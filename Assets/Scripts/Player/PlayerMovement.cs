@@ -67,10 +67,12 @@ public void MovimientoJugador()
 {
     if (controller.isGrounded)
     {
-        // Movimiento horizontal
-        moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+         // Movimiento horizontal
+        moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0.0f, Input.GetAxisRaw("Vertical"));
         moveDirection.Normalize(); // Normalizar el vector de movimiento
         moveDirection *= speed;
+
+         
 
         if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación cuando el jugador no se está moviendo
         {
@@ -265,3 +267,4 @@ IEnumerator MoveToTarget(GameObject instance)
 
 
 }
+
