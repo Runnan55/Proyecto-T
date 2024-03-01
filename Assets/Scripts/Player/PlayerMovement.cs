@@ -6,10 +6,12 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
        public float speed = 6.0f;
+       public float atackSpeed = 6.0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
 
        public float DashSpeed;
+       private float lastDashTime = -Mathf.Infinity;
 
        public float dashTime;  
 
@@ -48,6 +50,7 @@ void Update()
     if (Input.GetKeyDown(KeyCode.Mouse0)) // Suponiendo que el espacio es la tecla para atacar
     {
         canMove = true;
+       
         Atacar();
       
     }
@@ -67,67 +70,76 @@ public void MovimientoJugador()
 {
     if (controller.isGrounded)
     {
-         // Movimiento horizontal
-        moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0.0f, Input.GetAxisRaw("Vertical"));
-        moveDirection.Normalize(); // Normalizar el vector de movimiento
-        moveDirection *= speed;
+     // Obtén la entrada del jugador
+    float horizontal = Input.GetAxisRaw("Horizontal");
+    float vertical = Input.GetAxisRaw("Vertical");
 
+    // Crea un vector de movimiento basado en la entrada del jugador
+    Vector3 moveInput = new Vector3(horizontal, 0, vertical);
+
+    // Transforma el vector de movimiento desde las coordenadas locales de la cámara a las coordenadas del mundo
+    Vector3 moveDirection = Camera.main.transform.TransformDirection(moveInput);
+
+    // Normaliza el vector de movimiento para asegurarte de que la velocidad del jugador es constante
+    moveDirection.Normalize();
+
+    // Multiplica el vector de movimiento por la velocidad del jugador para obtener la velocidad final
+    moveDirection *= speed;
+
+    // Aplica el movimiento al jugador
+    controller.Move(moveDirection * Time.deltaTime);
          
+if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación cuando el jugador no se está moviendo
+{
+    // Obtén la rotación de la cámara
+    Quaternion cameraRotation = Camera.main.transform.rotation;
 
-        if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación cuando el jugador no se está moviendo
+    // Crea una nueva rotación que ignore la inclinación de la cámara
+    Quaternion targetRotation = Quaternion.Euler(0, cameraRotation.eulerAngles.y, 0);
+ 
+     switch (vertical)
+{
+    case 1: // W key
+        switch (horizontal)
         {
-            // Determinar la dirección de la rotación basada en la entrada del jugador
-            int horizontal = Mathf.RoundToInt(Input.GetAxis("Horizontal"));
-            int vertical = Mathf.RoundToInt(Input.GetAxis("Vertical"));
-
-            Quaternion targetRotation = transform.rotation; // Inicializar con la rotación actual
-
-            switch (horizontal)
-            {
-                case 1: // D key
-                    switch (vertical)
-                    {
-                        case 1: // W key
-                            targetRotation = Quaternion.Euler(0, 45, 0);
-                            break;
-                        case -1: // S key
-                            targetRotation = Quaternion.Euler(0, 135, 0);
-                            break;
-                        default:
-                            targetRotation = Quaternion.Euler(0, 90, 0);
-                            break;
-                    }
-                    break;
-                case -1: // A key
-                    switch (vertical)
-                    {
-                        case 1: // W key
-                            targetRotation = Quaternion.Euler(0, -45, 0);
-                            break;
-                        case -1: // S key
-                            targetRotation = Quaternion.Euler(0, -135, 0);
-                            break;
-                        default:
-                            targetRotation = Quaternion.Euler(0, -90, 0);
-                            break;
-                    }
-                    break;
-                default:
-                    switch (vertical)
-                    {
-                        case 1: // W key
-                            targetRotation = Quaternion.Euler(0, 0, 0);
-                            break;
-                        case -1: // S key
-                            targetRotation = Quaternion.Euler(0, 180, 0);
-                            break;
-                    }
-                    break;
-            }
-
-            // Interpolar suavemente hacia la rotación objetivo
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            case 1: // D key
+                targetRotation *= Quaternion.Euler(0, 45, 0);
+                break;
+            case -1: // A key
+                targetRotation *= Quaternion.Euler(0, -45, 0);
+                break;
         }
+        break;
+    case -1: // S key
+        switch (horizontal)
+        {
+            case 1: // D key
+                targetRotation *= Quaternion.Euler(0, 135, 0);
+                break;
+            case -1: // A key
+                targetRotation *= Quaternion.Euler(0, -135, 0);
+                break;
+            default:
+                targetRotation *= Quaternion.Euler(0, 180, 0);
+                break;
+        }
+        break;
+    default:
+        switch (horizontal)
+        {
+            case 1: // D key
+                targetRotation *= Quaternion.Euler(0, 90, 0);
+                break;
+            case -1: // A key
+                targetRotation *= Quaternion.Euler(0, -90, 0);
+                break;
+        }
+        break;
+}
+
+    // Interpolar suavemente hacia la rotación objetivo
+    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+}
     }
        
  
@@ -155,6 +167,7 @@ private void StartAttack()
     isAttacking = true;
     isLookingAtTarget = true;
 
+speed /= 2;
     // Convertir la posición del click del ratón a una posición en el mundo 3D
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     RaycastHit hit;
@@ -182,20 +195,22 @@ private void StartAttack()
             instance.transform.SetParent(ataque3Inicio, true);
         }
 
-        // Iniciar la coroutine para mover el GameObject instanciado hacia la posición del segundo objeto vacío
+        
         StartCoroutine(MoveToTarget(instance));
     }
 }
 
 public void Atacar()
 {
-    // Si el botón izquierdo del ratón está presionado...
+    
     if (Input.GetMouseButtonDown(0))
     {
-        // Si no hay un ataque en curso, iniciar un nuevo ataque
+       
         if (!isAttacking)
         {
+             
             StartAttack();
+            
         }
     }
 }
@@ -226,7 +241,7 @@ IEnumerator MoveToTarget(GameObject instance)
         }
 
         // Mover el objeto instanciado hacia la posición final
-        instance.transform.position = Vector3.MoveTowards(instance.transform.position, targetPosition, speed * Time.deltaTime);
+        instance.transform.position = Vector3.MoveTowards(instance.transform.position, targetPosition, atackSpeed * Time.deltaTime);
 
         // Hacer que el objeto instanciado rote junto con el personaje
         instance.transform.rotation = transform.rotation;
@@ -244,19 +259,40 @@ IEnumerator MoveToTarget(GameObject instance)
     yield return new WaitForSeconds(0.1f);
     isAttacking = false;
     isLookingAtTarget = false;
+
+    speed *= 2;
 }
-    IEnumerator Dash()
+ IEnumerator Dash()
+{
+    if (Time.time >= lastDashTime + dashTime)
     {
+        float startTime = Time.time;
 
-      float startTime = Time.time;
+        // Obtener la dirección de entrada del jugador
+        Vector3 playerInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
-      while (Time.time < startTime + dashTime)
-      {
-        playerMovement.controller.Move(playerMovement.transform.forward * DashSpeed * Time.deltaTime);
-        yield return null;
-      }
+        // Obtener la dirección de la cámara
+        Vector3 cameraForward = Camera.main.transform.forward;
+        Vector3 cameraRight = Camera.main.transform.right;
 
+        // Eliminar la inclinación de la cámara
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward = cameraForward.normalized;
+        cameraRight = cameraRight.normalized;
+
+        // Calcular la dirección del dash relativa a la orientación de la cámara
+        Vector3 dashDirection = cameraForward * playerInput.z + cameraRight * playerInput.x;
+
+        while (Time.time < startTime + dashTime)
+        {
+            playerMovement.controller.Move(dashDirection * DashSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        lastDashTime = Time.time;
     }
+}
 
 
     public void AplicarCarta() // Método que se ejecuta al aplicar una carta
