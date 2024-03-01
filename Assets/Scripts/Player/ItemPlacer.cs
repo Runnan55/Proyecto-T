@@ -2,60 +2,76 @@ using UnityEngine;
 
 public class ItemPlacer : MonoBehaviour
 {
-    public GameObject itemPrefab; // Prefab del item final
-    public GameObject previewPrefab; // Prefab de la previsualizaciÛn permitida
-    public GameObject invalidPreviewPrefab; // Prefab de la previsualizaciÛn no permitida
+    public GameObject previewPrefab; // Prefab de la previsualizaci√≥n permitida
+    public GameObject invalidPreviewPrefab; // Prefab de la previsualizaci√≥n no permitida
     public LayerMask placementLayer; // Layer Mask para el suelo
     public LayerMask obstructionLayer; // Layer Mask para detectar obstrucciones
-    public Transform player; // Referencia p˙blica al jugador
+    public Transform player; // Referencia p√∫blica al jugador
 
-    private GameObject currentPreviewInstance; // Instancia actual de la previsualizaciÛn
+    private GameObject currentPreviewInstance; // Instancia actual de la previsualizaci√≥n
     private GameObject placedObject; // Referencia al objeto colocado
-    private bool isPreviewValid = false; // Indica si la previsualizaciÛn actual es v·lida
+    private bool isPreviewValid = false; // Indica si la previsualizaci√≥n actual es v√°lida
     private LineRenderer lineRenderer; // LineRenderer para dibujar el trail
-    private bool isPlacementMode = true; // Controla si el modo actual es de colocaciÛn
+    private bool isPlacementMode = true; // Controla si el modo actual es de colocaci√≥n
+
+    public GameObject CartaTp; // Referencia al jugador
+
+    public GameObject CartaHole; // Referencia al jugador
+
+    public bool CartaColocada = false;
 
     void Start()
     {
-        // Intenta obtener el LineRenderer del jugador, si no existe, crÈalo.
+        // Intenta obtener el LineRenderer del jugador, si no existe, cr√©alo.
         lineRenderer = player.gameObject.GetComponent<LineRenderer>();
         if (lineRenderer == null)
         {
             lineRenderer = player.gameObject.AddComponent<LineRenderer>();
-            // Configura el LineRenderer aquÌ
+            // Configura el LineRenderer aqu√≠
             lineRenderer.startWidth = 0.05f;
             lineRenderer.endWidth = 0.1f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // Aseg˙rate de asignar un material adecuado
+            lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // Aseg√∫rate de asignar un material adecuado
         }
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1)) // Al presionar el botÛn derecho
+        if (Input.GetMouseButtonDown(1)) // Al presionar el bot√≥n derecho
         {
-            if (isPlacementMode)
+            string activeCardName = InventarioPlayer.Instance.GetCurrentCardName(); // Obtiene el nombre de la carta activa
+            if (activeCardName != "Empty" && !CartaColocada) // Verifica que el slot activo no est√© vac√≠o
             {
-                if (currentPreviewInstance == null)
+                if (isPlacementMode)
                 {
-                    CreateOrUpdatePreview(previewPrefab);
+                    if (currentPreviewInstance == null)
+                    {
+                        CreateOrUpdatePreview(previewPrefab);
+                        CartaColocada = true;
+                    }
                 }
+            
             }
-            else
-            {
-                Card cardComponent = placedObject.GetComponent<Card>();
-                if (cardComponent != null)
+            if (CartaColocada)
                 {
-                    cardComponent.Activate();
-                    // AcciÛn de activaciÛn, eliminar el objeto colocado y volver al modo de colocaciÛn
-                    Debug.Log("ActivaciÛn");
+                    if (placedObject != null)
+                    {
+                    Card cardComponent = placedObject.GetComponent<Card>();
+
+                    if (cardComponent != null)
+                    {
+                        cardComponent.Activate();
+                        // Acci√≥n de activaci√≥n, eliminar el objeto colocado y volver al modo de colocaci√≥n
+                        Debug.Log("Activaci√≥n");
+                    }
+                    if (placedObject != null)
+                    {
+                        //Destroy(placedObject); // Elimina el objeto colocado
+                        placedObject = null;
+                    }
+                    isPlacementMode = true; // Vuelve al modo de colocaci√≥n
+                    CartaColocada = false;
+                    }
                 }
-                if (placedObject != null)
-                {
-                    //Destroy(placedObject); // Elimina el objeto colocado
-                    placedObject = null;
-                }
-                isPlacementMode = true; // Vuelve al modo de colocaciÛn
-            }
         }
 
         if (isPlacementMode && currentPreviewInstance != null)
@@ -65,10 +81,10 @@ public class ItemPlacer : MonoBehaviour
         }
         else if (lineRenderer != null && !Input.GetMouseButton(1))
         {
-            lineRenderer.enabled = false; // Oculta el trail si no hay previsualizaciÛn
+            lineRenderer.enabled = false; // Oculta el trail si no hay previsualizaci√≥n
         }
 
-        if (Input.GetMouseButtonUp(1) && isPlacementMode) // Intentar colocar el item al soltar, solo si est· en modo de colocaciÛn
+        if (Input.GetMouseButtonUp(1) && isPlacementMode) // Intentar colocar el item al soltar, solo si est√° en modo de colocaci√≥n
         {
             PlaceItemAndClearPreview();
         }
@@ -122,8 +138,28 @@ public class ItemPlacer : MonoBehaviour
     {
         if (isPreviewValid && currentPreviewInstance != null)
         {
+            string activeCardName = InventarioPlayer.Instance.GetCurrentCardName(); // Obtiene el nombre de la carta activa
+            GameObject itemPrefab = null; // Selecciona el prefab basado en el nombre de la carta activa
+
+            switch (activeCardName)
+            {
+                case "TpCard":
+                    itemPrefab = CartaTp /* referencia al prefab TpCard */;
+                    break;
+                case "CartaHole":
+                    itemPrefab = CartaHole/* referencia a otro prefab */;
+                    break;
+                // A√±ade m√°s casos seg√∫n sea necesario
+                default:
+                    // Opcional: Manejar si no hay coincidencia o si el slot est√° vac√≠o
+                    Debug.Log("No se encontr√≥ una carta v√°lida o el slot est√° vac√≠o.");
+                    return; // Sale de la funci√≥n si no se quiere colocar nada
+            }
+
+            // Colocar el prefab seleccionado
             placedObject = Instantiate(itemPrefab, currentPreviewInstance.transform.position, Quaternion.identity);
-            isPlacementMode = false; // Desactiva el modo de colocaciÛn despuÈs de colocar un objeto
+            isPlacementMode = false; // Desactiva el modo de colocaci√≥n despu√©s de colocar un objeto
+            InventarioPlayer.Instance.UseCard(); // Usa la carta activa
         }
         if (currentPreviewInstance != null)
         {
@@ -132,7 +168,7 @@ public class ItemPlacer : MonoBehaviour
         }
         if (lineRenderer != null)
         {
-            lineRenderer.enabled = false; // Oculta el trail despuÈs de colocar el item
+            lineRenderer.enabled = false; // Oculta el trail despu√©s de colocar el item
         }
     }
 }
