@@ -6,7 +6,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
        public float speed = 6.0f;
-       public float atackSpeed = 6.0f;
+
+       public float reduccionVelocidad =6.0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
 
@@ -17,27 +18,25 @@ public class PlayerMovement : MonoBehaviour
 
        PlayerMovement playerMovement;
        private CharacterController controller;
-
     private Vector3 moveDirection = Vector3.zero;
-    
-    public GameObject ataqueProvisional; // El prefab que se instanciará al hacer click
-    [Header("Ataque 1")]
-    public Transform ataque1Inicio;
-    public Transform ataque1Final; // El objeto vacío hacia el que quieres mover el GameObject instanciado
-    bool canMove = true;
-    [Header("Ataque 2")]
-    public Transform ataque2Inicio;
-    public Transform ataque2Final; // El segundo objeto vacío hacia el que quieres mover el GameObject instanciado
-   private bool isAttacking = false; 
- [Header("Ataque 3")]
-   public Transform ataque3Inicio;
-   public Transform ataque3Final; // El segundo objeto vacío hacia el que quieres mover el GameObject instanciado
-   bool isLookingAtTarget = false;
-  public int attackState = 0;
+    bool canMove = true;   
+    bool isLookingAtTarget = false;
+
+
+
+   public Animator animator;
+  int cantidad_clik;
+  bool puedo_dar_cliks;
     void Start()
     {
-        controller = GetComponent<CharacterController>();
-        playerMovement = GetComponent<PlayerMovement>();
+         controller = GetComponent<CharacterController>();
+         playerMovement = GetComponent<PlayerMovement>();
+
+         animator = GetComponent<Animator>();
+         cantidad_clik = 0;
+         puedo_dar_cliks = true;
+
+         
     }
 
 void Update()
@@ -45,27 +44,97 @@ void Update()
     if (canMove)
     {
         MovimientoJugador();
-    }
+    }   
 
-    if (Input.GetKeyDown(KeyCode.Mouse0)) // Suponiendo que el espacio es la tecla para atacar
-    {
-        canMove = true;
-       
-        Atacar();
-      
-    }
 
     if (Input.GetKeyDown(KeyCode.LeftShift))
     {
         StartCoroutine(Dash());
     }
 
-    
-        AplicarCarta();
+    {
+
+
+     if (Input.GetMouseButtonDown(0)) 
+   {
+ 
+            Iniciar_combo();
+
+            // Marcar que hay un ataque en curso
+ 
+        // Convertir la posición del click del ratón a una posición en el mundo 3D
+    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    RaycastHit hit;
+    if (Physics.Raycast(ray, out hit))
+    {
+        // Hacer que el objeto mire hacia la posición del click
+        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+        transform.LookAt(targetPosition);
+     
+    }
+
+
+    } 
+
+
+    }
+
+
+
    
 }
 
+  public
+void Iniciar_combo()
+  {
+    if(puedo_dar_cliks)
+    {
+        cantidad_clik++;
+    }
 
+    if (cantidad_clik == 1)
+    {
+      animator.SetInteger("attack", 1);
+    }
+  
+  }
+
+    public void Verificar_combo()
+    {
+        puedo_dar_cliks = false;
+
+      if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack0") && cantidad_clik == 1)
+      {
+        animator.SetInteger("attack", 0);
+         puedo_dar_cliks = true;
+         cantidad_clik = 0;
+      }
+      else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack0") && cantidad_clik >= 2)
+      {
+        animator.SetInteger("attack", 2);
+        puedo_dar_cliks = true;
+      }
+      else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && cantidad_clik == 2)
+      {
+        animator.SetInteger("attack", 0);
+         puedo_dar_cliks = true; 
+        cantidad_clik = 0;
+        
+      }
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && cantidad_clik >= 3)
+      {
+        animator.SetInteger("attack", 3);
+        puedo_dar_cliks = true;
+        
+      }
+         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") )
+      {
+        animator.SetInteger("attack", 0); 
+        puedo_dar_cliks = true;      
+         cantidad_clik = 0;
+      }           
+    
+    }
 public void MovimientoJugador()
 {
     if (controller.isGrounded)
@@ -155,112 +224,6 @@ if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación c
 
     // Mover al personaje
     controller.Move(moveDirection * Time.deltaTime);
-}
-
-
-
-
-
-private void StartAttack()
-{
-  // Marcar que hay un ataque en curso
-    isAttacking = true;
-    isLookingAtTarget = true;
-
-speed /= 2;
-    // Convertir la posición del click del ratón a una posición en el mundo 3D
-    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    RaycastHit hit;
-    if (Physics.Raycast(ray, out hit))
-    {
-        // Hacer que el objeto mire hacia la posición del click
-        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-        transform.LookAt(targetPosition);
-
-        GameObject instance;
-        // Instanciar el GameObject en la posición del objeto vacío y como hijo del objeto vacío
-        if (attackState == 0)
-        {
-            instance = Instantiate(ataqueProvisional, ataque1Inicio.position, Quaternion.identity);
-            instance.transform.SetParent(ataque1Inicio, true);
-        }
-        else if (attackState == 1)
-        {
-            instance = Instantiate(ataqueProvisional, ataque2Inicio.position, Quaternion.identity);
-            instance.transform.SetParent(ataque2Inicio, true);
-        }
-        else
-        {
-            instance = Instantiate(ataqueProvisional, ataque3Inicio.position, Quaternion.identity);
-            instance.transform.SetParent(ataque3Inicio, true);
-        }
-
-        
-        StartCoroutine(MoveToTarget(instance));
-    }
-}
-
-public void Atacar()
-{
-    
-    if (Input.GetMouseButtonDown(0))
-    {
-       
-        if (!isAttacking)
-        {
-             
-            StartAttack();
-            
-        }
-    }
-}
-IEnumerator MoveToTarget(GameObject instance)
-{
-    Vector3 targetPosition;
-
-    while (true) // Loop infinito hasta que el objeto llegue a su destino
-    {
-        // Actualizar la posición final basada en el estado de ataque actual
-        if (attackState == 0)
-        {
-            targetPosition = ataque1Final.position;
-        }
-        else if (attackState == 1)
-        {
-            targetPosition = ataque2Final.position;
-        }
-        else
-        {
-            targetPosition = ataque3Final.position;
-        }
-
-        // Si el objeto ha llegado a su destino, salir del loop
-        if (Vector3.Distance(instance.transform.position, targetPosition) <= 0.1f)
-        {
-            break;
-        }
-
-        // Mover el objeto instanciado hacia la posición final
-        instance.transform.position = Vector3.MoveTowards(instance.transform.position, targetPosition, atackSpeed * Time.deltaTime);
-
-        // Hacer que el objeto instanciado rote junto con el personaje
-        instance.transform.rotation = transform.rotation;
-
-        yield return null; // Esperar hasta el próximo frame
-    }
-
-      // Destruir el GameObject instanciado una vez que llegue a su destino
-    Destroy(instance);
-
-    // Cambiar attackState después de que el objeto ha sido destruido
-    attackState = (attackState + 1) % 3;
-
-    // Esperar un pequeño retraso antes de marcar que el ataque ha terminado
-    yield return new WaitForSeconds(0.1f);
-    isAttacking = false;
-    isLookingAtTarget = false;
-
-    speed *= 2;
 }
  IEnumerator Dash()
 {
