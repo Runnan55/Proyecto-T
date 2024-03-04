@@ -14,12 +14,12 @@ public class SimpleEnemy : MonoBehaviour
     public float attackCooldown = 2f;
     public float visionAngle = 60f;
 
-
     private NavMeshAgent agent;
     private Vector3 targetPosition;
     private float timer;
     private float attackTimer;
     private GameObject player;
+    private bool isChasingPlayer = false; // Flag to indicate whether the enemy is chasing the player
 
     void Start()
     {
@@ -32,43 +32,48 @@ public class SimpleEnemy : MonoBehaviour
 
     void Update()
     {
-
-
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
 
-        if (distanceToPlayer <= detectionRange || distanceToPlayer <= minChaseRange)
+        if (!isChasingPlayer && (distanceToPlayer <= detectionRange || distanceToPlayer <= minChaseRange))
         {
             float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
 
             if (angleToPlayer < visionAngle * 0.5f)
             {
-                if (distanceToPlayer <= attackRange)
-                {
-                    if (Time.time >= attackTimer)
-                    {
-                        AttackPlayer();
-                        attackTimer = Time.time + attackCooldown;
-                    }
-                }
-                else
-                {
-                    agent.SetDestination(player.transform.position);
-                }
-                return;
+                isChasingPlayer = true; // Start chasing the player
             }
         }
 
-        if (!agent.pathPending && agent.remainingDistance < 0.1f)
+        if (isChasingPlayer)
         {
-            timer -= Time.deltaTime;
-            if (timer <= 0f)
+            if (distanceToPlayer <= attackRange)
             {
-                SetRandomDestination();
-                timer = wanderTimer;
+                if (Time.time >= attackTimer)
+                {
+                    AttackPlayer();
+                    attackTimer = Time.time + attackCooldown;
+                }
+            }
+            else
+            {
+                agent.SetDestination(player.transform.position);
+            }
+        }
+        else
+        {
+            if (!agent.pathPending && agent.remainingDistance < 0.1f)
+            {
+                timer -= Time.deltaTime;
+                if (timer <= 0f)
+                {
+                    SetRandomDestination();
+                    timer = wanderTimer;
+                }
             }
         }
     }
+
     void SetRandomDestination()
     {
         Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
@@ -82,6 +87,6 @@ public class SimpleEnemy : MonoBehaviour
 
     void AttackPlayer()
     {
-        Debug.Log("atacando");
+        Debug.Log("Attacking");
     }
 }
