@@ -132,6 +132,12 @@ void Iniciar_combo()
         animator.SetInteger("attack", 0); 
         puedo_dar_cliks = true;      
          cantidad_clik = 0;
+      }     
+         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash") && cantidad_clik <= 4)
+      {
+        animator.SetInteger("attack", 0); 
+        puedo_dar_cliks = true;      
+         cantidad_clik = 0;
       }           
     
     }
@@ -217,6 +223,13 @@ if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación c
     if (Input.GetKey(KeyCode.LeftShift))
     {
         Dash();
+        animator.SetBool("Dash", true);
+    }
+    else
+    {
+        animator.SetBool("Dash", false);
+        
+        
     }
 
     // Aplicar gravedad
