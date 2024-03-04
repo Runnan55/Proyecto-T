@@ -19,7 +19,7 @@ public class SimpleEnemy : MonoBehaviour
     private float timer;
     private float attackTimer;
     private GameObject player;
-    private bool isChasingPlayer = false; // Flag to indicate whether the enemy is chasing the player
+    private bool isChasingPlayer = false; 
 
     void Start()
     {
@@ -41,13 +41,14 @@ public class SimpleEnemy : MonoBehaviour
 
             if (angleToPlayer < visionAngle * 0.5f)
             {
-                isChasingPlayer = true; // Start chasing the player
+                isChasingPlayer = true; 
             }
         }
 
         if (isChasingPlayer)
         {
-            if (distanceToPlayer <= attackRange)
+            agent.ResetPath();
+            if (distanceToPlayer <= attackRange+1)
             {
                 if (Time.time >= attackTimer)
                 {

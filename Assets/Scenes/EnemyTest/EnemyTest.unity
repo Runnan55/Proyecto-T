@@ -598,7 +598,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!23 &1295299908
 MeshRenderer:
@@ -1131,7 +1131,7 @@ Transform:
   m_GameObject: {fileID: 1834829942}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.87, y: 0, z: -1.03}
+  m_LocalPosition: {x: -7.87, y: 0.64, z: -1.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1263,7 +1263,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1339,13 +1339,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 320bf64d321a4c64297a06ed67d56580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 3
+  attackRange: 11.74
   detectionRange: 100
   player: {fileID: 1834829946}
   wanderRadius: 10
   wanderTimer: 5
-  viewAngle: 180
-  frontCollider: {fileID: 2059098087}
+  viewAngle: 60
   backCollider: {fileID: 1149609866}
   chargeSpeed: 10
 --- !u!54 &2090397559

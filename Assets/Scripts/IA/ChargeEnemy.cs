@@ -6,13 +6,12 @@ using UnityEngine.AI;
 
 public class ChargeEnemy : MonoBehaviour
 {
-    public float attackRange = 3f; 
-    public float detectionRange = 5f; 
-    public Transform player; 
+    public float attackRange = 3f;
+    public float detectionRange = 5f;
+    public Transform player;
     public float wanderRadius = 10f;
     public float wanderTimer = 5f;
-    public float viewAngle = 60f; 
-    public Collider frontCollider; 
+    public float viewAngle = 60f;
     public Collider backCollider;
     public float chargeSpeed = 10f;
 
@@ -22,7 +21,7 @@ public class ChargeEnemy : MonoBehaviour
     private bool charging = false;
 
 
-    bool playerDetected = false; 
+    bool playerDetected = false;
 
     void Start()
     {
@@ -30,33 +29,24 @@ public class ChargeEnemy : MonoBehaviour
         timer = wanderTimer;
         SetRandomDestination();
 
-       
-        if (frontCollider != null)
-            frontCollider.enabled = true;
-
- 
         if (backCollider != null)
             backCollider.enabled = false;
     }
 
     void Update()
     {
-        
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        
+
         Vector3 directionToPlayer = player.position - transform.position;
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
-        if (distanceToPlayer <= detectionRange && angleToPlayer <= viewAngle / 2f)
+        if (distanceToPlayer <= detectionRange )
         {
             playerDetected = true;
-           
+
             if (backCollider != null)
                 backCollider.enabled = false;
-            
-            if (frontCollider != null)
-                frontCollider.enabled = true;
-            Debug.Log("collider activo");
 
             if (!charging)
             {
@@ -71,9 +61,8 @@ public class ChargeEnemy : MonoBehaviour
             if (backCollider != null)
                 backCollider.enabled = true;
 
-            if (frontCollider != null)
-                frontCollider.enabled = false;
-            Debug.Log("collider desactivo");
+          
+            Debug.Log("collider activo, puedes pegar");
 
         }
 
@@ -107,15 +96,16 @@ public class ChargeEnemy : MonoBehaviour
         agent.enabled = false;
 
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
-
         Vector3 chargeTargetPosition = player.position;
-
         Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
-        Vector3 chargeDestination = transform.position + chargeDirection * 10f; // Cambia 10f por la distancia que quieras que el enemigo avance
+        Vector3 chargeDestination = transform.position + chargeDirection * 10f;
+        transform.LookAt(player);
+
 
         agent.enabled = true;
         agent.speed = chargeSpeed;
         agent.SetDestination(chargeDestination);
+
 
         charging = false;
     }
