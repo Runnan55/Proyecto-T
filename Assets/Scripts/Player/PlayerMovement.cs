@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     bool canMove = true;   
     bool isLookingAtTarget = false;
 
-
+    
 
    public Animator animator;
   int cantidad_clik;
@@ -263,7 +263,15 @@ if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación c
        //Dani aqui tienes el metodo
        
     }
+public Collider espada; // Añade esta línea
+   public void ActivarEspada()
+   {
+       espada.enabled = true; // Cambia esta línea
+   }
 
-
+   public void DesactivarEspada()
+   {
+       espada.enabled = false; // Y esta línea
+   }
 }
 
