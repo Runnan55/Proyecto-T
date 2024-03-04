@@ -16,7 +16,7 @@ public class Card : MonoBehaviour
                 TpCard();
                 Destroy(this.gameObject);
                 break;
-            case "BlackHoleCard":
+            case "CartaHole":
                 // Llama a la funci�n para manejar BlackHoleCard
                 print("First");
                 StartCoroutine(AttractCharacters());
