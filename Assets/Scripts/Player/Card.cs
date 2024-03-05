@@ -44,7 +44,7 @@ public class Card : MonoBehaviour
         // Intenta encontrar el hijo espec�fico dentro del jugador
         Transform playerGroundTransform = playerParent?.transform.Find("PlayerGround");
 
-        GameObject card = GameObject.FindGameObjectWithTag("Card");
+        GameObject card = GameObject.FindGameObjectWithTag("Tp");
 
         // Verifica que el jugador y la carta existan en la escena
         if (playerParent != null && playerGroundTransform != null && card != null)
