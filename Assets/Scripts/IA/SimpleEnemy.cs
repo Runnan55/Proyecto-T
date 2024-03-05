@@ -13,6 +13,7 @@ public class SimpleEnemy : Enemy
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
     public float visionAngle = 60f;
+   
 
     private NavMeshAgent agent;
     private Vector3 targetPosition;
@@ -28,6 +29,8 @@ public class SimpleEnemy : Enemy
         attackTimer = 0f;
         SetRandomDestination();
         player = GameObject.FindGameObjectWithTag("Player");
+        damage = 10f;
+        health = 100f;
     }
 
     void Update()
