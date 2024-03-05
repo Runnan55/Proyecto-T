@@ -11,14 +11,15 @@ public class ChargeEnemy : MonoBehaviour
     public Transform player;
     public float wanderRadius = 10f;
     public float wanderTimer = 5f;
-    public float viewAngle = 60f;
     public Collider backCollider;
     public float chargeSpeed = 10f;
+    public float chargeTimer=2f;
 
     private NavMeshAgent agent;
     private float timer;
     private Vector3 targetPosition;
     private bool charging = false;
+    private float timerC;
 
 
     bool playerDetected = false;
@@ -28,6 +29,7 @@ public class ChargeEnemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
         SetRandomDestination();
+        timerC = chargeTimer;
 
         if (backCollider != null)
             backCollider.enabled = false;
@@ -40,33 +42,19 @@ public class ChargeEnemy : MonoBehaviour
 
 
         Vector3 directionToPlayer = player.position - transform.position;
-        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
         if (distanceToPlayer <= detectionRange )
         {
-            playerDetected = true;
-
-            if (backCollider != null)
-                backCollider.enabled = false;
+           
 
             if (!charging)
             {
                 charging = true;
-                Invoke("ChargeAttack", 2f); // Espera 2 segundos antes de cargar el ataque
+                Invoke("ChargeAttack", 2f); 
             }
         }
-        else
-        {
-            playerDetected = false;
+       
 
-            if (backCollider != null)
-                backCollider.enabled = true;
-
-          
-            Debug.Log("collider activo, puedes pegar");
-
-        }
-
-        if (distanceToPlayer <= attackRange && !playerDetected)
+       else if (distanceToPlayer <= attackRange && !playerDetected)
         {
             Debug.Log("La meti por detras");
         }
@@ -101,14 +89,23 @@ public class ChargeEnemy : MonoBehaviour
         Vector3 chargeDestination = transform.position + chargeDirection * 10f;
         transform.LookAt(player);
 
-
+       
         agent.enabled = true;
         agent.speed = chargeSpeed;
         agent.SetDestination(chargeDestination);
+        
+
+        Invoke("WaitTime", 2f);
 
 
-        charging = false;
     }
 
-    
+    void WaitTime()
+    {
+        charging = false;
+        transform.LookAt(player);
+     
+    }
+
+
 }
