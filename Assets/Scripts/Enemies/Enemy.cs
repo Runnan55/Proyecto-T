@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
     public float health = 100f;
     public float damage = 10f;
     public Life playerLife;
+    public GameObject floatingTextPrefab;
 
     void Start()
     {
@@ -30,10 +32,24 @@ public class Enemy : MonoBehaviour
         }
         
         Debug.Log("Daño infringido: " + amount + ", Vida: " + health);
+
+        if (health > 0)
+        {
+            ShowFloatingText(amount);
+        }
     }
 
     public virtual void AttackPlayer()
     {
         playerLife.ModifyTime(-damage);
+    }
+
+    //* TEXTO
+    void ShowFloatingText(float amount)
+    {
+        Debug.Log("ShowFloatingText");
+        Vector3 offset = new Vector3(0, 2, 0); // Ajusta el valor 2 para cambiar la altura del desplazamiento
+        var go = Instantiate(floatingTextPrefab, transform.position + offset, Quaternion.identity);
+        go.GetComponent<DamageText>().SetText(amount.ToString());
     }
 }
