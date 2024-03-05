@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class DistanceEnemy : MonoBehaviour
+public class DistanceEnemy : Enemy
 {
     public float detectionRange = 10f;
     public float attackRange = 10f;

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class ChargeEnemy : MonoBehaviour
+public class ChargeEnemy : Enemy
 {
     public float attackRange = 3f;
     public float detectionRange = 5f;

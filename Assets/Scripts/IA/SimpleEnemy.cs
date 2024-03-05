@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class SimpleEnemy : MonoBehaviour
+public class SimpleEnemy : Enemy
 {
     public float wanderRadius = 10f;
     public float wanderTimer = 5f;
@@ -86,7 +86,7 @@ public class SimpleEnemy : MonoBehaviour
         agent.SetDestination(targetPosition);
     }
 
-    void AttackPlayer()
+     public override void AttackPlayer()
     {
         Debug.Log("Attacking");
     }
