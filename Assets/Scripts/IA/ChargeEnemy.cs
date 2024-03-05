@@ -13,13 +13,13 @@ public class ChargeEnemy : MonoBehaviour
     public float wanderTimer = 5f;
     public Collider backCollider;
     public float chargeSpeed = 10f;
-    public float chargeTimer=2f;
+    public float chargeDistance = 15f;
 
     private NavMeshAgent agent;
     private float timer;
     private Vector3 targetPosition;
     private bool charging = false;
-    private float timerC;
+   
 
 
     bool playerDetected = false;
@@ -29,7 +29,6 @@ public class ChargeEnemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
         SetRandomDestination();
-        timerC = chargeTimer;
 
         if (backCollider != null)
             backCollider.enabled = false;
@@ -86,7 +85,7 @@ public class ChargeEnemy : MonoBehaviour
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         Vector3 chargeTargetPosition = player.position;
         Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
-        Vector3 chargeDestination = transform.position + chargeDirection * 10f;
+        Vector3 chargeDestination = transform.position + chargeDirection * chargeDistance;
         transform.LookAt(player);
 
        
