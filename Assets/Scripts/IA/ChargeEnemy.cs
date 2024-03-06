@@ -82,6 +82,7 @@ public class ChargeEnemy : Enemy
     }
     void ChargeAttack()
     {
+        
             agent.enabled = false;
 
             Vector3 chargeTargetPosition = player.position;
@@ -114,11 +115,16 @@ public class ChargeEnemy : Enemy
 
     public void DesactivarMovimientos()
     {
+        CancelInvoke();
+        agent.ResetPath();
+
         enabled = false;
     }
         public void ReactivarMovimientos()
     {
         enabled = true;
+        charging = false;
+
     }
 
 
