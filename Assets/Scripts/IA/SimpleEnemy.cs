@@ -24,7 +24,7 @@ public class SimpleEnemy : Enemy
     private bool canAttack = true;
 
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
