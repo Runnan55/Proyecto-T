@@ -57,10 +57,7 @@ public class ChargeEnemy : Enemy
         }
        
 
-       else if (distanceToPlayer <= attackRange && !playerDetected)
-        {
-            Debug.Log("La meti por detras");
-        }
+      
 
         if (!agent.pathPending && agent.remainingDistance < 0.1f)
         {
@@ -98,7 +95,8 @@ public class ChargeEnemy : Enemy
         agent.enabled = true;
         agent.speed = chargeSpeed;
         agent.SetDestination(chargeDestination);
-        
+        backCollider.enabled = false;
+
 
         Invoke("WaitTime", 2f);
        // animator.SetBool("Attack", true);
@@ -110,12 +108,12 @@ public class ChargeEnemy : Enemy
     {
         charging = false;
         transform.LookAt(player);
-        
-       // animator.SetBool("Attack", false);
-       
+        backCollider.enabled = true;
 
+        // animator.SetBool("Attack", false);
 
     }
 
+   
 
 }

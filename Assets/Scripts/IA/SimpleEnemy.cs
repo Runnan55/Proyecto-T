@@ -97,7 +97,7 @@ public class SimpleEnemy : Enemy
             AttackPlayer();
             Debug.Log("-10");
             canAttack = false;
-            Invoke("ResetetAttack", 3f);
+            Invoke("ResetetAttack", 2f);
         }
 
         

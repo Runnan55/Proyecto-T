@@ -2,25 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Flecha : MonoBehaviour
+public class DoDamage : MonoBehaviour
 {
-    public float speed = 10f;
-    public float lifetime = 2f;
-    public float damage = 10f;
-
+    public float damage = 10;
     private Life playerLife;
-
-
-    private void Start()
+    // Start is called before the first frame update
+    void Start()
     {
-        Destroy(gameObject, lifetime);
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
 
     }
 
-    private void Update()
+    // Update is called once per frame
+    void Update()
     {
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -29,8 +25,7 @@ public class Flecha : MonoBehaviour
         {
             playerLife.ModifyTime(-damage);
 
-            Debug.Log("pummm");
-            Destroy(gameObject);
+            Debug.Log("choco");
         }
     }
 }
