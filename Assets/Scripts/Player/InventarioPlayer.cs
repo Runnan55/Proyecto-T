@@ -46,14 +46,14 @@ public class InventarioPlayer : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            RotateLeft();
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            RotateRight();
-        }
+if (Input.GetKeyDown(KeyCode.Q) || Input.GetAxis("Mouse ScrollWheel") < 0)
+{
+    RotateLeft();
+}
+if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
+{
+    RotateRight();
+}
         else if (Input.GetKeyDown(KeyCode.X)) // Intenta activar carta con X
         {
             UseCard();
