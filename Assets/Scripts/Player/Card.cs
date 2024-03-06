@@ -96,6 +96,7 @@ public class Card : MonoBehaviour
                 Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
+                    ResetStart();
                     Vector3 toCenter = (transform.position - rb.transform.position);
                     Vector3 direction = toCenter.normalized;
                     // Calcula la velocidad actual hacia el centro
@@ -114,10 +115,67 @@ public class Card : MonoBehaviour
             yield return null;
         }
         Debug.Log("finish");
+        ResetFinish();
         Destroy(this.gameObject);
         // Aquí puedes agregar lógica adicional si necesitas realizar alguna acción después de que finalice la atracción
     }
-
+    void ResetStart()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attractionRadius);
+        foreach (var hitCollider in hitColliders)
+        {
+            SimpleEnemy enemy = hitCollider.GetComponent<SimpleEnemy>();
+            ChargeEnemy charger = hitCollider.GetComponent<ChargeEnemy>();
+            DistanceEnemy distance = hitCollider.GetComponent<DistanceEnemy>();
+            if (enemy != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                enemy.DesactiveNavMesh();
+            }
+            if (distance != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                distance.DesactiveNavMesh();
+            }
+            if (charger != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                charger.DesactivarMovimientos();
+            }
+        }
+    }
+    void ResetFinish()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attractionRadius);
+        foreach (var hitCollider in hitColliders)
+        {
+            Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
+            SimpleEnemy enemy = hitCollider.GetComponent<SimpleEnemy>();
+            ChargeEnemy charger = hitCollider.GetComponent<ChargeEnemy>();
+            DistanceEnemy distance = hitCollider.GetComponent<DistanceEnemy>();
+            if (rb != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+                        if (enemy != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                enemy.ActiveNavMesh();
+            }
+                if (distance != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                distance.ActiveNavMesh();
+            }
+                if (charger != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                charger.ReactivarMovimientos();
+            }
+        }
+    }
     // Utilizado para dibujar un gizmo en el Editor que representa el radio de atracci�n
     void OnDrawGizmos()
     {

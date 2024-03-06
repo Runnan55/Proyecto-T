@@ -115,7 +115,7 @@ public class ChargeEnemy : Enemy
 
     public void DesactivarMovimientos()
     {
-        agent.isStopped = true; 
+        agent.isStopped = false; 
         charging = false; 
     }
     public void ReactivarMovimientos()
