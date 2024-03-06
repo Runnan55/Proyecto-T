@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Flecha : MonoBehaviour
+public class Flecha : Enemy
 {
     public float speed = 10f;
     public float lifetime = 2f;
@@ -10,6 +10,7 @@ public class Flecha : MonoBehaviour
     private void Start()
     {
         Destroy(gameObject, lifetime);
+        damage = 10;
     }
 
     private void Update()
@@ -21,6 +22,7 @@ public class Flecha : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            AttackPlayer();
             Debug.Log("pummm");
             Destroy(gameObject);
         }

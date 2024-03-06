@@ -14,6 +14,8 @@ public class ChargeEnemy : Enemy
     public Collider backCollider;
     public float chargeSpeed = 10f;
     public float chargeDistance = 15f;
+    //public Animator animator;
+
 
     private NavMeshAgent agent;
     private float timer;
@@ -29,6 +31,8 @@ public class ChargeEnemy : Enemy
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
         SetRandomDestination();
+       // animator = GetComponent<Animator>();
+
 
         if (backCollider != null)
             backCollider.enabled = false;
@@ -77,6 +81,8 @@ public class ChargeEnemy : Enemy
         NavMesh.SamplePosition(randomDirection, out hit, wanderRadius, 1);
         targetPosition = hit.position;
         agent.SetDestination(targetPosition);
+        //animator.SetBool("Walk", true);
+
     }
     void ChargeAttack()
     {
@@ -95,6 +101,7 @@ public class ChargeEnemy : Enemy
         
 
         Invoke("WaitTime", 2f);
+       // animator.SetBool("Attack", true);
 
 
     }
@@ -103,7 +110,11 @@ public class ChargeEnemy : Enemy
     {
         charging = false;
         transform.LookAt(player);
-     
+        
+       // animator.SetBool("Attack", false);
+       
+
+
     }
 
 

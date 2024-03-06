@@ -20,7 +20,9 @@ public class SimpleEnemy : Enemy
     private float timer;
     private float attackTimer;
     private GameObject player;
-    private bool isChasingPlayer = false; 
+    private bool isChasingPlayer = false;
+    private bool canAttack = true;
+
 
     void Start()
     {
@@ -55,7 +57,6 @@ public class SimpleEnemy : Enemy
             {
                 if (Time.time >= attackTimer)
                 {
-                    AttackPlayer();
                     attackTimer = Time.time + attackCooldown;
                 }
             }
@@ -89,8 +90,21 @@ public class SimpleEnemy : Enemy
         agent.SetDestination(targetPosition);
     }
 
-     public override void AttackPlayer()
+    private void OnTriggerStay(Collider other)
     {
-        Debug.Log("Attacking");
+        if (other.CompareTag("Player") && canAttack)
+        {
+            AttackPlayer();
+            Debug.Log("-10");
+            canAttack = false;
+            Invoke("ResetetAttack", 3f);
+        }
+
+        
+    }
+
+    private void ResetetAttack()
+    {
+        canAttack = true;
     }
 }
