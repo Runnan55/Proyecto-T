@@ -77,4 +77,14 @@ public class DistanceEnemy : Enemy
         GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, Quaternion.identity);
         arrow.transform.rotation = Quaternion.LookRotation(directionToPlayer);
     }
+
+    public void ActiveNavMesh()
+    {
+        agent.enabled = true;
+    }
+
+    public void DesactiveNavMesh()
+    {
+        agent.enabled = false;
+    }
 }

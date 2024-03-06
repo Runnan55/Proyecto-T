@@ -107,4 +107,13 @@ public class SimpleEnemy : Enemy
     {
         canAttack = true;
     }
+    public void ActiveNavMesh()
+    {
+        agent.enabled = true;
+    }
+
+    public void DesactiveNavMesh()
+    {
+        agent.enabled = false;
+    }
 }

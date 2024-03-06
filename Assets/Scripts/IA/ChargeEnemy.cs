@@ -113,6 +113,17 @@ public class ChargeEnemy : Enemy
 
     }
 
-   
+    public void DesactivarMovimientos()
+    {
+        agent.isStopped = true; 
+        charging = false; 
+    }
+    public void ReactivarMovimientos()
+    {
+        agent.isStopped = false; 
+        timer = wanderTimer; 
+        SetRandomDestination(); 
+    }
+
 
 }
