@@ -75,6 +75,7 @@ public class DistanceEnemy : Enemy
     {
         Debug.Log("Ataque");
         GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, Quaternion.identity);
+        //sonido flecha
         arrow.transform.rotation = Quaternion.LookRotation(directionToPlayer);
     }
 

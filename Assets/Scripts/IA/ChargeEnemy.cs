@@ -95,7 +95,7 @@ public class ChargeEnemy : Enemy
             agent.speed = chargeSpeed;
             agent.SetDestination(chargeDestination);
             backCollider.enabled = false;
-
+        //sonido embestida
 
             Invoke("WaitTime", 2f);
             // animator.SetBool("Attack", true);
