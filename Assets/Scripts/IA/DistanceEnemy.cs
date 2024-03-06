@@ -80,11 +80,11 @@ public class DistanceEnemy : Enemy
 
     public void ActiveNavMesh()
     {
-        agent.enabled = true;
+        enabled = true;
     }
 
     public void DesactiveNavMesh()
     {
-        agent.enabled = false;
+        enabled = false;
     }
 }

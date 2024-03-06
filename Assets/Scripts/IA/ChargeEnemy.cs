@@ -21,6 +21,8 @@ public class ChargeEnemy : Enemy
     private float timer;
     private Vector3 targetPosition;
     private bool charging = false;
+    private bool attack=true;
+    
    
 
 
@@ -43,7 +45,6 @@ public class ChargeEnemy : Enemy
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
 
-        Vector3 directionToPlayer = player.position - transform.position;
         if (distanceToPlayer <= detectionRange )
         {
            
@@ -82,25 +83,26 @@ public class ChargeEnemy : Enemy
     }
     void ChargeAttack()
     {
-        agent.enabled = false;
+        do
+        {
+            agent.enabled = false;
 
-        Vector3 directionToPlayer = (player.position - transform.position).normalized;
-        Vector3 chargeTargetPosition = player.position;
-        Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
-        Vector3 chargeDestination = transform.position + chargeDirection * chargeDistance;
-        transform.LookAt(player);
-
-       
-        agent.enabled = true;
-        agent.speed = chargeSpeed;
-        agent.SetDestination(chargeDestination);
-        backCollider.enabled = false;
+            Vector3 chargeTargetPosition = player.position;
+            Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
+            Vector3 chargeDestination = transform.position + chargeDirection * chargeDistance;
+            transform.LookAt(player);
 
 
-        Invoke("WaitTime", 2f);
-       // animator.SetBool("Attack", true);
+            agent.enabled = true;
+            agent.speed = chargeSpeed;
+            agent.SetDestination(chargeDestination);
+            backCollider.enabled = false;
 
 
+            Invoke("WaitTime", 2f);
+            // animator.SetBool("Attack", true);
+
+        } while (attack == false);
     }
 
     void WaitTime()
@@ -115,14 +117,18 @@ public class ChargeEnemy : Enemy
 
     public void DesactivarMovimientos()
     {
-        agent.isStopped = false; 
-        charging = false; 
+        //agent.isStopped = false; 
+        //charging = false; 
+        attack = false;
+        enabled = false;
     }
     public void ReactivarMovimientos()
     {
-        agent.isStopped = false; 
-        timer = wanderTimer; 
-        SetRandomDestination(); 
+        // agent.isStopped = false; 
+        // timer = wanderTimer; 
+        //SetRandomDestination(); 
+        enabled = true;
+        attack = true;
     }
 
 
