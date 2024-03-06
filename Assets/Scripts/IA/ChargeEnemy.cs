@@ -21,9 +21,7 @@ public class ChargeEnemy : Enemy
     private float timer;
     private Vector3 targetPosition;
     private bool charging = false;
-    private bool attack=true;
-    
-   
+    private bool attack = true;
 
 
 
@@ -32,9 +30,9 @@ public class ChargeEnemy : Enemy
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
         SetRandomDestination();
-       // animator = GetComponent<Animator>();
+        // animator = GetComponent<Animator>();
 
-
+       
         if (backCollider != null)
             backCollider.enabled = false;
     }
@@ -42,14 +40,14 @@ public class ChargeEnemy : Enemy
     void Update()
     {
 
+        
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
 
         if (distanceToPlayer <= detectionRange )
         {
-           
-
-            if (!charging)
+            if (!charging )
             {
                 charging = true;
                 Invoke("ChargeAttack", 2f); 
@@ -68,6 +66,7 @@ public class ChargeEnemy : Enemy
                 timer = wanderTimer;
             }
         }
+
     }
 
     void SetRandomDestination()
@@ -83,8 +82,6 @@ public class ChargeEnemy : Enemy
     }
     void ChargeAttack()
     {
-        do
-        {
             agent.enabled = false;
 
             Vector3 chargeTargetPosition = player.position;
@@ -102,7 +99,7 @@ public class ChargeEnemy : Enemy
             Invoke("WaitTime", 2f);
             // animator.SetBool("Attack", true);
 
-        } while (attack == false);
+        
     }
 
     void WaitTime()
@@ -117,18 +114,11 @@ public class ChargeEnemy : Enemy
 
     public void DesactivarMovimientos()
     {
-        //agent.isStopped = false; 
-        //charging = false; 
-        attack = false;
         enabled = false;
     }
-    public void ReactivarMovimientos()
+        public void ReactivarMovimientos()
     {
-        // agent.isStopped = false; 
-        // timer = wanderTimer; 
-        //SetRandomDestination(); 
         enabled = true;
-        attack = true;
     }
 
 
