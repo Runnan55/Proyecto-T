@@ -24,7 +24,6 @@ public class ChargeEnemy : Enemy
    
 
 
-    bool playerDetected = false;
 
     void Start()
     {

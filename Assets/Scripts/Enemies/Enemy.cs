@@ -26,9 +26,10 @@ public class Enemy : MonoBehaviour
     public void ReceiveDamage(float amount) // (en segundos)
     {
         health -= amount;
-        if (health < 0)
+        if (health <= 0)
         {
-            health = 0;
+            Destroy(gameObject);
+
         }
         
         Debug.Log("Daño infringido: " + amount + ", Vida: " + health);
@@ -51,5 +52,10 @@ public class Enemy : MonoBehaviour
         Vector3 offset = new Vector3(0, 2, 0); // Ajusta el valor 2 para cambiar la altura del desplazamiento
         var go = Instantiate(floatingTextPrefab, transform.position + offset, Quaternion.identity);
         go.GetComponent<DamageText>().SetText(amount.ToString());
+    }
+
+    public void Activar()
+    {    
+        gameObject.SetActive(true); 
     }
 }
