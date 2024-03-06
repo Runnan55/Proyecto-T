@@ -5,6 +5,10 @@ public class Card : MonoBehaviour
     public string CardName;
     public float attractionRadius = 5f; // Radio de atracci�n
     public float attractionForce = 10f; // Fuerza de atracci�n
+    public float damping = 5f; // Amortiguación inicial para reducir el impulso lateral
+    public float duration = 3f; // Duración de la atracción
+
+    public GameObject Zona;
     // M�todo para cambiar la posici�n entre el jugador y la carta
     public void Activate()
     {
@@ -75,37 +79,43 @@ public class Card : MonoBehaviour
     if (controller != null) controller.enabled = true;
         }
     }
-
     public void BlackHoleCard()
     {
         StartCoroutine(AttractCharacters());
     }
+
     IEnumerator AttractCharacters()
     {
         float elapsedTime = 0f;
-        float duration = 3f; // Duraci�n de la atracci�n
-
+        Zona.SetActive(true);
         while (elapsedTime < duration)
         {
-            // Encuentra todos los objetos dentro del radio de atracci�n
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, attractionRadius);
             foreach (var hitCollider in hitColliders)
             {
-                CharacterController controller = hitCollider.GetComponent<CharacterController>();
-                if (controller != null)
+                Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
+                if (rb != null)
                 {
-                    // Calcula la direcci�n hacia el centro de la carta
-                    Vector3 direction = (transform.position - controller.transform.position).normalized;
-                    // Aplica la fuerza de atracci�n
-                    controller.Move(direction * attractionForce * Time.deltaTime);
+                    Vector3 toCenter = (transform.position - rb.transform.position);
+                    Vector3 direction = toCenter.normalized;
+                    // Calcula la velocidad actual hacia el centro
+                    float currentSpeedTowardsCenter = Vector3.Dot(rb.velocity, direction);
+                    // Calcula la fuerza de amortiguación para reducir el movimiento lateral
+                    Vector3 dampingForce = -rb.velocity + direction * currentSpeedTowardsCenter;
+                    // Ajusta la fuerza de atracción y la amortiguación basándose en el tiempo restante
+                    float attractionForceAdjusted = attractionForce * (1 - (elapsedTime / duration));
+                    float dampingAdjusted = damping * (1 - (elapsedTime / duration));
+                    // Aplica la fuerza de atracción ajustada junto con la fuerza de amortiguación ajustada
+                    rb.AddForce((direction * attractionForceAdjusted + dampingForce * dampingAdjusted) * Time.deltaTime, ForceMode.VelocityChange);
                 }
             }
 
             elapsedTime += Time.deltaTime;
-            yield return null; // Espera hasta el pr�ximo frame
+            yield return null;
         }
-        print("finish");
+        Debug.Log("finish");
         Destroy(this.gameObject);
+        // Aquí puedes agregar lógica adicional si necesitas realizar alguna acción después de que finalice la atracción
     }
 
     // Utilizado para dibujar un gizmo en el Editor que representa el radio de atracci�n
