@@ -60,7 +60,13 @@ public class Enemy : MonoBehaviour
     {
         if (dropPrefab != null)
         {
-            Instantiate(dropPrefab, transform.position, Quaternion.identity); 
+            float chance = Random.Range(0.0f, 1.0f);
+        
+        // Comprueba si el número generado es menor o igual a 0.3 (30%)
+        if (chance <= 0.3f)
+        {
+            Instantiate(dropPrefab, transform.position, Quaternion.identity);
+        }
         }
     }
 
