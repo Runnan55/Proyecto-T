@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
        public float speed = 6.0f;
-
+    public float maxSpeed = 6.0f;
        public float reduccionVelocidad =6.0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
@@ -21,9 +22,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection = Vector3.zero;
     bool canMove = true;   
     bool isLookingAtTarget = false;
-
-    
-
+    public bool isAttacking = false;
+   public bool hasRotated = false; // Añade esta variable al principio de tu clase
+    Vector3 targetPosition;
    public Animator animator;
   int cantidad_clik;
   bool puedo_dar_cliks;
@@ -52,52 +53,84 @@ void Update()
         StartCoroutine(Dash());
     }
 
-    {
 
 
-     if (Input.GetMouseButtonDown(0)) 
-   {
- 
-            Iniciar_combo();
-
-            // Marcar que hay un ataque en curso
- 
-        // Convertir la posición del click del ratón a una posición en el mundo 3D
+if (Input.GetMouseButtonDown(0)) 
+{
+    isAttacking = true;
+    Iniciar_combo();    
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     RaycastHit hit;
-    if (Physics.Raycast(ray, out hit))
+    if (Physics.Raycast(ray, out hit) && !hasRotated)
     {
-        // Hacer que el objeto mire hacia la posición del click
         Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-        transform.LookAt(targetPosition);
-     
+
+        // Calcular la dirección hacia la que el jugador debe mirar
+        Vector3 directionToLook = (targetPosition - transform.position).normalized;
+
+        // Crear una rotación que mire en la dirección del objetivo
+        Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+
+        // Aplicar la rotación al jugador
+        transform.rotation = targetRotation;
+
+          hasRotated = true; // Establece hasRotated en true después de la rotación
     }
-
-
-    } 
-
-
-    }
-
-
-
+} 
    
 }
 
-  public
-void Iniciar_combo()
+public void StartAttack()
+{
+    isAttacking = true;
+}
+
+public void EndAttack()
+{
+    isAttacking = false;
+}
+  public void Iniciar_combo()
   {
-    if(puedo_dar_cliks)
-    {
-        cantidad_clik++;
-    }
+cantidad_clik++;
 
     if (cantidad_clik == 1)
     {
-      animator.SetInteger("attack", 1);
+        animator.SetInteger("attack", 1);
+        hasRotated = false;
     }
   
   }
+
+
+  #region 	NoRotar
+public void NoRotar()
+{
+     if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack0") )
+      {
+        hasRotated = false;
+        speed = maxSpeed;
+      }
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") )
+      {
+        hasRotated = false;
+        
+      }
+         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") )
+      {
+        hasRotated = false;
+      }  
+      else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") )
+      {
+        hasRotated = false;
+        
+      }  
+       else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash") )
+      {
+        hasRotated = false;
+      }  
+}
+#endregion
+
 
     public void Verificar_combo()
     {
@@ -119,6 +152,7 @@ void Iniciar_combo()
         animator.SetInteger("attack", 0);
          puedo_dar_cliks = true; 
         cantidad_clik = 0;
+         hasRotated = false;
         
       }
         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && cantidad_clik >= 3)
@@ -132,6 +166,7 @@ void Iniciar_combo()
         animator.SetInteger("attack", 0); 
         puedo_dar_cliks = true;      
          cantidad_clik = 0;
+          hasRotated = false;
       }     
          else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash") && cantidad_clik <= 4)
       {
@@ -143,28 +178,51 @@ void Iniciar_combo()
     }
 public void MovimientoJugador()
 {
-    if (controller.isGrounded)
+   if (controller.isGrounded)
     {
-     // Obtén la entrada del jugador
+       // Get the player's input
     float horizontal = Input.GetAxisRaw("Horizontal");
     float vertical = Input.GetAxisRaw("Vertical");
 
-    // Crea un vector de movimiento basado en la entrada del jugador
+    // Create a movement vector based on the player's input
     Vector3 moveInput = new Vector3(horizontal, 0, vertical);
 
-    // Transforma el vector de movimiento desde las coordenadas locales de la cámara a las coordenadas del mundo
+         // Check if any movement keys are pressed
+      if ((horizontal != 0 || vertical != 0) && isAttacking == false)
+{
+    // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
+    animator.SetBool("Run", true);
+    speed = maxSpeed;
+}
+         else if (isAttacking == true) 
+        {
+            // If no movement keys are pressed, set the "Run" parameter to false
+            animator.SetBool("Run", false);
+        }
+        else
+        {
+            // If the player is attacking, set the "Run" parameter to false
+            animator.SetBool("Run", false);
+        }
+
+    // Transform the movement vector from the camera's local coordinates to world coordinates
     Vector3 moveDirection = Camera.main.transform.TransformDirection(moveInput);
 
-    // Normaliza el vector de movimiento para asegurarte de que la velocidad del jugador es constante
+    // Normalize the movement vector to ensure the player's speed is constant
     moveDirection.Normalize();
 
-    // Multiplica el vector de movimiento por la velocidad del jugador para obtener la velocidad final
+    // Multiply the movement vector by the player's speed to get the final velocity
     moveDirection *= speed;
 
-    // Aplica el movimiento al jugador
-    controller.Move(moveDirection * Time.deltaTime);
-         
-if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación cuando el jugador no se está moviendo
+    // If the player is grounded or attacking, apply the movement
+    if (controller.isGrounded || isAttacking)
+    {
+        controller.Move(moveDirection * Time.deltaTime);
+    }
+
+if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
+{
+           if (moveDirection != Vector3.zero && !isLookingAtTarget && !isAttacking) // Evita la rotación cuando el jugador no se está moviendo
 {
     // Obtén la rotación de la cámara
     Quaternion cameraRotation = Camera.main.transform.rotation;
@@ -210,20 +268,30 @@ if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación c
                 break;
         }
         break;
+        
+}         
+    transform.rotation = targetRotation;        
 }
+        
+else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y hay una posición de click guardada
+{
+    // Calculate the target rotation
+    Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
 
-    // Interpolar suavemente hacia la rotación objetivo
-    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+    // Apply the rotation to the player
+    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
 }
-    }
-       
- 
+    }      
+
+
+}
 
     // Dash
     if (Input.GetKey(KeyCode.LeftShift))
     {
-        Dash();
+       
         animator.SetBool("Dash", true);
+        //BERTO PON AUDIO DE INICIO DE DASH
     }
     else
     {
@@ -270,21 +338,30 @@ if (moveDirection != Vector3.zero && !isLookingAtTarget) // Evita la rotación c
     }
 }
 
-
-    public void AplicarCarta() // Método que se ejecuta al aplicar una carta
-    {
-       //Dani aqui tienes el metodo
-       
-    }
+   
 public Collider espada; // Añade esta línea
    public void ActivarEspada()
    {
        espada.enabled = true; // Cambia esta línea
+       
    }
 
    public void DesactivarEspada()
    {
        espada.enabled = false; // Y esta línea
+   }
+
+   public void ReduccionVelocidad()
+   {
+       speed /=reduccionVelocidad;
+
+       //BERTO PON AUDIO DE INICIO DE ATAQUE
+   }
+
+ 
+   public void VelocidadMaxima()
+   {
+       speed = maxSpeed;
    }
 }
 
