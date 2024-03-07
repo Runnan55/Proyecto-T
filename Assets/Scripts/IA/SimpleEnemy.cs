@@ -31,8 +31,7 @@ public class SimpleEnemy : Enemy
         attackTimer = 0f;
         SetRandomDestination();
         player = GameObject.FindGameObjectWithTag("Player");
-        damage = 10f;
-        health = 100f;
+        
     }
 
     void Update()
