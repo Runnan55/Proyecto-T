@@ -1,23 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    private float _hp = 100f;
-    public float health {
-        get { return _hp; }
-        set {
-             _hp = math.clamp(value,0,100) ;
-         if (health == 0)
-        {
-            DropItem();
-            Destroy(gameObject);
-        }
-         }    
-    }
+    public float health = 100f;
     public float damage = 10f;
     public Life playerLife;
     public GameObject floatingTextPrefab;
@@ -30,7 +18,11 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-       
+        if (health <= 0)
+        {
+            DropItem();
+            Destroy(gameObject);
+        }
     }
 
     public void ReceiveDamage(float amount) // (en segundos)
@@ -68,7 +60,7 @@ public class Enemy : MonoBehaviour
     {
         if (dropPrefab != null)
         {
-            float chance = UnityEngine.Random.Range(0.0f, 1.0f);
+            float chance = Random.Range(0.0f, 1.0f);
         
         // Comprueba si el número generado es menor o igual a 0.3 (30%)
         if (chance <= 0.3f)
