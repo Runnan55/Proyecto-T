@@ -11,6 +11,7 @@ public class Life : MonoBehaviour
 
     public TextMeshProUGUI timeText;
     public Image timeImage;
+   public DeathScreen deathScreen; 
 
     void Start()
     {
@@ -51,6 +52,8 @@ public class Life : MonoBehaviour
         }
         else if (currentTime < 0)
         {
+            deathScreen.ShowDeathScreen();
+
             currentTime = 0;
         }
         UpdateTimeImage();

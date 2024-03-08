@@ -47,7 +47,7 @@ public class ItemPlacer : MonoBehaviour
                     if (currentPreviewInstance == null)
                     {
                         CreateOrUpdatePreview(previewPrefab);
-                        CartaColocada = true;
+                        
                     }
                 }
             
@@ -174,7 +174,7 @@ void PlaceItemAndClearPreview()
                 Debug.Log("No se encontró una carta válida o el slot está vacío.");
                 return;
         }
-
+        CartaColocada = true;
         placedObject = Instantiate(itemPrefab, placementPosition, Quaternion.identity);
         isPlacementMode = false;
         InventarioPlayer.Instance.UseCard();
