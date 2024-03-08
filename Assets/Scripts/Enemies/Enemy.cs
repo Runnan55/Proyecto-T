@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
         
-        Debug.Log("Daño infringido: " + amount + ", Vida: " + health);
+        Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
 
         if (health > 0)
         {
