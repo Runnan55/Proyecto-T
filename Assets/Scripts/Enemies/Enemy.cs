@@ -64,7 +64,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("ShowFloatingText");
         Vector3 offset = new Vector3(0, 2, 0); // Ajusta el valor 2 para cambiar la altura del desplazamiento
         var go = Instantiate(floatingTextPrefab, transform.position + offset, Quaternion.identity);
-        go.GetComponent<DamageText>().SetText(amount.ToString());
+        go.GetComponentInChildren<DamageText>().SetText(amount.ToString());
     }
 
     void DropItem()

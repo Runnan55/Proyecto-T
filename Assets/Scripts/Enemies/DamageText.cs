@@ -13,11 +13,11 @@ public class DamageText : MonoBehaviour
     {
         AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
         Destroy(gameObject, clipInfo[0].clip.length);
-        damageText = animator.GetComponentInChildren<TextMeshPro>();
+        damageText = GetComponentInChildren<TextMeshPro>();
 
         if (damageText == null)
         {
-            Debug.LogError("No se encontró el componente TextMeshPro.");
+            Debug.LogError("No se encontró el componente TextMeshPro en los hijos del objeto.");
         }
     }
 
