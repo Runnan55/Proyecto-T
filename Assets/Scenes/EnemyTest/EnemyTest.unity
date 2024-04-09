@@ -566,6 +566,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da90970f0272f384a8795d50bacce777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 10
+  playerLife: {fileID: 0}
+  floatingTextPrefab: {fileID: 0}
+  dropPrefab: {fileID: 0}
   wanderRadius: 10
   wanderTimer: 1
   detectionRange: 10
@@ -664,6 +668,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1593057522}
+  - {fileID: 1779010417}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1593057521
@@ -909,6 +914,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4aea3d26950ee24ca116e554ecbd04e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 10
+  playerLife: {fileID: 0}
+  floatingTextPrefab: {fileID: 0}
+  dropPrefab: {fileID: 0}
   detectionRange: 10
   attackRange: 10
   optimalDistance: 5
@@ -1010,6 +1019,57 @@ Transform:
   - {fileID: 418932911}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1779010416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1779010417}
+  - component: {fileID: 1779010418}
+  m_Layer: 0
+  m_Name: VisionCone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1779010417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779010416}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1295299910}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1779010418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779010416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f9b15b52c36334d8f8eb66f5bb82c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VisionConeMaterial: {fileID: 2100000, guid: 1612ac04706dcc443b0fdebab26b92a8, type: 2}
+  VisionRange: 10
+  VisionAngle: 90
+  VisionObstructingLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  VisionConeResolution: 120
 --- !u!1 &1834829942
 GameObject:
   m_ObjectHideFlags: 0
@@ -1125,6 +1185,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1844666230}
   - component: {fileID: 1844666229}
+  - component: {fileID: 1844666231}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -1209,6 +1270,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1844666231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844666228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &2059098086
 GameObject:
   m_ObjectHideFlags: 0
@@ -1317,6 +1401,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 320bf64d321a4c64297a06ed67d56580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 10
+  playerLife: {fileID: 0}
+  floatingTextPrefab: {fileID: 0}
+  dropPrefab: {fileID: 0}
   attackRange: 11.74
   detectionRange: 100
   player: {fileID: 1834829946}
@@ -1324,7 +1412,7 @@ MonoBehaviour:
   wanderTimer: 5
   backCollider: {fileID: 1149609866}
   chargeSpeed: 10
-  chargeTimer: 2
+  chargeDistance: 15
 --- !u!54 &2090397559
 Rigidbody:
   m_ObjectHideFlags: 0
