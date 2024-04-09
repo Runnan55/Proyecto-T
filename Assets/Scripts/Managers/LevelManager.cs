@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    List<string> tarotCards = new List<string>() { "Strength", "Empress"};
+    List<string> tarotCards = new List<string>() { "Strength", "HighPriestess"};
     string selectedCard;
 
     void SelectRandomCard()
