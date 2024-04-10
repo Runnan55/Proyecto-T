@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 public class PlayerMovement : MonoBehaviour
 {
        public float speed = 6.0f;
-    public float maxSpeed = 6.0f;
+       public float maxSpeed = 6.0f;
        public float reduccionVelocidad =6.0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
@@ -19,23 +19,31 @@ public class PlayerMovement : MonoBehaviour
 
        PlayerMovement playerMovement;
        private CharacterController controller;
-    private Vector3 moveDirection = Vector3.zero;
-    bool canMove = true;   
-    bool isLookingAtTarget = false;
-    public bool isAttacking = false;
-   public bool hasRotated = false; // Añade esta variable al principio de tu clase
-    Vector3 targetPosition;
-   public Animator animator;
-  int cantidad_clik;
-  bool puedo_dar_cliks;
-    void Start()
+       private Vector3 moveDirection = Vector3.zero;
+       bool canMove = true;   
+       bool isLookingAtTarget = false;      
+       public static bool hasRotated = false; // Añade esta variable al principio de tu clase
+       Vector3 targetPosition;
+       public Animator animator;
+       public bool isAttacking = false;
+
+       public static bool enterAttack = false;
+       public static PlayerMovement instance;
+      
+
+
+        private void Awake()
+    {
+        instance = this;
+    }
+      
+          void Start()
     {
          controller = GetComponent<CharacterController>();
          playerMovement = GetComponent<PlayerMovement>();
 
          animator = GetComponent<Animator>();
-         cantidad_clik = 0;
-         puedo_dar_cliks = true;
+        
 
          
     }
@@ -53,16 +61,17 @@ void Update()
         StartCoroutine(Dash());
     }
 
+    StartAttack();
 
-
-if (Input.GetMouseButtonDown(0)) 
-{
-    isAttacking = true;
-    Iniciar_combo();    
+   if (Input.GetMouseButtonDown(0)) 
+   {
+    enterAttack = true;
+      
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     RaycastHit hit;
+
     if (Physics.Raycast(ray, out hit) && !hasRotated)
-    {
+     {
         Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 
         // Calcular la dirección hacia la que el jugador debe mirar
@@ -74,108 +83,21 @@ if (Input.GetMouseButtonDown(0))
         // Aplicar la rotación al jugador
         transform.rotation = targetRotation;
 
-          hasRotated = true; // Establece hasRotated en true después de la rotación
-    }
-} 
+           hasRotated = true;
+           
+     }
+   } 
    
 }
-
 public void StartAttack()
 {
-    isAttacking = true;
-}
-
-public void EndAttack()
-{
-    isAttacking = false;
-}
-  public void Iniciar_combo()
-  {
-cantidad_clik++;
-
-    if (cantidad_clik == 1)
+    if (Input.GetButtonDown("Fire1"))
     {
-        animator.SetInteger("attack", 1);
-        hasRotated = false;
+       isAttacking = true;
     }
-  
-  }
-
-
-  #region 	NoRotar
-public void NoRotar()
-{
-     if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack0") )
-      {
-        hasRotated = false;
-        speed = maxSpeed;
-      }
-        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") )
-      {
-        hasRotated = false;
-        
-      }
-         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") )
-      {
-        hasRotated = false;
-      }  
-      else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") )
-      {
-        hasRotated = false;
-        
-      }  
-       else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash") )
-      {
-        hasRotated = false;
-      }  
+ 
 }
-#endregion
-
-
-    public void Verificar_combo()
-    {
-        puedo_dar_cliks = false;
-
-      if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack0") && cantidad_clik == 1)
-      {
-        animator.SetInteger("attack", 0);
-         puedo_dar_cliks = true;
-         cantidad_clik = 0;
-      }
-      else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack0") && cantidad_clik >= 2)
-      {
-        animator.SetInteger("attack", 2);
-        puedo_dar_cliks = true;
-      }
-      else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && cantidad_clik == 2)
-      {
-        animator.SetInteger("attack", 0);
-         puedo_dar_cliks = true; 
-        cantidad_clik = 0;
-         hasRotated = false;
-        
-      }
-        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && cantidad_clik >= 3)
-      {
-        animator.SetInteger("attack", 3);
-        puedo_dar_cliks = true;
-        
-      }
-         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2") )
-      {
-        animator.SetInteger("attack", 0); 
-        puedo_dar_cliks = true;      
-         cantidad_clik = 0;
-          hasRotated = false;
-      }     
-         else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash") && cantidad_clik <= 4)
-      {
-        animator.SetInteger("attack", 0); 
-        puedo_dar_cliks = true;      
-         cantidad_clik = 0;
-      }           
     
-    }
 public void MovimientoJugador()
 {
    if (controller.isGrounded)
@@ -188,13 +110,13 @@ public void MovimientoJugador()
     Vector3 moveInput = new Vector3(horizontal, 0, vertical);
 
          // Check if any movement keys are pressed
-      if ((horizontal != 0 || vertical != 0) && isAttacking == false)
+      if ((horizontal != 0 || vertical != 0) && enterAttack == false)
 {
     // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
     animator.SetBool("Run", true);
     speed = maxSpeed;
 }
-         else if (isAttacking == true) 
+         else if (enterAttack == true) 
         {
             // If no movement keys are pressed, set the "Run" parameter to false
             animator.SetBool("Run", false);
@@ -215,14 +137,14 @@ public void MovimientoJugador()
     moveDirection *= speed;
 
     // If the player is grounded or attacking, apply the movement
-    if (controller.isGrounded || isAttacking)
+    if (controller.isGrounded || enterAttack)
     {
         controller.Move(moveDirection * Time.deltaTime);
     }
 
 if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
 {
-           if (moveDirection != Vector3.zero && !isLookingAtTarget && !isAttacking) // Evita la rotación cuando el jugador no se está moviendo
+ if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
 {
     // Obtén la rotación de la cámara
     Quaternion cameraRotation = Camera.main.transform.rotation;
@@ -270,9 +192,9 @@ if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
         break;
         
 }         
-    transform.rotation = targetRotation;        
-}
-        
+    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);     
+      
+}        
 else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y hay una posición de click guardada
 {
     // Calculate the target rotation
@@ -295,8 +217,7 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
     }
     else
     {
-        animator.SetBool("Dash", false);
-        
+        animator.SetBool("Dash", false);       
         
     }
 
