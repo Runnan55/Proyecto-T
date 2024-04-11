@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EspadaAtaque : MonoBehaviour
 {
-   public Collider myCollider; // Añade esta línea
+  
    public float damage = 10f;
 
    public void OnTriggerEnter(Collider other)
@@ -22,13 +22,9 @@ public class EspadaAtaque : MonoBehaviour
         }
    }
 
-   public void ActivarEspada()
-   {
-       myCollider.enabled = true; // Cambia esta línea
-   }
+ 
 
-   public void DesactivarEspada()
-   {
-       myCollider.enabled = false; // Y esta línea
-   }
+   
+    
+   
 }

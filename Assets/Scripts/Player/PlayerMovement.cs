@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
+using System;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-       public float speed = 6.0f;
-       public float maxSpeed = 6.0f;
+       static public float speed = 15.0f;
+       public float maxSpeed = 15.0f;
        public float reduccionVelocidad =6.0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
@@ -26,15 +28,19 @@ public class PlayerMovement : MonoBehaviour
        Vector3 targetPosition;
        public Animator animator;
        public bool isAttacking = false;
-
+       public static bool hasAttacked = false;
        public static bool enterAttack = false;
        public static PlayerMovement instance;
-      
 
+      
+    public  bool isDashing = false;
+            
+  
 
         private void Awake()
     {
         instance = this;
+       
     }
       
           void Start()
@@ -50,13 +56,14 @@ public class PlayerMovement : MonoBehaviour
 
 void Update()
 {
+  
     if (canMove)
     {
         MovimientoJugador();
     }   
 
 
-    if (Input.GetKeyDown(KeyCode.LeftShift))
+    if (Input.GetKeyDown(KeyCode.LeftShift) && !hasAttacked)
     {
         StartCoroutine(Dash());
     }
@@ -66,6 +73,7 @@ void Update()
    if (Input.GetMouseButtonDown(0)) 
    {
     enterAttack = true;
+    hasAttacked = true;
       
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     RaycastHit hit;
@@ -97,6 +105,8 @@ public void StartAttack()
     }
  
 }
+
+
     
 public void MovimientoJugador()
 {
@@ -208,18 +218,7 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
 
 }
 
-    // Dash
-    if (Input.GetKey(KeyCode.LeftShift))
-    {
-       
-        animator.SetBool("Dash", true);
-        //BERTO PON AUDIO DE INICIO DE DASH
-    }
-    else
-    {
-        animator.SetBool("Dash", false);       
-        
-    }
+    
 
     // Aplicar gravedad
     moveDirection.y -= gravity * Time.deltaTime;
@@ -229,8 +228,10 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
 }
  IEnumerator Dash()
 {
-    if (Time.time >= lastDashTime + dashTime)
+    if (!isDashing && Time.time >= lastDashTime + dashTime)
     {
+        isDashing = true;
+        animator.SetBool("Dash", true);
         float startTime = Time.time;
 
         // Obtener la dirección de entrada del jugador
@@ -254,8 +255,12 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
             playerMovement.controller.Move(dashDirection * DashSpeed * Time.deltaTime);
             yield return null;
         }
+            animator.SetBool("Dash", false);
+
+         yield return new WaitForSeconds(2);
 
         lastDashTime = Time.time;
+        isDashing = false;
     }
 }
 

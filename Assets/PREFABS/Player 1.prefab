@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 2761910027748480661}
   - component: {fileID: 7110437525729747865}
   - component: {fileID: 4782494915581369897}
-  - component: {fileID: 9203641111381030102}
-  - component: {fileID: 6361409255906377397}
   m_Layer: 0
   m_Name: espada
   m_TagString: Untagged
@@ -85,42 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &9203641111381030102
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487426264615425368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d71c3fb17581e84994ef1c7955b0806, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myCollider: {fileID: 6361409255906377397}
-  damage: 10
---- !u!64 &6361409255906377397
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487426264615425368}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 5891977006971135994, guid: 7c3cd409064dcba4fa5c64d784bd8301, type: 3}
 --- !u!1 &3569987904297382263
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +129,6 @@ GameObject:
   - component: {fileID: 2181895391206848762}
   - component: {fileID: 695646126826906759}
   - component: {fileID: 6175096795765902965}
-  - component: {fileID: 2855737898273117907}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Player
@@ -230,14 +191,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06d6f5e6a6db2044dbff3085e1e5f9b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  maxSpeed: 15
   reduccionVelocidad: 6
   rotationSpeed: 20
   gravity: 20
   DashSpeed: 30
   dashTime: 0.25
   animator: {fileID: 6175096795765902965}
-  espada: {fileID: 6361409255906377397}
+  isAttacking: 0
+  isDashing: 0
+  espada: {fileID: 0}
 --- !u!114 &5332897348857573235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,6 +267,7 @@ MonoBehaviour:
   maxTime: 600
   timeText: {fileID: 0}
   timeImage: {fileID: 0}
+  deathScreen: {fileID: 0}
 --- !u!95 &6175096795765902965
 Animator:
   serializedVersion: 5
@@ -325,20 +289,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2855737898273117907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8514913180736235943}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d71c3fb17581e84994ef1c7955b0806, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myCollider: {fileID: 6361409255906377397}
-  damage: 10
 --- !u!1001 &2995347013600978781
 PrefabInstance:
   m_ObjectHideFlags: 0

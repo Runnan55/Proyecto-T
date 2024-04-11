@@ -19,10 +19,7 @@ public class Transition2Script : StateMachineBehaviour
             PlayerMovement.instance.animator.Play("Attack3");
         }
 
-         if (Input.GetKey(KeyCode.LeftShift))
-    {      
-        animator.Play("Dash");        
-    }
+     
         
     }
 
