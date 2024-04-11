@@ -21,10 +21,15 @@ public class WaveManager : MonoBehaviour
 
     private int currentWave = 0;
 
+    public int EnemiesRemaining { get; private set; }
+
     public void StartNextWave()
     {
+        Debug.Log("Siguiente oleada");
+        
         if (currentWave < waves.Length)
         {
+            EnemiesRemaining = waves[currentWave].enemySpawns.Length;
             StartCoroutine(SpawnWave(waves[currentWave]));
             currentWave++;
         }
@@ -43,4 +48,24 @@ public class WaveManager : MonoBehaviour
     {
         Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
     }
+
+    public void EnemyDied()
+    {
+        Debug.Log("Enemigo muerto para las oleadas");
+        EnemiesRemaining--;
+        if (EnemiesRemaining <= 0)
+        {
+            StartNextWave();
+        }
+    }
+
+    #region DEBUG //    ***** DEBUG ***** 
+    public void Update()
+   {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            StartNextWave();
+        }
+    }
+    #endregion DEBUG
 }

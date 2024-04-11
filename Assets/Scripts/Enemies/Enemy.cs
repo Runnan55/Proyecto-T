@@ -26,14 +26,12 @@ public class Enemy : MonoBehaviour
     public GameObject floatingTextPrefab;
     public GameObject dropPrefab;
 
+    public WaveManager waveManager;
+
     void Start()
     {
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
-    }
-
-    void Update()
-    {
-      
+        waveManager = GameObject.FindGameObjectWithTag("WaveManager").GetComponent<WaveManager>(); 
     }
 
     public void ReceiveDamage(float amount) // (en segundos)
@@ -43,6 +41,7 @@ public class Enemy : MonoBehaviour
         {
             DropItem();
             Destroy(gameObject);
+            waveManager.EnemyDied();
         }
         
         Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
@@ -85,4 +84,19 @@ public class Enemy : MonoBehaviour
     {    
         gameObject.SetActive(true); 
     }
+
+
+    #region DEBUG //    ***** DEBUG ***** 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            Debug.Log("moricion");
+            //ReceiveDamage(health);
+            //Destroy(gameObject);
+            waveManager.EnemyDied();
+            Debug.Log("moricion fin");
+        }    
+    }
+    #endregion DEBUG
 }
