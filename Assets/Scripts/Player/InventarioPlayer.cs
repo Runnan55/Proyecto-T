@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro; // Para trabajar con TextMeshPro
 using UnityEngine.UI; // Para trabajar con componentes UI Image
 
-public class InventarioPlayer : MonoBehaviour
+public class InventarioPlayer : MonoBehaviour 
 {
     public static InventarioPlayer Instance { get; private set; }
 

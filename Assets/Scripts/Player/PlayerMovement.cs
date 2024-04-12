@@ -6,10 +6,9 @@ using UnityEngine.Rendering;
 using System;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IEffectable
 {
-       static public float speed = 15.0f;
-       public float maxSpeed = 15.0f;
+       public float speed = 15.0f;
        public float reduccionVelocidad =6.0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
@@ -124,7 +123,7 @@ public void MovimientoJugador()
 {
     // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
     animator.SetBool("Run", true);
-    speed = maxSpeed;
+
 }
          else if (enterAttack == true) 
         {
@@ -283,11 +282,13 @@ public Collider espada; // Añade esta línea
 
        //BERTO PON AUDIO DE INICIO DE ATAQUE
    }
-
- 
-   public void VelocidadMaxima()
-   {
-       speed = maxSpeed;
-   }
+   public void ApplyEffect(StatusEffect effect)
+    {
+        effect.ApplyEffect(gameObject);
+    }
+    public void RemoveEffect(StatusEffect effect)
+    {
+        effect.RemoveEffect(gameObject);
+    }
 }
 

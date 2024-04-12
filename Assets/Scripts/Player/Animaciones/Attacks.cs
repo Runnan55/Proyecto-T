@@ -21,7 +21,6 @@ public class Attacks : StateMachineBehaviour
         }
     }
    
-        PlayerMovement.speed = 0;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -35,7 +34,6 @@ public class Attacks : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        PlayerMovement.speed = 15.0f;
         PlayerMovement.hasAttacked = false;
 
           GameObject damageZone = GameObject.Find("ZonaDaño");
