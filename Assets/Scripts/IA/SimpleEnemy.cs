@@ -6,13 +6,12 @@ using UnityEngine.AI;
 public class SimpleEnemy : Enemy
 {
     public float wanderRadius = 10f;
-    public float wanderTimer = 5f;
-    public float detectionRange = 10f;
-    public float minChaseRange = 2f;
+    public float wanderTimer = 5f;  
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
-    public float visionAngle = 60f;
 
+
+    public EnemyVision enemyVision;
     private NavMeshAgent agent;
     private Vector3 targetPosition;
     private float timer;
@@ -61,13 +60,9 @@ public class SimpleEnemy : Enemy
                 }
 
                 // Transición al estado de persecución si el jugador está en rango de detección
-                if (distanceToPlayer <= detectionRange || distanceToPlayer <= minChaseRange)
+                if (enemyVision && enemyVision.PlayerEnRango() && enemyVision.DetectarAngulo())
                 {
-                    float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
-                    if (angleToPlayer < visionAngle * 0.5f)
-                    {
-                        currentState = EnemyState.Chase;
-                    }
+                        currentState = EnemyState.Chase;          
                 }
                 break;
 

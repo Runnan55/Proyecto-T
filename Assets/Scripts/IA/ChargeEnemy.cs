@@ -14,48 +14,57 @@ public class ChargeEnemy : Enemy
     public Collider backCollider;
     public float chargeSpeed = 10f;
     public float chargeDistance = 15f;
-    //public Animator animator;
-
 
     private NavMeshAgent agent;
     private float timer;
     private Vector3 targetPosition;
     private bool charging = false;
-    private bool attack = true;
 
+    private enum EnemyState
+    {
+        Wander,
+        Detect,
+        Charge
+    }
 
+    private EnemyState currentState;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
         SetRandomDestination();
-        // animator = GetComponent<Animator>();
-
-       
         if (backCollider != null)
             backCollider.enabled = false;
+
+        // Initial state
+        currentState = EnemyState.Wander;
     }
 
     void Update()
     {
-
-        
-
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-
-        if (distanceToPlayer <= detectionRange )
+        switch (currentState)
         {
-            if (!charging )
-            {
-                charging = true;
-                Invoke("ChargeAttack", 2f); 
-            }
+            case EnemyState.Wander:
+                UpdateWanderState();
+                break;
+            case EnemyState.Detect:
+                UpdateDetectState();
+                break;
+            case EnemyState.Charge:
+                UpdateChargeState();
+                break;
         }
-       
+    }
 
-      
+    void UpdateWanderState()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if (distanceToPlayer <= detectionRange)
+        {
+            currentState = EnemyState.Detect;
+            return;
+        }
 
         if (!agent.pathPending && agent.remainingDistance < 0.1f)
         {
@@ -66,7 +75,27 @@ public class ChargeEnemy : Enemy
                 timer = wanderTimer;
             }
         }
+    }
 
+    void UpdateDetectState()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if (distanceToPlayer > detectionRange)
+        {
+            currentState = EnemyState.Wander;
+            return;
+        }
+
+        if (!charging)
+        {
+            charging = true;
+            Invoke("ChargeAttack", 2f);
+        }
+    }
+
+    void UpdateChargeState()
+    {
+        // If already charging, no need to do anything in Update()
     }
 
     void SetRandomDestination()
@@ -77,30 +106,23 @@ public class ChargeEnemy : Enemy
         NavMesh.SamplePosition(randomDirection, out hit, wanderRadius, 1);
         targetPosition = hit.position;
         agent.SetDestination(targetPosition);
-        //animator.SetBool("Walk", true);
-
     }
+
     void ChargeAttack()
     {
-        
-            agent.enabled = false;
+        agent.enabled = false;
 
-            Vector3 chargeTargetPosition = player.position;
-            Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
-            Vector3 chargeDestination = transform.position + chargeDirection * chargeDistance;
-            transform.LookAt(player);
+        Vector3 chargeTargetPosition = player.position;
+        Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
+        Vector3 chargeDestination = transform.position + chargeDirection * chargeDistance;
+        transform.LookAt(player);
 
+        agent.enabled = true;
+        agent.speed = chargeSpeed;
+        agent.SetDestination(chargeDestination);
+        backCollider.enabled = false;
 
-            agent.enabled = true;
-            agent.speed = chargeSpeed;
-            agent.SetDestination(chargeDestination);
-            backCollider.enabled = false;
-        //sonido embestida
-
-            Invoke("WaitTime", 2f);
-            // animator.SetBool("Attack", true);
-
-        
+        Invoke("WaitTime", 2f);
     }
 
     void WaitTime()
@@ -108,24 +130,18 @@ public class ChargeEnemy : Enemy
         charging = false;
         transform.LookAt(player);
         backCollider.enabled = true;
-
-        // animator.SetBool("Attack", false);
-
     }
 
     public void DesactivarMovimientos()
     {
         CancelInvoke();
         agent.ResetPath();
-
         enabled = false;
     }
-        public void ReactivarMovimientos()
+
+    public void ReactivarMovimientos()
     {
         enabled = true;
         charging = false;
-
     }
-
-
 }

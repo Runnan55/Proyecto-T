@@ -127,6 +127,7 @@ public class Card : MonoBehaviour
             SimpleEnemy enemy = hitCollider.GetComponent<SimpleEnemy>();
             ChargeEnemy charger = hitCollider.GetComponent<ChargeEnemy>();
             DistanceEnemy distance = hitCollider.GetComponent<DistanceEnemy>();
+            TpEnemy tp = hitCollider.GetComponent<TpEnemy>();
             if (enemy != null)
             {
                 // Reinicia la velocidad lineal y angular
@@ -137,11 +138,17 @@ public class Card : MonoBehaviour
                 // Reinicia la velocidad lineal y angular
                 distance.DesactiveNavMesh();
             }
+            if (tp != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                tp.DesactiveNavMesh();
+            }
             if (charger != null)
             {
                 // Reinicia la velocidad lineal y angular
                 charger.DesactivarMovimientos();
             }
+           
         }
     }
     void ResetFinish()
@@ -153,6 +160,7 @@ public class Card : MonoBehaviour
             SimpleEnemy enemy = hitCollider.GetComponent<SimpleEnemy>();
             ChargeEnemy charger = hitCollider.GetComponent<ChargeEnemy>();
             DistanceEnemy distance = hitCollider.GetComponent<DistanceEnemy>();
+            TpEnemy tp = hitCollider.GetComponent<TpEnemy>();
             if (rb != null)
             {
                 // Reinicia la velocidad lineal y angular
@@ -169,7 +177,12 @@ public class Card : MonoBehaviour
                 // Reinicia la velocidad lineal y angular
                 distance.ActiveNavMesh();
             }
-                if (charger != null)
+            if (tp != null)
+            {
+                // Reinicia la velocidad lineal y angular
+                tp.ActiveNavMesh();
+            }
+            if (charger != null)
             {
                 // Reinicia la velocidad lineal y angular
                 charger.ReactivarMovimientos();

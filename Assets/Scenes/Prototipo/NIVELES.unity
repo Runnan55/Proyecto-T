@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -19744,7 +19744,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d71c3fb17581e84994ef1c7955b0806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myCollider: {fileID: 648857941}
   damage: 10
 --- !u!1 &332675819
 GameObject:
@@ -32899,6 +32898,99 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 564332593}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &564600851
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1346010753728905630, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1642877122563430818, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_Name
+      value: TpEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1642877122563430818, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1958211625241106372, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8cc00928ee6a82446942b9895f14823d, type: 2}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.334321
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.3786411
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132199116115464232, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243353309481632854, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: playerT
+      value: 
+      objectReference: {fileID: 327603723}
+    - target: {fileID: 5243353309481632854, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172741911408165941, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 327603723}
+    - target: {fileID: 8172741911408165941, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: dropPrefab
+      value: 
+      objectReference: {fileID: 6592644418209866909, guid: e1ef189d93100394b96d4b64182c5a2c, type: 3}
+    - target: {fileID: 8172741911408165941, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: playerLife
+      value: 
+      objectReference: {fileID: 327603733}
+    - target: {fileID: 8172741911408165941, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
+      propertyPath: floatingTextPrefab
+      value: 
+      objectReference: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 28063a158c1819543b59ecaf42f3264e, type: 3}
 --- !u!1 &565378754
 GameObject:
   m_ObjectHideFlags: 0
@@ -36842,7 +36934,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d71c3fb17581e84994ef1c7955b0806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myCollider: {fileID: 648857941}
   damage: 10
 --- !u!64 &648857941
 MeshCollider:
@@ -112037,3 +112128,4 @@ SceneRoots:
   - {fileID: 719361456}
   - {fileID: 1242906981}
   - {fileID: 943127637019884676}
+  - {fileID: 564600851}
