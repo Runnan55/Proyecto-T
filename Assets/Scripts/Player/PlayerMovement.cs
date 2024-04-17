@@ -10,7 +10,7 @@ using UnityEngine.VFX;
 public class PlayerMovement : MonoBehaviour, IEffectable
 {
        public float speed = 15.0f;
-       public float reduccionVelocidad =6.0f;
+       public float reduccionVelocidad = 0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
        public bool speedbuff = false;
