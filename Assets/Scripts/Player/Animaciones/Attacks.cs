@@ -31,7 +31,7 @@ public void  slow()
 }
 public void  Resetslow()
 {
-    PlayerMovement.instance.speed = PlayerMovement.instance.speed + 14f;
+    PlayerMovement.instance.speed = PlayerMovement.instance.speed + 15f;
    
 }
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
