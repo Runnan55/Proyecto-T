@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2686315929767958144}
   - component: {fileID: 1932254276584757939}
   - component: {fileID: 5009102440904802435}
+  - component: {fileID: 5703658165067268523}
   m_Layer: 0
   m_Name: ZombieFinal
   m_TagString: Enemy
@@ -128,18 +129,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da90970f0272f384a8795d50bacce777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 40
   damage: 10
   playerLife: {fileID: 0}
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
   dropPrefab: {fileID: 1105355636890625437, guid: 225f88ca2f606e044bd8d5e770d47102, type: 3}
+  waveManager: {fileID: 0}
   wanderRadius: 10
   wanderTimer: 2
-  detectionRange: 100
-  minChaseRange: 2
   attackRange: 1.5
   attackCooldown: 2
-  visionAngle: 100
+  enemyVision: {fileID: 0}
 --- !u!195 &1932254276584757939
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -185,6 +184,24 @@ CapsuleCollider:
   m_Height: 2.621053
   m_Direction: 1
   m_Center: {x: -0, y: 0.3105265, z: -0.08420658}
+--- !u!114 &5703658165067268523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659391851270986758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e066d8def665ee47bbb79cf9ef7e193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectDist: 13
+  anguloDetect: 120
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerT: {fileID: 0}
 --- !u!1 &3926484420369501853
 GameObject:
   m_ObjectHideFlags: 0

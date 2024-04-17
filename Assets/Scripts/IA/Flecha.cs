@@ -32,5 +32,11 @@ public class Flecha : MonoBehaviour
             Debug.Log("pummm");
             Destroy(gameObject);
         }
+        else if (other.CompareTag("Walls"))
+        {
+            Debug.Log("pared"); 
+            Destroy(gameObject);
+        }
     }
+  
 }
