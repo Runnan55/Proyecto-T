@@ -9,26 +9,30 @@ public class SpeedBuff : StatusEffect
         : base(name, duration, isPermanent)
 
     {
-        this.speedIncrease = 50;
+        this.speedIncrease = 50; this.IsPermanent = false;
     }
 
     public override void ApplyEffect(GameObject target)
     {
         if (target.TryGetComponent(out PlayerMovement controller))
         {
-            controller.speed += 50;
-            Debug.Log("Speed Aplicado a " + target);
+            if (controller.speedbuff == false)
+            {
+                controller.speed += 50;
+                Debug.Log("Speed Aplicado a " + target);
+                controller.speedbuff = true;
+            }
         }
-        //Falta para enemigos.
     }
 
     public override void RemoveEffect(GameObject target)
     {
         if (target.TryGetComponent(out PlayerMovement controller))
         {
+            if (controller.speedbuff == true)
             controller.speed -= 50;
             Debug.Log("Speed terminado a " + target);
+            controller.speedbuff = false;
         }
-        //Falta para enemigos.
     }
 }

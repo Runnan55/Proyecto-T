@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemPlacer : MonoBehaviour
@@ -32,11 +33,18 @@ public class ItemPlacer : MonoBehaviour
             lineRenderer.startWidth = 0.05f;
             lineRenderer.endWidth = 0.1f;
             lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // Asegúrate de asignar un material adecuado
+
         }
     }
 
     void Update()
     {
+            
+            InventarioPlayer Inventario = GetComponent<InventarioPlayer>();
+        if (Inventario.mode == "place" || CartaColocada)
+        {
+
+        
         if (Input.GetMouseButtonDown(1)) // Al presionar el botón derecho
         {
             string activeCardName = InventarioPlayer.Instance.GetCurrentCardName(); // Obtiene el nombre de la carta activa
@@ -56,7 +64,7 @@ public class ItemPlacer : MonoBehaviour
                 {
                     if (placedObject != null)
                     {
-                    Card cardComponent = placedObject.GetComponent<Card>();
+                    BaseCard cardComponent = placedObject.GetComponent<BaseCard>();
 
                     if (cardComponent != null)
                     {
@@ -90,6 +98,26 @@ public class ItemPlacer : MonoBehaviour
             PlaceItemAndClearPreview();
         }
     }
+    if (Inventario.mode == "self")
+    {
+         if (Input.GetMouseButtonDown(1)) 
+             {
+                SpeedBuff speed = GetComponent<SpeedBuff>();
+                StatusManager manager = GetComponent<StatusManager>();
+                manager.AddEffect(speed,this.gameObject);
+                InventarioPlayer.Instance.UseCard();
+             }  
+    }
+        if (Inventario.mode == "activable")
+    {
+         if (Input.GetMouseButtonDown(1)) 
+         {
+        BaseCard cardComponent = GetComponent<BaseCard>();
+        cardComponent.Activate();
+        InventarioPlayer.Instance.UseCard();
+         }
+        }
+}
 
     void CreateOrUpdatePreview(GameObject prefab)
     {

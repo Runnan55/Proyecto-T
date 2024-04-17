@@ -22,7 +22,6 @@ public class Card : MonoBehaviour
                 break;
             case "CartaHole":
                 // Llama a la funci�n para manejar BlackHoleCard
-                print("First");
                 StartCoroutine(AttractCharacters());
                 break;
             default:
@@ -114,7 +113,6 @@ public class Card : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        Debug.Log("finish");
         ResetFinish();
         Destroy(this.gameObject);
         // Aquí puedes agregar lógica adicional si necesitas realizar alguna acción después de que finalice la atracción

@@ -99,9 +99,9 @@ public class CardInventory : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             GameObject cardObject = new GameObject("TeleportCard");
-            C1Teleport teleportCard = cardObject.AddComponent<C1Teleport>();
-            AddCard("card" + cardCounter++, teleportCard);
-            Destroy(cardObject); 
+            //C1Teleport teleportCard = cardObject.AddComponent<C1Teleport>();
+           // AddCard("card" + cardCounter++, //teleportCard);
+            //Destroy(cardObject); 
         }
     }
 }

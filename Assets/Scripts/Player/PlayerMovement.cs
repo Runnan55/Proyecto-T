@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public float reduccionVelocidad =6.0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
-
+       public bool speedbuff = false;
        public float DashSpeed;
        private float lastDashTime = -Mathf.Infinity;
 

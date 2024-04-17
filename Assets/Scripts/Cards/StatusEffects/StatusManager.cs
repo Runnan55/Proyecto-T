@@ -4,22 +4,56 @@ using UnityEngine;
 
 public class StatusManager : MonoBehaviour
 {
-    private List<StatusEffect> activeEffects = new List<StatusEffect>();
+    private Dictionary<StatusEffect, Coroutine> effectCoroutines = new Dictionary<StatusEffect, Coroutine>();
 
     public void AddEffect(StatusEffect effect, GameObject target)
     {
         effect.ApplyEffect(target);
         if (!effect.IsPermanent)
         {
-            StartCoroutine(RemoveEffectAfterDelay(effect, target));
+            if (effectCoroutines.ContainsKey(effect))
+            {
+                // Reiniciar la corutina si ya está en ejecución
+                StopCoroutine(effectCoroutines[effect]);
+                effectCoroutines[effect] = StartCoroutine(RemoveEffectAfterDelay(effect, target));
+            }
+            else
+            {
+                // Iniciar una nueva corutina si no está en ejecución
+                var coroutine = StartCoroutine(RemoveEffectAfterDelay(effect, target));
+                effectCoroutines.Add(effect, coroutine);
+            }
         }
-        activeEffects.Add(effect);
+    }
+
+    public void RemoveEffectImmediately(StatusEffect effect, GameObject target)
+    {
+        if (effectCoroutines.ContainsKey(effect))
+        {
+            StopCoroutine(effectCoroutines[effect]);
+            effectCoroutines.Remove(effect);
+        }
+        effect.RemoveEffect(target);
+    }
+    public void RemoveEffectTriggers(StatusEffect effect, GameObject target)
+    {
+        //Metodo para remover en triggers
+        if (effectCoroutines.ContainsKey(effect))
+        {
+            // Si la corutina está activa, detenerla primero
+            StopCoroutine(effectCoroutines[effect]);
+            effectCoroutines.Remove(effect);
+        }
+        // Iniciar la corutina nuevamente
+        Coroutine coroutine = StartCoroutine(RemoveEffectAfterDelay(effect, target));
+        effectCoroutines[effect] = coroutine;
     }
 
     private IEnumerator RemoveEffectAfterDelay(StatusEffect effect, GameObject target)
     {
+        Debug.Log("enumerator");
         yield return new WaitForSeconds(effect.Duration);
         effect.RemoveEffect(target);
-        activeEffects.Remove(effect);
+        effectCoroutines.Remove(effect);
     }
 }

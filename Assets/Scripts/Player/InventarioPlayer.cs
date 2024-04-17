@@ -18,13 +18,18 @@ public class InventarioPlayer : MonoBehaviour
     public Sprite tpCardSprite; // Sprite para TpCard
 
     public Sprite HoleSprite;
+    public Sprite FireCard;
+    public Sprite FastCard;
     // Añade aquí más sprites según sea necesario para otras cartas
-
+    public bool mid;
     public string[] cards = new string[3];
     public int activeSlot = 1; // El slot del medio es el activo por defecto
 
+    public string mode;
+    private ItemPlacer itemPlacer;
     void Awake()
     {
+        itemPlacer=GetComponent<ItemPlacer>();
         if (Instance == null)
         {
             Instance = this;
@@ -33,6 +38,7 @@ public class InventarioPlayer : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
     }
 
     void Start()
@@ -48,11 +54,18 @@ public class InventarioPlayer : MonoBehaviour
     {
 if (Input.GetKeyDown(KeyCode.Q) || Input.GetAxis("Mouse ScrollWheel") < 0)
 {
-    RotateLeft();
+    if (!itemPlacer.CartaColocada)
+    {
+        RotateLeft();
+    } 
 }
 if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
 {
-    RotateRight();
+    if (!itemPlacer.CartaColocada)
+    {
+        RotateRight();
+    }
+
 }
         else if (Input.GetKeyDown(KeyCode.X)) // Intenta activar carta con X
         {
@@ -106,7 +119,9 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
 
         // Actualizar los sprites basado en el contenido de cada slot
         UpdateSlotImage(image1, cards[0]);
+        mid = true;
         UpdateSlotImage(image2, cards[1]);
+        mid = false;
         UpdateSlotImage(image3, cards[2]);
     }
 
@@ -114,18 +129,50 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
     {
         switch (cardName)
         {
+            
             case "TpCard":
                 slotImage.sprite = tpCardSprite;
+                if (mid)
+                {
+                    mode = "place";
+                }
+
                 break;
             // Añade aquí más casos según los nombres de tus cartas y sus sprites correspondientes
             case "Empty":
                 slotImage.sprite = emptySprite;
+                if (mid)
+                {
+                    mode = "null";
+                }
                 break;
             case "CartaHole":
                 slotImage.sprite = HoleSprite;
+                if (mid)
+                {
+                    mode = "place";
+                }
+                break;
+            case "FireCard":
+                slotImage.sprite = FireCard;
+                if (mid)
+                {
+                    mode = "activable";
+                }
+                break;
+            case "FastCard":
+                slotImage.sprite = FastCard;
+                if (mid)
+                {
+                    mode = "self";
+                }
                 break;
             default:
                 slotImage.sprite = emptySprite; // Usa el sprite vacío por defecto para cualquier otro caso
+                if (mid)
+                {
+                    mode = "null";
+                }
                 break;
         }
     }
