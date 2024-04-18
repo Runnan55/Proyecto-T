@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour
     List<string> tarotCards = new List<string>() { "Strength", "HighPriestess"};
     string selectedCard;
 
-    void SelectRandomCard()
+    public void SelectRandomCard()
     {
         if(tarotCards.Count > 0)
         {
@@ -51,7 +51,7 @@ public class LevelManager : MonoBehaviour
     }
 
     #region DEBUG //    ***** DEBUG ***** 
-    public void Update()
+    /* public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -77,7 +77,7 @@ public class LevelManager : MonoBehaviour
         {
             Debug.Log("Quedan " + tarotCards.Count + " cartas: " + string.Join(", ", tarotCards));
         }
-    }
+    } */
     #endregion DEBUG
 }
 
