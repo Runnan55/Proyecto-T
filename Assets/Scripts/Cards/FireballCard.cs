@@ -8,6 +8,7 @@ public class FireballCard : BaseCard
 
     private Camera mainCamera;         // Cámara principal
     private Transform playerTransform; // Transform del jugador
+    
 
     void Start()
     {
@@ -43,6 +44,16 @@ public class FireballCard : BaseCard
             {
                 rb.velocity = launchDirection.normalized * launchSpeed;
             }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Enemy enemy = other.gameObject.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemy.ReceiveDamage(50f); 
+            Destroy(gameObject);
         }
     }
 }
