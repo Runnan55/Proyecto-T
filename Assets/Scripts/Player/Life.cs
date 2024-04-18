@@ -11,12 +11,17 @@ public class Life : MonoBehaviour
 
     public TextMeshProUGUI timeText;
     public Image timeImage;
-   public DeathScreen deathScreen; 
+    public DeathScreen deathScreen; 
+
+    public LevelManager levelManager;
+
 
     void Start()
     {
         currentTime = maxTime;
         timeImage.fillAmount = 1;
+                levelManager = FindObjectOfType<LevelManager>();
+
     }
 
     void Update()
@@ -29,6 +34,8 @@ public class Life : MonoBehaviour
         }
         else
             Debug.Log("muerte");
+            //levelManager.OnLevelFailed();
+
 
         //* DEBUG
 
@@ -52,7 +59,8 @@ public class Life : MonoBehaviour
         }
         else if (currentTime < 0)
         {
-            deathScreen.ShowDeathScreen();
+            //deathScreen.ShowDeathScreen();
+            levelManager.OnLevelFailed();
 
             currentTime = 0;
         }
