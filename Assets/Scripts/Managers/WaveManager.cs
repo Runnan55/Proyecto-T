@@ -59,18 +59,18 @@ public class WaveManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        StartNextWave();
+    }
+
     #region DEBUG //    ***** DEBUG ***** 
-     public void Update()
+/*     public void Update()
    {
         if (Input.GetKeyDown(KeyCode.F))
         {
             StartNextWave();
         }
-    } 
-
-      void Start()
-    {
-        StartNextWave();
-    }
+    } */
     #endregion DEBUG
 }

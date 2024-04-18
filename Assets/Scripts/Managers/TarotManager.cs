@@ -7,6 +7,8 @@ public class TarotManager : MonoBehaviour
     public LevelManager levelManager;
     public Animation shuffleAnimation;
 
+    public GameObject tarotCardUI;
+
     void OnTriggerEnter(Collider other)
     {
         StartTarot();
@@ -20,6 +22,8 @@ public class TarotManager : MonoBehaviour
     public void PlayAnimationAndLoadLevel()
     {
         levelManager.SelectRandomCard();
+        
+        //tarotCardUI.SetActive(true);
 
         //shuffleAnimation.Play("miAnimacion");
 
