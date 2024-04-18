@@ -14,19 +14,19 @@ public class TarotManager : MonoBehaviour
 
     void StartTarot()
     {
-        StartCoroutine(PlayAnimationAndLoadLevel());
+        PlayAnimationAndLoadLevel();
     }
 
-    IEnumerator PlayAnimationAndLoadLevel()
+    public void PlayAnimationAndLoadLevel()
     {
         levelManager.SelectRandomCard();
 
-        shuffleAnimation.Play("miAnimacion");
+        //shuffleAnimation.Play("miAnimacion");
 
-        while (shuffleAnimation.isPlaying)
+/*         while (shuffleAnimation.isPlaying)
         {
             yield return null;
-        }
+        } */
         
         levelManager.LoadLevel();
     }
