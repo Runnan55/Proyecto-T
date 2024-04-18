@@ -47,13 +47,5 @@ public class FireballCard : BaseCard
         }
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        Enemy enemy = other.gameObject.GetComponent<Enemy>();
-        if (enemy != null)
-        {
-            enemy.ReceiveDamage(50f); 
-            Destroy(gameObject);
-        }
-    }
+   
 }
