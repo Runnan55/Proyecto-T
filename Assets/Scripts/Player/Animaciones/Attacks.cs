@@ -7,6 +7,7 @@ using UnityEngine.XR;
 public class Attacks : StateMachineBehaviour
 {
 
+public bool hasAttacked = false;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -20,9 +21,19 @@ public class Attacks : StateMachineBehaviour
             collider.enabled = true;
         }
     }
+    slow();
    
     }
-
+public void  slow()
+{
+    PlayerMovement.instance.speed = PlayerMovement.instance.reduccionVelocidad;
+   
+}
+public void  Resetslow()
+{
+    PlayerMovement.instance.speed = PlayerMovement.instance.speed + 15f;
+   
+}
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -44,6 +55,7 @@ public class Attacks : StateMachineBehaviour
         {
             collider.enabled = false;
         }
+        Resetslow();
     }
       
     }

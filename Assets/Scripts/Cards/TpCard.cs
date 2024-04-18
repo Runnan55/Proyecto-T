@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class TpCard : BaseCard
 {
+    //public GameObject Particula;
+    public GameObject ParticulaCast;
+    public Vector3 rotation = new Vector3(-90f, 0f, 0f);
     // Start is called before the first frame update
     public override void Activate()
     {
+     //   Particula.SetActive(true);
     GameObject player = GameObject.FindGameObjectWithTag("Player");
     CharacterController controller = player.GetComponent<CharacterController>();
 
@@ -51,6 +55,7 @@ public class TpCard : BaseCard
                 // Reactivar el CharacterController
     if (controller != null) controller.enabled = true;
         }
+        Instantiate(ParticulaCast, transform.position, Quaternion.Euler(rotation));
         Destroy(this.gameObject);
     }
     }

@@ -6,7 +6,7 @@ public class Flecha : MonoBehaviour
 {
     public float speed = 10f;
     public float lifetime = 2f;
-    public float damage = 10f;
+    public float damage = 5f;
 
     private Life playerLife;
 
@@ -32,5 +32,11 @@ public class Flecha : MonoBehaviour
             Debug.Log("pummm");
             Destroy(gameObject);
         }
+        else if (other.CompareTag("Walls"))
+        {
+            Debug.Log("pared"); 
+            Destroy(gameObject);
+        }
     }
+  
 }

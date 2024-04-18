@@ -4,12 +4,13 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
 using System;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour, IEffectable
 {
        public float speed = 15.0f;
-       public float reduccionVelocidad =6.0f;
+       public float reduccionVelocidad = 0f;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
        public bool speedbuff = false;
@@ -30,6 +31,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public static bool hasAttacked = false;
        public static bool enterAttack = false;
        public static PlayerMovement instance;
+        public VisualEffect vfx;
 
       
     public  bool isDashing = false;
@@ -95,6 +97,8 @@ void Update()
      }
    } 
    
+        vfx.transform.rotation = this.transform.rotation;
+
 }
 public void StartAttack()
 {
@@ -105,7 +109,10 @@ public void StartAttack()
  
 }
 
-
+public void EfectoVisual()
+{
+    vfx.Play();
+}
     
 public void MovimientoJugador()
 {

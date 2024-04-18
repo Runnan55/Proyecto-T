@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    private float _hp = 100f;
+    private float _hp = 50f;
     public float health {
         get { return _hp; }
         set 

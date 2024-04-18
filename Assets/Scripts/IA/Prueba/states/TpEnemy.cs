@@ -36,7 +36,7 @@ public class TpEnemy : Enemy
                 StartCoroutine(TeleportAndShoot());
             }
         }
-        else
+        else 
         {
             // Si el jugador no está dentro del rango de visión o estamos teletransportando, utiliza NavMeshAgent
             agent.SetDestination(player.position);
