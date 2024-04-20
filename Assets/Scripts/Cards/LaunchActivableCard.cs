@@ -8,16 +8,14 @@ public class LaunchActivableCard : BaseCard
 
     private Camera mainCamera;         // Cámara principal
     private Transform playerTransform; // Transform del jugador
-    
-
+    string cardName = InventarioPlayer.GetCardAtIndex(1);
+    private InventarioPlayer inventario;
+    void Awake()
+    {
+        inventario = InventarioPlayer.Instance;
+    }
     void Start()
     {
-        //Parte inicial de cartas
-        objectToLaunch = Resources.Load<GameObject>("Fireball");
-                if (objectToLaunch == null)
-        {
-            Debug.LogError("No se pudo cargar el prefab Fireball desde Resources");
-        }
         mainCamera = Camera.main; // Asigna la cámara principal
         playerTransform = this.transform; // Asigna el transform del jugador
     }
@@ -27,7 +25,25 @@ public class LaunchActivableCard : BaseCard
     }
     void Update()
     {
-
+    // Obtener la carta en la posición 1
+    cardName = InventarioPlayer.GetCardAtIndex(1);
+    if (cardName == null)
+    {
+        return;
+    }
+    switch (cardName)
+    {
+        case "FireCard":
+            objectToLaunch = Resources.Load<GameObject>("Fireball");
+            if (objectToLaunch == null)
+            {
+                Debug.LogError("No se pudo cargar el prefab Fireball desde Resources");
+            }
+            break;
+        default:
+            objectToLaunch = null;
+            break;
+    }
     }
 
     void LaunchObject()
@@ -48,5 +64,5 @@ public class LaunchActivableCard : BaseCard
         }
     }
 
-   
+
 }

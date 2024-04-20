@@ -176,4 +176,15 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
                 break;
         }
     }
+public static string GetCardAtIndex(int index)
+{
+    if (Instance != null && index >= 0 && index < Instance.cards.Length)
+    {
+        return Instance.cards[index];
+    }
+    else
+    {
+        return null;
+    }
+}
 }

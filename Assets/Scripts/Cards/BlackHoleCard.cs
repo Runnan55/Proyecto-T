@@ -11,11 +11,11 @@ public class BlackHoleCard : BaseCard
 
     public GameObject Zona;
     // Start is called before the first frame update
- public override void Activate()
+    public override void Activate()
     {
         BlackHole();
     }
-        public void BlackHole()
+    public void BlackHole()
     {
         StartCoroutine(AttractCharacters());
     }
@@ -29,22 +29,27 @@ public class BlackHoleCard : BaseCard
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, attractionRadius);
             foreach (var hitCollider in hitColliders)
             {
-                Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
-                if (rb != null)
+                if (!hitCollider.CompareTag("Projectile"))
                 {
-                    ResetStart();
-                    Vector3 toCenter = (transform.position - rb.transform.position);
-                    Vector3 direction = toCenter.normalized;
-                    // Calcula la velocidad actual hacia el centro
-                    float currentSpeedTowardsCenter = Vector3.Dot(rb.velocity, direction);
-                    // Calcula la fuerza de amortiguación para reducir el movimiento lateral
-                    Vector3 dampingForce = -rb.velocity + direction * currentSpeedTowardsCenter;
-                    // Ajusta la fuerza de atracción y la amortiguación basándose en el tiempo restante
-                    float attractionForceAdjusted = attractionForce * (1 - (elapsedTime / duration));
-                    float dampingAdjusted = damping * (1 - (elapsedTime / duration));
-                    // Aplica la fuerza de atracción ajustada junto con la fuerza de amortiguación ajustada
-                    rb.AddForce((direction * attractionForceAdjusted + dampingForce * dampingAdjusted) * Time.deltaTime, ForceMode.VelocityChange);
+                    Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        ResetStart();
+                        Vector3 toCenter = (transform.position - rb.transform.position);
+                        Vector3 direction = toCenter.normalized;
+                        // Calcula la velocidad actual hacia el centro
+                        float currentSpeedTowardsCenter = Vector3.Dot(rb.velocity, direction);
+                        // Calcula la fuerza de amortiguación para reducir el movimiento lateral
+                        Vector3 dampingForce = -rb.velocity + direction * currentSpeedTowardsCenter;
+                        // Ajusta la fuerza de atracción y la amortiguación basándose en el tiempo restante
+                        float attractionForceAdjusted = attractionForce * (1 - (elapsedTime / duration));
+                        float dampingAdjusted = damping * (1 - (elapsedTime / duration));
+                        // Aplica la fuerza de atracción ajustada junto con la fuerza de amortiguación ajustada
+                        rb.AddForce((direction * attractionForceAdjusted + dampingForce * dampingAdjusted) * Time.deltaTime, ForceMode.VelocityChange);
+                    }
                 }
+
+
             }
 
             elapsedTime += Time.deltaTime;
@@ -83,7 +88,7 @@ public class BlackHoleCard : BaseCard
                 // Reinicia la velocidad lineal y angular
                 charger.DesactivarMovimientos();
             }
-           
+
         }
     }
     void ResetFinish()
@@ -102,12 +107,12 @@ public class BlackHoleCard : BaseCard
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
             }
-                        if (enemy != null)
+            if (enemy != null)
             {
                 // Reinicia la velocidad lineal y angular
                 enemy.ActiveNavMesh();
             }
-                if (distance != null)
+            if (distance != null)
             {
                 // Reinicia la velocidad lineal y angular
                 distance.ActiveNavMesh();
