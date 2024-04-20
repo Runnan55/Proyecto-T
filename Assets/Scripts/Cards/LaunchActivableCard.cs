@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FireballCard : BaseCard
+public class LaunchActivableCard : BaseCard
 {
     public GameObject objectToLaunch;  // Objeto a lanzar
     public float launchSpeed = 25f;    // Velocidad de lanzamiento
@@ -12,6 +12,7 @@ public class FireballCard : BaseCard
 
     void Start()
     {
+        //Parte inicial de cartas
         objectToLaunch = Resources.Load<GameObject>("Fireball");
                 if (objectToLaunch == null)
         {

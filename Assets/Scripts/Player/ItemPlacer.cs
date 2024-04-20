@@ -22,6 +22,10 @@ public class ItemPlacer : MonoBehaviour
     public bool CartaColocada = false;
 
     public float maxDistance = 10f; // Rango máximo de previsualización
+
+    private string materialActivable = "MaterialActivablePreview"; //Material para la previsualización de dirección de activables.
+    private string materialPlace = "MaterialPlacePreview"; //Material para la previsualización de dirección de colocación.
+    
     void Start()
     {
         // Intenta obtener el LineRenderer del jugador, si no existe, créalo.
@@ -32,8 +36,18 @@ public class ItemPlacer : MonoBehaviour
             // Configura el LineRenderer aquí
             lineRenderer.startWidth = 0.05f;
             lineRenderer.endWidth = 0.1f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // Asegúrate de asignar un material adecuado
 
+        }
+                // Buscar el Line Renderer en el GameObject "PlayerGround" (hijo del jugador)
+        lineRenderer = GetComponentInChildren<LineRenderer>();
+        if (lineRenderer == null)
+        {
+            Debug.LogError("No se encontró el Line Renderer en el GameObject hijo 'PlayerGround'. Asegúrate de agregarlo.");
+        }
+        else
+        {
+            // Desactivar el Line Renderer al inicio (opcional)
+            lineRenderer.enabled = false;
         }
     }
 
@@ -108,15 +122,24 @@ public class ItemPlacer : MonoBehaviour
                 InventarioPlayer.Instance.UseCard();
              }  
     }
-        if (Inventario.mode == "activable")
+
+        if (Inventario.mode == "activable") //Recordar que es throw NO CAMBIAR AUN
     {
-         if (Input.GetMouseButtonDown(1)) 
-         {
-        BaseCard cardComponent = GetComponent<BaseCard>();
-        cardComponent.Activate();
-        InventarioPlayer.Instance.UseCard();
-         }
+        if (Input.GetMouseButton(1))
+        {
+            // Mostrar la previsualización de dirección al activar la carta activable
+            ShowDirectionPreviewThrow();
+            // Usar la carta activable al soltar el botón
         }
+        if (Input.GetMouseButtonUp(1))
+        {
+            lineRenderer.enabled = false;
+            // Ocultar la previsualización de dirección al soltar el botón
+            BaseCard cardComponent = GetComponent<BaseCard>();
+            cardComponent.Activate();
+            InventarioPlayer.Instance.UseCard();
+        }
+    }    
 }
 
     void CreateOrUpdatePreview(GameObject prefab)
@@ -164,6 +187,15 @@ void UpdatePreviewPositionAndStatus()
 
     void DrawTrailToPreview()
     {
+    Material material2 = Resources.Load<Material>(materialPlace);
+    if (material2 != null)
+    {
+         lineRenderer.material = material2;
+    }
+    else
+    {
+        Debug.LogError("No se pudo cargar el material desde la ruta proporcionada: " + materialPlace);
+    }   
         if (lineRenderer != null && currentPreviewInstance != null)
         {
             lineRenderer.enabled = true;
@@ -215,6 +247,46 @@ void PlaceItemAndClearPreview()
     if (lineRenderer != null)
     {
         lineRenderer.enabled = false;
+    }
+}
+void ShowDirectionPreviewThrow()
+{
+     // Cargar el material desde la carpeta Resources y asignarlo al Line Renderer
+    Material material = Resources.Load<Material>(materialActivable);
+    if (material != null)
+    {
+         lineRenderer.material = material;
+    }
+    else
+    {
+        Debug.LogError("No se pudo cargar el material desde la ruta proporcionada: " + materialActivable);
+    }    
+    if (lineRenderer != null && player != null)
+    {
+            lineRenderer.startWidth = 0.05f;
+            lineRenderer.endWidth = 0.1f;
+        // Obtener la posición del mouse en el mundo
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+            // Obtener la posición del mouse solo en el plano XY
+            Vector3 targetPosition = hit.point;
+            targetPosition.y = player.transform.position.y; // Mantener la altura del jugador
+
+            // Limitar el rango de previsualización
+            Vector3 direction = targetPosition - player.transform.position;
+            if (direction.magnitude > maxDistance)
+            {
+                targetPosition = player.transform.position + direction.normalized * maxDistance;
+            }
+
+            // Actualizar los puntos del Line Renderer para previsualizar la dirección
+            lineRenderer.enabled = true;
+            lineRenderer.positionCount = 2;
+            lineRenderer.SetPosition(0, player.transform.position);
+            lineRenderer.SetPosition(1, targetPosition);
+        }
     }
 }
 }
