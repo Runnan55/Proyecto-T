@@ -97,8 +97,6 @@ public class ZombiEnemy : Enemy
             canAttack = false;
             Invoke("ResetetAttack", 2f);
         }
-
-
     }
 
     private void ResetetAttack()

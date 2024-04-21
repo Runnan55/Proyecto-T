@@ -53,6 +53,7 @@ public class WaveManager : MonoBehaviour
     {
         Debug.Log("Enemigo muerto para las oleadas");
         EnemiesRemaining--;
+        Debug.Log("Quedan " + EnemiesRemaining + " enemigos");
         if (EnemiesRemaining <= 0)
         {
             StartNextWave();

@@ -61,7 +61,7 @@ public class Enemy : MonoBehaviour
     void ShowFloatingText(float amount)
     {
         Debug.Log("ShowFloatingText");
-        Vector3 offset = new Vector3(0, 2, 0); // Ajusta el valor 2 para cambiar la altura del desplazamiento
+        Vector3 offset = new Vector3(0, 2, 0); // la y es es la altura
         var go = Instantiate(floatingTextPrefab, transform.position + offset, Quaternion.identity);
         go.GetComponentInChildren<DamageText>().SetText(amount.ToString());
     }
@@ -87,7 +87,7 @@ public class Enemy : MonoBehaviour
 
 
     #region DEBUG //    ***** DEBUG ***** 
-    void Update()
+/*     void Update()
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
@@ -97,6 +97,6 @@ public class Enemy : MonoBehaviour
             waveManager.EnemyDied();
             Debug.Log("moricion fin");
         }    
-    }
+    } */
     #endregion DEBUG
 }
