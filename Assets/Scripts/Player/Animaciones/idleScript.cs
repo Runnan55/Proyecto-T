@@ -20,7 +20,10 @@ public class idleScript : StateMachineBehaviour
             PlayerMovement.instance.animator.Play("Attack1");
         }
 
-    
+        if(PlayerMovement.instance.isAttackingP)
+        {
+            PlayerMovement.instance.animator.Play("Attack1P");
+        }
        
     }
 
@@ -28,6 +31,8 @@ public class idleScript : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        PlayerMovement.instance.isAttacking = false; 
+
+         PlayerMovement.instance.isAttackingP = false;
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

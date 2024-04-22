@@ -8,8 +8,8 @@ public class Transition1Script : StateMachineBehaviour
      override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        PlayerMovement.hasRotated = false;
-       
- 
+
+        PlayerMovement.cambioarma = false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -20,7 +20,12 @@ public class Transition1Script : StateMachineBehaviour
             PlayerMovement.instance.animator.Play("Attack2");
         }
 
-   
+        if (PlayerMovement.instance.isAttackingP)
+        {
+            PlayerMovement.instance.animator.Play("Attack2P");
+        }
+
+     PlayerMovement.cambioarma = false;
    
         
     }
@@ -29,6 +34,10 @@ public class Transition1Script : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         PlayerMovement.instance.isAttacking = false;
+
+        PlayerMovement.instance.isAttackingP = false;
+
+         PlayerMovement.cambioarma = true;
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
@@ -43,3 +52,4 @@ public class Transition1Script : StateMachineBehaviour
     //    // Implement code that sets up animation IK (inverse kinematics)
     //}
 }
+

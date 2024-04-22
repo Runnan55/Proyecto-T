@@ -28,12 +28,19 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        Vector3 targetPosition;
        public Animator animator;
        public bool isAttacking = false;
+       public bool isAttackingP = false;
        public static bool hasAttacked = false;
        public static bool enterAttack = false;
-       public static PlayerMovement instance;
-        public VisualEffect vfx;
+       private bool verificarArma = false;
+       public static bool cambioarma = false;
 
-      
+       public static PlayerMovement instance;
+       public VisualEffect vfx;
+
+       public GameObject boomerangPrefab; // Prefab del boomerang
+       public GameObject boomerangPrefab2; // Prefab del boomerang
+       public string etiquetaJugador = "Player"; // Etiqueta del jugador
+
     public  bool isDashing = false;
             
   
@@ -41,6 +48,8 @@ public class PlayerMovement : MonoBehaviour, IEffectable
         private void Awake()
     {
         instance = this;
+        boomerangPrefab = Resources.Load<GameObject>("BoomerangPrefab");
+        boomerangPrefab2 = Resources.Load<GameObject>("BoomerangPrefab2");
        
     }
       
@@ -50,6 +59,9 @@ public class PlayerMovement : MonoBehaviour, IEffectable
          playerMovement = GetComponent<PlayerMovement>();
 
          animator = GetComponent<Animator>();
+
+        verificarArma = true;
+        cambioarma =true;
         
 
          
@@ -57,7 +69,8 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
 void Update()
 {
-  
+    
+     
     if (canMove)
     {
         MovimientoJugador();
@@ -69,7 +82,7 @@ void Update()
         StartCoroutine(Dash());
     }
 
-    StartAttack();
+ AtaquesGrimorios();
 
    if (Input.GetMouseButtonDown(0)) 
    {
@@ -98,15 +111,66 @@ void Update()
    } 
    
         vfx.transform.rotation = this.transform.rotation;
+         CambioArma();
 
 }
-public void StartAttack()
+public void CambioArma()
 {
-    if (Input.GetButtonDown("Fire1"))
+       if (Input.GetKeyDown(KeyCode.Space) && cambioarma)
+    {
+      verificarArma = !verificarArma;
+    }
+    
+}
+public void AtaquesGrimorios()
+{
+//Grimorio1
+    if (Input.GetButtonDown("Fire1") && verificarArma)
     {
        isAttacking = true;
     }
+
+//Grimorio2
+   if (Input.GetButtonDown("Fire1") && !verificarArma)
+    {
+        isAttackingP = true;
+    }
  
+}
+public void GrimorioDistancia()
+{
+                
+                GameObject A = GameObject.Find("A");
+
+                      GameObject jugador = GameObject.FindGameObjectWithTag(etiquetaJugador);
+            if (jugador != null)
+            {
+                // Obtener la dirección hacia adelante (forward) del jugador
+                Vector3 direccion = jugador.transform.forward;
+                // Instanciar el boomerang en la posición del jugador y con su rotación
+                GameObject boomerang = Instantiate(boomerangPrefab2, A.transform.position, Quaternion.identity);
+                // Iniciar el movimiento del boomerang con la dirección hacia adelante del jugador
+                boomerang.GetComponent<Boomerang>().IniciarMovimiento(direccion);
+            }
+               
+}
+
+public void GrimorioDistanciaVuelta()
+{
+                
+                GameObject A = GameObject.Find("A");
+
+                      GameObject jugador = GameObject.FindGameObjectWithTag(etiquetaJugador);
+            if (jugador != null)
+            {
+                // Obtener la dirección hacia adelante (forward) del jugador
+                Vector3 direccion = jugador.transform.forward;
+                // Instanciar el boomerang en la posición del jugador y con su rotación
+                GameObject boomerang = Instantiate(boomerangPrefab, A.transform.position, Quaternion.identity);
+                // Iniciar el movimiento del boomerang con la dirección hacia adelante del jugador
+                boomerang.GetComponent<Boomerang>().IniciarMovimiento(direccion);
+            }
+               
 }
 
 public void EfectoVisual()
@@ -271,24 +335,7 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
 }
 
    
-public Collider espada; // Añade esta línea
-   public void ActivarEspada()
-   {
-       espada.enabled = true; // Cambia esta línea
-       
-   }
 
-   public void DesactivarEspada()
-   {
-       espada.enabled = false; // Y esta línea
-   }
-
-   public void ReduccionVelocidad()
-   {
-       speed /=reduccionVelocidad;
-
-       //BERTO PON AUDIO DE INICIO DE ATAQUE
-   }
    public void ApplyEffect(StatusEffect effect)
     {
         effect.ApplyEffect(gameObject);
