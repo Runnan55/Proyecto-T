@@ -22,6 +22,10 @@ public class ZombiEnemy : Enemy
     private bool isChasingPlayer = false;
     private bool canAttack = true;
 
+    public ZombiEnemy(Animator animator)
+    {
+        this.animator = animator;
+    }
 
     void Awake()
     {
@@ -30,6 +34,7 @@ public class ZombiEnemy : Enemy
         attackTimer = 0f;
         SetRandomDestination();
         player = GameObject.FindGameObjectWithTag("Player");
+        animator = GetComponent<Animator>();  
 
     }
 
@@ -37,6 +42,8 @@ public class ZombiEnemy : Enemy
     {
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
+        animator.SetBool("Walk", true);
+
 
         if (!isChasingPlayer && (distanceToPlayer <= detectionRange || distanceToPlayer <= minChaseRange))
         {
@@ -45,6 +52,7 @@ public class ZombiEnemy : Enemy
             if (angleToPlayer < visionAngle * 0.5f)
             {
                 isChasingPlayer = true;
+                
             }
         }
 
@@ -56,11 +64,16 @@ public class ZombiEnemy : Enemy
                 if (Time.time >= attackTimer)
                 {
                     attackTimer = Time.time + attackCooldown;
+                    animator.SetBool("Walk", false);
+
+                    animator.SetBool("Attack", true);
                 }
             }
             else
             {
                 agent.SetDestination(player.transform.position);
+                animator.SetBool("Walk", true);
+                animator.SetBool("Attack", false);
             }
         }
         else
@@ -72,6 +85,11 @@ public class ZombiEnemy : Enemy
                 {
                     SetRandomDestination();
                     timer = wanderTimer;
+                    animator.SetBool("Walk", true);
+                }
+                else
+                {
+                    animator.SetBool("Walk", false);
                 }
             }
         }
@@ -102,14 +120,18 @@ public class ZombiEnemy : Enemy
     private void ResetetAttack()
     {
         canAttack = true;
+        animator.SetBool("Attack", false);
     }
     public void ActiveNavMesh()
     {
         agent.enabled = true;
+        animator.enabled = true;
+
     }
 
     public void DesactiveNavMesh()
     {
         agent.enabled = false;
+        animator.enabled = false;
     }
 }
