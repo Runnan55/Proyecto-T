@@ -21,11 +21,9 @@ public class ZombiEnemy : Enemy
     private GameObject player;
     private bool isChasingPlayer = false;
     private bool canAttack = true;
-
-    public ZombiEnemy(Animator animator)
-    {
-        this.animator = animator;
-    }
+    private Animator animator;
+    
+    
 
     void Awake()
     {

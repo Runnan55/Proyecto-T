@@ -27,7 +27,6 @@ public class Enemy : MonoBehaviour
     public GameObject dropPrefab;
 
     public WaveManager waveManager;
-    protected Animator animator;
 
 
     void Start()
@@ -43,7 +42,6 @@ public class Enemy : MonoBehaviour
         {
             DropItem();
             Destroy(gameObject);
-            animator.SetTrigger("Death");
             waveManager.EnemyDied();
         }
         
@@ -51,7 +49,6 @@ public class Enemy : MonoBehaviour
 
         if (health > 0)
         {
-            animator.SetTrigger("Damage");
 
             ShowFloatingText(amount);
 
