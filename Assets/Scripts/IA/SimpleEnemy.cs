@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class SimpleEnemy : Enemy
 {
     public float wanderRadius = 10f;
-    public float wanderTimer = 5f;  
+    public float wanderTimer = 5f;
+    public float detectionRange = 10f;
+    public float minChaseRange = 2f;
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
+    public float visionAngle = 60f;
 
 
-    public EnemyVision enemyVision;
     private NavMeshAgent agent;
     private Vector3 targetPosition;
     private float timer;
@@ -19,16 +22,9 @@ public class SimpleEnemy : Enemy
     private GameObject player;
     private bool isChasingPlayer = false;
     private bool canAttack = true;
-
-    // Enum para definir los estados del enemigo
-    private enum EnemyState
-    {
-        Wander,
-        Chase,
-        Attack
-    }
-
-    private EnemyState currentState; // Estado actual del enemigo
+    
+    
+    
 
     void Awake()
     {
@@ -37,7 +33,7 @@ public class SimpleEnemy : Enemy
         attackTimer = 0f;
         SetRandomDestination();
         player = GameObject.FindGameObjectWithTag("Player");
-        currentState = EnemyState.Wander; // Iniciar en el estado de deambular
+
     }
 
     void Update()
@@ -45,55 +41,46 @@ public class SimpleEnemy : Enemy
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
 
-        switch (currentState)
+
+        if (!isChasingPlayer && (distanceToPlayer <= detectionRange || distanceToPlayer <= minChaseRange))
         {
-            case EnemyState.Wander:
-                // Lógica para deambular
-                if (!agent.pathPending && agent.remainingDistance < 0.1f)
-                {
-                    timer -= Time.deltaTime;
-                    if (timer <= 0f)
-                    {
-                        SetRandomDestination();
-                        timer = wanderTimer;
-                    }
-                }
+            float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
 
-                // Transición al estado de persecución si el jugador está en rango de detección
-                if (enemyVision && enemyVision.PlayerEnRango() && enemyVision.DetectarAngulo())
-                {
-                        currentState = EnemyState.Chase;          
-                }
-                break;
+            if (angleToPlayer < visionAngle * 0.5f)
+            {
+                isChasingPlayer = true;
+                
+            }
+        }
 
-            case EnemyState.Chase:
-                // Lógica para perseguir al jugador
-                agent.ResetPath();
-                if (distanceToPlayer <= attackRange + 1)
-                {
-                    currentState = EnemyState.Attack; // Transición al estado de ataque si el jugador está dentro del rango de ataque
-                }
-                else
-                {
-                    agent.SetDestination(player.transform.position);
-                }
-                break;
-
-            case EnemyState.Attack:
-                // Lógica para atacar al jugador
+        if (isChasingPlayer)
+        {
+            agent.ResetPath();
+            if (distanceToPlayer <= attackRange + 1)
+            {
                 if (Time.time >= attackTimer)
                 {
-                    AttackPlayer();
-                    Debug.Log("-10");
                     attackTimer = Time.time + attackCooldown;
-                }
 
-                // Transición de regreso al estado de persecución si el jugador sale del rango de ataque
-                if (distanceToPlayer > attackRange + 1)
-                {
-                    currentState = EnemyState.Chase;
                 }
-                break;
+            }
+            else
+            {
+                agent.SetDestination(player.transform.position);
+            }
+        }
+        else
+        {
+            if (!agent.pathPending && agent.remainingDistance < 0.1f)
+            {
+                timer -= Time.deltaTime;
+                if (timer <= 0f)
+                {
+                    SetRandomDestination();
+                    timer = wanderTimer;
+                }
+                
+            }
         }
     }
 
@@ -123,10 +110,10 @@ public class SimpleEnemy : Enemy
     {
         canAttack = true;
     }
-
     public void ActiveNavMesh()
     {
         agent.enabled = true;
+
     }
 
     public void DesactiveNavMesh()
