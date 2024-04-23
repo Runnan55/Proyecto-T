@@ -288,7 +288,6 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
 
 }
 
-    
 
     // Aplicar gravedad
     moveDirection.y -= gravity * Time.deltaTime;
