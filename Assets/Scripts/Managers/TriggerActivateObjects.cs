@@ -5,7 +5,7 @@ using UnityEngine;
 public class TriggerActivateObjects : MonoBehaviour
 {
     public GameObject objectToActivate;
-    public float delayInSeconds = 120f; // 120 segundos = 2 minutos
+    public float delayInSeconds = 120; // 120 segundos = 2 minutos
 
     private void OnTriggerEnter(Collider other)
     {

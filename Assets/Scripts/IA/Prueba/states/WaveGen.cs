@@ -7,7 +7,8 @@ public class WaveGen : MonoBehaviour
     public GameObject enemyPrefab; // Prefab del enemigo que quieres spawnear
     public float timeBetweenWaves = 10f; // Tiempo entre oleadas de enemigos
     public float timeBetweenEnemies = 1f; // Tiempo entre la aparición de cada enemigo
-    public int enemiesPerWave = 5; // Número de enemigos por oleada
+    public int enemiesPerWave = 5; // Número inicial de enemigos por oleada
+    public int incrementPerWave = 2; // Incremento de enemigos por oleada
     public float spawnDuration = 90f; // Duración total de spawn en segundos (1:30 min)
     public float timeBeforeOpen = 120f; // Tiempo antes de activar la variable open en segundos (2 min)
     private int currentWave = 0;
@@ -28,9 +29,10 @@ public class WaveGen : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenWaves);
 
             currentWave++;
+            int numEnemiesThisWave = enemiesPerWave + incrementPerWave * (currentWave - 1);
 
             // Spawnea los enemigos de la oleada actual
-            for (int i = 0; i < enemiesPerWave; i++)
+            for (int i = 0; i < numEnemiesThisWave; i++)
             {
                 SpawnEnemy();
                 // Espera el tiempo entre enemigos

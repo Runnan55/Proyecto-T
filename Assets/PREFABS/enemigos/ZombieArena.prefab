@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 8717016472302694418}
   - component: {fileID: 534839863121057720}
   - component: {fileID: 1932254276584757939}
-  - component: {fileID: 5796510436351012168}
   - component: {fileID: 5009102440904802435}
+  - component: {fileID: 3208396190756446640}
   m_Layer: 0
   m_Name: ZombieArena
   m_TagString: Enemy
@@ -138,30 +138,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &5796510436351012168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1659391851270986758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a5f692ffd0a0f6438f3591593b00be3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 10
-  playerLife: {fileID: 0}
-  floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
-  dropPrefab: {fileID: 0}
-  waveManager: {fileID: 0}
-  wanderRadius: 10
-  wanderTimer: 5
-  detectionRange: 100
-  minChaseRange: 2
-  attackRange: 1.5
-  attackCooldown: 2
-  visionAngle: 360
 --- !u!136 &5009102440904802435
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -185,6 +161,30 @@ CapsuleCollider:
   m_Height: 2.621053
   m_Direction: 1
   m_Center: {x: -0, y: 0.3105265, z: -0.08420658}
+--- !u!114 &3208396190756446640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659391851270986758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da90970f0272f384a8795d50bacce777, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 10
+  playerLife: {fileID: 0}
+  floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
+  dropPrefab: {fileID: 0}
+  waveManager: {fileID: 0}
+  wanderRadius: 10
+  wanderTimer: 5
+  detectionRange: 100
+  minChaseRange: 2
+  attackRange: 1.5
+  attackCooldown: 2
+  visionAngle: 360
 --- !u!1 &3926484420369501853
 GameObject:
   m_ObjectHideFlags: 0
