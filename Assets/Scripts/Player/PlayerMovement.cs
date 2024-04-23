@@ -110,7 +110,7 @@ void Update()
      }
    } 
    
-        vfx.transform.rotation = this.transform.rotation;
+        //vfx.transform.rotation = this.transform.rotation;
          CambioArma();
 
 }
@@ -119,6 +119,7 @@ public void CambioArma()
        if (Input.GetKeyDown(KeyCode.Space) && cambioarma)
     {
       verificarArma = !verificarArma;
+      Debug.Log(verificarArma);
     }
     
 }
@@ -140,7 +141,7 @@ public void AtaquesGrimorios()
 public void GrimorioDistancia()
 {
                 
-                GameObject A = GameObject.Find("A");
+                GameObject A = GameObject.Find("ColliderGrimorios");
 
                       GameObject jugador = GameObject.FindGameObjectWithTag(etiquetaJugador);
             if (jugador != null)
@@ -158,7 +159,7 @@ public void GrimorioDistancia()
 public void GrimorioDistanciaVuelta()
 {
                 
-                GameObject A = GameObject.Find("A");
+                GameObject A = GameObject.Find("ColliderGrimorios");
 
                       GameObject jugador = GameObject.FindGameObjectWithTag(etiquetaJugador);
             if (jugador != null)

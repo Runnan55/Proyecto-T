@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.XR;
-
+using UnityEngine.VFX;
 public class Attacks : StateMachineBehaviour
 {
 
 public bool hasAttacked = false;
 public string attackNumber;   
-
+ 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+      
         PlayerMovement playerMovement = PlayerMovement.instance;
          GameObject damageZoneG1 = GameObject.Find("ZonaDañoG1");
         GameObject damageZone2G1 = GameObject.Find("ZonaDaño2G1");
@@ -20,6 +21,19 @@ public string attackNumber;
         GameObject damageZone2G2 = GameObject.Find("ZonaDaño2G2");
         GameObject damageZone3G2 = GameObject.Find("ZonaDaño3G2");
         PlayerMovement.cambioarma = false;
+        
+        GameObject vfxObject1G1 = GameObject.Find("VFXSlash1G1");
+
+        GameObject vfxObject2G1 = GameObject.Find("VFXSlash2G1");
+         GameObject vfxObject2G11 = GameObject.Find("VFXSlash2G11");
+
+        GameObject vfxObject1G2 = GameObject.Find("VFXSlash1G2");
+        
+         GameObject vfxObject31 = GameObject.Find("VFXSlash31");
+
+        GameObject vfxObject2G2 = GameObject.Find("VFXSlash2G2");
+
+        GameObject vfxObject32 = GameObject.Find("VFXSlash32");
            
    switch (attackNumber)
         {
@@ -35,7 +49,16 @@ public string attackNumber;
                     {
                       collider.enabled = true;
                     }
-                 }                            
+                 }        
+
+
+                 var vfx1G1 = vfxObject1G1.GetComponent<VisualEffect>();
+        if (vfx1G1 != null)
+        {
+            vfx1G1.enabled = true;
+            vfx1G1.Play();
+            
+        }                    
                 
                 break;
             case "Attack2":
@@ -52,12 +75,31 @@ public string attackNumber;
                     }
                  }          
 
+                  
+                 var vfx2G1 = vfxObject2G1.GetComponent<VisualEffect>();
+        if (vfx2G1 != null)
+        {
+            vfx2G1.enabled = true;
+            vfx2G1.Play();
+        }      
+
+                      
+                 var vfx2G11 = vfxObject2G11.GetComponent<VisualEffect>();
+        if (vfx2G11 != null)
+        {
+            vfx2G11.enabled = true;
+            vfx2G11.Play();
+        }      
+
+
+
                 break;
             case "Attack3":
 
                 
-                playerMovement.GrimorioDistanciaVuelta();
+             
                 break;
+                
             case "Attack1P":
                     if (damageZoneG2 != null)
                  {
@@ -67,8 +109,20 @@ public string attackNumber;
                      if (collider != null)
                     {
                       collider.enabled = true;
-                    }
+                    }         
+
+
              }
+
+
+var vfx1G2 = vfxObject2G2.GetComponent<VisualEffect>();
+        if (vfx1G2 != null)
+        {
+            vfx1G2.enabled = true;
+            vfx1G2.Play();
+        }
+    
+
                 break;
             case "Attack2P":
                      if (damageZone2G2 != null)
@@ -80,6 +134,16 @@ public string attackNumber;
                     {
                       collider.enabled = true;
                     }
+
+
+           // Asegúrate de que vfxObject es el objeto que tiene el efecto visual que quieres activar
+        var vfx2G2 = vfxObject1G2.GetComponent<VisualEffect>();
+        if (vfx2G2 != null)
+        {
+            vfx2G2.enabled = true;
+            vfx2G2.Play();
+        }
+
              }
                 break;
             case "Attack3P":
@@ -93,10 +157,29 @@ public string attackNumber;
                       collider.enabled = true;
                     }
              }
+
+
+                   var vfx11G2 = vfxObject31.GetComponent<VisualEffect>();
+        if (vfx11G2 != null)
+        {
+            vfx11G2.enabled = true;
+            vfx11G2.Play();
+        }
+
+ var vfx22G2 = vfxObject32.GetComponent<VisualEffect>();
+        if (vfx11G2 != null)
+        {
+            vfx22G2.enabled = true;
+            vfx22G2.Play();
+        }
+   
+
+
                 break;
        }
             slow();
-   
+
+
     }
 public void  slow()
 {

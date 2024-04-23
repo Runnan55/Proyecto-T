@@ -15,6 +15,11 @@ public class Boomerang : MonoBehaviour
     private bool pp3 = false;
     private float tiempoDeInstanciacion;
     public string etiquetaJugador = "Player"; // Etiqueta del jugador
+
+    //
+    public float damage = 5f;
+    private float timeSinceLastDamage = 0f;
+
     void Start()
     {
         // Guardar el tiempo de instanciación
@@ -53,6 +58,20 @@ public class Boomerang : MonoBehaviour
                 {
                     Destroy(gameObject);
                 }
+
+        timeSinceLastDamage += Time.deltaTime;
+    }
+
+        void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            if (timeSinceLastDamage >= 0.25f)
+            {
+                other.gameObject.GetComponent<Enemy>().ReceiveDamage(damage);
+                timeSinceLastDamage = 0f;
+            }
+        }
     }
 
     // Método para iniciar el movimiento del boomerang con una dirección dada
