@@ -41,6 +41,10 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public GameObject boomerangPrefab2; // Prefab del boomerang
        public string etiquetaJugador = "Player"; // Etiqueta del jugador
 
+       public GameObject grimorio1;
+       public GameObject grimorio2;
+
+
     public  bool isDashing = false;
             
   
@@ -112,6 +116,17 @@ void Update()
    
         //vfx.transform.rotation = this.transform.rotation;
          CambioArma();
+
+         if (verificarArma)
+{
+    grimorio1.SetActive(true);
+    grimorio2.SetActive(false);
+}
+else
+{
+    grimorio1.SetActive(false);
+    grimorio2.SetActive(true);
+}
 
 }
 public void CambioArma()
