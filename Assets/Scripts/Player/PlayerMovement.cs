@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public bool isAttackingP = false;
        public static bool hasAttacked = false;
        public static bool enterAttack = false;
-       private bool verificarArma = false;
+       public bool verificarArma = false;
        public static bool cambioarma = false;
 
        public static PlayerMovement instance;

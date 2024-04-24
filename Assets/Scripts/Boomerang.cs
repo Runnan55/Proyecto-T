@@ -54,10 +54,11 @@ public class Boomerang : MonoBehaviour
                     GetComponent<Rigidbody>().velocity = (objetivo- transform.position).normalized * velocidadRegreso;
                     pp3 = true;
                 }
-                if (Time.time - tiempoDeInstanciacion  > tiempoDeEspera+3f &&pp3)
+                if (Time.time - tiempoDeInstanciacion  > tiempoDeEspera+2f &&pp3)
                 {
                     Destroy(gameObject);
                 }
+
 
         timeSinceLastDamage += Time.deltaTime;
     }
