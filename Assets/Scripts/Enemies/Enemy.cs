@@ -35,24 +35,28 @@ public class Enemy : MonoBehaviour
         waveManager = GameObject.FindGameObjectWithTag("WaveManager").GetComponent<WaveManager>(); 
     }
 
-    public void ReceiveDamage(float amount) // (en segundos)
+       public void ReceiveDamage(float amount) // (en segundos)
     {
         health -= amount;
         if (health <= 0)
         {
             DropItem();
-            Destroy(gameObject);
             waveManager.EnemyDied();
-        }
-        
-        Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
-
-        if (health > 0)
-        {
-
             ShowFloatingText(amount);
-
+            StartCoroutine(DestroyAfterDelay(1f));
         }
+
+        else
+        {
+            Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
+            ShowFloatingText(amount);
+        }
+    }
+
+        IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
     }
 
     public virtual void AttackPlayer()
