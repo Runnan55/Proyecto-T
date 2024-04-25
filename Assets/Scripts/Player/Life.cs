@@ -8,6 +8,7 @@ public class Life : MonoBehaviour
 {
     public float maxTime = 600;
     private float currentTime;
+    private bool isInvincible = false;
 
     public TextMeshProUGUI timeText;
     public Image timeImage;
@@ -15,13 +16,14 @@ public class Life : MonoBehaviour
 
     public LevelManager levelManager;
 
+    public float invincibilityTime = 1;
+    public GameObject shield;
 
     void Start()
     {
         currentTime = maxTime;
         timeImage.fillAmount = 1;
-                levelManager = FindObjectOfType<LevelManager>();
-
+        levelManager = FindObjectOfType<LevelManager>();
     }
 
     void Update()
@@ -34,12 +36,8 @@ public class Life : MonoBehaviour
         }
         else
             Debug.Log("muerte");
-            //levelManager.OnLevelFailed();
 
-
-        //* DEBUG
-
-        if (Input.GetKeyDown(KeyCode.O))
+/*         if (Input.GetKeyDown(KeyCode.O))
         {
             ModifyTime(60);
         }
@@ -47,11 +45,15 @@ public class Life : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             ModifyTime(-60);
-        }
+        } */
+
+        //shield.SetActive(isInvincible);
     }
 
     public void ModifyTime(float amount)
     {
+        if (isInvincible && amount < 0) return;
+
         currentTime += amount;
         if (currentTime > maxTime)
         {
@@ -59,12 +61,21 @@ public class Life : MonoBehaviour
         }
         else if (currentTime < 0)
         {
-            //deathScreen.ShowDeathScreen();
             levelManager.OnLevelFailed();
-
             currentTime = 0;
         }
         UpdateTimeImage();
+
+        if (amount < 0) StartCoroutine(InvincibilityFrames());
+    }
+
+    IEnumerator InvincibilityFrames()
+    {
+        isInvincible = true;
+        shield.SetActive(true);
+        yield return new WaitForSeconds(invincibilityTime);
+        isInvincible = false;
+        shield.SetActive(false);
     }
 
     private void UpdateTimeText()
