@@ -48,7 +48,8 @@ public class EnemyTpA : Enemy
 
         // Apuntar hacia el jugador
         transform.LookAt(player);
-
+        animator.SetBool("Attack", true);
+        yield return new WaitForSeconds(1.5f);
         // Disparar
         Shoot();
 
@@ -62,7 +63,6 @@ public class EnemyTpA : Enemy
     void Shoot()
     {
         // Activar la animación de ataque
-        animator.SetBool("Attack", true);
 
         // Instanciar el proyectil en el punto de fuego
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);

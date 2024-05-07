@@ -54,7 +54,7 @@ public class CE : Enemy
 
                 break;
             case EnemyState.Detect:
-        animator.SetBool("Walk", false);
+                animator.SetBool("Walk", false);
                 UpdateDetectState();
                 break;
             case EnemyState.Charge:
@@ -96,6 +96,7 @@ public class CE : Enemy
 
         if (!charging)
         {
+
             charging = true;
             Invoke("ChargeAttack", 2f);
         }
@@ -118,6 +119,8 @@ public class CE : Enemy
 
     void ChargeAttack()
     {
+        animator.SetBool("Walk", true);
+
         agent.enabled = false;
 
         Vector3 chargeTargetPosition = player.position;
@@ -135,6 +138,8 @@ public class CE : Enemy
 
     void WaitTime()
     {
+        animator.SetBool("Walk", false);
+
         charging = false;
         transform.LookAt(player);
         backCollider.enabled = true;

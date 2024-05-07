@@ -16,16 +16,18 @@ public class ArqueroAnim : Enemy
 
     private NavMeshAgent agent;
     private GameObject player;
+    public Transform playerT;
     private float attackTimer;
     private int shotsFired = 0;
     private Vector3 directionToPlayer;
     private Animator animator;
-
+    private bool isAttacking = false;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player");
+        
         animator = GetComponent<Animator>();
 
     }
@@ -33,65 +35,86 @@ public class ArqueroAnim : Enemy
     void Update()
     {
         directionToPlayer = player.transform.position - transform.position;
-        directionToPlayer.y = 0;
         float distanceToPlayer = directionToPlayer.magnitude;
-        animator.SetBool("Walk", true);
+        directionToPlayer.y = 0; // Mantener el nivel de la mirada horizontal
 
         if (distanceToPlayer <= detectionRange)
         {
-            // Verifica si hay visión hacia el jugador
             RaycastHit hit;
             if (Physics.Raycast(transform.position, directionToPlayer, out hit, detectionRange))
             {
                 if (hit.collider.CompareTag("Player"))
                 {
-                    if (distanceToPlayer <= attackRange)
+                    LookAtPlayer();
+
+                    if (distanceToPlayer <= attackRange && !isAttacking)
                     {
-                        if (Time.time >= attackTimer)
+                        if (!animator.GetBool("Attack"))
                         {
-                            animator.SetBool("Walk", false); // Ya que el enemigo no se está moviendo
-                            animator.SetBool("Attack", true);
-                            AttackPlayer(directionToPlayer);
-                            transform.rotation = Quaternion.LookRotation(directionToPlayer);
-                            attackTimer = Time.time + attackCooldown;
-                            shotsFired++;
-                            if (shotsFired >= shotsBeforeMove)
-                            {
-                                shotsFired = 0;
-                                MoveAwayFromPlayer();
-                            }
+                            StartCoroutine(PerformAttackSequence());
                         }
                     }
-                    else
+                    else if (distanceToPlayer > attackRange)
                     {
                         MoveToPlayer();
-                        animator.SetBool("Walk", true);
-                        animator.SetBool("Attack", false); // Ya que el enemigo no está atacando
                     }
                 }
             }
         }
-       
+        else
+        {
+            StopMovement();
+        }
+    }
+
+    IEnumerator PerformAttackSequence()
+    {
+        isAttacking = true;
+        animator.SetBool("Attack", true);
+        animator.SetBool("Walk", false);
+
+        while (shotsFired < shotsBeforeMove)
+        {
+            AttackPlayer();
+            yield return new WaitForSeconds(attackCooldown);
+            shotsFired++;
+        }
+
+        shotsFired = 0;
+        MoveAwayFromPlayer();
+        isAttacking = false;
+        animator.SetBool("Attack", false);
     }
 
     void MoveToPlayer()
     {
-        Vector3 desiredPosition = player.transform.position - directionToPlayer.normalized * optimalDistance;
-        agent.SetDestination(desiredPosition);
+        agent.SetDestination(player.transform.position - directionToPlayer.normalized * optimalDistance);
+        animator.SetBool("Walk", true);
     }
 
     void MoveAwayFromPlayer()
     {
         Vector3 moveBackPosition = transform.position - transform.forward * moveBackDistance;
         agent.SetDestination(moveBackPosition);
+        animator.SetBool("Walk", true);
     }
 
-    void AttackPlayer(Vector3 directionToPlayer)
+    void StopMovement()
     {
-    
-        Debug.Log("Ataque");
-        GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, Quaternion.identity);
-        arrow.transform.rotation = Quaternion.LookRotation(directionToPlayer);
+        agent.SetDestination(transform.position);
+        animator.SetBool("Walk", false);
+        animator.SetBool("Attack", false);
+    }
+
+    public override void AttackPlayer()
+    {
+        GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, Quaternion.LookRotation(directionToPlayer));
+    }
+
+    void LookAtPlayer()
+    {
+        Quaternion rotation = Quaternion.LookRotation(directionToPlayer);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5);
     }
 
     public void ActiveNavMesh()
