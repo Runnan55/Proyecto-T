@@ -8,7 +8,7 @@ public class Life : MonoBehaviour
 {
     public float maxTime = 600;
     private float currentTime;
-    private bool isInvincible = false;
+    public bool isInvincible = false;
 
     public TextMeshProUGUI timeText;
     public Image timeImage;
@@ -19,11 +19,15 @@ public class Life : MonoBehaviour
     public float invincibilityTime = 1;
     public GameObject shield;
 
+    public CharacterController playerController;
+
     void Start()
     {
         currentTime = maxTime;
         timeImage.fillAmount = 1;
+
         levelManager = FindObjectOfType<LevelManager>();
+        playerController = GetComponent<CharacterController>();
     }
 
     void Update()
@@ -76,6 +80,18 @@ public class Life : MonoBehaviour
         yield return new WaitForSeconds(invincibilityTime);
         isInvincible = false;
         shield.SetActive(false);
+    }
+
+    public IEnumerator Knockback(Vector3 direction, float duration, float speed)
+    {
+        float elapsed = 0;
+
+        while (elapsed < duration)
+        {
+            playerController.Move(direction * speed * Time.deltaTime);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
     }
 
     private void UpdateTimeText()

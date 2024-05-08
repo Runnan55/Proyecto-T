@@ -28,6 +28,8 @@ public class Enemy : MonoBehaviour
 
     public WaveManager waveManager;
 
+    public float knockbackDistance = 2f;
+    public float knockbackDuration = 0.1f;
 
     void Start()
     {
@@ -61,7 +63,13 @@ public class Enemy : MonoBehaviour
 
     public virtual void AttackPlayer()
     {
-        playerLife.ModifyTime(-damage);
+        if (!playerLife.isInvincible)
+        {
+            Vector3 knockbackDirection = (playerLife.transform.position - transform.position).normalized;
+            float knockbackSpeed = knockbackDistance / knockbackDuration;
+            playerLife.StartCoroutine(playerLife.Knockback(knockbackDirection, knockbackDuration, knockbackSpeed));
+            playerLife.ModifyTime(-damage);
+        }
     }
 
     //* TEXTO
