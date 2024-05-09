@@ -51,7 +51,7 @@ public class EnemyTpA : Enemy
         animator.SetBool("Attack", true);
         yield return new WaitForSeconds(1.5f);
         // Disparar
-        Shoot();
+       // Shoot();
 
         // Esperar antes de permitir otro teletransporte
         yield return new WaitForSeconds(waitTime);
