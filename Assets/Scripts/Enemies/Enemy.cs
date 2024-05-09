@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
     public GameObject floatingTextPrefab;
     public GameObject dropPrefab;
 
-    public WaveManager waveManager;
+    private WaveManager waveManager;
 
     public float knockbackDistance = 2f;
     public float knockbackDuration = 0.1f;
@@ -37,13 +37,13 @@ public class Enemy : MonoBehaviour
         waveManager = GameObject.FindGameObjectWithTag("WaveManager").GetComponent<WaveManager>(); 
     }
 
-       public void ReceiveDamage(float amount) // (en segundos)
+       public virtual void ReceiveDamage(float amount) // (en segundos)
     {
         health -= amount;
         if (health <= 0)
         {
             DropItem();
-            waveManager.EnemyDied();
+            //waveManager.EnemyDied();
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
         }

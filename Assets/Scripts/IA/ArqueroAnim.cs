@@ -5,117 +5,83 @@ using UnityEngine.AI;
 
 public class ArqueroAnim : Enemy
 {
-    public float detectionRange = 10f;
-    public float attackRange = 10f;
-    public float optimalDistance = 5f;
-    public float moveBackDistance = 3f;
-    public int shotsBeforeMove = 3;
-    public float attackCooldown = 2f;
+    public Transform player;
+    public float shootingRange = 10.0f;
+    public float backwardStep = 5.0f;
+    public float shootCooldown = 2.0f;
     public GameObject arrowPrefab;
     public Transform arrowSpawnPoint;
 
     private NavMeshAgent agent;
-    private GameObject player;
-    public Transform playerT;
-    private float attackTimer;
-    private int shotsFired = 0;
-    private Vector3 directionToPlayer;
+    private float lastShootTime = -999;
     private Animator animator;
-    private bool isAttacking = false;
+    
 
-    void Start()
+    private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        
         animator = GetComponent<Animator>();
-
     }
 
-    void Update()
+    private void Update()
     {
-        directionToPlayer = player.transform.position - transform.position;
-        float distanceToPlayer = directionToPlayer.magnitude;
-        directionToPlayer.y = 0; // Mantener el nivel de la mirada horizontal
+        float distance = Vector3.Distance(player.position, transform.position);
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
 
-        if (distanceToPlayer <= detectionRange)
+        // Siempre mirar hacia el jugador
+        transform.LookAt(player.position);
+
+        // Comprobación de línea de visión
+        if (!Physics.Raycast(transform.position, directionToPlayer, distance, LayerMask.GetMask("Obstruction")))
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, directionToPlayer, out hit, detectionRange))
+            if (Mathf.Abs(distance - shootingRange) < 0.5f)  // Está en la distancia perfecta
             {
-                if (hit.collider.CompareTag("Player"))
+                if (Time.time > lastShootTime + shootCooldown)
                 {
-                    LookAtPlayer();
-
-                    if (distanceToPlayer <= attackRange && !isAttacking)
-                    {
-                        if (!animator.GetBool("Attack"))
-                        {
-                            StartCoroutine(PerformAttackSequence());
-                        }
-                    }
-                    else if (distanceToPlayer > attackRange)
-                    {
-                        MoveToPlayer();
-                    }
+                    
+                    lastShootTime = Time.time;
+                    animator.SetBool("Attack", true);  // Activar animación de ataque
+                    animator.SetBool("Walk", false);   // Asegurarse de que no camina mientras ataca
                 }
             }
+            else
+            {
+                // Ajustar posición
+                Vector3 targetPosition = player.position - directionToPlayer * shootingRange;
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(targetPosition, out hit, 1.0f, NavMesh.AllAreas))
+                {
+                    agent.SetDestination(hit.position);
+                    animator.SetBool("Walk", true);  // Activar animación de caminar
+                }
+                animator.SetBool("Attack", false);  // Asegurarse de que no ataca mientras camina
+            }
+        }
+        else if (distance > shootingRange)
+        {
+            // Seguir al jugador si está fuera de rango
+            agent.SetDestination(player.position);
+            animator.SetBool("Walk", true);  // Caminar si el jugador está lejos
+            animator.SetBool("Attack", false);
         }
         else
         {
-            StopMovement();
+            // Detenerse y esperar
+            animator.SetBool("Walk", false);
+            animator.SetBool("Attack", false);
         }
     }
 
-    IEnumerator PerformAttackSequence()
+    void Shoot()
     {
-        isAttacking = true;
+        Debug.Log("Ataque");
+        GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
+        // Desactivar animación de caminar si está atacando
+        animator.SetBool("Walk", false);
+        // Reactivar animación de ataque si es necesario (opcional dependiendo de cómo esté configurada la animación)
         animator.SetBool("Attack", true);
-        animator.SetBool("Walk", false);
-
-        while (shotsFired < shotsBeforeMove)
-        {
-            AttackPlayer();
-            yield return new WaitForSeconds(attackCooldown);
-            shotsFired++;
-        }
-
-        shotsFired = 0;
-        MoveAwayFromPlayer();
-        isAttacking = false;
-        animator.SetBool("Attack", false);
     }
 
-    void MoveToPlayer()
-    {
-        agent.SetDestination(player.transform.position - directionToPlayer.normalized * optimalDistance);
-        animator.SetBool("Walk", true);
-    }
-
-    void MoveAwayFromPlayer()
-    {
-        Vector3 moveBackPosition = transform.position - transform.forward * moveBackDistance;
-        agent.SetDestination(moveBackPosition);
-        animator.SetBool("Walk", true);
-    }
-
-    void StopMovement()
-    {
-        agent.SetDestination(transform.position);
-        animator.SetBool("Walk", false);
-        animator.SetBool("Attack", false);
-    }
-
-    public override void AttackPlayer()
-    {
-        GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, Quaternion.LookRotation(directionToPlayer));
-    }
-
-    void LookAtPlayer()
-    {
-        Quaternion rotation = Quaternion.LookRotation(directionToPlayer);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5);
-    }
 
     public void ActiveNavMesh()
     {

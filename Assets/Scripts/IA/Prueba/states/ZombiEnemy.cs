@@ -104,6 +104,19 @@ public class ZombiEnemy : Enemy
         agent.SetDestination(targetPosition);
     }
 
+    public override void ReceiveDamage(float amount)
+    {
+        base.ReceiveDamage(amount);
+
+        if (animator.GetBool("Attack"))
+        {
+            animator.SetBool("Attack", false);
+            canAttack = false;
+            Invoke("ResetAttack", attackCooldown);  // Espera el tiempo de cooldown para poder atacar de nuevo
+            Debug.Log("atacado");
+        }
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Player") && canAttack)
