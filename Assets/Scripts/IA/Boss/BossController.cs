@@ -9,13 +9,21 @@ public class BossController : MonoBehaviour
     public GameObject enemyPrefab;
     public Transform[] spawnPoints; // Posiciones para el patrón 3
     public GameObject player;
-
+    public GameObject particlePrefab;
+   
+    public float damageRadius;
+    public float timeBetweenPatterns = 2f; // Tiempo entre cada repetición de patrones
+    public LayerMask playerLayer;
     private float attackDuration = 20f;
     private int currentPattern = 0;
+    private Life playerLife;
+
 
     void Start()
     {
         StartCoroutine(PatternRoutine());
+        playerLife = FindObjectOfType<Life>();
+
     }
 
     IEnumerator PatternRoutine()
@@ -27,48 +35,76 @@ public class BossController : MonoBehaviour
             switch (currentPattern)
             {
                 case 0:
-                    StartCoroutine(Pattern1());
                     Debug.Log("pat1");
+                    StartCoroutine(RepeatPattern(Pattern1, timeBetweenPatterns));
                     break;
                 case 1:
-                    StartCoroutine(Pattern2());
                     Debug.Log("pat2");
-
+                    StartCoroutine(RepeatPattern(Pattern2, timeBetweenPatterns));
                     break;
                 case 2:
-                    StartCoroutine(Pattern3());
                     Debug.Log("pat3");
-
+                    StartCoroutine(RepeatPattern(Pattern3, timeBetweenPatterns));
                     break;
             }
         }
     }
 
-    IEnumerator Pattern1()
+    IEnumerator RepeatPattern(System.Action pattern, float timeBetweenRepetitions)
     {
-        foreach (var point in attackPoints)
+        float elapsedTime = 0f;
+        while (elapsedTime < attackDuration)
         {
-            // Previsualización del ataque
-            // Podrías usar un efecto visual aquí
-            yield return new WaitForSeconds(1);
-            // Implementar el ataque real
+            pattern.Invoke();
+            elapsedTime += timeBetweenRepetitions;
+            yield return new WaitForSeconds(timeBetweenRepetitions);
         }
     }
 
-    IEnumerator Pattern2()
+    void Pattern1()
+    {
+        foreach (var point in attackPoints)
+        {
+            StartCoroutine(AttackPlayer(point.position));
+        }
+    }
+
+
+    void Pattern2()
     {
         Vector3 targetDirection = (player.transform.position - transform.position).normalized;
         GameObject fireball = Instantiate(fireballPrefab, transform.position, Quaternion.identity);
         fireball.GetComponent<Rigidbody>().velocity = targetDirection * 10f; // Ajustar la velocidad según necesites
-        yield return new WaitForSeconds(1);
     }
 
-    IEnumerator Pattern3()
+    void Pattern3()
     {
         foreach (var spawnPoint in spawnPoints)
         {
             Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
         }
-        yield return null;
+    }
+
+    IEnumerator AttackPlayer(Vector3 position)
+    {
+        // Activar el efecto visual (sistema de partículas)
+        GameObject particleEffect = Instantiate(particlePrefab, position, Quaternion.identity);
+        yield return new WaitForSeconds(1); // Duración de la previsualización
+        Destroy(particleEffect); // Desactivar el efecto visual
+
+        // Detectar y aplicar daño a los jugadores dentro del radio de daño
+        Collider[] hitColliders = Physics.OverlapSphere(position, damageRadius, playerLayer);
+        foreach (var collider in hitColliders)
+        {
+            if (collider.CompareTag("Player"))
+            {
+                // Restar vida al jugador utilizando el script Life si está presente
+                Life playerLife = collider.GetComponent<Life>();
+                if (playerLife != null)
+                {
+                    playerLife.ModifyTime(-damageRadius); // Ajusta el valor según sea necesario
+                }
+            }
+        }
     }
 }
