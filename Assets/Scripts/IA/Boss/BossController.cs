@@ -10,20 +10,19 @@ public class BossController : MonoBehaviour
     public Transform[] spawnPoints; // Posiciones para el patrón 3
     public GameObject player;
     public GameObject particlePrefab;
-   
+
     public float damageRadius;
     public float timeBetweenPatterns = 2f; // Tiempo entre cada repetición de patrones
     public LayerMask playerLayer;
     private float attackDuration = 20f;
     private int currentPattern = 0;
-    private Life playerLife;
 
 
     void Start()
     {
-        StartCoroutine(PatternRoutine());
-        playerLife = FindObjectOfType<Life>();
 
+        StartCoroutine(PatternRoutine());
+        Pattern1();
     }
 
     IEnumerator PatternRoutine()
@@ -50,6 +49,7 @@ public class BossController : MonoBehaviour
         }
     }
 
+
     IEnumerator RepeatPattern(System.Action pattern, float timeBetweenRepetitions)
     {
         float elapsedTime = 0f;
@@ -63,10 +63,7 @@ public class BossController : MonoBehaviour
 
     void Pattern1()
     {
-        foreach (var point in attackPoints)
-        {
-            StartCoroutine(AttackPlayer(point.position));
-        }
+        StartCoroutine(Pattern1Routine());
     }
 
 
@@ -84,25 +81,43 @@ public class BossController : MonoBehaviour
             Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
         }
     }
-
-    IEnumerator AttackPlayer(Vector3 position)
+    IEnumerator Pattern1Routine()
     {
-        // Activar el efecto visual (sistema de partículas)
-        GameObject particleEffect = Instantiate(particlePrefab, position, Quaternion.identity);
-        yield return new WaitForSeconds(1); // Duración de la previsualización
-        Destroy(particleEffect); // Desactivar el efecto visual
-
-        // Detectar y aplicar daño a los jugadores dentro del radio de daño
-        Collider[] hitColliders = Physics.OverlapSphere(position, damageRadius, playerLayer);
-        foreach (var collider in hitColliders)
+        while (true)
         {
-            if (collider.CompareTag("Player"))
+            Debug.Log("Starting Pattern 1");
+            StartCoroutine(PreviewAndExecutePattern1()); // Inicia la previsualización y el ataque
+            yield return new WaitForSeconds(timeBetweenPatterns); // Espera antes de pasar al siguiente patrón
+        }
+    }
+
+    IEnumerator PreviewAndExecutePattern1()
+    {
+        // Previsualización del ataque 1 segundo antes
+        Debug.Log("Previewing Pattern 1");
+        yield return new WaitForSeconds(1f);
+
+        // Ejecuta el ataque
+        Debug.Log("Executing Pattern 1");
+        foreach (var point in attackPoints)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(point.position, damageRadius, playerLayer);
+
+            foreach (Collider collider in hitColliders)
             {
-                // Restar vida al jugador utilizando el script Life si está presente
-                Life playerLife = collider.GetComponent<Life>();
-                if (playerLife != null)
+                // Comprobar si el objeto colisionado es el jugador
+                if (collider.gameObject == player)
                 {
-                    playerLife.ModifyTime(-damageRadius); // Ajusta el valor según sea necesario
+                    // Aplicar daño al jugador
+                    Debug.Log("Player hit by boss!");
+
+                    // Acceder al componente Life del jugador
+                    BossHealth playerLife = collider.gameObject.GetComponent<BossHealth>();
+                    if (playerLife != null)
+                    {
+                        // Reducir la vida del jugador (tiempo)
+                        playerLife.TakeDamage(60); // Cambia el valor de -60 según sea necesario
+                    }
                 }
             }
         }

@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class BossHealth : MonoBehaviour
 {
-    public int maxHealth = 1000;
-    public int currentHealth;
+    public float maxHealth = 1000f;
+    public float currentHealth;
     public Slider healthSlider;
 
     void Start()
@@ -17,7 +17,7 @@ public class BossHealth : MonoBehaviour
         healthSlider.value = currentHealth;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         currentHealth -= damage;
         healthSlider.value = currentHealth;

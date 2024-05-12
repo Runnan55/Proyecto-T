@@ -113,7 +113,8 @@ public class ZombiEnemy : Enemy
             animator.SetBool("Attack", false);
             canAttack = false;
             Invoke("ResetAttack", attackCooldown);  // Espera el tiempo de cooldown para poder atacar de nuevo
-            Debug.Log("atacado");
+            Debug.Log("Ataque cancelado");
+
         }
     }
 
