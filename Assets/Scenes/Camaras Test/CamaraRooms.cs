@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CamaraRooms : MonoBehaviour
 {
-    public Transform target; // La posición actual hacia la que la cámara debe moverse
-    public float smoothSpeed = 0.125f; // Velocidad de suavizado del movimiento de la cámara
+    public Transform target; // La posición y rotación actual hacia la que la cámara debe moverse
+    public float smoothSpeed = 0.125f; // Velocidad de suavizado del movimiento y rotación de la cámara
 
     private void LateUpdate()
     {
@@ -14,6 +14,10 @@ public class CamaraRooms : MonoBehaviour
             // Interpola la posición de la cámara hacia la posición del target
             Vector3 smoothedPosition = Vector3.Lerp(transform.position, target.position, smoothSpeed * Time.deltaTime);
             transform.position = smoothedPosition;
+
+            // Interpola la rotación de la cámara hacia la rotación del target
+            Quaternion smoothedRotation = Quaternion.Slerp(transform.rotation, target.rotation, smoothSpeed * Time.deltaTime);
+            transform.rotation = smoothedRotation;
         }
     }
 
