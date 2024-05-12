@@ -5705,6 +5705,10 @@ PrefabInstance:
       propertyPath: levelManager
       value: 
       objectReference: {fileID: 2043312838}
+    - target: {fileID: 3859693518273114668, guid: 3d03c281e7e5b5443b0764923b1e911e, type: 3}
+      propertyPath: m_shakeCamera
+      value: 
+      objectReference: {fileID: 1723028050}
     - target: {fileID: 5417627509057667976, guid: 3d03c281e7e5b5443b0764923b1e911e, type: 3}
       propertyPath: m_Name
       value: Player 2 Variant Variant (1)
@@ -13798,6 +13802,7 @@ GameObject:
   - component: {fileID: 1723028048}
   - component: {fileID: 1723028047}
   - component: {fileID: 1723028049}
+  - component: {fileID: 1723028050}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -13946,6 +13951,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 1284508107}
   smoothSpeed: 3
+--- !u!114 &1723028050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723028043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c3cf3e54278ce547b8adf68e34eba6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0.01
+  magnitude: 0.1
+  redFrame: {fileID: 0}
 --- !u!1001 &1727435043
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ public class SHAKECAMERA : MonoBehaviour
 
     public float magnitude = 1.5f;
 
+    public RectTransform redFrame;
     public IEnumerator shake()
     {
         Vector3 originalPosition = transform.localPosition;
@@ -19,13 +20,15 @@ public class SHAKECAMERA : MonoBehaviour
             float x = Random.Range(-1f, 1f) * magnitude;
 
             float y = Random.Range(-1f, 1f) * magnitude;
-            
-            transform.localPosition = new Vector3 (x, y, originalPosition.z);
+
+            transform.localPosition = new Vector3(originalPosition.x + x,originalPosition.y + y, originalPosition.z);
 
             elapsed += Time.deltaTime;
 
             yield return null;
         }
+
+        redFrame.gameObject.SetActive(false);
 
         transform.localPosition = originalPosition;
     }
