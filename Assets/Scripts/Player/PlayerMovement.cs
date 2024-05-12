@@ -43,11 +43,10 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
        public GameObject grimorio1;
        public GameObject grimorio2;
-
-
-    public  bool isDashing = false;
-            
-  
+       public  bool isDashing = false;
+       public Life lifeInstance;
+       public Renderer objectRenderer; // Asegúrate de asignar este valor en el inspector de Unity
+       private Color originalColor; // Para almacenar el color original del material
 
         private void Awake()
     {
@@ -66,22 +65,25 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
         verificarArma = true;
         cambioarma =true;
-        
 
+         originalColor = objectRenderer.material.color;
+        
+       
          
     }
 
 void Update()
 {
-    
-     
+
+   DamagePlayer();
+
     if (canMove)
     {
         MovimientoJugador();
     }   
 
 
-    if (Input.GetKeyDown(KeyCode.LeftShift) && !hasAttacked)
+    if (Input.GetKeyDown(KeyCode.LeftShift))
     {
         StartCoroutine(Dash());
     }
@@ -196,7 +198,7 @@ public void EfectoVisual()
     
 public void MovimientoJugador()
 {
-   if (controller.isGrounded)
+   if (canMove && controller.isGrounded)
     {
        // Get the player's input
     float horizontal = Input.GetAxisRaw("Horizontal");
@@ -311,7 +313,7 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
     // Mover al personaje
     controller.Move(moveDirection * Time.deltaTime);
 }
- IEnumerator Dash()
+IEnumerator Dash()
 {
     if (!isDashing && Time.time >= lastDashTime + dashTime)
     {
@@ -319,36 +321,33 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
         animator.SetBool("Dash", true);
         float startTime = Time.time;
 
-        // Obtener la dirección de entrada del jugador
-        Vector3 playerInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        // Obtener la entrada del usuario
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Obtener la dirección de la cámara
-        Vector3 cameraForward = Camera.main.transform.forward;
-        Vector3 cameraRight = Camera.main.transform.right;
-
-        // Eliminar la inclinación de la cámara
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward = cameraForward.normalized;
-        cameraRight = cameraRight.normalized;
-
-        // Calcular la dirección del dash relativa a la orientación de la cámara
-        Vector3 dashDirection = cameraForward * playerInput.z + cameraRight * playerInput.x;
+        // Usar la dirección hacia adelante del jugador para el dash si no se presiona ninguna tecla,
+        // de lo contrario, usar la entrada del usuario para determinar la dirección
+        Vector3 dashDirection = (horizontalInput == 0 && verticalInput == 0) ? transform.forward : (horizontalInput * Camera.main.transform.right + verticalInput * Camera.main.transform.forward).normalized;
 
         while (Time.time < startTime + dashTime)
         {
-            playerMovement.controller.Move(dashDirection * DashSpeed * Time.deltaTime);
+            // Calcular la fracción del tiempo de dash que ha pasado
+            float fractionOfDashTimePassed = (Time.time - startTime) / dashTime;
+
+            // Interpolar linealmente la velocidad del dash desde DashSpeed hasta 0
+            float currentDashSpeed = Mathf.Lerp(DashSpeed, 0, fractionOfDashTimePassed);
+
+            playerMovement.controller.Move(dashDirection * currentDashSpeed * Time.deltaTime);
             yield return null;
         }
-            animator.SetBool("Dash", false);
+        animator.SetBool("Dash", false);
 
-         yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2);
 
         lastDashTime = Time.time;
         isDashing = false;
     }
 }
-
    
 
    public void ApplyEffect(StatusEffect effect)
@@ -359,5 +358,24 @@ else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y
     {
         effect.RemoveEffect(gameObject);
     }
+
+
+   public void DamagePlayer()
+{
+    if (lifeInstance != null && lifeInstance.DamagePlayer == true)
+    {
+        animator.SetBool("Damage", true);
+        objectRenderer.material.color = Color.red; // Cambia el color del material a rojo
+    }
+    else if (lifeInstance != null && lifeInstance.DamagePlayer == false)
+    {
+        animator.SetBool("Damage", false);
+        objectRenderer.material.color = originalColor; // Restaura el color original del material
+    }
+    else if (lifeInstance == null)
+    {
+      
+    }
+}
 }
 
