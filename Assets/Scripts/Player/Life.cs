@@ -25,6 +25,8 @@ public class Life : MonoBehaviour
 
     public bool DamagePlayer = false;
 
+    public SHAKECAMERA m_shakeCamera;
+
     void Start()
     {
         currentTime = maxTime;
@@ -66,6 +68,7 @@ public class Life : MonoBehaviour
         if (isInvincible && amount < 0) return;
   
         currentTime += amount;
+        StartCoroutine(m_shakeCamera.shake());
         if (currentTime > maxTime)
         {
             currentTime = maxTime;        
