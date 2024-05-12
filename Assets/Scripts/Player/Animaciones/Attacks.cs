@@ -181,16 +181,7 @@ var vfx1G2 = vfxObject2G2.GetComponent<VisualEffect>();
 
 
     }
-public void  slow()
-{
-    PlayerMovement.instance.speed = PlayerMovement.instance.reduccionVelocidad;
-   
-}
-public void  Resetslow()
-{
-    PlayerMovement.instance.speed = PlayerMovement.instance.speed + 15f;
-   
-}
+
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -289,6 +280,17 @@ public void  Resetslow()
        Resetslow();  
          PlayerMovement.cambioarma = true;
     }
+
+    public void  slow()
+{
+    PlayerMovement.instance.speed = PlayerMovement.instance.reduccionVelocidad;
+   
+}
+public void  Resetslow()
+{
+    PlayerMovement.instance.speed = PlayerMovement.instance.speed + 15f;
+   
+}
  
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

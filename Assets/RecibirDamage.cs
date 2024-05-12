@@ -2,20 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class dash : StateMachineBehaviour
+public class RecibirDamage : StateMachineBehaviour
 {
+    private Life lifeInstance;
 
-  private Life lifeInstance;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-      override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       PlayerMovement.hasRotated = false;   
-    
        lifeInstance = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
 
-
-        Invulnerable();
-        
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -27,26 +22,17 @@ public class dash : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-      Vulnerable();
-    
+        NoDamage();
+        animator.SetBool("Damage", false);
     }
 
-    void Invulnerable()
+        void NoDamage()
     {
         if (lifeInstance != null)
         {
-            lifeInstance.isInvincible = true;
+            lifeInstance.DamagePlayer = false;
         }
     }
-
-    void Vulnerable()
-    {
-        if (lifeInstance != null)
-        {
-            lifeInstance.isInvincible = false;
-        }
-    }
-
 
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

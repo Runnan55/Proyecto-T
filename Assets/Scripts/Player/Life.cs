@@ -19,7 +19,11 @@ public class Life : MonoBehaviour
     public float invincibilityTime = 1;
     public GameObject shield;
 
-    public CharacterController playerController;
+    public CharacterController playerController;  
+
+    PlayerMovement playerMovement;
+
+    public bool DamagePlayer = false;
 
     void Start()
     {
@@ -56,21 +60,28 @@ public class Life : MonoBehaviour
 
     public void ModifyTime(float amount)
     {
+       
+    DamagePlayer = true;
+    
         if (isInvincible && amount < 0) return;
-
+  
         currentTime += amount;
         if (currentTime > maxTime)
         {
-            currentTime = maxTime;
+            currentTime = maxTime;        
+ 
         }
         else if (currentTime < 0)
-        {
+        {            
             levelManager.OnLevelFailed();
             currentTime = 0;
         }
         UpdateTimeImage();
-
-        if (amount < 0) StartCoroutine(InvincibilityFrames());
+   
+        if (amount < 0) StartCoroutine(InvincibilityFrames());   
+   
+        
+        
     }
 
     IEnumerator InvincibilityFrames()
@@ -82,17 +93,21 @@ public class Life : MonoBehaviour
         shield.SetActive(false);
     }
 
-    public IEnumerator Knockback(Vector3 direction, float duration, float speed)
-    {
-        float elapsed = 0;
+public IEnumerator Knockback(Vector3 direction, float duration, float speed)
+{
+    float elapsed = 0;
 
-        while (elapsed < duration)
-        {
-            playerController.Move(direction * speed * Time.deltaTime);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
+    while (elapsed < duration)
+    {
+        float t = elapsed / duration;
+        // Aplicar la función de suavizado
+        t = 1 - (1 - t) * (1 - t);
+
+        playerController.Move(direction * speed * Time.deltaTime * t);
+        elapsed += Time.deltaTime;
+        yield return null;
     }
+}
 
     private void UpdateTimeText()
     {
