@@ -132,7 +132,7 @@ public class ArqueroAnim : Enemy
     {
         empujar = true;
         enabled = true;
-        animator.enabled = true;
+        animator.applyRootMotion = true;
 
     }
 
@@ -140,7 +140,7 @@ public class ArqueroAnim : Enemy
     {
         empujar = false;
         enabled = false;
-        animator.enabled = false;
+        animator.applyRootMotion = false;
 
     }
 }

@@ -137,7 +137,7 @@ public class ZombiEnemy : Enemy
 
         }
     }
-    private void Empuje()
+    public void Empuje()
     {
         Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
         if (enemyRigidbody != null)
@@ -169,18 +169,18 @@ public class ZombiEnemy : Enemy
 
         agent.enabled = true;
 
-        animator.enabled = true;
         animator.applyRootMotion = true;
 
         empujar = true;
+        Debug.Log("fffffffffff");
+
     }
 
     public void DesactiveNavMesh()
     {
         empujar = false;
-
+        Debug.Log("sadsdasd");
         animator.applyRootMotion = false;
-        animator.enabled = false;
         agent.enabled = false;
     }
 }

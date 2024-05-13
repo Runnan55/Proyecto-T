@@ -104,15 +104,15 @@ public class EnemyTpA : Enemy
 
     public void ActiveNavMesh()
     {
-        agent.enabled = true;
-        animator.enabled = true;
+        enabled = true;
+        animator.applyRootMotion = true;
 
     }
 
     public void DesactiveNavMesh()
     {
-        agent.enabled = false;
-        animator.enabled = false;
+        enabled = false;
+        animator.applyRootMotion = false;
 
     }
 }

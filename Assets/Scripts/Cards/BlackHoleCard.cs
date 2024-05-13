@@ -64,10 +64,10 @@ public class BlackHoleCard : BaseCard
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, attractionRadius);
         foreach (var hitCollider in hitColliders)
         {
-            SimpleEnemy enemy = hitCollider.GetComponent<SimpleEnemy>();
-            ChargeEnemy charger = hitCollider.GetComponent<ChargeEnemy>();
-            DistanceEnemy distance = hitCollider.GetComponent<DistanceEnemy>();
-            TpEnemy tp = hitCollider.GetComponent<TpEnemy>();
+            ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
+            CE charger = hitCollider.GetComponent<CE>();
+            ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
+            EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
             if (enemy != null)
             {
                 // Reinicia la velocidad lineal y angular
@@ -97,10 +97,10 @@ public class BlackHoleCard : BaseCard
         foreach (var hitCollider in hitColliders)
         {
             Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
-            SimpleEnemy enemy = hitCollider.GetComponent<SimpleEnemy>();
-            ChargeEnemy charger = hitCollider.GetComponent<ChargeEnemy>();
-            DistanceEnemy distance = hitCollider.GetComponent<DistanceEnemy>();
-            TpEnemy tp = hitCollider.GetComponent<TpEnemy>();
+            ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
+            CE charger = hitCollider.GetComponent<CE>();
+            ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
+            EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
             if (rb != null)
             {
                 // Reinicia la velocidad lineal y angular
