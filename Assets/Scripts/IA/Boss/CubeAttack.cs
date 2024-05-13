@@ -5,6 +5,13 @@ using UnityEngine;
 public class CubeAttack : MonoBehaviour
 {
     public float damageAmount = 10f; // Cantidad de daño que se aplica al jugador
+    public float destroyDelay = 2f;   // Retraso antes de destruir el cubo
+
+    void Start()
+    {
+        // Destruir el cubo después de un retraso, independientemente de si colisiona con el jugador o no
+        Destroy(gameObject, destroyDelay);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -20,9 +27,6 @@ public class CubeAttack : MonoBehaviour
                 // Aplicar daño al jugador
                 playerLife.ModifyTime(-damageAmount);
             }
-
-            // Destruir el cubo después de la colisión
-            Destroy(gameObject);
         }
     }
 }

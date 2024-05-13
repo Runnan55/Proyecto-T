@@ -112,11 +112,11 @@ public class BossController : MonoBehaviour
                     Debug.Log("Player hit by boss!");
 
                     // Acceder al componente Life del jugador
-                    BossHealth playerLife = collider.gameObject.GetComponent<BossHealth>();
+                    Life playerLife = collider.gameObject.GetComponent<Life>();
                     if (playerLife != null)
                     {
                         // Reducir la vida del jugador (tiempo)
-                        playerLife.TakeDamage(60); // Cambia el valor de -60 según sea necesario
+                        playerLife.ModifyTime(-60); // Cambia el valor de -60 según sea necesario
                     }
                 }
             }

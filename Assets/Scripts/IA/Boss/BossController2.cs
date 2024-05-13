@@ -52,18 +52,10 @@ public class BossController2 : MonoBehaviour
 
     void ExecuteCircularAttack()
     {
-        
+        StartCoroutine(Pattern1Routine());
 
     }
-    IEnumerator Pattern1Routine()
-    {
-        while (true)
-        {
-            Debug.Log("Starting Pattern 1");
-            StartCoroutine(PreviewAndExecutePattern1()); // Inicia la previsualización y el ataque
-            yield return new WaitForSeconds(timeBetweenPatterns); // Espera antes de pasar al siguiente patrón
-        }
-    }
+
 
     IEnumerator PreviewAndExecutePattern1()
     {
@@ -86,14 +78,23 @@ public class BossController2 : MonoBehaviour
                     Debug.Log("Player hit by boss!");
 
                     // Acceder al componente Life del jugador
-                    BossHealth playerLife = collider.gameObject.GetComponent<BossHealth>();
+                    Life playerLife = collider.gameObject.GetComponent<Life>();
                     if (playerLife != null)
                     {
                         // Reducir la vida del jugador (tiempo)
-                        playerLife.TakeDamage(60); // Cambia el valor de -60 según sea necesario
+                        playerLife.ModifyTime(-damageAmount); // Cambia el valor de -60 según sea necesario
                     }
                 }
             }
+        }
+    }
+    IEnumerator Pattern1Routine()
+    {
+        while (true)
+        {
+            Debug.Log("Starting Pattern 1");
+            StartCoroutine(PreviewAndExecutePattern1()); // Inicia la previsualización y el ataque
+            yield return new WaitForSeconds(timeBetweenPatterns); // Espera antes de pasar al siguiente patrón
         }
     }
 
