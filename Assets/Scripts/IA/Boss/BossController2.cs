@@ -1,115 +1,105 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BossController2 : MonoBehaviour
 {
-    public GameObject cubePrefab; // Prefab del cubo para el primer patrón de ataque
-    public GameObject player;
+    public GameObject punchPrefab;
+    public GameObject[] circleObjects; // Array para los cinco círculos
+    public float punchCooldown = 3f;
+    public float circleCooldown = 5f;
+    public float punchRange = 2f;
+    public float circleRange = 3f;
 
-
-    public float attackCooldown = 3f; // Tiempo entre ataques
-    public float circularAttackRadius = 5f; // Radio de las zonas de ataque circular
-
-    public Transform[] attackZones; // Array de transforms para las posiciones de las zonas de ataque
-    public float damageRadius;
-    public float timeBetweenPatterns = 2f; // Tiempo entre cada repetición de patrones
-
-    public LayerMask playerLayer;
-    float damageAmount = 10f;
+    private Transform player;
+    private NavMeshAgent navMeshAgent;
     private float lastAttackTime;
+    private bool isAttacking;
+
+    void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        lastAttackTime = Time.time;
+        isAttacking = false;
+
+        // Desactivar los círculos al inicio
+        foreach (GameObject circle in circleObjects)
+        {
+            circle.SetActive(false);
+        }
+    }
 
     void Update()
     {
-        if (Time.time - lastAttackTime >= attackCooldown)
+        if (player != null && !isAttacking)
         {
-            // Realizar un ataque aleatorio
-            int attackPattern = Random.Range(1, 3);
-            switch (attackPattern)
+            float distance = Vector3.Distance(transform.position, player.position);
+
+            // Persigue al jugador
+            navMeshAgent.SetDestination(player.position);
+
+            // Si está lo suficientemente cerca y ha pasado suficiente tiempo desde el último ataque
+            if (Time.time - lastAttackTime > punchCooldown && distance < punchRange)
             {
-                case 1:
-                    ExecuteFrontalAttack();
-                    break;
-                case 2:
-                    ExecuteCircularAttack();
-                    break;
-            }
-
-            lastAttackTime = Time.time;
-        }
-    }
-
-    void ExecuteFrontalAttack()
-    {
-        // Generar dos puntos aleatorios en frente del jefe
-        Vector3 attackPoint1 = transform.position + transform.forward * 5f;
-        Vector3 attackPoint2 = transform.position + transform.forward * 7f;
-
-        // Instanciar los cubos en los puntos de ataque
-        Instantiate(cubePrefab, attackPoint1, Quaternion.identity);
-        Instantiate(cubePrefab, attackPoint2, Quaternion.identity);
-    }
-
-    void ExecuteCircularAttack()
-    {
-        StartCoroutine(Pattern1Routine());
-
-    }
-
-
-    IEnumerator PreviewAndExecutePattern1()
-    {
-        // Previsualización del ataque 1 segundo antes
-        Debug.Log("Previewing Pattern 1");
-        yield return new WaitForSeconds(1f);
-
-        // Cambiar el color de las zonas de ataque a rojo
-        foreach (var zone in attackZones)
-        {
-            zone.GetComponent<Renderer>().material.color = Color.red;
-        }
-
-        // Ejecuta el ataque
-        Debug.Log("Executing Pattern 1");
-        foreach (var point in attackZones)
-        {
-            Collider[] hitColliders = Physics.OverlapSphere(point.position, damageRadius, playerLayer);
-
-            foreach (Collider collider in hitColliders)
-            {
-                // Comprobar si el objeto colisionado es el jugador
-                if (collider.gameObject == player)
-                {
-                    // Aplicar daño al jugador
-                    Debug.Log("Player hit by boss!");
-
-                    // Acceder al componente Life del jugador
-                    Life playerLife = collider.gameObject.GetComponent<Life>();
-                    if (playerLife != null)
-                    {
-                        // Reducir la vida del jugador (tiempo)
-                        playerLife.ModifyTime(-damageAmount); // Cambia el valor de -60 según sea necesario
-                    }
-                }
+                Attack();
             }
         }
-
-        // Devolver el color original de las zonas de ataque
-        yield return new WaitForSeconds(0.5f); // Tiempo de espera para mantener el color rojo
-        foreach (var zone in attackZones)
-        {
-            zone.GetComponent<Renderer>().material.color = Color.white; // Puedes cambiar a cualquier otro color si lo deseas
-        }
     }
 
-    IEnumerator Pattern1Routine()
+    void Attack()
     {
-        while (true)
+        isAttacking = true;
+        lastAttackTime = Time.time;
+
+        int attackType = Random.Range(0, 2); // Genera un número aleatorio entre 0 y 1
+
+        switch (attackType)
         {
-            Debug.Log("Starting Pattern 1");
-            StartCoroutine(PreviewAndExecutePattern1()); // Inicia la previsualización y el ataque
-            yield return new WaitForSeconds(timeBetweenPatterns); // Espera antes de pasar al siguiente patrón
+            case 0:
+                StartCoroutine(Punch());
+                break;
+            case 1:
+                StartCoroutine(CircleAttack());
+                break;
+            default:
+                break;
         }
     }
 
+    IEnumerator Punch()
+    {
+        // Lógica de ataque de puñetazo
+        // Instancia el prefab del puñetazo, aplica daño, etc.
+        Debug.Log("Punch!");
+
+        // Calcular la dirección hacia el jugador
+        Vector3 direction = (player.position - transform.position).normalized;
+
+        // Instanciar los cubos del ataque de puñetazo
+        Instantiate(punchPrefab, transform.position + direction, Quaternion.identity);
+        yield return new WaitForSeconds(1f); // Tiempo de espera para el ataque
+        isAttacking = false;
+    }
+
+    IEnumerator CircleAttack()
+    {
+        // Lógica de ataque circular
+        // Activar los círculos para mostrarlos durante el ataque
+        foreach (GameObject circle in circleObjects)
+        {
+            circle.SetActive(true);
+        }
+
+        yield return new WaitForSeconds(2f); // Tiempo de espera para el ataque
+
+        // Desactivar los círculos después del ataque
+        foreach (GameObject circle in circleObjects)
+        {
+            circle.SetActive(false);
+        }
+
+        isAttacking = false;
+    }
 }
