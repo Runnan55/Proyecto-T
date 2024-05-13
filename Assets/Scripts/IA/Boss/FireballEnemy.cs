@@ -8,9 +8,9 @@ public class FireballEnemy : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Life player = other.gameObject.GetComponent<Life>();
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Player"))
         {
-            player.ModifyTime(50f);
+            player.ModifyTime(-50f);
 
             Debug.Log("Golpe a un enemigo");
             Destroy(gameObject); // Destruye el objeto que golpea

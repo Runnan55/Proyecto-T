@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    private float _hp = 20f;
+    public float _hp = 20f;
     public float health {
         get { return _hp; }
         set 
@@ -71,6 +71,7 @@ public class Enemy : MonoBehaviour
             playerLife.ModifyTime(-damage);
         }
     }
+   
 
     //* TEXTO
     void ShowFloatingText(float amount)

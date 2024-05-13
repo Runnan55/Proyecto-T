@@ -10,6 +10,7 @@ public class BossController : MonoBehaviour
     public Transform[] spawnPoints; // Posiciones para el patrón 3
     public GameObject player;
     public GameObject particlePrefab;
+    public GameObject cilindroPrefab;
 
     public float damageRadius;
     public float timeBetweenPatterns = 2f; // Tiempo entre cada repetición de patrones
@@ -63,6 +64,7 @@ public class BossController : MonoBehaviour
 
     void Pattern1()
     {
+
         StartCoroutine(Pattern1Routine());
     }
 
@@ -83,25 +85,35 @@ public class BossController : MonoBehaviour
     }
     IEnumerator Pattern1Routine()
     {
-        while (true)
+        float elapsedTime = 0f;
+
+        // Mientras el tiempo transcurrido sea menor que attackDuration
+        while (elapsedTime < attackDuration)
         {
             Debug.Log("Starting Pattern 1");
             StartCoroutine(PreviewAndExecutePattern1()); // Inicia la previsualización y el ataque
             yield return new WaitForSeconds(timeBetweenPatterns); // Espera antes de pasar al siguiente patrón
+            elapsedTime += timeBetweenPatterns; // Incrementa el tiempo transcurrido
         }
+        ChangeAttackPointColor(Color.white);
+
     }
 
     IEnumerator PreviewAndExecutePattern1()
     {
         // Previsualización del ataque 1 segundo antes
         Debug.Log("Previewing Pattern 1");
+
         yield return new WaitForSeconds(1f);
+
+        // Cambiar el color de los cilindros
+        ChangeAttackPointColor(Color.red); // Cambia el color según lo necesites
 
         // Ejecuta el ataque
         Debug.Log("Executing Pattern 1");
         foreach (var point in attackPoints)
         {
-            Collider[] hitColliders = Physics.OverlapSphere(point.position, damageRadius, playerLayer);
+            Collider[] hitColliders = Physics.OverlapSphere(point.transform.position, damageRadius, playerLayer);
 
             foreach (Collider collider in hitColliders)
             {
@@ -119,6 +131,23 @@ public class BossController : MonoBehaviour
                         playerLife.ModifyTime(-60); // Cambia el valor de -60 según sea necesario
                     }
                 }
+            }
+        }
+
+        // Restaurar el color de los cilindros después del ataque
+        ChangeAttackPointColor(Color.white); // Restaura el color original de los cilindros
+
+        yield return new WaitForSeconds(2f); // Puedes ajustar el tiempo de espera según necesites
+    }
+
+    void ChangeAttackPointColor(Color color)
+    {
+        foreach (var point in attackPoints)
+        {
+            Renderer renderer = point.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = color;
             }
         }
     }

@@ -63,6 +63,12 @@ public class BossController2 : MonoBehaviour
         Debug.Log("Previewing Pattern 1");
         yield return new WaitForSeconds(1f);
 
+        // Cambiar el color de las zonas de ataque a rojo
+        foreach (var zone in attackZones)
+        {
+            zone.GetComponent<Renderer>().material.color = Color.red;
+        }
+
         // Ejecuta el ataque
         Debug.Log("Executing Pattern 1");
         foreach (var point in attackZones)
@@ -87,7 +93,15 @@ public class BossController2 : MonoBehaviour
                 }
             }
         }
+
+        // Devolver el color original de las zonas de ataque
+        yield return new WaitForSeconds(0.5f); // Tiempo de espera para mantener el color rojo
+        foreach (var zone in attackZones)
+        {
+            zone.GetComponent<Renderer>().material.color = Color.white; // Puedes cambiar a cualquier otro color si lo deseas
+        }
     }
+
     IEnumerator Pattern1Routine()
     {
         while (true)

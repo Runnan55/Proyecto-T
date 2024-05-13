@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 2470151328465008234}
   - component: {fileID: 4668140650039345346}
   - component: {fileID: 2890264543519675846}
+  - component: {fileID: 3437050653987121560}
   - component: {fileID: 8908359803936041901}
   - component: {fileID: 1178873458941113230}
-  - component: {fileID: -1740481055263274157}
   m_Layer: 0
   m_Name: FireballEnemy
   m_TagString: Projectile
@@ -87,6 +87,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3437050653987121560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5140770012291937909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3bcd6a5b12171643b75633dd354854d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &8908359803936041901
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -135,18 +147,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-1740481055263274157
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5140770012291937909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3d2af280e85dba449807fb224887ae2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &8345127762217538607
 PrefabInstance:
   m_ObjectHideFlags: 0
