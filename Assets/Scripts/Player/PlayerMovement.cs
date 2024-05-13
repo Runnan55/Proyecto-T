@@ -48,6 +48,11 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public Renderer objectRenderer; // Asegúrate de asignar este valor en el inspector de Unity
        private Color originalColor; // Para almacenar el color original del material
 
+       ZombiEnemy zombiEnemy;
+
+       public float puntosUltimate = 0f;
+       private float maxPuntosUltimate= 50f;
+
         private void Awake()
     {
         instance = this;
@@ -74,6 +79,8 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
 void Update()
 {
+
+    Ultimate();
 
    DamagePlayer();
 
@@ -149,7 +156,7 @@ public void AtaquesGrimorios()
     }
 
 //Grimorio2
-   if (Input.GetButtonDown("Fire1") && !verificarArma)
+   if (Input.GetButtonDown("Fire1") && !verificarArma && puntosUltimate == maxPuntosUltimate)
     {
         isAttackingP = true;
     }
@@ -377,5 +384,102 @@ IEnumerator Dash()
       
     }
 }
+ 
+    public void IncrementFloatVariable()
+    {
+   
+
+    if (puntosUltimate < maxPuntosUltimate)
+    {
+       
+        puntosUltimate += 1f;
+    }
+    else
+    {
+        
+    }
+
+
+    }
+
+    private float buttonPressTime = 0f;
+private bool isButtonPressed = false;
+
+    public void Ultimate()
+    {
+        if (puntosUltimate >= maxPuntosUltimate && verificarArma == true)
+        {
+            if (Input.GetButton("Fire1"))
+             {
+             if (!isButtonPressed)
+             {
+                isButtonPressed = true;
+                  buttonPressTime = 0f;
+             }
+             buttonPressTime += Time.deltaTime;
+             if (buttonPressTime >= 1f)
+             {
+                 GrimorioDistancia2();
+               
+               
+                 Debug.Log("Ultimate");
+                buttonPressTime = 0f;
+                puntosUltimate = 0f;
+             }
+    }
+        else if (puntosUltimate >= maxPuntosUltimate && verificarArma == false)
+        {
+         if (Input.GetButton("Fire1"))
+             {
+             if (!isButtonPressed)
+             {
+                isButtonPressed = true;
+                  buttonPressTime = 0f;
+             }
+             buttonPressTime += Time.deltaTime;
+             if (buttonPressTime >= 1f)
+            {       
+
+                buttonPressTime = 0f;
+                puntosUltimate = 0f;
+             }
+         }
+         
+        else   
+        {
+        isButtonPressed = false;
+        }
+
+      }
+    
+     }
+    }  
+
+public void GrimorioDistancia2()
+{
+    GameObject A = GameObject.Find("ColliderGrimorios");
+    GameObject B = GameObject.Find("ColliderGrimoriosB"); // Reemplaza "NombreDeTuGameObjectB" con el nombre real de tu GameObject
+    GameObject C = GameObject.Find("ColliderGrimoriosC"); // Reemplaza "NombreDeTuGameObjectC" con el nombre real de tu GameObject
+    GameObject jugador = GameObject.FindGameObjectWithTag(etiquetaJugador);
+    if (jugador != null)
+    {
+        Vector3 direccion = jugador.transform.forward;
+        // Instancia un boomerang en la posición de cada GameObject
+        InstantiateBoomerangAtPosition(A.transform.position, direccion, boomerangPrefab);
+        InstantiateBoomerangAtPosition(B.transform.position, direccion, boomerangPrefab);
+        InstantiateBoomerangAtPosition(C.transform.position, direccion, boomerangPrefab);
+    }   
 }
 
+
+private void InstantiateBoomerangAtPosition(Vector3 position, Vector3 direction, GameObject boomerangPrefab)
+{
+    GameObject boomerang = Instantiate(boomerangPrefab, position, Quaternion.identity);
+    boomerang.GetComponent<Boomerang>().IniciarMovimiento(direction);
+}
+
+
+
+
+
+}

@@ -19,7 +19,7 @@ public class Life : MonoBehaviour
 
     public float invincibilityTime = 1;
     public GameObject shield;
-    public GameObject damagePanel;
+
 
     public CharacterController playerController;  
 
@@ -65,13 +65,16 @@ public class Life : MonoBehaviour
     public void ModifyTime(float amount)
     {
        
-    DamagePlayer = true;
+        DamagePlayer = true;
     
         if (isInvincible && amount < 0) return;
   
         currentTime += amount;
+
         StartCoroutine(m_shakeCamera.shake());
-        GameObject damageInstance = Instantiate(damagePanel, canvas.transform);
+        
+     
+
         if (currentTime > maxTime)
         {
             currentTime = maxTime;        

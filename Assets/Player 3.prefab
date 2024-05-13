@@ -3572,7 +3572,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6407859862860861557}
-  - component: {fileID: 1012577971408718351}
   m_Layer: 7
   m_Name: Modelo
   m_TagString: Untagged
@@ -3597,27 +3596,6 @@ Transform:
   - {fileID: 1494377404364255457}
   m_Father: {fileID: 660693657161052109}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1012577971408718351
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6027674702816627407}
-  m_Enabled: 0
-  m_Avatar: {fileID: 9000000, guid: 7c3cd409064dcba4fa5c64d784bd8301, type: 3}
-  m_Controller: {fileID: 9100000, guid: 950f7c78ab7bee949997d98f661acf8e, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6157040771261135284
 GameObject:
   m_ObjectHideFlags: 0
@@ -6425,6 +6403,8 @@ MonoBehaviour:
   grimorio1: {fileID: 0}
   grimorio2: {fileID: 0}
   isDashing: 0
+  lifeInstance: {fileID: 0}
+  objectRenderer: {fileID: 0}
 --- !u!114 &4108188701473834811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6494,13 +6474,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxTime: 600
   isInvincible: 0
+  canvas: {fileID: 0}
   timeText: {fileID: 0}
   timeImage: {fileID: 0}
   deathScreen: {fileID: 0}
   levelManager: {fileID: 0}
   invincibilityTime: 1
   shield: {fileID: 7903729103191879855}
+  damagePanel: {fileID: 0}
   playerController: {fileID: 0}
+  DamagePlayer: 0
+  m_shakeCamera: {fileID: 0}
 --- !u!114 &6467810922184340888
 MonoBehaviour:
   m_ObjectHideFlags: 0
