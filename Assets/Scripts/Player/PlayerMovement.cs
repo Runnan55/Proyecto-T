@@ -53,6 +53,8 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public float puntosUltimate = 0f;
        private float maxPuntosUltimate= 50f;
 
+       public Transform halo;
+
         private void Awake()
     {
         instance = this;
@@ -79,64 +81,57 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
 void Update()
 {
-
     Ultimate();
-
-   DamagePlayer();
+    DamagePlayer();
 
     if (canMove)
     {
         MovimientoJugador();
     }   
 
-
     if (Input.GetKeyDown(KeyCode.LeftShift))
     {
         StartCoroutine(Dash());
     }
 
- AtaquesGrimorios();
+    AtaquesGrimorios();
 
-   if (Input.GetMouseButtonDown(0)) 
-   {
-    enterAttack = true;
-    hasAttacked = true;
-      
+    if (Input.GetMouseButtonDown(0)) 
+    {
+        enterAttack = true;
+        hasAttacked = true;
+    } 
+
+    Plane plane = new Plane(Vector3.up, halo.position);
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    RaycastHit hit;
+    float distance;
 
-    if (Physics.Raycast(ray, out hit) && !hasRotated)
-     {
-        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+    if (plane.Raycast(ray, out distance))
+    {
+        Vector3 targetPosition = ray.GetPoint(distance);
 
-        // Calcular la dirección hacia la que el jugador debe mirar
-        Vector3 directionToLook = (targetPosition - transform.position).normalized;
+        // Calcular la dirección hacia la que el halo debe mirar
+        Vector3 directionToLook = (targetPosition - halo.position).normalized;
 
         // Crear una rotación que mire en la dirección del objetivo
         Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
 
-        // Aplicar la rotación al jugador
-        transform.rotation = targetRotation;
+        // Aplicar la rotación al halo
+        halo.rotation = targetRotation;
+    }
 
-           hasRotated = true;
-           
-     }
-   } 
-   
-        //vfx.transform.rotation = this.transform.rotation;
-         CambioArma();
+    CambioArma();
 
-         if (verificarArma)
-{
-    grimorio1.SetActive(true);
-    grimorio2.SetActive(false);
-}
-else
-{
-    grimorio1.SetActive(false);
-    grimorio2.SetActive(true);
-}
-
+    if (verificarArma)
+    {
+        grimorio1.SetActive(true);
+        grimorio2.SetActive(false);
+    }
+    else
+    {
+        grimorio1.SetActive(false);
+        grimorio2.SetActive(true);
+    }
 }
 public void CambioArma()
 {
