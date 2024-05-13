@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    public DoorManager doorManager;
     public float _hp = 20f;
     public float health {
         get { return _hp; }
@@ -16,6 +17,7 @@ public class Enemy : MonoBehaviour
             if (health == 0)
             {
                 DropItem();
+                doorManager.EnemyDefeated(); 
                 Destroy(gameObject);
             }
         }    
@@ -35,6 +37,7 @@ public class Enemy : MonoBehaviour
     {
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
         waveManager = GameObject.FindGameObjectWithTag("WaveManager").GetComponent<WaveManager>(); 
+        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
     }
 
        public virtual void ReceiveDamage(float amount) // (en segundos)
