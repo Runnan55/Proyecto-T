@@ -60,6 +60,12 @@ public class EnemyTpA : Enemy
         nextFireTime = Time.time + 1f / fireRate;
     }
 
+    public override void ReceiveDamage(float amount)
+    {
+        base.ReceiveDamage(amount);        
+    }
+
+
     void Shoot()
     {
         // Activar la animación de ataque
@@ -99,10 +105,14 @@ public class EnemyTpA : Enemy
     public void ActiveNavMesh()
     {
         agent.enabled = true;
+        animator.enabled = true;
+
     }
 
     public void DesactiveNavMesh()
     {
         agent.enabled = false;
+        animator.enabled = false;
+
     }
 }

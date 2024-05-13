@@ -13,13 +13,15 @@ public class CE : Enemy
     public Collider backCollider;
     public float chargeSpeed = 10f;
     public float chargeDistance = 15f;
+    public GameObject damageEffect;
+
 
     private NavMeshAgent agent;
     private float timer;
     private Vector3 targetPosition;
     private bool charging = false;
     private Animator animator;
-
+    private Rigidbody rb;
 
     private enum EnemyState
     {
@@ -41,6 +43,7 @@ public class CE : Enemy
         // Initial state
         currentState = EnemyState.Wander;
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
 
     }
 
@@ -136,6 +139,20 @@ public class CE : Enemy
         Invoke("WaitTime", 2f);
     }
 
+    public override void ReceiveDamage(float amount)
+    {
+        base.ReceiveDamage(amount);
+        DesactivarMovimientos();
+
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(true);
+
+            Invoke("DisableDamageEffect", 2f);
+        } 
+
+    }
+
     void WaitTime()
     {
         animator.SetBool("Walk", false);
@@ -147,13 +164,16 @@ public class CE : Enemy
 
     public void DesactivarMovimientos()
     {
+        animator.enabled = false;
+        agent.enabled = false; // Desactiva el NavMeshAgent
         CancelInvoke();
-        agent.ResetPath();
         enabled = false;
     }
 
     public void ReactivarMovimientos()
     {
+        animator.enabled = true;
+        agent.enabled = true; // Reactiva el NavMeshAgent
         enabled = true;
         charging = false;
     }

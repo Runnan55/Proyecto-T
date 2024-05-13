@@ -11,12 +11,14 @@ public class ArqueroAnim : Enemy
     public float shootCooldown = 2.0f;
     public GameObject arrowPrefab;
     public Transform arrowSpawnPoint;
+    public GameObject damageEffect;
+
 
     private NavMeshAgent agent;
     private float lastShootTime = -999;
     private Animator animator;
-    
-
+    private bool isAttacking ;
+    private bool empujar = true;
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -34,12 +36,12 @@ public class ArqueroAnim : Enemy
         // Comprobación de línea de visión
         if (!Physics.Raycast(transform.position, directionToPlayer, distance, LayerMask.GetMask("Obstruction")))
         {
-            if (Mathf.Abs(distance - shootingRange) < 0.5f)  // Está en la distancia perfecta
+            if (Mathf.Abs(distance - shootingRange) < 0.5f || distance < 5.0f)  // Está en la distancia perfecta
             {
                 if (Time.time > lastShootTime + shootCooldown)
                 {
-                    
                     lastShootTime = Time.time;
+                    isAttacking = true; // Comienza el ataque
                     animator.SetBool("Attack", true);  // Activar animación de ataque
                     animator.SetBool("Walk", false);   // Asegurarse de que no camina mientras ataca
                 }
@@ -75,6 +77,7 @@ public class ArqueroAnim : Enemy
     void Shoot()
     {
         Debug.Log("Ataque");
+        isAttacking = true; // Comienza el ataque
         GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
         // Desactivar animación de caminar si está atacando
         animator.SetBool("Walk", false);
@@ -82,14 +85,62 @@ public class ArqueroAnim : Enemy
         animator.SetBool("Attack", true);
     }
 
+    public override void ReceiveDamage(float amount)
+    {
+        base.ReceiveDamage(amount);
+        if (isAttacking)
+        {
+            isAttacking = false; // Cancela el ataque
+            animator.SetBool("Attack", false); // Cancela la animación de ataque
+        }
+
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(true);
+
+            Invoke("DisableDamageEffect", 2f);
+        }
+        if (empujar)
+        {
+            Empuje();
+        }
+        // Aplica una fuerza hacia atrás al enemigo
+       
+    }
+    private void DisableDamageEffect()
+    {
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(false);
+
+        }
+    
+    }
+
+    private void Empuje()
+    {
+        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
+        if (enemyRigidbody != null)
+        {
+            // Cambia el valor de la fuerza según lo necesites
+            float force = 100f;
+            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
+        }
+    }
 
     public void ActiveNavMesh()
     {
+        empujar = true;
         enabled = true;
+        animator.enabled = true;
+
     }
 
     public void DesactiveNavMesh()
     {
+        empujar = false;
         enabled = false;
+        animator.enabled = false;
+
     }
 }

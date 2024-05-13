@@ -12,7 +12,7 @@ public class ZombiEnemy : Enemy
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
     public float visionAngle = 60f;
-
+    public GameObject damageEffect;
 
     private NavMeshAgent agent;
     private Vector3 targetPosition;
@@ -22,8 +22,9 @@ public class ZombiEnemy : Enemy
     private bool isChasingPlayer = false;
     private bool canAttack = true;
     private Animator animator;
-    
-    
+    private bool empujar = true;
+
+
 
     void Awake()
     {
@@ -116,6 +117,35 @@ public class ZombiEnemy : Enemy
             Debug.Log("Ataque cancelado");
 
         }
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(true);
+
+            Invoke("DisableDamageEffect", 2f);
+        }
+
+        if (empujar)
+        {
+            Empuje();
+        }
+    }
+    private void DisableDamageEffect()
+    {
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(false);
+
+        }
+    }
+    private void Empuje()
+    {
+        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
+        if (enemyRigidbody != null)
+        {
+            // Cambia el valor de la fuerza según lo necesites
+            float force = 100f;
+            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -136,14 +166,21 @@ public class ZombiEnemy : Enemy
     }
     public void ActiveNavMesh()
     {
-        agent.enabled = true;
-        animator.enabled = true;
 
+        agent.enabled = true;
+
+        animator.enabled = true;
+        animator.applyRootMotion = true;
+
+        empujar = true;
     }
 
     public void DesactiveNavMesh()
     {
-        agent.enabled = false;
+        empujar = false;
+
+        animator.applyRootMotion = false;
         animator.enabled = false;
+        agent.enabled = false;
     }
 }
