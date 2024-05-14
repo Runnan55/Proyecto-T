@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -32,12 +33,19 @@ public class Enemy : MonoBehaviour
 
     public float knockbackDistance = 2f;
     public float knockbackDuration = 0.1f;
+       PlayerMovement playerMovement;
 
+
+public void Awake()
+{
+ playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+}
     void Start()
     {
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
         waveManager = GameObject.FindGameObjectWithTag("WaveManager").GetComponent<WaveManager>(); 
         doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+        
     }
 
        public virtual void ReceiveDamage(float amount) // (en segundos)
@@ -53,8 +61,10 @@ public class Enemy : MonoBehaviour
 
         else
         {
+            FloatUltimate();
             Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
             ShowFloatingText(amount);
+        
         }
     }
 
@@ -118,4 +128,10 @@ public class Enemy : MonoBehaviour
         }    
     } */
     #endregion DEBUG
+
+public void FloatUltimate()
+{
+  playerMovement.IncrementFloatVariable();
+}
+
 }

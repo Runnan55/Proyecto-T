@@ -51,9 +51,19 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        ZombiEnemy zombiEnemy;
 
        public float puntosUltimate = 0f;
-       private float maxPuntosUltimate= 50f;
+       public float maxPuntosUltimate= 20f;
 
-       public Transform halo;
+
+       public GameObject objectPrefab;
+private GameObject[] objects = new GameObject[3];
+public float radius = 5f;
+public float orbitDuration = 10f;
+public float rotationSpeedUlt = 20f;
+
+private bool isButtonPressed = false;
+private float buttonPressTime = 0f;
+
+
 
         private void Awake()
     {
@@ -75,63 +85,82 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
          originalColor = objectRenderer.material.color;
         
-       
+
          
     }
 
 void Update()
 {
+ 
     Ultimate();
-    DamagePlayer();
+
+   DamagePlayer();
 
     if (canMove)
     {
         MovimientoJugador();
     }   
 
+
     if (Input.GetKeyDown(KeyCode.LeftShift))
     {
         StartCoroutine(Dash());
     }
 
-    AtaquesGrimorios();
+ AtaquesGrimorios();
 
-    if (Input.GetMouseButtonDown(0)) 
-    {
-        enterAttack = true;
-        hasAttacked = true;
-    } 
+   if (Input.GetMouseButtonDown(0)) 
+   {
+    enterAttack = true;
+    hasAttacked = true;
+      
 
-    Plane plane = new Plane(Vector3.up, halo.position);
+
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    float distance;
+    RaycastHit hit;
 
-    if (plane.Raycast(ray, out distance))
-    {
-        Vector3 targetPosition = ray.GetPoint(distance);
+    if (Physics.Raycast(ray, out hit) && !hasRotated)
+     {
+        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 
-        // Calcular la dirección hacia la que el halo debe mirar
-        Vector3 directionToLook = (targetPosition - halo.position).normalized;
+        // Calcular la dirección hacia la que el jugador debe mirar
+        Vector3 directionToLook = (targetPosition - transform.position).normalized;
 
         // Crear una rotación que mire en la dirección del objetivo
         Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
 
-        // Aplicar la rotación al halo
-        halo.rotation = targetRotation;
-    }
+        // Aplicar la rotación al jugador
+        transform.rotation = targetRotation;
 
-    CambioArma();
+           hasRotated = true;
+           
+     }
+   } 
+   
+        //vfx.transform.rotation = this.transform.rotation;
+         CambioArma();
 
-    if (verificarArma)
-    {
-        grimorio1.SetActive(true);
-        grimorio2.SetActive(false);
-    }
-    else
-    {
-        grimorio1.SetActive(false);
-        grimorio2.SetActive(true);
-    }
+         if (verificarArma)
+{
+    grimorio1.SetActive(true);
+    grimorio2.SetActive(false);
+}
+else
+{
+    grimorio1.SetActive(false);
+    grimorio2.SetActive(true);
+}
+
+
+
+
+
+
+
+
+
+
+
 }
 public void CambioArma()
 {
@@ -151,7 +180,7 @@ public void AtaquesGrimorios()
     }
 
 //Grimorio2
-   if (Input.GetButtonDown("Fire1") && !verificarArma && puntosUltimate == maxPuntosUltimate)
+   if (Input.GetButtonDown("Fire1") && !verificarArma)
     {
         isAttackingP = true;
     }
@@ -397,59 +426,58 @@ IEnumerator Dash()
 
     }
 
-    private float buttonPressTime = 0f;
-private bool isButtonPressed = false;
 
-    public void Ultimate()
+public void Ultimate()
+{
+    if (puntosUltimate >= maxPuntosUltimate && verificarArma == false)
     {
-        if (puntosUltimate >= maxPuntosUltimate && verificarArma == true)
+        if (Input.GetButton("Fire1"))
         {
-            if (Input.GetButton("Fire1"))
-             {
-             if (!isButtonPressed)
-             {
+            if (!isButtonPressed)
+            {
                 isButtonPressed = true;
-                  buttonPressTime = 0f;
-             }
-             buttonPressTime += Time.deltaTime;
-             if (buttonPressTime >= 1f)
-             {
-                 GrimorioDistancia2();
-               
-               
-                 Debug.Log("Ultimate");
                 buttonPressTime = 0f;
-                puntosUltimate = 0f;
-             }
+            }
+            buttonPressTime += Time.deltaTime;
+            if (buttonPressTime >= 1f)
+            {
+             // Instantiate the objects
+    for (int i = 0; i < 3; i++)
+    {
+        objects[i] = Instantiate(objectPrefab);
+        StartCoroutine(OrbitObject(objects[i], i));
     }
-        else if (puntosUltimate >= maxPuntosUltimate && verificarArma == false)
-        {
-         if (Input.GetButton("Fire1"))
-             {
-             if (!isButtonPressed)
-             {
-                isButtonPressed = true;
-                  buttonPressTime = 0f;
-             }
-             buttonPressTime += Time.deltaTime;
-             if (buttonPressTime >= 1f)
-            {       
 
                 buttonPressTime = 0f;
                 puntosUltimate = 0f;
-             }
-         }
-         
-        else   
-        {
-        isButtonPressed = false;
+            }
         }
+        else
+        {
+            isButtonPressed = false;
+        }
+    }
+}
 
-      }
-    
-     }
-    }  
 
+private IEnumerator OrbitObject(GameObject obj, int index)
+{
+    float elapsedTime = 0f;
+
+    while (elapsedTime < orbitDuration)
+    {
+        // Update the object's position
+        float angle = index * 2f * Mathf.PI / 3f + rotationSpeedUlt * elapsedTime; // 120 degrees
+        Vector3 pos = this.transform.position;
+        obj.transform.position = new Vector3(pos.x + radius * Mathf.Cos(angle), pos.y +1, pos.z + radius * Mathf.Sin(angle));
+
+        elapsedTime += Time.deltaTime;
+        yield return null;
+    }
+
+    // Optionally, destroy the object after it's finished orbiting
+    Destroy(obj);
+}
 public void GrimorioDistancia2()
 {
     GameObject A = GameObject.Find("ColliderGrimorios");
@@ -472,9 +500,6 @@ private void InstantiateBoomerangAtPosition(Vector3 position, Vector3 direction,
     GameObject boomerang = Instantiate(boomerangPrefab, position, Quaternion.identity);
     boomerang.GetComponent<Boomerang>().IniciarMovimiento(direction);
 }
-
-
-
 
 
 }

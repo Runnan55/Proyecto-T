@@ -4599,6 +4599,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7072292778515449502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8228830612998632273}
+  m_Layer: 7
+  m_Name: ColliderGrimoriosB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8228830612998632273
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7072292778515449502}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 1.43, z: 2.55}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 660693657161052109}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7116653217246922035
 GameObject:
   m_ObjectHideFlags: 0
@@ -4959,6 +4990,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 10
+--- !u!1 &7524275441601277571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9218266095961691835}
+  m_Layer: 7
+  m_Name: ColliderGrimoriosC
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9218266095961691835
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7524275441601277571}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 1.43, z: 2.55}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 660693657161052109}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7530169716147962598
 GameObject:
   m_ObjectHideFlags: 0
@@ -6317,6 +6379,7 @@ GameObject:
   - component: {fileID: 2660679897688083841}
   - component: {fileID: 7701817985424812867}
   - component: {fileID: 8210159779605325016}
+  - component: {fileID: 790469038261418127}
   m_Layer: 7
   m_Name: Player 3
   m_TagString: Player
@@ -6342,6 +6405,8 @@ Transform:
   - {fileID: 3964009705297699795}
   - {fileID: 4202296782036050270}
   - {fileID: 1777991632404774586}
+  - {fileID: 8228830612998632273}
+  - {fileID: 9218266095961691835}
   - {fileID: 2869080899679228842}
   - {fileID: 8403096926254747511}
   - {fileID: 2779156915699072483}
@@ -6366,13 +6431,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 3
+  m_Radius: 0.74
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_Center: {x: 0, y: 1.58, z: 0}
 --- !u!114 &1296534185814930133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6390,8 +6455,8 @@ MonoBehaviour:
   rotationSpeed: 20
   gravity: 20
   speedbuff: 0
-  DashSpeed: 40
-  dashTime: 0.18
+  DashSpeed: 60
+  dashTime: 0.16
   animator: {fileID: 2660679897688083841}
   isAttacking: 0
   isAttackingP: 0
@@ -6403,8 +6468,13 @@ MonoBehaviour:
   grimorio1: {fileID: 0}
   grimorio2: {fileID: 0}
   isDashing: 0
-  lifeInstance: {fileID: 0}
-  objectRenderer: {fileID: 0}
+  lifeInstance: {fileID: 615039151597238709}
+  objectRenderer: {fileID: 790469038261418127}
+  puntosUltimate: 50
+  objectPrefab: {fileID: 2467145305580178717, guid: 1cf7bb90a60ed3b40bfe4012080fba5c, type: 3}
+  radius: 5
+  orbitDuration: 10
+  rotationSpeedUlt: 5
 --- !u!114 &4108188701473834811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6481,7 +6551,6 @@ MonoBehaviour:
   levelManager: {fileID: 0}
   invincibilityTime: 1
   shield: {fileID: 7903729103191879855}
-  damagePanel: {fileID: 0}
   playerController: {fileID: 0}
   DamagePlayer: 0
   m_shakeCamera: {fileID: 0}
@@ -6549,6 +6618,48 @@ MonoBehaviour:
   Name: SpeedBuff
   Duration: 2
   IsPermanent: 0
+--- !u!23 &790469038261418127
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8518043658290104337}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &8601582046130569818
 GameObject:
   m_ObjectHideFlags: 0
