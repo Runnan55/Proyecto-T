@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
             if (health == 0)
             {
                 DropItem();
-                doorManager.EnemyDefeated(); 
+               // doorManager.EnemyDefeated(); 
                 Destroy(gameObject);
             }
         }    
@@ -61,7 +61,7 @@ public void Awake()
 
         else
         {
-            FloatUltimate();
+           FloatUltimate();
             Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
             ShowFloatingText(amount);
         

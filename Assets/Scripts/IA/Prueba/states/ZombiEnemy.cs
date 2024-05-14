@@ -142,7 +142,7 @@ public class ZombiEnemy : Enemy
         Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
         if (enemyRigidbody != null)
         {
-            // Cambia el valor de la fuerza según lo necesites
+            // Cambia el valor de la fuerza segï¿½n lo necesites
             float force = 100f;
             enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
         }
