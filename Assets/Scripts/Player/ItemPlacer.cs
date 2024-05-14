@@ -202,6 +202,7 @@ void UpdatePreviewPositionAndStatus()
             lineRenderer.positionCount = 2;
             lineRenderer.SetPosition(0, player.position);
             lineRenderer.SetPosition(1, currentPreviewInstance.transform.position);
+            lineRenderer.textureMode = LineTextureMode.Tile;
         }
     }
 
@@ -263,8 +264,9 @@ void ShowDirectionPreviewThrow()
     }    
     if (lineRenderer != null && player != null)
     {
-            lineRenderer.startWidth = 0.05f;
-            lineRenderer.endWidth = 0.1f;
+            lineRenderer.startWidth = 0.5f;
+            lineRenderer.endWidth = 0.5f;
+            lineRenderer.textureMode = LineTextureMode.Stretch;
         // Obtener la posición del mouse en el mundo
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
