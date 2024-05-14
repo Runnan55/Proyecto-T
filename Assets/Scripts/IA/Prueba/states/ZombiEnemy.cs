@@ -26,7 +26,7 @@ public class ZombiEnemy : Enemy
 
 
 
-    void Awake()
+    void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BossController2 : MonoBehaviour
+public class BossController2 : Enemy
 {
     public GameObject punchPrefab;
     public GameObject[] circleObjects; // Array para los cinco círculos
@@ -37,15 +37,27 @@ public class BossController2 : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, player.position);
 
-            // Persigue al jugador
-            navMeshAgent.SetDestination(player.position);
-
             // Si está lo suficientemente cerca y ha pasado suficiente tiempo desde el último ataque
             if (Time.time - lastAttackTime > punchCooldown && distance < punchRange)
             {
                 Attack();
             }
+            else if (distance > punchRange) // Si está fuera del rango de ataque
+            {
+                // Calcular la dirección hacia el jugador
+                Vector3 direction = (player.position - transform.position).normalized;
+                Vector3 targetPosition = player.position - direction * 1f; // 1 unidad de distancia del jugador
+
+                // Establecer la posición de destino del NavMeshAgent
+                navMeshAgent.SetDestination(targetPosition);
+            }
+            else
+            {
+                // Si está dentro del rango de ataque, detener al enemigo
+                navMeshAgent.SetDestination(transform.position);
+            }
         }
+    
     }
 
     void Attack()

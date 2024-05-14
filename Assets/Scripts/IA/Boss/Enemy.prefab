@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3057527695300581100}
   - component: {fileID: 5250137544120692813}
   - component: {fileID: 8491624462512525076}
-  - component: {fileID: 142751821935455399}
   - component: {fileID: 7999727289244281632}
   - component: {fileID: 8679340686958558571}
   m_Layer: 0
@@ -86,21 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &142751821935455399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7952769748908080058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2e0bb834666e574b808c43cda4eb9a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 1000
-  currentHealth: 0
-  secondBoss: {fileID: 0}
 --- !u!114 &7999727289244281632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,10 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da69fb69b4bde5d409ab70e2ce762c78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   fireballPrefab: {fileID: 5140770012291937909, guid: 1736d2742c40d6e41abce1c2c2f6ea7f, type: 3}
   enemyPrefab: {fileID: 1725759024108555218, guid: 6067b0679c02e724bbf54c9e91852389, type: 3}
   spawnPoints:
@@ -124,12 +104,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   player: {fileID: 0}
-  particlePrefab: {fileID: 3206042946649222974, guid: 143728a1d11e46e448dc68da160bc3d9, type: 3}
+  circlePrefab: {fileID: 0}
+  triggerArea: {fileID: 0}
   damageRadius: 6
   timeBetweenPatterns: 3
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
+  numberOfCircles: 5
 --- !u!65 &8679340686958558571
 BoxCollider:
   m_ObjectHideFlags: 0

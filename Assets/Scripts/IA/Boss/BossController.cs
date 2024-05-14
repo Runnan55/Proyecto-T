@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossController : MonoBehaviour
+public class BossController : Enemy
 {
     public GameObject fireballPrefab;
     public GameObject enemyPrefab;

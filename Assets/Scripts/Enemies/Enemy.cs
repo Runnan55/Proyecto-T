@@ -25,9 +25,10 @@ public class Enemy : MonoBehaviour
     }
 
     public float damage = 10f;
-    public Life playerLife;
+    private Life playerLife;
     public GameObject floatingTextPrefab;
     public GameObject dropPrefab;
+    public GameObject boss2;
 
     private WaveManager waveManager;
 
@@ -54,6 +55,7 @@ public void Awake()
         if (health <= 0)
         {
             DropItem();
+            ActiveBoss();
             //waveManager.EnemyDied();
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
@@ -73,6 +75,8 @@ public void Awake()
         yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
+
+    
 
     public virtual void AttackPlayer()
     {
@@ -106,6 +110,15 @@ public void Awake()
         {
             Instantiate(dropPrefab, transform.position, Quaternion.identity);
         }
+        }
+    }
+    void ActiveBoss()
+    {
+        if (boss2 != null)
+        {
+
+            boss2.SetActive(true);
+          
         }
     }
 
