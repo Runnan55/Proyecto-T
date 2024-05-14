@@ -165,15 +165,17 @@ public class CE : Enemy
     public void DesactivarMovimientos()
     {
         animator.applyRootMotion = false;
+        animator.enabled = false;
+
         agent.enabled = false; // Desactiva el NavMeshAgent
         CancelInvoke();
-        enabled = false;
     }
 
     public void ReactivarMovimientos()
     {
         animator.applyRootMotion = true;
-        enabled = true;
+        animator.enabled = true;
+
         charging = false;
     }
 }

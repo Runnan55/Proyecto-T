@@ -1,147 +1,111 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
-
-public class ChargeEnemy : Enemy
+public class ChargeEnemy : MonoBehaviour
 {
-    public float attackRange = 3f;
-    public float detectionRange = 5f;
-    public Transform player;
-    public float wanderRadius = 10f;
-    public float wanderTimer = 5f;
-    public Collider backCollider;
-    public float chargeSpeed = 10f;
-    public float chargeDistance = 15f;
-
-    private NavMeshAgent agent;
-    private float timer;
-    private Vector3 targetPosition;
-    private bool charging = false;
-
-    private enum EnemyState
-    {
-        Wander,
-        Detect,
-        Charge
-    }
-
-    private EnemyState currentState;
+    public Transform player; // Referencia al transform del jugador
+    public float detectionRange = 10f; // Rango de detección del enemigo
+    public float stoppingDistance = 10f; // Distancia a la que el enemigo se detiene del jugador
+    public float chargeSpeed = 5f; // Velocidad de carga del embiste
+    public float chargeDuration = 1f; // Duración de la carga del embiste
+    public float cooldownDuration = 2f; // Duración del tiempo de espera entre embistes
+    private NavMeshAgent agent; // Referencia al NavMeshAgent
+    private bool playerDetected = false; // Flag para indicar si el jugador ha sido detectado
+    private bool isCharging = false; // Flag para indicar si el enemigo está cargando
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        timer = wanderTimer;
-        SetRandomDestination();
-        if (backCollider != null)
-            backCollider.enabled = false;
-
-        // Initial state
-        currentState = EnemyState.Wander;
+        StartCoroutine(AttackRoutine());
     }
 
     void Update()
     {
-        switch (currentState)
+        // Si el jugador es detectado
+        if (PlayerDetected())
         {
-            case EnemyState.Wander:
-                UpdateWanderState();
-                break;
-            case EnemyState.Detect:
-                UpdateDetectState();
-                break;
-            case EnemyState.Charge:
-                UpdateChargeState();
-                break;
+            playerDetected = true;
+            // Movemos al enemigo hacia el jugador
+            MoveTowardsPlayer();
+        }
+        else
+        {
+            playerDetected = false;
         }
     }
 
-    void UpdateWanderState()
+    bool PlayerDetected()
     {
+        // Calculamos la distancia entre el jugador y el enemigo
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        if (distanceToPlayer <= detectionRange)
-        {
-            currentState = EnemyState.Detect;
-            return;
-        }
 
-        if (!agent.pathPending && agent.remainingDistance < 0.1f)
+        // Si la distancia es menor o igual al rango de detección, retornamos true
+        return distanceToPlayer <= detectionRange;
+    }
+
+    void MoveTowardsPlayer()
+    {
+        // Movemos al enemigo hacia el jugador
+        agent.SetDestination(player.position);
+
+        // Si la distancia entre el enemigo y el jugador es menor o igual a la distancia de parada,
+        // detenemos al enemigo
+        if (Vector3.Distance(transform.position, player.position) <= stoppingDistance)
         {
-            timer -= Time.deltaTime;
-            if (timer <= 0f)
+            agent.isStopped = true;
+        }
+        else
+        {
+            agent.isStopped = false;
+        }
+    }
+
+    IEnumerator AttackRoutine()
+    {
+        while (true)
+        {
+            if (playerDetected && !isCharging)
             {
-                SetRandomDestination();
-                timer = wanderTimer;
+                isCharging = true;
+                yield return Charge();
+                yield return new WaitForSeconds(cooldownDuration);
             }
+            yield return null;
         }
     }
 
-    void UpdateDetectState()
+    IEnumerator Charge()
     {
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        if (distanceToPlayer > detectionRange)
-        {
-            currentState = EnemyState.Wander;
-            return;
-        }
+        // Calculamos la dirección hacia el jugador
+        Vector3 direction = (player.position - transform.position).normalized;
 
-        if (!charging)
-        {
-            charging = true;
-            Invoke("ChargeAttack", 2f);
-        }
-    }
+        // Mantenemos al enemigo mirando hacia el jugador
+        transform.rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
 
-    void UpdateChargeState()
-    {
-        // If already charging, no need to do anything in Update()
-    }
-
-    void SetRandomDestination()
-    {
-        Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
-        randomDirection += transform.position;
-        NavMeshHit hit;
-        NavMesh.SamplePosition(randomDirection, out hit, wanderRadius, 1);
-        targetPosition = hit.position;
-        agent.SetDestination(targetPosition);
-    }
-
-    void ChargeAttack()
-    {
+        // Deshabilitamos la navegación para que el enemigo no siga al jugador durante el embiste
         agent.enabled = false;
 
-        Vector3 chargeTargetPosition = player.position;
-        Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
-        Vector3 chargeDestination = transform.position + chargeDirection * chargeDistance;
-        transform.LookAt(player);
+        // Cargamos hacia el jugador
+        float elapsedTime = 0f;
+        while (elapsedTime < chargeDuration)
+        {
+            transform.position += direction * chargeSpeed * Time.deltaTime;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
 
+        // Habilitamos la navegación nuevamente
         agent.enabled = true;
-        agent.speed = chargeSpeed;
-        agent.SetDestination(chargeDestination);
-        backCollider.enabled = false;
 
-        Invoke("WaitTime", 2f);
+        // Finalizamos la carga
+        isCharging = false;
     }
 
-    void WaitTime()
+    void OnDrawGizmosSelected()
     {
-        charging = false;
-        transform.LookAt(player);
-        backCollider.enabled = true;
-    }
-
-    public void DesactivarMovimientos()
-    {
-        CancelInvoke();
-        agent.ResetPath();
-        enabled = false;
-    }
-
-    public void ReactivarMovimientos()
-    {
-        enabled = true;
-        charging = false;
+        // Dibujamos un gizmo visualizando el rango de detección del enemigo
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 }
