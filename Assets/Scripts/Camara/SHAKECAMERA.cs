@@ -21,7 +21,7 @@ public class SHAKECAMERA : MonoBehaviour
 
             float y = Random.Range(-1f, 1f) * magnitude;
 
-            transform.localPosition = new Vector3(originalPosition.x + x,originalPosition.y + y, originalPosition.z);
+            transform.localPosition = new Vector3(0, originalPosition.y + y, originalPosition.z); 
 
             elapsed += Time.deltaTime;
 

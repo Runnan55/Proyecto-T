@@ -38,6 +38,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public static PlayerMovement instance;
        public VisualEffect vfx;
 
+
        public GameObject boomerangPrefab; // Prefab del boomerang
        public GameObject boomerangPrefab2; // Prefab del boomerang
        public string etiquetaJugador = "Player"; // Etiqueta del jugador
@@ -93,7 +94,11 @@ public Image ultimateImage;
 void Update()
 {
  
-    Ultimate();
+
+
+
+
+        Ultimate();
 
    DamagePlayer();
 
