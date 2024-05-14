@@ -53,7 +53,7 @@ private void Start()
     {
         GameManager.Instance.GetComponent<SoundManager>().PlayMusic(AudioMusic.levelMusic, MusicAudioSource, true);
         GameManager.Instance.GetComponent<SoundManager>().PlayMusic(AudioMusic.ambience, MusicAudioSource, true);
-        SceneManager.LoadScene(AppScenes.Level);
+        //SceneManager.LoadScene(AppScenes.Level);
         SceneManager.LoadScene("Hub");
     }
 

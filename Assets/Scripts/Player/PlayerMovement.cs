@@ -140,19 +140,30 @@ void Update()
         //vfx.transform.rotation = this.transform.rotation;
          CambioArma();
 
-         if (verificarArma)
+if (verificarArma)
 {
-    grimorio1.SetActive(true);
-    grimorio2.SetActive(false);
+    if (grimorio1 != null)
+    {
+        grimorio1.SetActive(true);
+    }
+
+    if (grimorio2 != null)
+    {
+        grimorio2.SetActive(false);
+    }
 }
 else
 {
-    grimorio1.SetActive(false);
-    grimorio2.SetActive(true);
+    if (grimorio1 != null)
+    {
+        grimorio1.SetActive(false);
+    }
+
+    if (grimorio2 != null)
+    {
+        grimorio2.SetActive(true);
+    }
 }
-
-
-
 
 
 

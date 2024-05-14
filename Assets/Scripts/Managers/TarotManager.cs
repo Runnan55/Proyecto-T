@@ -21,11 +21,19 @@ public class TarotManager : MonoBehaviour
 
     private Dictionary<string, Sprite> arcanaImageDict; // El diccionario que asocia los nombres de las arcanas con las imágenes
 
+    public GameObject player;
+    public PlayerMovement pm;
+
     [System.Serializable]
     public class ArcanaImage
     {
         public string name; // El nombre de la arcana
         public Sprite image; // La imagen de la arcana
+    }
+
+    void Awake()
+    {
+        pm = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
     }
 
     void Start()
@@ -41,6 +49,10 @@ public class TarotManager : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         StartTarot();
+        //player = GameObject.FindGameObjectWithTag("Player");
+        pm.speed = 0;
+        pm.animator.Play("Idle");
+        pm.enabled = false;
     }
 
     void StartTarot()

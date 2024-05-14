@@ -32,10 +32,23 @@ public class Life : MonoBehaviour
     void Start()
     {
         currentTime = maxTime;
-        timeImage.fillAmount = 1;
+
+        if (timeImage != null)
+        {
+            timeImage.fillAmount = 1;
+        }
+        else
+        {
+            Debug.Log("timeImage es null.");
+        }
 
         levelManager = FindObjectOfType<LevelManager>();
         playerController = GetComponent<CharacterController>();
+
+        if (playerController == null)
+        {
+            Debug.Log("No se encontró el componente CharacterController.");
+        }
     }
 
     void Update()
@@ -88,9 +101,6 @@ public class Life : MonoBehaviour
         UpdateTimeImage();
    
         if (amount < 0) StartCoroutine(InvincibilityFrames());   
-   
-        
-        
     }
 
     IEnumerator InvincibilityFrames()
@@ -102,31 +112,37 @@ public class Life : MonoBehaviour
         shield.SetActive(false);
     }
 
-public IEnumerator Knockback(Vector3 direction, float duration, float speed)
-{
-    float elapsed = 0;
-
-    while (elapsed < duration)
+    public IEnumerator Knockback(Vector3 direction, float duration, float speed)
     {
-        float t = elapsed / duration;
-        // Aplicar la función de suavizado
-        t = 1 - (1 - t) * (1 - t);
+        float elapsed = 0;
 
-        playerController.Move(direction * speed * Time.deltaTime * t);
-        elapsed += Time.deltaTime;
-        yield return null;
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            // Aplicar la función de suavizado
+            t = 1 - (1 - t) * (1 - t);
+
+            playerController.Move(direction * speed * Time.deltaTime * t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
     }
-}
 
     private void UpdateTimeText()
     {
-        int minutes = Mathf.FloorToInt(currentTime / 60);
-        int seconds = Mathf.FloorToInt(currentTime % 60);
-        timeText.text = minutes + ":" + seconds.ToString("00");
+        if (timeText != null)
+        {
+            int minutes = Mathf.FloorToInt(currentTime / 60);
+            int seconds = Mathf.FloorToInt(currentTime % 60);
+            timeText.text = minutes + ":" + seconds.ToString("00");
+        }
     }
 
     private void UpdateTimeImage()
     {
-        timeImage.fillAmount = currentTime / maxTime;
+        if (timeImage != null)
+        {
+            timeImage.fillAmount = currentTime / maxTime;
+        }
     }
 }
