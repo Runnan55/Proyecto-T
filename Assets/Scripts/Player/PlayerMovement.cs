@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public GameObject grimorio2;
        public  bool isDashing = false;
        public Life lifeInstance;
-       public Renderer objectRenderer; // Asegúrate de asignar este valor en el inspector de Unity
+       public Renderer cambioColoAlPegar; // Asegúrate de asignar este valor en el inspector de Unity
        private Color originalColor; // Para almacenar el color original del material
 
        ZombiEnemy zombiEnemy;
@@ -84,7 +84,7 @@ public Image ultimateImage;
         verificarArma = true;
         cambioarma =true;
 
-         originalColor = objectRenderer.material.color;
+         originalColor = cambioColoAlPegar.material.color;
         
 
          
@@ -408,12 +408,12 @@ IEnumerator Dash()
     if (lifeInstance != null && lifeInstance.DamagePlayer == true)
     {
         animator.SetBool("Damage", true);
-        objectRenderer.material.color = Color.red; // Cambia el color del material a rojo
+        cambioColoAlPegar.material.color = Color.red; // Cambia el color del material a rojo
     }
     else if (lifeInstance != null && lifeInstance.DamagePlayer == false)
     {
         animator.SetBool("Damage", false);
-        objectRenderer.material.color = originalColor; // Restaura el color original del material
+        cambioColoAlPegar.material.color = originalColor; // Restaura el color original del material
     }
     else if (lifeInstance == null)
     {
@@ -441,7 +441,30 @@ IEnumerator Dash()
 
 public void Ultimate()
 {
-    if (puntosUltimate >= maxPuntosUltimate && verificarArma == false)
+    if (puntosUltimate >= maxPuntosUltimate && verificarArma == true)
+    {
+         if (Input.GetButton("Fire1"))
+        {
+            if (!isButtonPressed)
+            {
+                isButtonPressed = true;
+                buttonPressTime = 0f;
+            }
+            buttonPressTime += Time.deltaTime;
+            if (buttonPressTime >= 1f)
+            {
+               GrimorioDistancia2();
+
+                buttonPressTime = 0f;
+                puntosUltimate = 0f;
+            }
+        }
+        else
+        {
+            isButtonPressed = false;
+        }
+    }
+    else if (puntosUltimate >= maxPuntosUltimate && verificarArma == false)
     {
         if (Input.GetButton("Fire1"))
         {

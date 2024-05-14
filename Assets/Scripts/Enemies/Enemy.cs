@@ -14,11 +14,11 @@ public class Enemy : MonoBehaviour
         {
             _hp = math.clamp(value, 0, 100);
 
-            if (health == 0)
+            if (health <= 0)
             {
                 DropItem();
                 Debug.Log("Enemy defeated en enemy");
-                doorManager.EnemyDefeated(); 
+              doorManager.EnemyDefeated(); 
                 Destroy(gameObject);
             }
         }    
