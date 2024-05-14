@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    public DoorManager doorManager;
     public float _hp = 20f;
     public float health {
         get { return _hp; }
@@ -18,7 +17,8 @@ public class Enemy : MonoBehaviour
             if (health == 0)
             {
                 DropItem();
-               // doorManager.EnemyDefeated(); 
+                Debug.Log("Enemy defeated en enemy");
+                doorManager.EnemyDefeated(); 
                 Destroy(gameObject);
             }
         }    
@@ -31,42 +31,48 @@ public class Enemy : MonoBehaviour
     public GameObject boss2;
 
     private WaveManager waveManager;
+    public DoorManager doorManager;
 
     public float knockbackDistance = 2f;
     public float knockbackDuration = 0.1f;
        PlayerMovement playerMovement;
 
 
-public void Awake()
-{
- playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
-}
-    void Start()
+    public void Awake()
+    {
+        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+    }
+     void Start()
     {
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
-        waveManager = GameObject.FindGameObjectWithTag("WaveManager").GetComponent<WaveManager>(); 
+        var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
+        if (waveManagerObject != null)
+        {
+            waveManager = waveManagerObject.GetComponent<WaveManager>();
+        }
         doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
-        
     }
 
-       public virtual void ReceiveDamage(float amount) // (en segundos)
+    public virtual void ReceiveDamage(float amount) // (en segundos)
     {
         health -= amount;
         if (health <= 0)
         {
             DropItem();
             ActiveBoss();
-            //waveManager.EnemyDied();
+            if (waveManager != null)
+            {
+                //waveManager.EnemyDied();
+            }
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
         }
-
         else
         {
-           FloatUltimate();
+            FloatUltimate();
             Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
             ShowFloatingText(amount);
-        
         }
     }
 

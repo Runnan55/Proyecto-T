@@ -18,6 +18,9 @@ public class VIctoryManager : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        levelManager.OnLevelCompleted();
+        if (other.gameObject.tag == "Player")
+        {
+            levelManager.OnLevelCompleted();
+        }    
     }
 }

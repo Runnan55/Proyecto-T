@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System;
 using UnityEngine.VFX;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour, IEffectable
@@ -63,7 +64,7 @@ public float rotationSpeedUlt = 20f;
 private bool isButtonPressed = false;
 private float buttonPressTime = 0f;
 
-
+public Image ultimateImage;
 
         private void Awake()
     {
@@ -452,12 +453,12 @@ public void Ultimate()
             buttonPressTime += Time.deltaTime;
             if (buttonPressTime >= 1f)
             {
-             // Instantiate the objects
-    for (int i = 0; i < 3; i++)
-    {
-        objects[i] = Instantiate(objectPrefab);
-        StartCoroutine(OrbitObject(objects[i], i));
-    }
+                // Instantiate the objects
+                for (int i = 0; i < 3; i++)
+                {
+                    objects[i] = Instantiate(objectPrefab);
+                    StartCoroutine(OrbitObject(objects[i], i));
+                }
 
                 buttonPressTime = 0f;
                 puntosUltimate = 0f;
@@ -468,8 +469,21 @@ public void Ultimate()
             isButtonPressed = false;
         }
     }
-}
 
+    if (ultimateImage != null)
+    {
+        ultimateImage.fillAmount = puntosUltimate / maxPuntosUltimate;
+
+        if (ultimateImage.fillAmount == 1)
+        {
+            ultimateImage.color = Color.yellow; 
+        }
+        else
+        {
+            ultimateImage.color = Color.white;
+        }
+    }
+}
 
 private IEnumerator OrbitObject(GameObject obj, int index)
 {

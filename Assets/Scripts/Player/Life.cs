@@ -13,7 +13,8 @@ public class Life : MonoBehaviour
 
     public TextMeshProUGUI timeText;
     public Image timeImage;
-    public DeathScreen deathScreen; 
+    public GameObject deathScreen; 
+    public LoseManager LoseManager;
 
     public LevelManager levelManager;
 
@@ -44,6 +45,7 @@ public class Life : MonoBehaviour
 
         levelManager = FindObjectOfType<LevelManager>();
         playerController = GetComponent<CharacterController>();
+        LoseManager = FindObjectOfType<LoseManager>();
 
         if (playerController == null)
         {
@@ -95,7 +97,9 @@ public class Life : MonoBehaviour
         }
         else if (currentTime < 0)
         {            
-            levelManager.OnLevelFailed();
+            //levelManager.OnLevelFailed();
+            deathScreen.gameObject.SetActive(true);
+            LoseManager.Lose();
             currentTime = 0;
         }
         UpdateTimeImage();

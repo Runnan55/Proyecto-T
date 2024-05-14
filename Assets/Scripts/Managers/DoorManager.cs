@@ -20,28 +20,30 @@ public class DoorManager : MonoBehaviour
             {
                 door.SetActive(true);
             }
-
-            // Abrir la primera puerta
-            StartCoroutine(OpenDoor(doors[0]));
         }
     }
 
     // Este método se llama cuando un enemigo es derrotado
     public void EnemyDefeated()
     {
+        Debug.Log("Enemy defeated en doormanager");
+
         defeatedEnemies++; // Incrementar el contador de enemigos derrotados
+
+        Debug.Log("Defeated enemies: " + defeatedEnemies); // Agregar un registro de depuración para verificar el número de enemigos derrotados
 
         // Verificar si todos los enemigos en la sala actual han sido derrotados
         if (defeatedEnemies >= enemiesPerRoom[currentRoom])
         {
-            // Pasar a la siguiente sala
-            currentRoom++;
-
             // Si hay más salas, abrir la puerta a la siguiente sala
             if (currentRoom < doors.Count)
             {
+                Debug.Log("Opening door"); // Agregar un registro de depuración para verificar que la puerta se está abriendo
                 StartCoroutine(OpenDoor(doors[currentRoom]));
             }
+
+            // Pasar a la siguiente sala
+            currentRoom++;
 
             // Resetear el contador de enemigos derrotados
             defeatedEnemies = 0;
@@ -50,7 +52,8 @@ public class DoorManager : MonoBehaviour
 
     // Coroutine para abrir la puerta
     IEnumerator OpenDoor(GameObject door)
-    {
+    {      
+        Debug.Log("abriendo puerta");
         float timer = 0;
 
         while (timer < 5)
