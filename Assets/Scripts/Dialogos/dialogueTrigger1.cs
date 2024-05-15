@@ -1,3 +1,4 @@
+using Ink.Parsed;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class dialogueTrigger1 : MonoBehaviour
 {
     [Header("Icono")]
     [SerializeField] private GameObject icono;
+  
 
     [Header("InkJSON")]
     [SerializeField] private TextAsset inkJSON;
@@ -31,8 +33,8 @@ public class dialogueTrigger1 : MonoBehaviour
         else
         {
             icono.SetActive(false);
-        }
-    
+        }   
+
     }
 
     private void OnTriggerEnter(Collider collider)
