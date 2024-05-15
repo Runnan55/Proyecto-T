@@ -39,6 +39,8 @@ public class ZombiEnemy : Enemy
 
     void Update()
     {
+        Debug.Log("Can attack: " + canAttack);
+
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
         animator.SetBool("Walk", true);
@@ -150,20 +152,22 @@ public class ZombiEnemy : Enemy
 
     private void OnTriggerStay(Collider other)
     {
+        Debug.Log("Colliding with: " + other.tag + "" +other.gameObject.name);
         if (other.CompareTag("Player") && canAttack)
         {
+            Debug.Log("Attacking player");
             AttackPlayer();
-            Debug.Log("-10");
             canAttack = false;
-            Invoke("ResetetAttack", 2f);
+            Invoke("ResetAttack", attackCooldown);
         }
     }
 
-    private void ResetetAttack()
+    private void ResetAttack()
     {
+        Debug.Log("Resetting attack");
         canAttack = true;
-        animator.SetBool("Attack", false);
     }
+
     public void ActiveNavMesh()
     {
 

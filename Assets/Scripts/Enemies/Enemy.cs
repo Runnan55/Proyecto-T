@@ -46,7 +46,7 @@ public class Enemy : MonoBehaviour
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
     }
-    
+
     void Start()
     {
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
@@ -71,7 +71,7 @@ public class Enemy : MonoBehaviour
             ActiveBoss();
             if (waveManager != null)
             {
-                //waveManager.EnemyDied();
+                waveManager.EnemyDied();
             }
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
