@@ -13,13 +13,13 @@ public class StatusManager : MonoBehaviour
         {
             if (effectCoroutines.ContainsKey(effect))
             {
-                // Reiniciar la corutina si ya está en ejecución
+                // Reiniciar la corutina si ya estï¿½ en ejecuciï¿½n
                 StopCoroutine(effectCoroutines[effect]);
                 effectCoroutines[effect] = StartCoroutine(RemoveEffectAfterDelay(effect, target));
             }
             else
             {
-                // Iniciar una nueva corutina si no está en ejecución
+                // Iniciar una nueva corutina si no estï¿½ en ejecuciï¿½n
                 var coroutine = StartCoroutine(RemoveEffectAfterDelay(effect, target));
                 effectCoroutines.Add(effect, coroutine);
             }
@@ -40,7 +40,7 @@ public class StatusManager : MonoBehaviour
         //Metodo para remover en triggers
         if (effectCoroutines.ContainsKey(effect))
         {
-            // Si la corutina está activa, detenerla primero
+            // Si la corutina estï¿½ activa, detenerla primero
             StopCoroutine(effectCoroutines[effect]);
             effectCoroutines.Remove(effect);
         }

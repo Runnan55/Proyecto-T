@@ -2,37 +2,42 @@ using UnityEngine;
 
 public class SpeedBuff : StatusEffect
 {
-    private float speedIncrease = 50;
+    private float speedIncrease = 0.3f;  // Incremento de 30% en la velocidad
 
-
-    public SpeedBuff(string name, float duration, bool isPermanent, float speedIncrease,bool speedit)
+    public SpeedBuff(string name, float duration, bool isPermanent)
         : base(name, duration, isPermanent)
-
     {
-        this.speedIncrease = 50; this.IsPermanent = false;
     }
 
     public override void ApplyEffect(GameObject target)
     {
-        if (target.TryGetComponent(out PlayerMovement controller))
+        if (target.TryGetComponent(out PlayerMovement playerMovement))
         {
-            if (controller.speedbuff == false)
+            if (!playerMovement.speedbuff)  // Asegúrate de no aplicar el efecto múltiples veces
             {
-                controller.speed += 50;
+                speedIncrease = 0.5f;  // Incremento de 30% en la velocidad
+                Debug.Log("Speed Aplicado a " + speedIncrease);
+                playerMovement.BuffSpeed += speedIncrease;  // Aumenta el BuffSpeed
+                playerMovement.speedbuff = true;  // Marca el estado como activo
                 Debug.Log("Speed Aplicado a " + target);
-                controller.speedbuff = true;
+                playerMovement.SpeedChange();  // Actualiza la velocidad del jugador
+                target.GetComponent<StatusManager>()?.AddEffect(this, target);  // Añade el efecto para su manejo en StatusManager
             }
         }
     }
 
     public override void RemoveEffect(GameObject target)
     {
-        if (target.TryGetComponent(out PlayerMovement controller))
+        if (target.TryGetComponent(out PlayerMovement playerMovement))
         {
-            if (controller.speedbuff == true)
-            controller.speed -= 50;
-            Debug.Log("Speed terminado a " + target);
-            controller.speedbuff = false;
+            if (playerMovement.speedbuff)
+            {
+                speedIncrease = 0.5f;  // Incremento de 30% en la velocidad
+                playerMovement.BuffSpeed -= speedIncrease;  // Revierte el BuffSpeed al estado original
+                playerMovement.speedbuff = false;
+                playerMovement.SpeedChange();  // Actualiza la velocidad del jugador
+                Debug.Log("Speed terminado a " + target);
+            }
         }
     }
 }

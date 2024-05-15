@@ -40,6 +40,13 @@ public class LaunchActivableCard : BaseCard
                 Debug.LogError("No se pudo cargar el prefab Fireball desde Resources");
             }
             break;
+        case "SwapCard":
+            objectToLaunch = Resources.Load<GameObject>("SwaperCard");
+            if (objectToLaunch == null)
+            {
+                Debug.LogError("No se pudo cargar el prefab Iceball desde Resources");
+            }
+            break;
         default:
             objectToLaunch = null;
             break;

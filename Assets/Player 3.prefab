@@ -409,37 +409,6 @@ Transform:
   - {fileID: 5815975435946942441}
   m_Father: {fileID: 5103245984970344534}
   m_LocalEulerAnglesHint: {x: -11.942, y: 0.404, z: 59.449}
---- !u!1 &1177747788286151897
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1777991632404774586}
-  m_Layer: 7
-  m_Name: ColliderGrimorios
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1777991632404774586
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1177747788286151897}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.43, z: 2.55}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 660693657161052109}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1178669866079383544
 GameObject:
   m_ObjectHideFlags: 0
@@ -5287,73 +5256,6 @@ Transform:
   - {fileID: 386068436671914589}
   m_Father: {fileID: 1097289638862005414}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7672850289645044786
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3964009705297699795}
-  - component: {fileID: 2232431764925911804}
-  - component: {fileID: 1167889272713379244}
-  m_Layer: 7
-  m_Name: "ZonaDa\xF1o"
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3964009705297699795
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7672850289645044786}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.452, z: 2.7}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 660693657161052109}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2232431764925911804
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7672850289645044786}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 4.5, y: 1.42, z: 2.54}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1167889272713379244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7672850289645044786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d71c3fb17581e84994ef1c7955b0806, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 10
 --- !u!1 &7673239482864454386
 GameObject:
   m_ObjectHideFlags: 0
@@ -6096,7 +5998,7 @@ Transform:
   m_GameObject: {fileID: 8019522454136092282}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.164, z: 0}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6110,7 +6012,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8019522454136092282}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -6167,8 +6069,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 0, b: 0, a: 1}
-      key1: {r: 0.4716981, g: 0.006674961, b: 0.25814888, a: 1}
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -6191,7 +6093,7 @@ LineRenderer:
       atime5: 0
       atime6: 0
       atime7: 0
-      m_Mode: 0
+      m_Mode: 1
       m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
@@ -6520,9 +6422,7 @@ Transform:
   m_Children:
   - {fileID: 576243268135560273}
   - {fileID: 6407859862860861557}
-  - {fileID: 3964009705297699795}
   - {fileID: 4202296782036050270}
-  - {fileID: 1777991632404774586}
   - {fileID: 8228830612998632273}
   - {fileID: 9218266095961691835}
   - {fileID: 2869080899679228842}
@@ -6591,6 +6491,7 @@ MonoBehaviour:
   cambioColoAlPegar: {fileID: 6018181568907254340}
   puntosUltimate: 20
   maxPuntosUltimate: 20
+  BuffSpeed: 1
   objectPrefab: {fileID: 2467145305580178717, guid: 1cf7bb90a60ed3b40bfe4012080fba5c, type: 3}
   radius: 5
   orbitDuration: 10
@@ -6644,6 +6545,7 @@ MonoBehaviour:
   HoleSprite: {fileID: 21300000, guid: f9e7690082dd9d54b99b699eeebb7081, type: 3}
   FireCard: {fileID: 21300000, guid: ce394b3afd5733146a7ce51da236d662, type: 3}
   FastCard: {fileID: 21300000, guid: a9ac2457667984e45a085d6b0d776f02, type: 3}
+  SwapCard: {fileID: 21300000, guid: fb6e670a899106440b854af52e8de837, type: 3}
   mid: 0
   cards:
   - 
@@ -6738,7 +6640,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: SpeedBuff
-  Duration: 2
+  Duration: 5
   IsPermanent: 0
 --- !u!1 &8601582046130569818
 GameObject:

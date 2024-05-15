@@ -55,6 +55,12 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public float puntosUltimate = 0f;
        public float maxPuntosUltimate= 20f;
 
+     // Buffos velocidad.
+    public float BuffSpeed = 1.0f;  // Controla el porcentaje de velocidad y animación
+
+    private float originalSpeed;  // Almacena la velocidad original del jugador
+    private float originalAnimatorSpeed;  // Almacena la velocidad original de las animaciones
+
 
        public GameObject objectPrefab;
 private GameObject[] objects = new GameObject[3];
@@ -69,6 +75,11 @@ public Image ultimateImage;
 
         private void Awake()
     {
+        animator = GetComponent<Animator>();
+        controller = GetComponent<CharacterController>();
+
+        originalSpeed = speed;
+        originalAnimatorSpeed = animator.speed;
         instance = this;
         boomerangPrefab = Resources.Load<GameObject>("BoomerangPrefab");
         boomerangPrefab2 = Resources.Load<GameObject>("BoomerangPrefab2");
@@ -95,10 +106,12 @@ void Update()
 {
  
 
+    speed = originalSpeed * BuffSpeed;
+    animator.speed = originalAnimatorSpeed * BuffSpeed;
 
 
 
-        Ultimate();
+    Ultimate();
 
    DamagePlayer();
 
@@ -554,5 +567,9 @@ private void InstantiateBoomerangAtPosition(Vector3 position, Vector3 direction,
     boomerang.GetComponent<Boomerang>().IniciarMovimiento(direction);
 }
 
+public void SpeedChange()
+{
+    Debug.Log("SpeedChange");
 
+}
 }

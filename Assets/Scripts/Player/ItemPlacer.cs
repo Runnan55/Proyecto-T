@@ -165,6 +165,7 @@ void UpdatePreviewPositionAndStatus()
     if (Physics.Raycast(ray, out hit, Mathf.Infinity, placementLayer))
     {
         Vector3 targetPosition = hit.point;
+        targetPosition.y = player.position.y; // Mantener la altura del jugador
         Vector3 directionFromPlayer = targetPosition - player.position;
 
         // Limitar el rango de previsualización
@@ -185,26 +186,35 @@ void UpdatePreviewPositionAndStatus()
     }
 }
 
-    void DrawTrailToPreview()
-    {
+
+void DrawTrailToPreview()
+{
     Material material2 = Resources.Load<Material>(materialPlace);
     if (material2 != null)
     {
-         lineRenderer.material = material2;
+        lineRenderer.material = material2;
     }
     else
     {
         Debug.LogError("No se pudo cargar el material desde la ruta proporcionada: " + materialPlace);
     }   
-        if (lineRenderer != null && currentPreviewInstance != null)
-        {
-            lineRenderer.enabled = true;
-            lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, player.position);
-            lineRenderer.SetPosition(1, currentPreviewInstance.transform.position);
-            lineRenderer.textureMode = LineTextureMode.Tile;
-        }
+    if (lineRenderer != null && currentPreviewInstance != null)
+    {
+        lineRenderer.enabled = true;
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, player.position);
+            lineRenderer.startWidth = 0.2f;
+            lineRenderer.endWidth = 0.2f;
+
+        // Asegúrate de que el segundo punto esté en el mismo plano horizontal que el jugador
+        Vector3 previewPosition = currentPreviewInstance.transform.position;
+        Vector3 fixedPreviewPosition = new Vector3(previewPosition.x, player.position.y, previewPosition.z);
+        lineRenderer.SetPosition(1, fixedPreviewPosition);
+        lineRenderer.textureMode = LineTextureMode.Tile;
     }
+}
+
+
 
 void PlaceItemAndClearPreview()
 {
@@ -252,11 +262,11 @@ void PlaceItemAndClearPreview()
 }
 void ShowDirectionPreviewThrow()
 {
-     // Cargar el material desde la carpeta Resources y asignarlo al Line Renderer
+    // Cargar el material desde la carpeta Resources y asignarlo al Line Renderer
     Material material = Resources.Load<Material>(materialActivable);
     if (material != null)
     {
-         lineRenderer.material = material;
+        lineRenderer.material = material;
     }
     else
     {
@@ -264,31 +274,38 @@ void ShowDirectionPreviewThrow()
     }    
     if (lineRenderer != null && player != null)
     {
-            lineRenderer.startWidth = 0.5f;
-            lineRenderer.endWidth = 0.5f;
-            lineRenderer.textureMode = LineTextureMode.Stretch;
+        lineRenderer.startWidth = 0.5f;
+        lineRenderer.endWidth = 0.5f;
+        lineRenderer.textureMode = LineTextureMode.Stretch;
+
         // Obtener la posición del mouse en el mundo
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
-            // Obtener la posición del mouse solo en el plano XY
+            // Obtener la posición del mouse solo en el plano XZ
             Vector3 targetPosition = hit.point;
-            targetPosition.y = player.transform.position.y; // Mantener la altura del jugador
+            targetPosition.y = player.position.y; // Mantener la altura del jugador
 
             // Limitar el rango de previsualización
-            Vector3 direction = targetPosition - player.transform.position;
+            Vector3 direction = targetPosition - player.position;
             if (direction.magnitude > maxDistance)
             {
-                targetPosition = player.transform.position + direction.normalized * maxDistance;
+                targetPosition = player.position + direction.normalized * maxDistance;
             }
 
             // Actualizar los puntos del Line Renderer para previsualizar la dirección
             lineRenderer.enabled = true;
             lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, player.transform.position);
-            lineRenderer.SetPosition(1, targetPosition);
+            lineRenderer.SetPosition(0, player.position);
+
+            // Asegúrate de que el segundo punto esté en el mismo plano horizontal que el jugador
+            Vector3 fixedTargetPosition = new Vector3(targetPosition.x, player.position.y, targetPosition.z);
+            lineRenderer.SetPosition(1, fixedTargetPosition);
         }
     }
 }
+
+
+
 }

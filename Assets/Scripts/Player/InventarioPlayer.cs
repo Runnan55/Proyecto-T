@@ -20,6 +20,7 @@ public class InventarioPlayer : MonoBehaviour
     public Sprite HoleSprite;
     public Sprite FireCard;
     public Sprite FastCard;
+    public Sprite SwapCard;
     // Añade aquí más sprites según sea necesario para otras cartas
     public bool mid;
     public string[] cards = new string[3];
@@ -155,6 +156,13 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
                 break;
             case "FireCard":
                 slotImage.sprite = FireCard;
+                if (mid)
+                {
+                    mode = "activable";
+                }
+                break;
+            case "SwapCard":
+                slotImage.sprite = SwapCard;
                 if (mid)
                 {
                     mode = "activable";
