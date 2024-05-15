@@ -7,8 +7,7 @@ public class BossController2 : Enemy
 {
     public GameObject punchPrefab;
     public GameObject[] circleObjects; // Array para los cinco círculos
-    public float punchCooldown = 3f;
-    public float circleCooldown = 5f;
+    public float attackInterval = 2f; // Intervalo entre ataques
     public float punchRange = 2f;
     public float circleRange = 3f;
 
@@ -37,8 +36,8 @@ public class BossController2 : Enemy
         {
             float distance = Vector3.Distance(transform.position, player.position);
 
-            // Si está lo suficientemente cerca y ha pasado suficiente tiempo desde el último ataque
-            if (Time.time - lastAttackTime > punchCooldown && distance < punchRange)
+            // Si ha pasado suficiente tiempo desde el último ataque
+            if (Time.time - lastAttackTime > attackInterval)
             {
                 Attack();
             }
@@ -46,7 +45,7 @@ public class BossController2 : Enemy
             {
                 // Calcular la dirección hacia el jugador
                 Vector3 direction = (player.position - transform.position).normalized;
-                Vector3 targetPosition = player.position - direction * 1f; // 1 unidad de distancia del jugador
+                Vector3 targetPosition = player.position - direction * 2f; // 1 unidad de distancia del jugador
 
                 // Establecer la posición de destino del NavMeshAgent
                 navMeshAgent.SetDestination(targetPosition);
@@ -57,7 +56,6 @@ public class BossController2 : Enemy
                 navMeshAgent.SetDestination(transform.position);
             }
         }
-    
     }
 
     void Attack()
