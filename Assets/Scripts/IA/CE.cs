@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,6 +22,7 @@ public class CE : Enemy
     private bool charging = false;
     private Animator animator;
     private Rigidbody rb;
+    private bool empujar = true;
 
     private enum EnemyState
     {
@@ -142,17 +143,31 @@ public class CE : Enemy
     public override void ReceiveDamage(float amount)
     {
         base.ReceiveDamage(amount);
-        DesactivarMovimientos();
 
         if (damageEffect != null)
         {
             damageEffect.SetActive(true);
+            CancelInvoke();
 
             Invoke("DisableDamageEffect", 2f);
-        } 
+        }
+
+        if (empujar)
+        {
+            Empuje();
+        }
 
     }
-
+    public void Empuje()
+    {
+        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
+        if (enemyRigidbody != null)
+        {
+            // Cambia el valor de la fuerza seg�n lo necesites
+            float force = 100f;
+            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
+        }
+    }
     void WaitTime()
     {
         animator.SetBool("Walk", false);
@@ -164,6 +179,7 @@ public class CE : Enemy
 
     public void DesactivarMovimientos()
     {
+        empujar = false;
         animator.applyRootMotion = false;
         animator.enabled = false;
 
@@ -175,7 +191,7 @@ public class CE : Enemy
     {
         animator.applyRootMotion = true;
         animator.enabled = true;
-
+        empujar = true;
         charging = false;
     }
 }
