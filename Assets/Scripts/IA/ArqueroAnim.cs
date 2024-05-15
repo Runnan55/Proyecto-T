@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class ArqueroAnim : Enemy
 {
-    public Transform player;
+    private Transform player;
     public float shootingRange = 10.0f;
     public float backwardStep = 5.0f;
     public float shootCooldown = 2.0f;
@@ -23,6 +23,13 @@ public class ArqueroAnim : Enemy
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
+        
     }
 
     private void Update()

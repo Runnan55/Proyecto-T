@@ -6,7 +6,7 @@ public class EnemyTpA : Enemy
 {
     public EnemyVision enemyVision;
     private NavMeshAgent agent;
-    public Transform player;
+    private Transform player;
     public GameObject bulletPrefab;
     public Transform firePoint;
     public float fireRate = 1f;
@@ -22,6 +22,12 @@ public class EnemyTpA : Enemy
         nextFireTime = Time.time;
         isTeleporting = false;
         animator = GetComponent<Animator>();
+
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
     }
 
     void Update()

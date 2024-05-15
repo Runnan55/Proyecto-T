@@ -7,7 +7,7 @@ public class CE : Enemy
 {
     public float attackRange = 3f;
     public float detectionRange = 5f;
-    public Transform player;
+    private Transform player;
     public float wanderRadius = 10f;
     public float wanderTimer = 5f;
     public Collider backCollider;
@@ -45,6 +45,12 @@ public class CE : Enemy
         currentState = EnemyState.Wander;
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
 
     }
 
@@ -174,7 +180,24 @@ public class CE : Enemy
 
         charging = false;
         transform.LookAt(player);
-        backCollider.enabled = true;
+        Vector3 directionToPlayer = player.position - transform.position;
+        Ray ray = new Ray(transform.position, directionToPlayer);
+        RaycastHit hit;
+
+        // Verificar si el raycast detecta al jugador
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.transform == player)
+            {
+                
+                backCollider.enabled = false; // Si ve al jugador, el backCollider está desactivado
+            }
+            else
+            {
+                backCollider.enabled = true; // Si ve al jugador, el backCollider está desactivado
+
+            }
+        }
     }
 
     public void DesactivarMovimientos()

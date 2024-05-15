@@ -8,13 +8,21 @@ public class EnemyVision : MonoBehaviour
     [SerializeField] float anguloDetect;
     [SerializeField] LayerMask obstacleMask;
 
-    public Transform playerT;
+    private Transform player;
     Vector3 direPlayer;
     float distPlayer;
 
+    private void Start()
+    {
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
+    }
     public bool PlayerEnRango()
     {
-        direPlayer = playerT.position - transform.position;
+        direPlayer = player.position - transform.position;
         distPlayer = direPlayer.magnitude;
         if (distPlayer <= detectDist)
         {

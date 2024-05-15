@@ -1588,7 +1588,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: a82fb7bdc8ecaf347b1cfe3a71c17134, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -1664,8 +1664,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.8133324, y: 1.5370624, z: 0.97197723}
-  m_Center: {x: 0.0027728968, y: 0.98073995, z: -0.6956221}
+  m_Size: {x: 2.491264, y: 1.5370624, z: 0.77329326}
+  m_Center: {x: 0.06431887, y: 0.98073995, z: -1.9432876}
 --- !u!114 &5419320515860926191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1678,17 +1678,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8413e9b82640117438016e52d6081ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doorManager: {fileID: 0}
   _hp: 20
   damage: 10
-  playerLife: {fileID: 0}
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
   dropPrefab: {fileID: 0}
+  boss2: {fileID: 0}
+  doorManager: {fileID: 0}
   knockbackDistance: 2
   knockbackDuration: 0.1
   attackRange: 3
   detectionRange: 123
-  player: {fileID: 0}
   wanderRadius: 10
   wanderTimer: 5
   backCollider: {fileID: 7125762064288206848}
@@ -2246,8 +2245,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.4615746, z: 1}
-  m_Center: {x: 0, y: 0.9411731, z: 0}
+  m_Size: {x: 1, y: 1.4615746, z: 0.52147985}
+  m_Center: {x: 0, y: 0.9411731, z: -1.0985715}
 --- !u!114 &3541581773454413674
 MonoBehaviour:
   m_ObjectHideFlags: 0
