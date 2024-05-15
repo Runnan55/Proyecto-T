@@ -1,28 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BossController : Enemy
 {
     public GameObject fireballPrefab;
     public GameObject enemyPrefab;
-    public Transform[] spawnPoints; // Posiciones para el patrón 3
+    public Transform[] spawnPoints; // Posiciones para el patrï¿½n 3
     public GameObject player;
     public GameObject circlePrefab;
-    public GameObject previewCirclePrefab; // Prefab para la previsualización
+    public GameObject previewCirclePrefab; // Prefab para la previsualizaciï¿½n
     public GameObject triggerArea;
 
     public float damageRadius;
-    public float timeBetweenPatterns = 2f; // Tiempo entre cada repetición de patrones
+    public float timeBetweenPatterns = 2f; // Tiempo entre cada repeticiï¿½n de patrones
     public LayerMask playerLayer;
     private float attackDuration = 20f;
     private int currentPattern = 0;
-    public int numberOfCircles = 5; // Cantidad de círculos a generar
-    public float previewDuration = 2f; // Duración de la previsualización
+    public int numberOfCircles = 5; // Cantidad de cï¿½rculos a generar
+    public float previewDuration = 2f; // Duraciï¿½n de la previsualizaciï¿½n
+
+    public GameObject healthBarObject;
+
+    public Image healthBar;
+    private float maxHealth;
 
     void Start()
     {
+        healthBarObject.SetActive(true);
+        maxHealth = health; 
         StartCoroutine(PatternRoutine());
+    }
+
+    void Update()
+    {
+        healthBar.fillAmount = health / maxHealth;
     }
 
     IEnumerator PatternRoutine()
@@ -67,19 +80,19 @@ public class BossController : Enemy
             Collider triggerCollider = triggerArea.GetComponent<Collider>();
             if (triggerCollider != null && triggerCollider.isTrigger)
             {
-                // Obtén los límites del collider del triggerArea
+                // Obtï¿½n los lï¿½mites del collider del triggerArea
                 Vector3 minPosition = triggerCollider.bounds.min;
                 Vector3 maxPosition = triggerCollider.bounds.max;
 
-                // Itera para generar la cantidad de círculos especificada
+                // Itera para generar la cantidad de cï¿½rculos especificada
                 for (int i = 0; i < numberOfCircles; i++)
                 {
-                    // Genera una posición aleatoria dentro del rango definido por los límites del collider
+                    // Genera una posiciï¿½n aleatoria dentro del rango definido por los lï¿½mites del collider
                     Vector3 randomPosition = new Vector3(Random.Range(minPosition.x, maxPosition.x),
                                                          Random.Range(minPosition.y, maxPosition.y),
                                                          Random.Range(minPosition.z, maxPosition.z));
 
-                    // Inicia la rutina para la previsualización y la instancia final
+                    // Inicia la rutina para la previsualizaciï¿½n y la instancia final
                     StartCoroutine(ShowPreviewAndInstantiate(randomPosition));
                 }
             }
@@ -88,19 +101,19 @@ public class BossController : Enemy
 
     IEnumerator ShowPreviewAndInstantiate(Vector3 position)
     {
-        // Instancia el objeto de previsualización
+        // Instancia el objeto de previsualizaciï¿½n
         GameObject previewCircle = Instantiate(previewCirclePrefab, position, Quaternion.identity);
 
-        // Espera el tiempo de previsualización
+        // Espera el tiempo de previsualizaciï¿½n
         yield return new WaitForSeconds(previewDuration);
 
-        // Destruye el objeto de previsualización
+        // Destruye el objeto de previsualizaciï¿½n
         Destroy(previewCircle);
 
-        // Instancia el círculo final
+        // Instancia el cï¿½rculo final
         GameObject circle = Instantiate(circlePrefab, position, Quaternion.identity);
 
-        // Destruye el círculo después de 2 segundos
+        // Destruye el cï¿½rculo despuï¿½s de 2 segundos
         Destroy(circle, 2f);
     }
 
@@ -108,7 +121,7 @@ public class BossController : Enemy
     {
         Vector3 targetDirection = (player.transform.position - transform.position).normalized;
         GameObject fireball = Instantiate(fireballPrefab, transform.position, Quaternion.identity);
-        fireball.GetComponent<Rigidbody>().velocity = targetDirection * 20f; // Ajustar la velocidad según necesites
+        fireball.GetComponent<Rigidbody>().velocity = targetDirection * 20f; // Ajustar la velocidad segï¿½n necesites
     }
 
     void Pattern3()

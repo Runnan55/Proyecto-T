@@ -8,12 +8,25 @@ public class LevelManager : MonoBehaviour
     List<string> tarotCards = new List<string>() { "Strength", "HighPriestess", "Devil"};
     public string selectedCard;
 
-    public void SelectRandomCard()
+        public void SelectRandomCard()
     {
         if(tarotCards.Count > 0)
         {
-            int randomIndex = Random.Range(0, tarotCards.Count);
-            selectedCard = tarotCards[randomIndex];
+            // Si "Devil" está en la lista y también lo están las otras dos cartas, excluye "Devil" de la selección
+            if (tarotCards.Contains("Devil") && (tarotCards.Contains("Strength") || tarotCards.Contains("HighPriestess")))
+            {
+                List<string> selectableCards = new List<string>(tarotCards);
+                selectableCards.Remove("Devil");
+
+                int randomIndex = Random.Range(0, selectableCards.Count);
+                selectedCard = selectableCards[randomIndex];
+            }
+            else
+            {
+                int randomIndex = Random.Range(0, tarotCards.Count);
+                selectedCard = tarotCards[randomIndex];
+            }
+
             Debug.Log("Se ha escogido la carta: " + selectedCard);
         }
 
@@ -51,7 +64,7 @@ public class LevelManager : MonoBehaviour
     }
 
     #region DEBUG //    ***** DEBUG ***** 
-    /* public void Update()
+    public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -77,7 +90,7 @@ public class LevelManager : MonoBehaviour
         {
             Debug.Log("Quedan " + tarotCards.Count + " cartas: " + string.Join(", ", tarotCards));
         }
-    } */
+    }
     #endregion DEBUG
 }
 
