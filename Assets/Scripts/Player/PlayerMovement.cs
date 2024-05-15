@@ -259,35 +259,34 @@ public void EfectoVisual()
     
 public void MovimientoJugador()
 {
-   if (canMove && controller.isGrounded)
+    if (canMove && controller.isGrounded)
     {
        // Get the player's input
-    float horizontal = Input.GetAxisRaw("Horizontal");
-    float vertical = Input.GetAxisRaw("Vertical");
+       float horizontal = -Input.GetAxisRaw("Horizontal"); // Invert the horizontal input
+       float vertical = Input.GetAxisRaw("Vertical");
 
-    // Create a movement vector based on the player's input
-    Vector3 moveInput = new Vector3(horizontal, 0, vertical);
+       // Create a movement vector based on the player's input
+       Vector3 moveInput = new Vector3(vertical, 0, horizontal);
 
-         // Check if any movement keys are pressed
-      if ((horizontal != 0 || vertical != 0) && enterAttack == false)
-{
-    // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
-    animator.SetBool("Run", true);
+    // Check if any movement keys are pressed
+    if ((horizontal != 0 || vertical != 0) && enterAttack == false)
+    {
+        // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
+        animator.SetBool("Run", true);
+    }
+    else if (enterAttack == true) 
+    {
+        // If no movement keys are pressed, set the "Run" parameter to false
+        animator.SetBool("Run", false);
+    }
+    else
+    {
+        // If the player is attacking, set the "Run" parameter to false
+        animator.SetBool("Run", false);
+    }
 
-}
-         else if (enterAttack == true) 
-        {
-            // If no movement keys are pressed, set the "Run" parameter to false
-            animator.SetBool("Run", false);
-        }
-        else
-        {
-            // If the player is attacking, set the "Run" parameter to false
-            animator.SetBool("Run", false);
-        }
-
-    // Transform the movement vector from the camera's local coordinates to world coordinates
-    Vector3 moveDirection = Camera.main.transform.TransformDirection(moveInput);
+    // Use the movement vector directly without transforming it to the camera's coordinates
+    Vector3 moveDirection = moveInput;
 
     // Normalize the movement vector to ensure the player's speed is constant
     moveDirection.Normalize();
@@ -300,7 +299,6 @@ public void MovimientoJugador()
     {
         controller.Move(moveDirection * Time.deltaTime);
     }
-
 if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
 {
  if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
@@ -317,10 +315,10 @@ if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
         switch (horizontal)
         {
             case 1: // D key
-                targetRotation *= Quaternion.Euler(0, 45, 0);
+                targetRotation *= Quaternion.Euler(0, -45, 0);
                 break;
             case -1: // A key
-                targetRotation *= Quaternion.Euler(0, -45, 0);
+                targetRotation *= Quaternion.Euler(0, 45, 0);
                 break;
         }
         break;
@@ -328,10 +326,10 @@ if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
         switch (horizontal)
         {
             case 1: // D key
-                targetRotation *= Quaternion.Euler(0, 135, 0);
+                targetRotation *= Quaternion.Euler(0, -135, 0);
                 break;
             case -1: // A key
-                targetRotation *= Quaternion.Euler(0, -135, 0);
+                targetRotation *= Quaternion.Euler(0, 135, 0);
                 break;
             default:
                 targetRotation *= Quaternion.Euler(0, 180, 0);
@@ -342,10 +340,10 @@ if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
         switch (horizontal)
         {
             case 1: // D key
-                targetRotation *= Quaternion.Euler(0, 90, 0);
+                targetRotation *= Quaternion.Euler(0, -90, 0);
                 break;
             case -1: // A key
-                targetRotation *= Quaternion.Euler(0, -90, 0);
+                targetRotation *= Quaternion.Euler(0, 90, 0);
                 break;
         }
         break;
@@ -461,39 +459,21 @@ public void Ultimate()
 {
     if (puntosUltimate >= maxPuntosUltimate && verificarArma == true)
     {
-         if (Input.GetButton("Fire1"))
-        {
-            if (!isButtonPressed)
-            {
-                isButtonPressed = true;
-                buttonPressTime = 0f;
-            }
-            buttonPressTime += Time.deltaTime;
-            if (buttonPressTime >= 1f)
-            {
+         if (Input.GetKeyDown(KeyCode.R))
+        {        
+                      
                GrimorioDistancia2();
-
-                buttonPressTime = 0f;
+             
                 puntosUltimate = 0f;
-            }
+            
         }
-        else
-        {
-            isButtonPressed = false;
-        }
+       
     }
     else if (puntosUltimate >= maxPuntosUltimate && verificarArma == false)
     {
-        if (Input.GetButton("Fire1"))
-        {
-            if (!isButtonPressed)
-            {
-                isButtonPressed = true;
-                buttonPressTime = 0f;
-            }
-            buttonPressTime += Time.deltaTime;
-            if (buttonPressTime >= 1f)
-            {
+        if (Input.GetKeyDown(KeyCode.R))
+                {       
+                   
                 // Instantiate the objects
                 for (int i = 0; i < 3; i++)
                 {
@@ -501,9 +481,9 @@ public void Ultimate()
                     StartCoroutine(OrbitObject(objects[i], i));
                 }
 
-                buttonPressTime = 0f;
+               
                 puntosUltimate = 0f;
-            }
+            
         }
         else
         {
@@ -550,6 +530,28 @@ public void GrimorioDistancia2()
     GameObject B = GameObject.Find("ColliderGrimoriosB"); // Reemplaza "NombreDeTuGameObjectB" con el nombre real de tu GameObject
     GameObject C = GameObject.Find("ColliderGrimoriosC"); // Reemplaza "NombreDeTuGameObjectC" con el nombre real de tu GameObject
     GameObject jugador = GameObject.FindGameObjectWithTag(etiquetaJugador);
+
+     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    RaycastHit hit;
+
+    if (Physics.Raycast(ray, out hit) && !hasRotated)
+     {
+        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+
+        // Calcular la dirección hacia la que el jugador debe mirar
+        Vector3 directionToLook = (targetPosition - transform.position).normalized;
+
+        // Crear una rotación que mire en la dirección del objetivo
+        Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+
+        // Aplicar la rotación al jugador
+        transform.rotation = targetRotation;
+
+           hasRotated = true;
+           
+     }
+
+
     if (jugador != null)
     {
         Vector3 direccion = jugador.transform.forward;
