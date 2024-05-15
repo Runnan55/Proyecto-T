@@ -9,6 +9,7 @@ public class BossController : Enemy
     public Transform[] spawnPoints; // Posiciones para el patrón 3
     public GameObject player;
     public GameObject circlePrefab;
+    public GameObject previewCirclePrefab; // Prefab para la previsualización
     public GameObject triggerArea;
 
     public float damageRadius;
@@ -17,12 +18,10 @@ public class BossController : Enemy
     private float attackDuration = 20f;
     private int currentPattern = 0;
     public int numberOfCircles = 5; // Cantidad de círculos a generar
-
-
+    public float previewDuration = 2f; // Duración de la previsualización
 
     void Start()
     {
-
         StartCoroutine(PatternRoutine());
     }
 
@@ -30,7 +29,6 @@ public class BossController : Enemy
     {
         while (true)
         {
-            
             switch (currentPattern)
             {
                 case 0:
@@ -39,7 +37,7 @@ public class BossController : Enemy
                     break;
                 case 1:
                     Debug.Log("pat2");
-                    StartCoroutine(RepeatPattern(Pattern2, timeBetweenPatterns));
+                    StartCoroutine(RepeatPattern(Pattern2, 0.5f));
                     break;
                 case 2:
                     Debug.Log("pat3");
@@ -50,7 +48,6 @@ public class BossController : Enemy
             currentPattern = (currentPattern + 1) % 3;
         }
     }
-
 
     IEnumerator RepeatPattern(System.Action pattern, float timeBetweenRepetitions)
     {
@@ -82,30 +79,36 @@ public class BossController : Enemy
                                                          Random.Range(minPosition.y, maxPosition.y),
                                                          Random.Range(minPosition.z, maxPosition.z));
 
-                    // Instancia un gameobject en la posición aleatoria
-                    GameObject circle = Instantiate(circlePrefab, randomPosition, Quaternion.identity);
-                    // Puedes ajustar la rotación u otras propiedades aquí si es necesario
-
-                    // Destruye el círculo después de 2 segundos
-                    Destroy(circle, 2f);
+                    // Inicia la rutina para la previsualización y la instancia final
+                    StartCoroutine(ShowPreviewAndInstantiate(randomPosition));
                 }
             }
-            else
-            {
-                Debug.LogError("El GameObject asignado como triggerArea no tiene un Collider marcado como trigger.");
-            }
         }
-        else
-        {
-            Debug.LogError("No se ha asignado ningún GameObject como triggerArea.");
-        }
+    }
+
+    IEnumerator ShowPreviewAndInstantiate(Vector3 position)
+    {
+        // Instancia el objeto de previsualización
+        GameObject previewCircle = Instantiate(previewCirclePrefab, position, Quaternion.identity);
+
+        // Espera el tiempo de previsualización
+        yield return new WaitForSeconds(previewDuration);
+
+        // Destruye el objeto de previsualización
+        Destroy(previewCircle);
+
+        // Instancia el círculo final
+        GameObject circle = Instantiate(circlePrefab, position, Quaternion.identity);
+
+        // Destruye el círculo después de 2 segundos
+        Destroy(circle, 2f);
     }
 
     void Pattern2()
     {
         Vector3 targetDirection = (player.transform.position - transform.position).normalized;
         GameObject fireball = Instantiate(fireballPrefab, transform.position, Quaternion.identity);
-        fireball.GetComponent<Rigidbody>().velocity = targetDirection * 10f; // Ajustar la velocidad según necesites
+        fireball.GetComponent<Rigidbody>().velocity = targetDirection * 20f; // Ajustar la velocidad según necesites
     }
 
     void Pattern3()
@@ -115,9 +118,4 @@ public class BossController : Enemy
             Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
         }
     }
-
-
-    
-    
-
 }
