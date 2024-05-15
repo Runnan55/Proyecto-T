@@ -114,6 +114,10 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
 
     public void UpdateInventoryDisplay()
     {
+        if (slot1 && slot2 && slot3)
+        {
+
+        
         slot1.text = cards[0];
         slot2.text = cards[1];
         slot3.text = cards[2];
@@ -124,6 +128,7 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
         UpdateSlotImage(image2, cards[1]);
         mid = false;
         UpdateSlotImage(image3, cards[2]);
+        }
     }
 
     void UpdateSlotImage(Image slotImage, string cardName)

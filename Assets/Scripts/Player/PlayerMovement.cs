@@ -266,7 +266,7 @@ public void MovimientoJugador()
     float vertical = Input.GetAxisRaw("Vertical");
 
     // Create a movement vector based on the player's input
-    Vector3 moveInput = new Vector3(horizontal, vertical, 0);
+    Vector3 moveInput = new Vector3(horizontal, vertical, vertical);
 
          // Check if any movement keys are pressed
       if ((horizontal != 0 || vertical != 0) && enterAttack == false)

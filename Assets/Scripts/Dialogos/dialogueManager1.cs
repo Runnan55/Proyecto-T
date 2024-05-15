@@ -54,7 +54,7 @@ public class dialogueManager1 : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             ContinueStory();
         }
