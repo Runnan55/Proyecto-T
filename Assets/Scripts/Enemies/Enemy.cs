@@ -18,7 +18,10 @@ public class Enemy : MonoBehaviour
             {
                 DropItem();
                 Debug.Log("Enemy defeated en enemy");
-              doorManager.EnemyDefeated(); 
+                if (doorManager != null) // Verificar si doorManager es null
+                {
+                    doorManager.EnemyDefeated(); 
+                }
                 Destroy(gameObject);
             }
         }    
@@ -43,7 +46,8 @@ public class Enemy : MonoBehaviour
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
     }
-     void Start()
+    
+    void Start()
     {
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
         var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
@@ -51,7 +55,11 @@ public class Enemy : MonoBehaviour
         {
             waveManager = waveManagerObject.GetComponent<WaveManager>();
         }
-        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+        var doorManagerObject = GameObject.FindGameObjectWithTag("DoorManager");
+        if (doorManagerObject != null) // Verificar si doorManagerObject es null
+        {
+            doorManager = doorManagerObject.GetComponent<DoorManager>();
+        }
     }
 
     public virtual void ReceiveDamage(float amount) // (en segundos)
