@@ -24,6 +24,12 @@ public class CE : Enemy
     private Rigidbody rb;
     private bool empujar = true;
 
+    [SerializeField] float detectDist;
+    [SerializeField] float anguloDetect;
+
+    Vector3 direPlayer;
+    float distPlayer;
+
     private enum EnemyState
     {
         Wander,
@@ -56,6 +62,8 @@ public class CE : Enemy
 
     void Update()
     {
+
+
         switch (currentState)
         {
             case EnemyState.Wander:
@@ -73,6 +81,9 @@ public class CE : Enemy
                 UpdateChargeState();
                 break;
         }
+
+
+       
     }
 
     void UpdateWanderState()
@@ -136,14 +147,14 @@ public class CE : Enemy
         Vector3 chargeTargetPosition = player.position;
         Vector3 chargeDirection = (chargeTargetPosition - transform.position).normalized;
         Vector3 chargeDestination = transform.position + chargeDirection * chargeDistance;
+        backCollider.enabled = false;
+
         transform.LookAt(player);
 
         agent.enabled = true;
         agent.speed = chargeSpeed;
         agent.SetDestination(chargeDestination);
-        backCollider.enabled = false;
-
-        Invoke("WaitTime", 2f);
+        Invoke("WaitTime", 3f);
     }
 
     public override void ReceiveDamage(float amount)
@@ -181,23 +192,42 @@ public class CE : Enemy
         charging = false;
         transform.LookAt(player);
         Vector3 directionToPlayer = player.position - transform.position;
-        Ray ray = new Ray(transform.position, directionToPlayer);
-        RaycastHit hit;
-
-        // Verificar si el raycast detecta al jugador
-        if (Physics.Raycast(ray, out hit))
+        ActivarCollider();
+      
+    }
+    public void ActivarCollider()
+    {
+        if (PlayerEnRango() && DetectarAngulo())
         {
-            if (hit.transform == player)
-            {
-                
-                backCollider.enabled = false; // Si ve al jugador, el backCollider está desactivado
-            }
-            else
-            {
-                backCollider.enabled = true; // Si ve al jugador, el backCollider está desactivado
-
-            }
+            print("Detecto al player");
+            backCollider.enabled = false;
         }
+        else
+        {
+            print("NO detecto al player");
+            backCollider.enabled = true;
+        }
+    }
+
+    public bool PlayerEnRango()
+    {
+        direPlayer = player.position - transform.position;
+        distPlayer = direPlayer.magnitude;
+        if (distPlayer <= detectDist)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool DetectarAngulo()
+    {
+        float angle = Vector3.Angle(transform.forward, direPlayer);
+        if (Mathf.Abs(angle) <= (anguloDetect / 2))
+        {
+            return true;
+        }
+        return false;
     }
 
     public void DesactivarMovimientos()

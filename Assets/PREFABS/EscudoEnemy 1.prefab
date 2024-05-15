@@ -1546,6 +1546,7 @@ GameObject:
   - component: {fileID: 4521828303609259487}
   - component: {fileID: 7125762064288206848}
   - component: {fileID: 5419320515860926191}
+  - component: {fileID: 8468138907682806082}
   m_Layer: 0
   m_Name: EscudoEnemy 1
   m_TagString: Enemy
@@ -1664,8 +1665,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.491264, y: 1.5370624, z: 0.77329326}
-  m_Center: {x: 0.06431887, y: 0.98073995, z: -1.9432876}
+  m_Size: {x: 2.491264, y: 1.5370624, z: 3.462342}
+  m_Center: {x: 0.06431887, y: 0.98073995, z: -0.59876335}
 --- !u!114 &5419320515860926191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1694,6 +1695,23 @@ MonoBehaviour:
   chargeSpeed: 10
   chargeDistance: 15
   damageEffect: {fileID: 419706324507893739}
+--- !u!114 &8468138907682806082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4130001804539012112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e066d8def665ee47bbb79cf9ef7e193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectDist: 10
+  anguloDetect: 90
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &4192758577461884418
 GameObject:
   m_ObjectHideFlags: 0
