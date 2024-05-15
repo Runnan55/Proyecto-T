@@ -259,34 +259,35 @@ public void EfectoVisual()
     
 public void MovimientoJugador()
 {
-    if (canMove && controller.isGrounded)
+   if (canMove && controller.isGrounded)
     {
        // Get the player's input
-       float horizontal = -Input.GetAxisRaw("Horizontal"); // Invert the horizontal input
-       float vertical = Input.GetAxisRaw("Vertical");
+    float horizontal = Input.GetAxisRaw("Horizontal");
+    float vertical = Input.GetAxisRaw("Vertical");
 
-       // Create a movement vector based on the player's input
-       Vector3 moveInput = new Vector3(vertical, 0, horizontal);
+    // Create a movement vector based on the player's input
+    Vector3 moveInput = new Vector3(horizontal, vertical, 0);
 
-    // Check if any movement keys are pressed
-    if ((horizontal != 0 || vertical != 0) && enterAttack == false)
-    {
-        // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
-        animator.SetBool("Run", true);
-    }
-    else if (enterAttack == true) 
-    {
-        // If no movement keys are pressed, set the "Run" parameter to false
-        animator.SetBool("Run", false);
-    }
-    else
-    {
-        // If the player is attacking, set the "Run" parameter to false
-        animator.SetBool("Run", false);
-    }
+         // Check if any movement keys are pressed
+      if ((horizontal != 0 || vertical != 0) && enterAttack == false)
+{
+    // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
+    animator.SetBool("Run", true);
 
-    // Use the movement vector directly without transforming it to the camera's coordinates
-    Vector3 moveDirection = moveInput;
+}
+         else if (enterAttack == true) 
+        {
+            // If no movement keys are pressed, set the "Run" parameter to false
+            animator.SetBool("Run", false);
+        }
+        else
+        {
+            // If the player is attacking, set the "Run" parameter to false
+            animator.SetBool("Run", false);
+        }
+
+    // Transform the movement vector from the camera's local coordinates to world coordinates
+    Vector3 moveDirection = Camera.main.transform.TransformDirection(moveInput);
 
     // Normalize the movement vector to ensure the player's speed is constant
     moveDirection.Normalize();
@@ -299,6 +300,7 @@ public void MovimientoJugador()
     {
         controller.Move(moveDirection * Time.deltaTime);
     }
+
 if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
 {
  if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
@@ -315,10 +317,10 @@ if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
         switch (horizontal)
         {
             case 1: // D key
-                targetRotation *= Quaternion.Euler(0, -45, 0);
+                targetRotation *= Quaternion.Euler(0, 45, 0);
                 break;
             case -1: // A key
-                targetRotation *= Quaternion.Euler(0, 45, 0);
+                targetRotation *= Quaternion.Euler(0, -45, 0);
                 break;
         }
         break;
@@ -326,10 +328,10 @@ if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
         switch (horizontal)
         {
             case 1: // D key
-                targetRotation *= Quaternion.Euler(0, -135, 0);
+                targetRotation *= Quaternion.Euler(0, 135, 0);
                 break;
             case -1: // A key
-                targetRotation *= Quaternion.Euler(0, 135, 0);
+                targetRotation *= Quaternion.Euler(0, -135, 0);
                 break;
             default:
                 targetRotation *= Quaternion.Euler(0, 180, 0);
@@ -340,10 +342,10 @@ if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
         switch (horizontal)
         {
             case 1: // D key
-                targetRotation *= Quaternion.Euler(0, -90, 0);
+                targetRotation *= Quaternion.Euler(0, 90, 0);
                 break;
             case -1: // A key
-                targetRotation *= Quaternion.Euler(0, 90, 0);
+                targetRotation *= Quaternion.Euler(0, -90, 0);
                 break;
         }
         break;
