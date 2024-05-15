@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using Ink.Runtime;
 
-public class dialogueManager1 : MonoBehaviour
+public class dialogueManager2 : MonoBehaviour
 {
     [Header("DialogueUI")]
 
@@ -17,7 +17,7 @@ public class dialogueManager1 : MonoBehaviour
 
     private Story currentStory;
     public bool dialogueIsPlaying { get; private set; }
-    private static dialogueManager1 instanceDialogue;
+    private static dialogueManager2 instanceDialogue;
     
 
     private void Awake()
@@ -28,7 +28,7 @@ public class dialogueManager1 : MonoBehaviour
         }
         instanceDialogue = this; 
     }
-    public static dialogueManager1 GetInstance()
+    public static dialogueManager2 GetInstance()
     {
         return instanceDialogue;
     }
