@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class FireballEnemy : MonoBehaviour
 {
+    public float lifetime = 2f;
+
+    private void Start()
+    {
+        Destroy(gameObject, lifetime);
+
+    }
+
     // Start is called before the first frame update
     void OnTriggerEnter(Collider other)
     {

@@ -39,7 +39,7 @@ public class CE : Enemy
 
     private EnemyState currentState;
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;

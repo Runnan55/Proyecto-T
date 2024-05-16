@@ -26,7 +26,7 @@ public class BossController : Enemy
     public Image healthBar;
     private float maxHealth;
 
-    void Start()
+    void Awake()
     {
         healthBarObject.SetActive(true);
         maxHealth = health; 

@@ -20,7 +20,7 @@ public class BossController2 : Enemy
     public Image healthBar;
     private float maxHealth;
 
-    void Start()
+    void Awake()
     {
         maxHealth = health; 
 

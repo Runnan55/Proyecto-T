@@ -19,7 +19,7 @@ public class ArqueroAnim : Enemy
     private Animator animator;
     private bool isAttacking ;
     private bool empujar = true;
-    private void Start()
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();

@@ -64,33 +64,33 @@ public class LevelManager : MonoBehaviour
     }
 
     #region DEBUG //    ***** DEBUG ***** 
-    public void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            SelectRandomCard();
-        }
+   //public void Update()
+   // {
+   //     if (Input.GetKeyDown(KeyCode.Q))
+   //     {
+   //         SelectRandomCard();
+   //     }
 
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            LoadLevel();
-        }
+   //     if (Input.GetKeyDown(KeyCode.W))
+   //     {
+   //         LoadLevel();
+   //     }
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            OnLevelCompleted();
-        }
+   //     if (Input.GetKeyDown(KeyCode.E))
+   //     {
+   //         OnLevelCompleted();
+   //     }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            OnLevelFailed();
-        }
+   //     if (Input.GetKeyDown(KeyCode.R))
+   //     {
+   //         OnLevelFailed();
+   //     }
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log("Quedan " + tarotCards.Count + " cartas: " + string.Join(", ", tarotCards));
-        }
-    }
+   //     if (Input.GetKeyDown(KeyCode.T))
+   //     {
+   //         Debug.Log("Quedan " + tarotCards.Count + " cartas: " + string.Join(", ", tarotCards));
+   //     }
+   // }
     #endregion DEBUG
 }
 

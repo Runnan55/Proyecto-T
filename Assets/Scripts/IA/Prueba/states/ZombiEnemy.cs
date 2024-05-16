@@ -26,7 +26,7 @@ public class ZombiEnemy : Enemy
 
 
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
@@ -150,7 +150,7 @@ public class ZombiEnemy : Enemy
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Colliding with: " + other.tag + "" +other.gameObject.name);
         if (other.CompareTag("Player") && canAttack)

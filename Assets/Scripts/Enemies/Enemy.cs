@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
         get { return _hp; }
         set 
         {
-            _hp = math.clamp(value, 0, 100);
+            _hp = math.clamp(value, 0, 1000);
 
             if (health <= 0)
             {
@@ -41,14 +41,13 @@ public class Enemy : MonoBehaviour
        PlayerMovement playerMovement;
 
 
-    public void Awake()
-    {
-        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
-        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
-    }
+    
 
     void Start()
     {
+        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
         var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
         if (waveManagerObject != null)
@@ -67,12 +66,14 @@ public class Enemy : MonoBehaviour
         health -= amount;
         if (health <= 0)
         {
-            DropItem();
-            ActiveBoss();
             if (waveManager != null)
             {
+                Debug.Log("muasdaksdnakdnada");
                 waveManager.EnemyDied();
             }
+            DropItem();
+            ActiveBoss();
+            
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
         }
@@ -83,7 +84,7 @@ public class Enemy : MonoBehaviour
             ShowFloatingText(amount);
         }
     }
-
+    
         IEnumerator DestroyAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);

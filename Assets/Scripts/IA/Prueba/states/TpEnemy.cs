@@ -17,7 +17,7 @@ public class TpEnemy : Enemy
     private float nextFireTime;
     private bool isTeleporting;
 
-    void Start()
+    void Awake()
     {
         nextFireTime = Time.time;
         isTeleporting = false;

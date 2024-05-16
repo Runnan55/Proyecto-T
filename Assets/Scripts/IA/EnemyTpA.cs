@@ -17,7 +17,7 @@ public class EnemyTpA : Enemy
     private bool isTeleporting;
     private Animator animator;
 
-    void Start()
+    void Awake()
     {
         nextFireTime = Time.time;
         isTeleporting = false;
