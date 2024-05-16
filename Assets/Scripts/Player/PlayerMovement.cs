@@ -71,8 +71,7 @@ public float rotationSpeedUlt = 20f;
 private bool isButtonPressed = false;
 private float buttonPressTime = 0f;
 
-  public GameObject particlePrefab; // Referencia al prefab de la partícula
-  private GameObject particleInstance; // Instancia de la partícula
+
 
 public Image ultimateImage;
 
@@ -102,7 +101,7 @@ public Image ultimateImage;
         cambioarma =true;
 
          originalColor = cambioColoAlPegar.material.color;
-          particleInstance = GameObject.Instantiate(particlePrefab, this.transform.position, Quaternion.identity);
+          
 
          
     }
@@ -411,15 +410,7 @@ IEnumerator Dash()
         animator.SetBool("Dash", false);
 
         yield return new WaitForSeconds(2);
-        GameObject DashVFX = GameObject.Find("DashVFX");
-        
-        var vfx1G1 = DashVFX.GetComponent<VisualEffect>();
-        if (vfx1G1 != null)
-        {
-            vfx1G1.enabled = true;
-            vfx1G1.Play();
-            
-        }  
+     
         lastDashTime = Time.time;
         isDashing = false;
     }

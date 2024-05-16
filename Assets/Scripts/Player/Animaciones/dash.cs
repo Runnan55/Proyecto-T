@@ -13,16 +13,7 @@ public class dash : StateMachineBehaviour
        PlayerMovement.hasRotated = false;   
     
        lifeInstance = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
-
-         GameObject Lightning = GameObject.Find("Lightning");
-
-        var vfx1G1 = Lightning.GetComponent<VisualEffect>();
-        if (vfx1G1 != null)
-        {
-            vfx1G1.enabled = true;
-            vfx1G1.Play();
-            
-        }   
+     
 
         Invulnerable();
         
