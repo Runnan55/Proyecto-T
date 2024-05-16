@@ -31,6 +31,8 @@ public class Enemy : MonoBehaviour
     private Life playerLife;
     public GameObject floatingTextPrefab;
     public GameObject dropPrefab;
+
+    private Vector3 dropspawn;
     public GameObject boss2;
 
     private WaveManager waveManager;
@@ -122,7 +124,9 @@ public class Enemy : MonoBehaviour
         // Comprueba si el número generado es menor o igual a 0.3 (30%)
         if (chance <= 0.3f)
         {
-            Instantiate(dropPrefab, transform.position, Quaternion.identity);
+
+            dropspawn = new Vector3(transform.position.x, transform.position.y+ 1, transform.position.z);
+            Instantiate(dropPrefab, dropspawn, Quaternion.identity);
         }
         }
     }

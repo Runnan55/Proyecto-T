@@ -284,12 +284,13 @@ var vfx1G2 = vfxObject2G2.GetComponent<VisualEffect>();
     public void  slow()
 {
     PlayerMovement.instance.speed = PlayerMovement.instance.reduccionVelocidad;
+    PlayerMovement.slowless = true;
    
 }
 public void  Resetslow()
 {
     PlayerMovement.instance.speed = PlayerMovement.instance.speed + 15f;
-   
+    PlayerMovement.slowless = false;
 }
  
     // OnStateMove is called right after Animator.OnAnimatorMove()

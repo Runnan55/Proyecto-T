@@ -11,7 +11,9 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour, IEffectable
 {
        public float speed = 15.0f;
-       public float reduccionVelocidad = 0f;
+       public float reduccionVelocidad = 4f;
+
+       public float reduccionVelocidadOriginal;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
        public bool speedbuff = false;
@@ -38,7 +40,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public static PlayerMovement instance;
        public VisualEffect vfx;
 
-
+       public static bool slowless;
        public GameObject boomerangPrefab; // Prefab del boomerang
        public GameObject boomerangPrefab2; // Prefab del boomerang
        public string etiquetaJugador = "Player"; // Etiqueta del jugador
@@ -82,6 +84,7 @@ public Image ultimateImage;
 
         originalSpeed = speed;
         originalAnimatorSpeed = animator.speed;
+        reduccionVelocidadOriginal = reduccionVelocidad;
         instance = this;
         boomerangPrefab = Resources.Load<GameObject>("BoomerangPrefab");
         boomerangPrefab2 = Resources.Load<GameObject>("BoomerangPrefab2");
@@ -109,10 +112,21 @@ public Image ultimateImage;
 void Update()
 {
  
+    if (!slowless)
+    {
 
-    speed = originalSpeed * BuffSpeed;
-    animator.speed = originalAnimatorSpeed * BuffSpeed;
-
+        speed = originalSpeed * BuffSpeed;
+        animator.speed = originalAnimatorSpeed * BuffSpeed;
+        reduccionVelocidad = reduccionVelocidadOriginal * BuffSpeed;
+    }
+    else
+    {
+        speed = originalSpeed * BuffSpeed;
+        animator.speed = originalAnimatorSpeed * BuffSpeed;
+        reduccionVelocidad = reduccionVelocidadOriginal * BuffSpeed;
+        speed = reduccionVelocidad;
+        
+    }
 
 
     Ultimate();

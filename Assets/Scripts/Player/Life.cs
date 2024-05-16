@@ -86,7 +86,7 @@ public class Life : MonoBehaviour
   
         currentTime += amount;
 
-        StartCoroutine(m_shakeCamera.shake());
+        //StartCoroutine(m_shakeCamera.shake());
         
      
 
