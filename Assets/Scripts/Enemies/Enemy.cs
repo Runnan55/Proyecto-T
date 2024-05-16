@@ -41,13 +41,14 @@ public class Enemy : MonoBehaviour
        PlayerMovement playerMovement;
 
 
-    
+    public void Awake()
+    {      
+        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+    }
 
     void Start()
     {
-        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
-        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
-
+          playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
         var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
         if (waveManagerObject != null)
@@ -66,14 +67,12 @@ public class Enemy : MonoBehaviour
         health -= amount;
         if (health <= 0)
         {
-            if (waveManager != null)
-            {
-                Debug.Log("muasdaksdnakdnada");
-                waveManager.EnemyDied();
-            }
             DropItem();
             ActiveBoss();
-            
+            if (waveManager != null)
+            {
+                waveManager.EnemyDied();
+            }
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
         }
@@ -84,7 +83,7 @@ public class Enemy : MonoBehaviour
             ShowFloatingText(amount);
         }
     }
-    
+
         IEnumerator DestroyAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);

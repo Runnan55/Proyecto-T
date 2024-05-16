@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class dash : StateMachineBehaviour
 {
@@ -13,16 +14,25 @@ public class dash : StateMachineBehaviour
     
        lifeInstance = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
 
+         GameObject Lightning = GameObject.Find("Lightning");
+
+        var vfx1G1 = Lightning.GetComponent<VisualEffect>();
+        if (vfx1G1 != null)
+        {
+            vfx1G1.enabled = true;
+            vfx1G1.Play();
+            
+        }   
 
         Invulnerable();
         
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

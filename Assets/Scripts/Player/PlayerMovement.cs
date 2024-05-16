@@ -71,6 +71,9 @@ public float rotationSpeedUlt = 20f;
 private bool isButtonPressed = false;
 private float buttonPressTime = 0f;
 
+  public GameObject particlePrefab; // Referencia al prefab de la partícula
+  private GameObject particleInstance; // Instancia de la partícula
+
 public Image ultimateImage;
 
         private void Awake()
@@ -83,6 +86,8 @@ public Image ultimateImage;
         instance = this;
         boomerangPrefab = Resources.Load<GameObject>("BoomerangPrefab");
         boomerangPrefab2 = Resources.Load<GameObject>("BoomerangPrefab2");
+       
+       
        
     }
       
@@ -97,7 +102,7 @@ public Image ultimateImage;
         cambioarma =true;
 
          originalColor = cambioColoAlPegar.material.color;
-        
+          particleInstance = GameObject.Instantiate(particlePrefab, this.transform.position, Quaternion.identity);
 
          
     }
@@ -259,14 +264,14 @@ public void EfectoVisual()
     
 public void MovimientoJugador()
 {
-   if (canMove && controller.isGrounded)
+    if (canMove && controller.isGrounded)
     {
        // Get the player's input
     float horizontal = Input.GetAxisRaw("Horizontal");
     float vertical = Input.GetAxisRaw("Vertical");
 
     // Create a movement vector based on the player's input
-    Vector3 moveInput = new Vector3(horizontal, vertical, vertical);
+    Vector3 moveInput = new Vector3(horizontal, vertical, 0);
 
          // Check if any movement keys are pressed
       if ((horizontal != 0 || vertical != 0) && enterAttack == false)
@@ -286,8 +291,10 @@ public void MovimientoJugador()
             animator.SetBool("Run", false);
         }
 
+    moveInput = Camera.main.transform.TransformDirection(moveInput);
+
     // Transform the movement vector from the camera's local coordinates to world coordinates
-    Vector3 moveDirection = Camera.main.transform.TransformDirection(moveInput);
+    Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.z);
 
     // Normalize the movement vector to ensure the player's speed is constant
     moveDirection.Normalize();
@@ -404,7 +411,15 @@ IEnumerator Dash()
         animator.SetBool("Dash", false);
 
         yield return new WaitForSeconds(2);
-
+        GameObject DashVFX = GameObject.Find("DashVFX");
+        
+        var vfx1G1 = DashVFX.GetComponent<VisualEffect>();
+        if (vfx1G1 != null)
+        {
+            vfx1G1.enabled = true;
+            vfx1G1.Play();
+            
+        }  
         lastDashTime = Time.time;
         isDashing = false;
     }
