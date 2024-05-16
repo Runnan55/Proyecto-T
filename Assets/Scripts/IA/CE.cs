@@ -182,7 +182,7 @@ public class CE : Enemy
         {
             // Cambia el valor de la fuerza seg�n lo necesites
             float force = 100f;
-            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
+            enemyRigidbody.AddForce(transform.forward * force, ForceMode.Impulse);
         }
     }
     void WaitTime()
@@ -233,17 +233,13 @@ public class CE : Enemy
     public void DesactivarMovimientos()
     {
         empujar = false;
-        animator.applyRootMotion = false;
-        animator.enabled = false;
-
-        agent.enabled = false; // Desactiva el NavMeshAgent
+        
         CancelInvoke();
+        agent.enabled = false; // Desactiva el NavMeshAgent
     }
 
     public void ReactivarMovimientos()
     {
-        animator.applyRootMotion = true;
-        animator.enabled = true;
         empujar = true;
         charging = false;
     }
