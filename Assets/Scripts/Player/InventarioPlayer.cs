@@ -13,6 +13,8 @@ public class InventarioPlayer : MonoBehaviour
     public Image image1; // Referencia a la Image del slot 1
     public Image image2; // Referencia a la Image del slot 2
     public Image image3; // Referencia a la Image del slot 3
+    
+    public Color GrayColor = Color.gray;
 
     public Sprite emptySprite; // Sprite para slots vacíos
     public Sprite tpCardSprite; // Sprite para TpCard
@@ -28,9 +30,10 @@ public class InventarioPlayer : MonoBehaviour
 
     public string mode;
     private ItemPlacer itemPlacer;
+
     void Awake()
     {
-        itemPlacer=GetComponent<ItemPlacer>();
+        itemPlacer = GetComponent<ItemPlacer>();
         if (Instance == null)
         {
             Instance = this;
@@ -39,7 +42,6 @@ public class InventarioPlayer : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
 
     void Start()
@@ -53,21 +55,20 @@ public class InventarioPlayer : MonoBehaviour
 
     void Update()
     {
-if (Input.GetKeyDown(KeyCode.Q) || Input.GetAxis("Mouse ScrollWheel") < 0)
-{
-    if (!itemPlacer.CartaColocada)
-    {
-        RotateLeft();
-    } 
-}
-if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
-{
-    if (!itemPlacer.CartaColocada)
-    {
-        RotateRight();
-    }
-
-}
+        if (Input.GetKeyDown(KeyCode.Q) || Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            if (!itemPlacer.CartaColocada)
+            {
+                RotateLeft();
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
+        {
+            if (!itemPlacer.CartaColocada)
+            {
+                RotateRight();
+            }
+        }
         else if (Input.GetKeyDown(KeyCode.X)) // Intenta activar carta con X
         {
             UseCard();
@@ -81,6 +82,7 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
         cards[1] = cards[2];
         cards[2] = temp;
         UpdateInventoryDisplay();
+        itemPlacer.ClearPreview();
     }
 
     void RotateRight()
@@ -90,6 +92,7 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
         cards[1] = cards[0];
         cards[0] = temp;
         UpdateInventoryDisplay();
+        itemPlacer.ClearPreview();
     }
 
     public void UseCard()
@@ -97,13 +100,20 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
         // Verifica si el slot activo es distinto de "Empty" antes de usar la carta
         if (cards[activeSlot] != "Empty")
         {
-            Debug.Log("Carta Activada: " + cards[activeSlot]);
+            // Debug.Log("Carta Activada: " + cards[activeSlot]);
             cards[activeSlot] = "Empty"; // Cambia el nombre de la carta a "Empty"
-            UpdateInventoryDisplay();
+            if (mode == "place" && itemPlacer.CartaColocada == true)
+            {
+                image2.color = GrayColor;
+            }
+            else
+            {
+                UpdateInventoryDisplay();
+            }
         }
         else
         {
-            Debug.Log("El slot activo está vacío.");
+            // Debug.Log("El slot activo está vacío.");
         }
     }
 
@@ -116,18 +126,16 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
     {
         if (slot1 && slot2 && slot3)
         {
+            slot1.text = cards[0];
+            slot2.text = cards[1];
+            slot3.text = cards[2];
 
-        
-        slot1.text = cards[0];
-        slot2.text = cards[1];
-        slot3.text = cards[2];
-
-        // Actualizar los sprites basado en el contenido de cada slot
-        UpdateSlotImage(image1, cards[0]);
-        mid = true;
-        UpdateSlotImage(image2, cards[1]);
-        mid = false;
-        UpdateSlotImage(image3, cards[2]);
+            // Actualizar los sprites basado en el contenido de cada slot
+            UpdateSlotImage(image1, cards[0]);
+            mid = true;
+            UpdateSlotImage(image2, cards[1]);
+            mid = false;
+            UpdateSlotImage(image3, cards[2]);
         }
     }
 
@@ -135,14 +143,12 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
     {
         switch (cardName)
         {
-            
             case "TpCard":
                 slotImage.sprite = tpCardSprite;
                 if (mid)
                 {
                     mode = "place";
                 }
-
                 break;
             // Añade aquí más casos según los nombres de tus cartas y sus sprites correspondientes
             case "Empty":
@@ -189,15 +195,16 @@ if (Input.GetKeyDown(KeyCode.E) || Input.GetAxis("Mouse ScrollWheel") > 0)
                 break;
         }
     }
-public static string GetCardAtIndex(int index)
-{
-    if (Instance != null && index >= 0 && index < Instance.cards.Length)
+
+    public static string GetCardAtIndex(int index)
     {
-        return Instance.cards[index];
+        if (Instance != null && index >= 0 && index < Instance.cards.Length)
+        {
+            return Instance.cards[index];
+        }
+        else
+        {
+            return null;
+        }
     }
-    else
-    {
-        return null;
-    }
-}
 }

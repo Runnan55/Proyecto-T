@@ -16,7 +16,6 @@ public class Enemy : MonoBehaviour
 
             if (health <= 0)
             {
-                DropItem();
                 Debug.Log("Enemy defeated en enemy");
                 if (doorManager != null) // Verificar si doorManager es null
                 {
