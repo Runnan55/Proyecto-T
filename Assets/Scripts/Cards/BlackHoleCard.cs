@@ -65,7 +65,7 @@ public class BlackHoleCard : BaseCard
         foreach (var hitCollider in hitColliders)
         {
             ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
-            CE charger = hitCollider.GetComponent<CE>();
+            Charge charger = hitCollider.GetComponent<Charge>();
             ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
             EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
             if (enemy != null)
@@ -98,7 +98,7 @@ public class BlackHoleCard : BaseCard
         {
             Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
             ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
-            CE charger = hitCollider.GetComponent<CE>();
+            Charge charger = hitCollider.GetComponent<Charge>();
             ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
             EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
             if (rb != null)

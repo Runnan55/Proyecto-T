@@ -7,18 +7,18 @@ public class ArqueroAnim : Enemy
 {
     private Transform player;
     public float shootingRange = 10.0f;
-    public float backwardStep = 5.0f;
+    public float closeDistance = 5f;
     public float shootCooldown = 2.0f;
+    public float randomMoveRadius = 5.0f;
     public GameObject arrowPrefab;
     public Transform arrowSpawnPoint;
     public GameObject damageEffect;
 
-
     private NavMeshAgent agent;
     private float lastShootTime = -999;
     private Animator animator;
-    private bool isAttacking ;
-    private bool empujar = true;
+    private bool isAttacking;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -29,11 +29,12 @@ public class ArqueroAnim : Enemy
         {
             player = playerObject.transform;
         }
-        
     }
 
     private void Update()
     {
+        if (player == null) return;
+
         float distance = Vector3.Distance(player.position, transform.position);
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
 
@@ -43,7 +44,20 @@ public class ArqueroAnim : Enemy
         // Comprobación de línea de visión
         if (!Physics.Raycast(transform.position, directionToPlayer, distance, LayerMask.GetMask("Obstruction")))
         {
-            if (Mathf.Abs(distance - shootingRange) < 0.5f || distance < 5.0f)  // Está en la distancia perfecta
+            if (distance <= closeDistance)
+            {
+                // Moverse a una posición aleatoria si está muy cerca
+                Vector3 randomDirection = Random.insideUnitSphere * randomMoveRadius;
+                randomDirection += transform.position;
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(randomDirection, out hit, randomMoveRadius, NavMesh.AllAreas))
+                {
+                    agent.SetDestination(hit.position);
+                    animator.SetBool("Walk", true);
+                    animator.SetBool("Attack", false);
+                }
+            }
+            else if (distance <= shootingRange)
             {
                 if (Time.time > lastShootTime + shootCooldown)
                 {
@@ -55,7 +69,7 @@ public class ArqueroAnim : Enemy
             }
             else
             {
-                // Ajustar posición
+                // Ajustar posición manteniendo la distancia de disparo
                 Vector3 targetPosition = player.position - directionToPlayer * shootingRange;
                 NavMeshHit hit;
                 if (NavMesh.SamplePosition(targetPosition, out hit, 1.0f, NavMesh.AllAreas))
@@ -107,47 +121,25 @@ public class ArqueroAnim : Enemy
 
             Invoke("DisableDamageEffect", 2f);
         }
-        if (empujar)
-        {
-            Empuje();
-        }
-        // Aplica una fuerza hacia atrás al enemigo
-       
     }
+
     private void DisableDamageEffect()
     {
         if (damageEffect != null)
         {
             damageEffect.SetActive(false);
-
-        }
-    
-    }
-
-    private void Empuje()
-    {
-        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
-        if (enemyRigidbody != null)
-        {
-            // Cambia el valor de la fuerza según lo necesites
-            float force = 100f;
-            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
         }
     }
 
     public void ActiveNavMesh()
     {
-        empujar = true;
         enabled = true;
         animator.applyRootMotion = true;
-
     }
 
     public void DesactiveNavMesh()
     {
-        empujar = false;
         enabled = false;
         animator.applyRootMotion = false;
-
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BossController : Enemy
+public class BossController : BossHealth
 {
     public GameObject fireballPrefab;
     public GameObject enemyPrefab;
@@ -24,18 +24,18 @@ public class BossController : Enemy
     public GameObject healthBarObject;
 
     public Image healthBar;
-    private float maxHealth;
+    private float health;
 
     void Awake()
     {
         healthBarObject.SetActive(true);
-        maxHealth = health; 
+        health = currentHealth; 
         StartCoroutine(PatternRoutine());
     }
 
     void Update()
     {
-        healthBar.fillAmount = health / maxHealth;
+        healthBar.fillAmount = currentHealth / health;
     }
 
     IEnumerator PatternRoutine()

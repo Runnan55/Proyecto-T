@@ -26,11 +26,20 @@ public class BossHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             Debug.Log("muerto");
+            ActiveBoss();
             Die();
 
         }
     }
+    void ActiveBoss()
+    {
+        if (secondBoss != null)
+        {
 
+            secondBoss.SetActive(true);
+
+        }
+    }
     public void Die()
     {
 

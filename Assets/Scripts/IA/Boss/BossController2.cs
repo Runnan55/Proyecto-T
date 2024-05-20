@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class BossController2 : Enemy
+public class BossController2 : BossHealth
 {
     public GameObject punchPrefab;
     public GameObject[] circleObjects; // Array para los cinco c�rculos
@@ -18,11 +18,11 @@ public class BossController2 : Enemy
     private bool isAttacking;
 
     public Image healthBar;
-    private float maxHealth;
+    private float Health;
 
     void Awake()
     {
-        maxHealth = health; 
+        Health = currentHealth; 
 
         player = GameObject.FindGameObjectWithTag("Player").transform;
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -38,7 +38,7 @@ public class BossController2 : Enemy
 
     void Update()
     {
-        healthBar.fillAmount = health / maxHealth;
+        healthBar.fillAmount = currentHealth / Health;
 
         if (player != null && !isAttacking)
         {
