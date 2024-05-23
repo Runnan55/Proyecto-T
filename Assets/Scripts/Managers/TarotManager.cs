@@ -22,7 +22,7 @@ public class TarotManager : MonoBehaviour
     private Dictionary<string, Sprite> arcanaImageDict; // El diccionario que asocia los nombres de las arcanas con las imágenes
 
     public GameObject player;
-    public PlayerMovement pm;
+    public PlayerHub pm;
 
     [System.Serializable]
     public class ArcanaImage
@@ -33,7 +33,7 @@ public class TarotManager : MonoBehaviour
 
     void Awake()
     {
-        pm = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+        pm = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHub>();
     }
 
     void Start()

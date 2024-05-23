@@ -39,7 +39,7 @@ public class ZombiEnemy : Enemy
 
     void Update()
     {
-        Debug.Log("Can attack: " + canAttack);
+       // Debug.Log("Can attack: " + canAttack);
 
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;

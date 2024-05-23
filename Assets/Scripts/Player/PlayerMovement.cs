@@ -72,10 +72,9 @@ public float rotationSpeedUlt = 20f;
 
 private bool isButtonPressed = false;
 private float buttonPressTime = 0f;
-
-
-
 public Image ultimateImage;
+
+
 
         private void Awake()
     {
@@ -111,6 +110,8 @@ public Image ultimateImage;
 
 void Update()
 {
+
+    
  
     if (!slowless)
     {
@@ -139,7 +140,7 @@ void Update()
     }   
 
 
-    if (Input.GetKeyDown(KeyCode.LeftShift))
+    if (Input.GetKeyDown(KeyCode.Space))
     {
         StartCoroutine(Dash());
     }
@@ -212,7 +213,7 @@ else
 }
 public void CambioArma()
 {
-       if (Input.GetKeyDown(KeyCode.Space) && cambioarma)
+       if (Input.GetKeyDown(KeyCode.LeftShift) && cambioarma)
     {
       verificarArma = !verificarArma;
       Debug.Log(verificarArma);
@@ -410,6 +411,12 @@ IEnumerator Dash()
         // de lo contrario, usar la entrada del usuario para determinar la dirección
         Vector3 dashDirection = (horizontalInput == 0 && verticalInput == 0) ? transform.forward : (horizontalInput * Camera.main.transform.right + verticalInput * Camera.main.transform.forward).normalized;
 
+        // Desactivar los colliders de los objetos con la etiqueta "Walls"
+        foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
+        {
+            wall.GetComponent<Collider>().enabled = false;
+        }
+
         while (Time.time < startTime + dashTime)
         {
             // Calcular la fracción del tiempo de dash que ha pasado
@@ -419,12 +426,20 @@ IEnumerator Dash()
             float currentDashSpeed = Mathf.Lerp(DashSpeed, 0, fractionOfDashTimePassed);
 
             playerMovement.controller.Move(dashDirection * currentDashSpeed * Time.deltaTime);
+
+            
             yield return null;
         }
-        animator.SetBool("Dash", false);
+        animator.SetBool("Dash", false);                  
 
-        yield return new WaitForSeconds(2);
-     
+          foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
+          {
+            wall.GetComponent<Collider>().enabled = true;
+          }       
+            
+        yield return new WaitForSeconds(2); 
+    
+
         lastDashTime = Time.time;
         isDashing = false;
     }
@@ -596,4 +611,7 @@ public void SpeedChange()
     Debug.Log("SpeedChange");
 
 }
+
+
+
 }

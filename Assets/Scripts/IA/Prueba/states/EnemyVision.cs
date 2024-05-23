@@ -45,7 +45,7 @@ public class EnemyVision : MonoBehaviour
     {
         if (PlayerEnRango() && DetectarAngulo())
         {
-            print("Detecto al player");
+            //print("Detecto al player");
         }
     }
 
@@ -54,8 +54,8 @@ public class EnemyVision : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, direPlayer, out hit, distPlayer, obstacleMask))
         {
-            // Si el rayo golpea un objeto en la capa de obstáculos,
-            // significa que hay un obstáculo entre el enemigo y el jugador
+            // Si el rayo golpea un objeto en la capa de obstï¿½culos,
+            // significa que hay un obstï¿½culo entre el enemigo y el jugador
             return true;
         }
         return false;
