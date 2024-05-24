@@ -21,7 +21,7 @@ public class Charge : Enemy
     private bool isWaiting = false;
     private Animator animator;
 
-    void Awake()
+    void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = normalSpeed;
@@ -29,8 +29,6 @@ public class Charge : Enemy
 
         // Desactivar el collider de ataque al inicio
         attackCollider.enabled = false;
-
-
     }
 
     void Update()

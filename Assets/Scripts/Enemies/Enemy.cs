@@ -42,13 +42,14 @@ public class Enemy : MonoBehaviour
        PlayerMovement playerMovement;
 
 
-   
+    public void Awake()
+    {      
+        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+    }
 
     void Start()
     {
-        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
-
-        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+          playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
         var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
         if (waveManagerObject != null)
