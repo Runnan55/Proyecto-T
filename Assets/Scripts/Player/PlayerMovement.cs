@@ -399,6 +399,9 @@ IEnumerator Dash()
 {
     if (!isDashing && Time.time >= lastDashTime + dashTime)
     {
+        // Almacenar la posición Y actual del jugador antes de comenzar el Dash
+        float originalY = transform.position.y;
+
         isDashing = true;
         animator.SetBool("Dash", true);
         float startTime = Time.time;
@@ -425,25 +428,36 @@ IEnumerator Dash()
             // Interpolar linealmente la velocidad del dash desde DashSpeed hasta 0
             float currentDashSpeed = Mathf.Lerp(DashSpeed, 0, fractionOfDashTimePassed);
 
+            // Mover al jugador en la dirección del dash
             playerMovement.controller.Move(dashDirection * currentDashSpeed * Time.deltaTime);
 
-            
+            // Cancelar el movimiento vertical durante el Dash
+            Vector3 newPosition = transform.position;
+            newPosition.y = originalY; // Mantener la posición Y original
+            transform.position = newPosition;
+
             yield return null;
         }
-        animator.SetBool("Dash", false);                  
 
-          foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
-          {
+        animator.SetBool("Dash", false);
+
+        // Reactivar los colliders de los objetos con la etiqueta "Walls"
+        foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
+        {
             wall.GetComponent<Collider>().enabled = true;
-          }       
-            
-        yield return new WaitForSeconds(2); 
-    
+        }
+
+        yield return new WaitForSeconds(0.5f); 
+        // Restaurar la posición Y del jugador después de que termine el Dash
+        Vector3 finalPosition = transform.position;
+        finalPosition.y = originalY;
+        transform.position = finalPosition;
 
         lastDashTime = Time.time;
         isDashing = false;
     }
 }
+
    
 
    public void ApplyEffect(StatusEffect effect)

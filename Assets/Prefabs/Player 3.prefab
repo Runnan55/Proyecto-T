@@ -5964,7 +5964,7 @@ GameObject:
   - component: {fileID: 8277566278440329313}
   m_Layer: 7
   m_Name: ColliderGrimorios
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6002,6 +6002,7 @@ GameObject:
   - component: {fileID: 2366821324918242586}
   - component: {fileID: 1448756053162247022}
   - component: {fileID: 4595932509230696522}
+  - component: {fileID: 706574955169949573}
   m_Layer: 7
   m_Name: Player 3
   m_TagString: Player
@@ -6017,7 +6018,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7548333083626667019}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -15.15, y: -8.09, z: 1.95}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6078,7 +6079,7 @@ MonoBehaviour:
   rotationSpeed: 20
   gravity: 20
   speedbuff: 0
-  DashSpeed: 70
+  DashSpeed: 120
   dashTime: 0.16
   animator: {fileID: 2366821324918242586}
   isAttacking: 0
@@ -6248,6 +6249,18 @@ MonoBehaviour:
   Name: SpeedBuff
   Duration: 5
   IsPermanent: 0
+--- !u!114 &706574955169949573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7548333083626667019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37ac8b707a921c4f987d7987dfab6ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8068772608272397746
 GameObject:
   m_ObjectHideFlags: 0
@@ -7056,15 +7069,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4036644174007608841, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.x
-      value: -15.15
+      value: -11.589082
       objectReference: {fileID: 0}
     - target: {fileID: 4036644174007608841, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.y
-      value: -6.8900003
+      value: 4.881137
       objectReference: {fileID: 0}
     - target: {fileID: 4036644174007608841, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.z
-      value: 4.29
+      value: -126.58313
       objectReference: {fileID: 0}
     - target: {fileID: 4637640791799818487, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_Name
@@ -7130,15 +7143,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4036644174007608841, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.x
-      value: -15.15
+      value: -11.589082
       objectReference: {fileID: 0}
     - target: {fileID: 4036644174007608841, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.y
-      value: -6.8900003
+      value: 4.881137
       objectReference: {fileID: 0}
     - target: {fileID: 4036644174007608841, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.z
-      value: 4.29
+      value: -126.58313
       objectReference: {fileID: 0}
     - target: {fileID: 4637640791799818487, guid: 7df4800e61ca8994f852be2425c6096c, type: 3}
       propertyPath: m_Name

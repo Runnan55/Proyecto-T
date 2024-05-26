@@ -10,9 +10,12 @@ public class RoomTrigger : MonoBehaviour
         {
             // Encuentra la cámara principal y llama a ChangeTarget para actualizar la posición objetivo
             CamaraRooms CamaraRooms = Camera.main.GetComponent<CamaraRooms>();
+            Camara camara = Camera.main.GetComponent<Camara>();
             if (CamaraRooms != null)
             {
                 CamaraRooms.ChangeTarget(cameraPosition);
+               
+
             }
         }
     }
