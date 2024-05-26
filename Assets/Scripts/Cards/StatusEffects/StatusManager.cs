@@ -51,7 +51,7 @@ public class StatusManager : MonoBehaviour
 
     private IEnumerator RemoveEffectAfterDelay(StatusEffect effect, GameObject target)
     {
-        Debug.Log("enumerator");
+        //Debug.Log("enumerator");
         yield return new WaitForSeconds(effect.Duration);
         effect.RemoveEffect(target);
         effectCoroutines.Remove(effect);

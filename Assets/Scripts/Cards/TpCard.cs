@@ -41,7 +41,7 @@ public class TpCard : BaseCard
 
             // Opcionalmente, puedes mover la carta a la posici�n original del PlayerGround o realizar otras acciones
             card.transform.position = playerGroundTransform.position; // Esto mover�a la carta a donde estaba originalmente el PlayerGround
-            Debug.Log("TpCard");
+            //Debug.Log("TpCard");
                 // Reactivar el CharacterController
     if (controller != null) controller.enabled = true;
         }

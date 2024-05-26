@@ -7,6 +7,7 @@ public class ItemPlacer : MonoBehaviour
     public GameObject invalidPreviewPrefab; // Prefab de la previsualización no permitida
     public LayerMask placementLayer; // Layer Mask para el suelo
     public LayerMask obstructionLayer; // Layer Mask para detectar obstrucciones
+    public LayerMask wallsLayer; // Layer Mask para detectar paredes
     public Transform player; // Referencia pública al jugador
 
     public Color WhiteColor = Color.white;
@@ -15,6 +16,7 @@ public class ItemPlacer : MonoBehaviour
     private bool isPreviewValid = false; // Indica si la previsualización actual es válida
     private LineRenderer lineRenderer; // LineRenderer para dibujar el trail
     private bool isPlacementMode = true; // Controla si el modo actual es de colocación
+    private bool isMousePressed = false; // Indica si el mouse está presionado
 
     public GameObject CartaTp; // Referencia al jugador
 
@@ -58,6 +60,7 @@ public class ItemPlacer : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(1)) // Al presionar el botón derecho
             {
+                isMousePressed = true;
                 string activeCardName = InventarioPlayer.Instance.GetCurrentCardName(); // Obtiene el nombre de la carta activa
                 if (activeCardName != "Empty" && !CartaColocada) // Verifica que el slot activo no esté vacío
                 {
@@ -93,19 +96,27 @@ public class ItemPlacer : MonoBehaviour
                 }
             }
 
-            if (isPlacementMode && currentPreviewInstance != null)
+            if (Input.GetMouseButtonUp(1)) // Intentar colocar el item al soltar
+            {
+                isMousePressed = false;
+                if (isPlacementMode) 
+                {
+                    PlaceItemAndClearPreview();
+                } 
+                else 
+                {
+                    ClearPreview();
+                }
+            }
+
+            if (isMousePressed && isPlacementMode && currentPreviewInstance != null)
             {
                 UpdatePreviewPositionAndStatus();
                 DrawTrailToPreview(); // Dibuja el trail hacia el prefab
             }
-            else if (lineRenderer != null && !Input.GetMouseButton(1))
+            else if (lineRenderer != null && !isMousePressed)
             {
                 lineRenderer.enabled = false; // Oculta el trail si no hay previsualización
-            }
-
-            if (Input.GetMouseButtonUp(1) && isPlacementMode) // Intentar colocar el item al soltar, solo si está en modo de colocación
-            {
-                PlaceItemAndClearPreview();
             }
         }
         if (Inventario.mode == "self")
@@ -135,6 +146,14 @@ public class ItemPlacer : MonoBehaviour
                 cardComponent.Activate();
                 InventarioPlayer.Instance.UseCard();
             }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (isMousePressed && isPlacementMode && currentPreviewInstance != null)
+        {
+            UpdatePreviewPositionAndStatus(); // Mover la lógica de actualización de previsualización a FixedUpdate
         }
     }
 
@@ -172,18 +191,43 @@ public class ItemPlacer : MonoBehaviour
             }
 
             currentPreviewInstance.transform.position = targetPosition;
+
             bool isObstructed = Physics.CheckSphere(targetPosition, 0.5f, obstructionLayer);
-            GameObject prefabToUse = isObstructed ? invalidPreviewPrefab : previewPrefab;
-            if (isObstructed != isPreviewValid || currentPreviewInstance.GetComponentInChildren<MeshRenderer>().gameObject != prefabToUse)
+            bool isHittingWall = Physics.Raycast(targetPosition, Vector3.down, 1f, wallsLayer);
+
+            GameObject prefabToUse = (isObstructed || isHittingWall) ? invalidPreviewPrefab : previewPrefab;
+            if ((isObstructed || isHittingWall) != isPreviewValid || currentPreviewInstance.GetComponentInChildren<MeshRenderer>().gameObject != prefabToUse)
             {
-                isPreviewValid = !isObstructed;
+                isPreviewValid = !(isObstructed || isHittingWall);
                 CreateOrUpdatePreview(prefabToUse);
+            }
+        }
+        else
+        {
+            if (currentPreviewInstance != null)
+            {
+                Destroy(currentPreviewInstance);
+                currentPreviewInstance = null;
+            }
+            isPreviewValid = false;
+            if (lineRenderer != null)
+            {
+                lineRenderer.enabled = false; // Desactivar el LineRenderer cuando no hay una previsualización válida
             }
         }
     }
 
     void DrawTrailToPreview()
     {
+        if (currentPreviewInstance == null)
+        {
+            if (lineRenderer != null)
+            {
+                lineRenderer.enabled = false;
+            }
+            return;
+        }
+
         Material material2 = Resources.Load<Material>(materialPlace);
         if (material2 != null)
         {
@@ -222,6 +266,14 @@ public class ItemPlacer : MonoBehaviour
                 placementPosition = player.position + directionFromPlayer;
             }
 
+            // Verificar que el punto final de colocación esté en una superficie válida
+            if (!Physics.Raycast(placementPosition, Vector3.down, 1f, placementLayer))
+            {
+                Debug.Log("La posición de colocación no es válida.");
+                ClearPreview(); // Limpiar previsualización si no es válida
+                return;
+            }
+
             string activeCardName = InventarioPlayer.Instance.GetCurrentCardName();
             GameObject itemPrefab = null;
 
@@ -236,6 +288,7 @@ public class ItemPlacer : MonoBehaviour
                 // Añade más casos según sea necesario
                 default:
                     Debug.Log("No se encontró una carta válida o el slot está vacío.");
+                    ClearPreview(); // Limpiar previsualización si no se encuentra una carta válida
                     return;
             }
             CartaColocada = true;
@@ -243,15 +296,7 @@ public class ItemPlacer : MonoBehaviour
             isPlacementMode = false;
             InventarioPlayer.Instance.UseCard();
         }
-        if (currentPreviewInstance != null)
-        {
-            Destroy(currentPreviewInstance);
-            currentPreviewInstance = null;
-        }
-        if (lineRenderer != null)
-        {
-            lineRenderer.enabled = false;
-        }
+        ClearPreview(); // Siempre limpiar la previsualización después de intentar colocar el item
     }
 
     void ShowDirectionPreviewThrow()

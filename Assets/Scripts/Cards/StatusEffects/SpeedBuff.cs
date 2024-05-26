@@ -36,7 +36,7 @@ public class SpeedBuff : StatusEffect
                 playerMovement.BuffSpeed -= speedIncrease;  // Revierte el BuffSpeed al estado original
                 playerMovement.speedbuff = false;
                 playerMovement.SpeedChange();  // Actualiza la velocidad del jugador
-                Debug.Log("Speed terminado a " + target);
+                //Debug.Log("Speed terminado a " + target);
             }
         }
     }
