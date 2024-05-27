@@ -420,7 +420,7 @@ IEnumerator Dash()
         // Desactivar los colliders de los objetos con la etiqueta "Walls"
         foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
         {
-            wall.GetComponent<Collider>().enabled = false;
+            //wall.GetComponent<Collider>().enabled = false;
         }
 
         while (Time.time < startTime + dashTime)

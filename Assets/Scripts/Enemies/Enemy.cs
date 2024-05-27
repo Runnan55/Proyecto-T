@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
         get { return _hp; }
         set 
         {
-            _hp = math.clamp(value, 0, 1000);
+            _hp = math.clamp(value, 0, 200000000);
 
             if (health <= 0)
             {
