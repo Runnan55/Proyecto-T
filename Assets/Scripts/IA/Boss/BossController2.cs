@@ -17,6 +17,7 @@ public class BossController2 : BossHealth
     public float attackInterval = 2f; // Intervalo entre ataques
     public float punchRange = 2f;
     public float circleRange = 3f;
+    public GameObject escudo;
 
     private Transform player;
     private NavMeshAgent navMeshAgent;

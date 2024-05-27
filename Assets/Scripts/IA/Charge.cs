@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,14 +13,17 @@ public class Charge : Enemy
     public float waitTime = 2f;
     public float chargeSpeed = 10f;
     public float normalSpeed = 3.5f;
-    public float chargeDistance = 5f; // Distancia que se embestir·
-    public float chargeDuration = 1f; // DuraciÛn de la embestida
+    public float chargeDistance = 5f; // Distancia que se embestir√°
+    public float chargeDuration = 1f; // Duraci√≥n de la embestida
     public Collider dano;
+    public GameObject damageEffect;
+
 
     private NavMeshAgent agent;
     private bool isAttacking = false;
     private bool isWaiting = false;
     private Animator animator;
+    private bool empujar = true;
     void Awake()
     {
 
@@ -41,7 +44,7 @@ public class Charge : Enemy
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Si el enemigo est· en espera, el jugador est· detr·s del enemigo y el enemigo no est· atacando
+        // Si el enemigo est√° en espera, el jugador est√° detr√°s del enemigo y el enemigo no est√° atacando
         if (isWaiting && !IsPlayerBehindEnemy() && !isAttacking)
         {
             // Activa el collider de ataque
@@ -53,7 +56,7 @@ public class Charge : Enemy
             attackCollider.enabled = false;
         }
         
-        // Si el jugador est· dentro del radio de detecciÛn y el enemigo no est· atacando ni esperando
+        // Si el jugador est√° dentro del radio de detecci√≥n y el enemigo no est√° atacando ni esperando
         if (distanceToPlayer <= detectionRadius && !isAttacking && !isWaiting)
         {
             if (distanceToPlayer > attackDistance)
@@ -106,7 +109,7 @@ public class Charge : Enemy
         agent.speed = normalSpeed;
         agent.SetDestination(transform.position); // Detener el movimiento
 
-        // Mirar al jugador despuÈs de la carga
+        // Mirar al jugador despu√©s de la carga
         transform.LookAt(player.position);
         Debug.Log("Enemy charge completed and looking at player.");
             dano.enabled = false;
@@ -125,7 +128,7 @@ public class Charge : Enemy
         Gizmos.DrawWireSphere(transform.position, attackDistance);
     }
 
-    // MÈtodo para verificar si el jugador est· detr·s del enemigo
+    // M√©todo para verificar si el jugador est√° detr√°s del enemigo
     private bool IsPlayerBehindEnemy()
     {
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
@@ -133,11 +136,46 @@ public class Charge : Enemy
         forwardDirection.y = 0; // Ignorar la componente Y para evitar problemas en terrenos inclinados
         directionToPlayer.y = 0; // Ignorar la componente Y para evitar problemas en terrenos inclinados
 
-        // Calcula el ·ngulo entre los dos vectores
+        // Calcula el √°ngulo entre los dos vectores
         float angleToPlayer = Vector3.Dot(forwardDirection.normalized, directionToPlayer.normalized);
 
-        // Si el ·ngulo es mayor que 0.5, el jugador est· detr·s del enemigo
+        // Si el √°ngulo es mayor que 0.5, el jugador est√° detr√°s del enemigo
         return angleToPlayer > 0.5f;
+    }
+
+    public override void ReceiveDamage(float amount)
+    {
+        base.ReceiveDamage(amount);
+
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(true);
+
+            Invoke("DisableDamageEffect", 2f);
+        }
+
+        if (empujar)
+        {
+            Empuje();
+        }
+    }
+    public void Empuje()
+    {
+        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
+        if (enemyRigidbody != null)
+        {
+            // Cambia el valor de la fuerza segÔøΩn lo necesites
+            float force = 100f;
+            enemyRigidbody.AddForce(transform.forward * force, ForceMode.Impulse);
+        }
+    }
+    private void DisableDamageEffect()
+    {
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(false);
+
+        }
     }
 
     public void DesactivarMovimientos()

@@ -199,7 +199,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -656211765711378435, guid: 78b3e22bd381fd34d9292a8018430902, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -308,7 +308,8 @@ MonoBehaviour:
   maxHealth: 20
   currentHealth: 0
   secondBoss: {fileID: 0}
-  punchPrefab: {fileID: 4159430690168888597, guid: ea50dee8d46006c40b646bd55f71be20, type: 3}
+  enemyPrefab: {fileID: 0}
+  spawnPoints: []
   circleObjects:
   - {fileID: 0}
   - {fileID: 0}
@@ -318,6 +319,8 @@ MonoBehaviour:
   fireballPrefab: {fileID: 0}
   fireballSpawnPoints: []
   fireballSpeed: 10
+  invulnerableColor: {r: 0, g: 0.5474634, b: 1, a: 1}
+  invulnerableDuration: 5
   attackInterval: 2
   punchRange: 2
   circleRange: 3
