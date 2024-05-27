@@ -411,8 +411,23 @@ IEnumerator Dash()
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
 
+        // Obtener las direcciones de la cámara
+        Vector3 cameraForward = Camera.main.transform.forward;
+        Vector3 cameraRight = Camera.main.transform.right;
+
+        // Ignorar la componente vertical (y) de los vectores de la cámara
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+
+        // Normalizar los vectores (después de modificarlos)
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
         // Usar la transformación del jugador para calcular la dirección del dash
-        Vector3 dashDirection = (horizontalInput == 0 && verticalInput == 0) ? transform.forward : (horizontalInput * Vector3.right + verticalInput * Vector3.forward).normalized;
+        Vector3 dashDirection = (horizontalInput == 0 && verticalInput == 0) 
+            ? transform.forward 
+            : (horizontalInput * cameraRight + verticalInput * cameraForward).normalized;
+
         foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
         {
             //wall.GetComponent<Collider>().enabled = false;
@@ -447,7 +462,6 @@ IEnumerator Dash()
         isDashing = false;
     }
 }
-
    
 
    public void ApplyEffect(StatusEffect effect)
