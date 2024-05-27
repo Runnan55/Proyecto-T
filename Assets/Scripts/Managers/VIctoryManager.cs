@@ -9,6 +9,15 @@ public class VIctoryManager : MonoBehaviour
     void Start()
     {
         levelManager = FindObjectOfType<LevelManager>();
+
+        if (levelManager != null)
+        {
+            Debug.Log("LevelManager encontrado");
+        }
+        else
+        {
+            Debug.Log("LevelManager no encontrado");
+        }
     }
 
     void Update()

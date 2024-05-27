@@ -242,35 +242,35 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Perdiste. Cargando Hub.");
         SceneManager.LoadScene("Hub");
     }
-
+/* 
     #region DEBUG //    ***** DEBUG ***** 
-   //public void Update()
-   // {
-   //     if (Input.GetKeyDown(KeyCode.Q))
-   //     {
-   //         SelectCard();
-   //     }
+   public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            SelectCard();
+        }
 
-   //     if (Input.GetKeyDown(KeyCode.W))
-   //     {
-   //         LoadLevel();
-   //     }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            LoadLevel();
+        }
 
-   //     if (Input.GetKeyDown(KeyCode.E))
-   //     {
-   //         OnLevelCompleted();
-   //     }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            OnLevelCompleted();
+        }
 
-   //     if (Input.GetKeyDown(KeyCode.R))
-   //     {
-   //         OnLevelFailed();
-   //     }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            OnLevelFailed();
+        }
 
-   //     if (Input.GetKeyDown(KeyCode.T))
-   //     {
-   //         //Debug.Log("Quedan " + tarotCards.Count + " cartas: " + string.Join(", ", tarotCards));
-   //         Debug.Log(+actualLevel + "debug");
-   //     }
-   // }
-    #endregion DEBUG
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            //Debug.Log("Quedan " + tarotCards.Count + " cartas: " + string.Join(", ", tarotCards));
+            Debug.Log(+actualLevel + "debug");
+        }
+    }
+    #endregion DEBUG */
 }
