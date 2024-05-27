@@ -54,7 +54,7 @@ private void Start()
         GameManager.Instance.GetComponent<SoundManager>().PlayMusic(AudioMusic.levelMusic, MusicAudioSource, true);
         GameManager.Instance.GetComponent<SoundManager>().PlayMusic(AudioMusic.ambience, MusicAudioSource, true);
         //SceneManager.LoadScene(AppScenes.Level);
-        SceneManager.LoadScene("Hub");
+        SceneManager.LoadScene("Tutorial");
     }
 
     public void OnOptionsClicked()
