@@ -10,6 +10,7 @@ public class BossHealth : MonoBehaviour
     public float currentHealth;
     public GameObject secondBoss; 
     public LevelManager levelManager;
+    public GameObject victory;
 
     void Start()
     {
@@ -25,25 +26,25 @@ public class BossHealth : MonoBehaviour
             Debug.Log("muerto");
             ActiveBoss();
             Die();
-
+          
         }
     }
     void ActiveBoss()
     {
         if (secondBoss != null)
         {
-
             secondBoss.SetActive(true);
-
         }
+       
     }
     public void Die()
     {
-    
-    if (gameObject.name == "Enemy2")
-    {
-        levelManager.OnLevelCompleted();
-    }
         Destroy(gameObject);
+        if (gameObject.name == "Enemy2")
+        {
+            victory.SetActive(true);
+        }
     }
+  
+    
 }
