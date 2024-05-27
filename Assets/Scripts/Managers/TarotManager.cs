@@ -62,7 +62,8 @@ public class TarotManager : MonoBehaviour
 
     public IEnumerator PlayAnimationAndLoadLevel()
     {
-        levelManager.SelectRandomCard();
+        //levelManager.SelectRandomCard();
+        levelManager.SelectCard();
 
         // Activa las cartas justo antes de iniciar la animación
         foreach (GameObject obj in rotatingObjects)
