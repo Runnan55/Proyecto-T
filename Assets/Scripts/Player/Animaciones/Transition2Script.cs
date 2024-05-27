@@ -8,7 +8,7 @@ public class Transition2Script : StateMachineBehaviour
      override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        PlayerMovement.hasRotated = false;
- PlayerMovement.cambioarma = false;
+       PlayerMovement.cambioarma = false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

@@ -38,60 +38,11 @@ public string attackNumber;
    switch (attackNumber)
         {
             case "Attack1":
-
-                
-                 if (damageZoneG1 != null)
-                 {
-
-                    Collider collider = damageZoneG1.GetComponent<Collider>();
-
-                     if (collider != null)
-                    {
-                      collider.enabled = true;
-                    }
-                 }        
-
-
-                 var vfx1G1 = vfxObject1G1.GetComponent<VisualEffect>();
-        if (vfx1G1 != null)
-        {
-            vfx1G1.enabled = true;
-            vfx1G1.Play();
-            
-        }                    
+                             
                 
                 break;
-            case "Attack2":
+            case "Attack2":             
                
-               
-                if (damageZone2G1 != null)
-                 {
-
-                    Collider collider = damageZone2G1.GetComponent<Collider>();
-
-                     if (collider != null)
-                    {
-                      collider.enabled = true;
-                    }
-                 }          
-
-                  
-                 var vfx2G1 = vfxObject2G1.GetComponent<VisualEffect>();
-        if (vfx2G1 != null)
-        {
-            vfx2G1.enabled = true;
-            vfx2G1.Play();
-        }      
-
-                      
-                 var vfx2G11 = vfxObject2G11.GetComponent<VisualEffect>();
-        if (vfx2G11 != null)
-        {
-            vfx2G11.enabled = true;
-            vfx2G11.Play();
-        }      
-
-
 
                 break;
             case "Attack3":
@@ -206,33 +157,10 @@ var vfx1G2 = vfxObject2G2.GetComponent<VisualEffect>();
             case "Attack1":
 
         
-                  if (damageZoneG1 != null)
-                 {
-
-                    Collider collider = damageZoneG1.GetComponent<Collider>();
-
-                     if (collider != null)
-                    {
-                      collider.enabled = false;
-                    }
-                 }          
-
                 
                 break;
             case "Attack2":
                
-
-            if (damageZone2G1 != null)
-                 {
-
-                    Collider collider = damageZone2G1.GetComponent<Collider>();
-
-                     if (collider != null)
-                    {
-                      collider.enabled = false;
-                    }
-                 }          
-
 
 
                 break;

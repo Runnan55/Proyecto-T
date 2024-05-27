@@ -75,6 +75,8 @@ private float buttonPressTime = 0f;
 public Image ultimateImage;
 
 
+  public GameObject dashObjec;
+
 
         private void Awake()
     {
@@ -235,6 +237,7 @@ public void AtaquesGrimorios()
     }
  
 }
+
 public void GrimorioDistancia()
 {
                 
@@ -441,13 +444,14 @@ IEnumerator Dash()
 
         animator.SetBool("Dash", false);
 
-        // Reactivar los colliders de los objetos con la etiqueta "Walls"
-        foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
-        {
-            wall.GetComponent<Collider>().enabled = true;
-        }
+            // Activa el objeto
+        dashObjec.SetActive(true);
 
         yield return new WaitForSeconds(0.5f); 
+
+        // Desactiva el objeto
+        dashObjec.SetActive(false);
+
         // Restaurar la posición Y del jugador después de que termine el Dash
         Vector3 finalPosition = transform.position;
         finalPosition.y = originalY;
