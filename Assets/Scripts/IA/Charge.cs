@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class Charge : Enemy
 {
-    public Transform player;
+    private Transform player;
     public Collider attackCollider; // Collider de ataque
     public float detectionRadius = 10f;
     public float attackDistance = 2f;
@@ -20,9 +20,15 @@ public class Charge : Enemy
     private bool isAttacking = false;
     private bool isWaiting = false;
     private Animator animator;
-
-    void Start()
+    private bool stop=true;
+    void Awake()
     {
+
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
         agent = GetComponent<NavMeshAgent>();
         agent.speed = normalSpeed;
         animator = GetComponent<Animator>(); // Obtener el Animator
@@ -46,7 +52,8 @@ public class Charge : Enemy
             // Desactiva el collider de ataque
             attackCollider.enabled = false;
         }
-
+        if(stop){
+        
         // Si el jugador está dentro del radio de detección y el enemigo no está atacando ni esperando
         if (distanceToPlayer <= detectionRadius && !isAttacking && !isWaiting)
         {
@@ -58,6 +65,7 @@ public class Charge : Enemy
             }
             else
             {
+
                 // Comienza la espera antes de atacar
                 StartCoroutine(WaitAndAttack());
             }
@@ -66,6 +74,7 @@ public class Charge : Enemy
         {
             animator.SetBool("Walk", false);
 
+        }
         }
     }
 
@@ -82,6 +91,7 @@ public class Charge : Enemy
 
     private IEnumerator ChargeAttack()
     {
+        if (stop) { 
         isAttacking = true;
         agent.isStopped = false;
         agent.speed = chargeSpeed;
@@ -105,7 +115,7 @@ public class Charge : Enemy
 
         isAttacking = false;
         animator.SetBool("Walk", false);
-
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -134,15 +144,20 @@ public class Charge : Enemy
 
     public void DesactivarMovimientos()
     {
-
+        stop = false;
+        animator.enabled = false;
         agent.enabled = false; // Desactiva el NavMeshAgent
+        Debug.Log("asasa");
     }
 
     public void ReactivarMovimientos()
     {
 
-        agent.enabled = true; // Desactiva el NavMeshAgent
+        agent.isStopped = true; // Desactiva el NavMeshAgent
+        animator.enabled = true;
+        stop = true;
 
+        Debug.Log("gfgfgfg");
     }
 
 }

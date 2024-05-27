@@ -32,7 +32,6 @@ public class Enemy : MonoBehaviour
     public GameObject dropPrefab;
 
     private Vector3 dropspawn;
-    public GameObject boss2;
 
     private WaveManager waveManager;
     public DoorManager doorManager;
@@ -42,14 +41,13 @@ public class Enemy : MonoBehaviour
        PlayerMovement playerMovement;
 
 
-    public void Awake()
-    {      
-        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
-    }
+    
 
     void Start()
     {
-          playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+
+        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
         var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
         if (waveManagerObject != null)
@@ -69,7 +67,6 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             DropItem();
-            ActiveBoss();
             if (waveManager != null)
             {
                 waveManager.EnemyDied();
@@ -129,15 +126,7 @@ public class Enemy : MonoBehaviour
         }
         }
     }
-    void ActiveBoss()
-    {
-        if (boss2 != null)
-        {
-
-            boss2.SetActive(true);
-          
-        }
-    }
+  
 
     public void Activar()
     {    

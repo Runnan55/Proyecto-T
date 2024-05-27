@@ -98,8 +98,8 @@ public class BlackHoleCard : BaseCard
         {
             Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
             ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
-            Charge charger = hitCollider.GetComponent<Charge>();
             ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
+            Charge charger = hitCollider.GetComponent<Charge>();
             EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
             if (rb != null)
             {

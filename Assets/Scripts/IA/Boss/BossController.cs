@@ -12,11 +12,12 @@ public class BossController : BossHealth
     public GameObject circlePrefab;
     public GameObject previewCirclePrefab; // Prefab para la previsualizaci�n
     public GameObject triggerArea;
+    public Transform disparador;
 
     public float damageRadius;
     public float timeBetweenPatterns = 2f; // Tiempo entre cada repetici�n de patrones
     public LayerMask playerLayer;
-    private float attackDuration = 20f;
+    private float attackDuration = 10f;
     private int currentPattern = 0;
     public int numberOfCircles = 5; // Cantidad de c�rculos a generar
     public float previewDuration = 2f; // Duraci�n de la previsualizaci�n
@@ -24,18 +25,16 @@ public class BossController : BossHealth
     public GameObject healthBarObject;
 
     public Image healthBar;
-    private float health;
 
     void Awake()
     {
         healthBarObject.SetActive(true);
-        health = currentHealth; 
         StartCoroutine(PatternRoutine());
     }
 
     void Update()
     {
-        healthBar.fillAmount = currentHealth / health;
+        healthBar.fillAmount = currentHealth / maxHealth;
     }
 
     IEnumerator PatternRoutine()
@@ -54,7 +53,7 @@ public class BossController : BossHealth
                     break;
                 case 2:
                     Debug.Log("pat3");
-                    StartCoroutine(RepeatPattern(Pattern3, timeBetweenPatterns));
+                    StartCoroutine(RepeatPattern(Pattern3, 5f));
                     break;
             }
             yield return new WaitForSeconds(attackDuration);
@@ -119,8 +118,8 @@ public class BossController : BossHealth
 
     void Pattern2()
     {
-        Vector3 targetDirection = (player.transform.position - transform.position).normalized;
-        GameObject fireball = Instantiate(fireballPrefab, transform.position, Quaternion.identity);
+        Vector3 targetDirection = (player.transform.position - disparador.position).normalized;
+        GameObject fireball = Instantiate(fireballPrefab, disparador.position, Quaternion.identity);
         fireball.GetComponent<Rigidbody>().velocity = targetDirection * 20f; // Ajustar la velocidad seg�n necesites
     }
 
