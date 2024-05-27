@@ -73,14 +73,18 @@ public class Boomerang : MonoBehaviour
 
                 timeSinceLastDamage = 0f;
             }
-            if (timeSinceLastDamage >= 0.25f)
-            {
-                other.gameObject.GetComponent<BossHealth>().TakeDamage(damage);
-
-                timeSinceLastDamage = 0f;
-            }
+           
         }
 
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (timeSinceLastDamage >= 0.25f)
+        {
+            other.gameObject.GetComponent<BossHealth>().TakeDamage(damage);
+
+            timeSinceLastDamage = 0f;
+        }
     }
 
     // Método para iniciar el movimiento del boomerang con una dirección dada
