@@ -15,12 +15,12 @@ public class Charge : Enemy
     public float normalSpeed = 3.5f;
     public float chargeDistance = 5f; // Distancia que se embestirá
     public float chargeDuration = 1f; // Duración de la embestida
+    public Collider dano;
 
     private NavMeshAgent agent;
     private bool isAttacking = false;
     private bool isWaiting = false;
     private Animator animator;
-    private bool stop=true;
     void Awake()
     {
 
@@ -32,7 +32,7 @@ public class Charge : Enemy
         agent = GetComponent<NavMeshAgent>();
         agent.speed = normalSpeed;
         animator = GetComponent<Animator>(); // Obtener el Animator
-
+        dano.enabled = false;
         // Desactivar el collider de ataque al inicio
         attackCollider.enabled = false;
     }
@@ -52,7 +52,6 @@ public class Charge : Enemy
             // Desactiva el collider de ataque
             attackCollider.enabled = false;
         }
-        if(stop){
         
         // Si el jugador está dentro del radio de detección y el enemigo no está atacando ni esperando
         if (distanceToPlayer <= detectionRadius && !isAttacking && !isWaiting)
@@ -65,7 +64,7 @@ public class Charge : Enemy
             }
             else
             {
-
+                    
                 // Comienza la espera antes de atacar
                 StartCoroutine(WaitAndAttack());
             }
@@ -75,14 +74,13 @@ public class Charge : Enemy
             animator.SetBool("Walk", false);
 
         }
-        }
+        
     }
 
     private IEnumerator WaitAndAttack()
     {
         isWaiting = true;
         agent.isStopped = true; // Detener al enemigo
-        Debug.Log("Enemy waiting...");
         yield return new WaitForSeconds(waitTime);
 
         isWaiting = false;
@@ -91,12 +89,11 @@ public class Charge : Enemy
 
     private IEnumerator ChargeAttack()
     {
-        if (stop) { 
         isAttacking = true;
         agent.isStopped = false;
+            dano.enabled = true;
         agent.speed = chargeSpeed;
         animator.SetBool("Walk", true);
-        Debug.Log("Enemy charging...");
         Vector3 chargeDirection = (player.position - transform.position).normalized;
         Vector3 chargeTarget = transform.position + chargeDirection * chargeDistance;
 
@@ -112,10 +109,11 @@ public class Charge : Enemy
         // Mirar al jugador después de la carga
         transform.LookAt(player.position);
         Debug.Log("Enemy charge completed and looking at player.");
+            dano.enabled = false;
 
-        isAttacking = false;
+            isAttacking = false;
         animator.SetBool("Walk", false);
-        }
+        
     }
 
     void OnDrawGizmosSelected()
@@ -144,20 +142,19 @@ public class Charge : Enemy
 
     public void DesactivarMovimientos()
     {
-        stop = false;
-        animator.enabled = false;
+        attackCollider.enabled = true;
         agent.enabled = false; // Desactiva el NavMeshAgent
-        Debug.Log("asasa");
+        animator.enabled = false;
+        Debug.Log("11");
     }
 
     public void ReactivarMovimientos()
     {
+        attackCollider.enabled = false;
 
-        agent.isStopped = true; // Desactiva el NavMeshAgent
+        agent.enabled = true; // Desactiva el NavMeshAgent
         animator.enabled = true;
-        stop = true;
-
-        Debug.Log("gfgfgfg");
+        Debug.Log("22");
     }
 
 }

@@ -29,12 +29,10 @@ public class Flecha : MonoBehaviour
         {
             playerLife.ModifyTime(-damage);
 
-            Debug.Log("pummm");
             Destroy(gameObject);
         }
         else if (other.CompareTag("Walls"))
         {
-            Debug.Log("pared"); 
             Destroy(gameObject);
         }
     }
