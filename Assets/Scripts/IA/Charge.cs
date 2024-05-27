@@ -180,9 +180,12 @@ public class Charge : Enemy
 
     public void DesactivarMovimientos()
     {
+        empujar = false;
+
+        animator.applyRootMotion = false;
+
         attackCollider.enabled = true;
         agent.enabled = false; // Desactiva el NavMeshAgent
-        animator.enabled = false;
         Debug.Log("11");
     }
 
@@ -191,7 +194,9 @@ public class Charge : Enemy
         attackCollider.enabled = false;
 
         agent.enabled = true; // Desactiva el NavMeshAgent
-        animator.enabled = true;
+        animator.applyRootMotion = true;
+        empujar = true;
+
         Debug.Log("22");
     }
 
