@@ -402,22 +402,17 @@ IEnumerator Dash()
 {
     if (!isDashing && Time.time >= lastDashTime + dashTime)
     {
-        // Almacenar la posición Y actual del jugador antes de comenzar el Dash
         float originalY = transform.position.y;
 
         isDashing = true;
         animator.SetBool("Dash", true);
         float startTime = Time.time;
 
-        // Obtener la entrada del usuario
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Usar la dirección hacia adelante del jugador para el dash si no se presiona ninguna tecla,
-        // de lo contrario, usar la entrada del usuario para determinar la dirección
-        Vector3 dashDirection = (horizontalInput == 0 && verticalInput == 0) ? transform.forward : (horizontalInput * Camera.main.transform.right + verticalInput * Camera.main.transform.forward).normalized;
-
-        // Desactivar los colliders de los objetos con la etiqueta "Walls"
+        // Usar la transformación del jugador para calcular la dirección del dash
+        Vector3 dashDirection = (horizontalInput == 0 && verticalInput == 0) ? transform.forward : (horizontalInput * Vector3.right + verticalInput * Vector3.forward).normalized;
         foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Walls"))
         {
             //wall.GetComponent<Collider>().enabled = false;
@@ -425,18 +420,12 @@ IEnumerator Dash()
 
         while (Time.time < startTime + dashTime)
         {
-            // Calcular la fracción del tiempo de dash que ha pasado
             float fractionOfDashTimePassed = (Time.time - startTime) / dashTime;
-
-            // Interpolar linealmente la velocidad del dash desde DashSpeed hasta 0
             float currentDashSpeed = Mathf.Lerp(DashSpeed, 0, fractionOfDashTimePassed);
-
-            // Mover al jugador en la dirección del dash
             playerMovement.controller.Move(dashDirection * currentDashSpeed * Time.deltaTime);
 
-            // Cancelar el movimiento vertical durante el Dash
             Vector3 newPosition = transform.position;
-            newPosition.y = originalY; // Mantener la posición Y original
+            newPosition.y = originalY;
             transform.position = newPosition;
 
             yield return null;
@@ -444,15 +433,12 @@ IEnumerator Dash()
 
         animator.SetBool("Dash", false);
 
-            // Activa el objeto
         dashObjec.SetActive(true);
 
         yield return new WaitForSeconds(0.5f); 
 
-        // Desactiva el objeto
         dashObjec.SetActive(false);
 
-        // Restaurar la posición Y del jugador después de que termine el Dash
         Vector3 finalPosition = transform.position;
         finalPosition.y = originalY;
         transform.position = finalPosition;
