@@ -19,7 +19,7 @@ public class CardInventory : MonoBehaviour
     public TextMeshProUGUI slot2Text;
     public TextMeshProUGUI slot3Text;
 
-    private static int cardCounter = 0;
+    //private static int cardCounter = 0;
 
     public bool AddCard(string id, ICard card)
     {

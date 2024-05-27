@@ -207,4 +207,11 @@ public class InventarioPlayer : MonoBehaviour
             return null;
         }
     }
+    public void ClearInventory()
+    {
+        cards[0] = "Empty";
+        cards[1] = "Empty";
+        cards[2] = "Empty";
+        UpdateInventoryDisplay();
+    }
 }
