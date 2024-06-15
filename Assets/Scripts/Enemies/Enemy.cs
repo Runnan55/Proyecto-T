@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
 
             if (health <= 0)
             {
-                Debug.Log("Enemy defeated en enemy");
+                //Debug.Log("Enemy defeated en enemy");
                 if (doorManager != null) // Verificar si doorManager es null
                 {
                     doorManager.EnemyDefeated(); 
@@ -38,6 +38,7 @@ public class Enemy : MonoBehaviour
 
     public float knockbackDistance = 2f;
     public float knockbackDuration = 0.1f;
+    public Level level;
        PlayerMovement playerMovement;
 
 
@@ -46,6 +47,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
+        level = GameObject.FindGameObjectWithTag("Level").GetComponent<Level>();
+
 
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
@@ -73,6 +76,11 @@ public class Enemy : MonoBehaviour
             }
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
+
+            if (level != null)
+            {
+                level.EnemyDefeated(this);
+            }
         }
         else
         {

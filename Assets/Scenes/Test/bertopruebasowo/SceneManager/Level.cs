@@ -2,65 +2,75 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class EnemySpawner
+{
+    public Enemy enemy;
+    public Transform spawnPoint;
+}
+
+[System.Serializable]
+public class EnemyWave
+{
+    public List<EnemySpawner> enemySpawns;
+}
+
 public class Level : MonoBehaviour
 {
-    public interface INivel
+    public List<EnemyWave> waves;
+    public Door entranceDoor, exitDoor;
+    public float delayBetweenEnemies = 1f;
+    private int currentWave = 0;
+    private int defeatedEnemies = 0;
+    private bool hasPlayerEntered = false;
+
+    private void OnTriggerEnter(Collider other)
     {
-        void Iniciar();
-        void Finalizar();
-        void SpawnEnemigos();
-        void AbrirPuertas();
-        void CerrarPuertas();
-        void EnemigoDerrotado(Enemy enemigo);
+        if (other.CompareTag("Player") && !hasPlayerEntered)
+        {
+            StartCoroutine(entranceDoor.Close());
+            Debug.Log(hasPlayerEntered);
+            StartNextWave();
+            hasPlayerEntered = true; 
+            Debug.Log(hasPlayerEntered);
+        }
     }
 
-    public class NivelArena : INivel
+    public void StartNextWave()
     {
-        private List<Enemy> enemigos = new List<Enemy>();
-        private GameObject puertaEntrada, puertaSalida;
-
-        public NivelArena(GameObject entrada, GameObject salida)
+        if (currentWave < waves.Count)
         {
-            this.puertaEntrada = entrada;
-            this.puertaSalida = salida;
+            defeatedEnemies = waves[currentWave].enemySpawns.Count;
+            StartCoroutine(SpawnWave(waves[currentWave]));
+            currentWave++;
         }
+    }
 
-        public void Iniciar()
+    private IEnumerator SpawnWave(EnemyWave wave)
+    {
+        foreach (EnemySpawner enemySpawner in wave.enemySpawns)
         {
-            CerrarPuertas();
-            SpawnEnemigos();
+            Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
+            yield return new WaitForSeconds(delayBetweenEnemies);
         }
+    }
 
-        public void Finalizar()
+    public void EnemyDefeated(Enemy enemy)
+    {
+        Debug.Log("Enemy defeated");
+        defeatedEnemies--;
+        Debug.Log("Defeated enemies: " + defeatedEnemies);
+
+        if (defeatedEnemies <= 0)
         {
-            AbrirPuertas();
-        }
-
-        public void SpawnEnemigos()
-        {
-
-        }
-
-        public void AbrirPuertas()
-        {
-
-        }
-
-        public void CerrarPuertas()
-        {
-
-        }
-
-        public void EnemigoDerrotado(Enemy enemigo)
-        {
-            VerificarFinalizacion();
-        }
-
-        private void VerificarFinalizacion()
-        {
-            if (enemigos.Count == 0)
+            if (currentWave == waves.Count)
             {
-                Finalizar();
+                StartCoroutine(entranceDoor.Open());
+                StartCoroutine(exitDoor.Open());
+            }
+            else
+            {
+                StartNextWave();
             }
         }
     }
