@@ -1383,7 +1383,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 19.04, y: -14.36, z: 22.99}
-  m_LocalScale: {x: 2.4696803, y: 5.8899183, z: 55.409863}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 387326452}
@@ -1400,6 +1400,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bea3ccf30bb42c48b4b0bf8422587c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entranceDoor: {fileID: 28949900}
+  exitDoor: {fileID: 2034882581}
+  delayBetweenEnemies: 1
   waves:
   - enemySpawns:
     - enemy: {fileID: 1776565623}
@@ -1413,9 +1416,6 @@ MonoBehaviour:
       spawnPoint: {fileID: 961381343}
     - enemy: {fileID: 1776565623}
       spawnPoint: {fileID: 496775412}
-  entranceDoor: {fileID: 28949900}
-  exitDoor: {fileID: 2034882581}
-  delayBetweenEnemies: 1
 --- !u!65 &462888782
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1435,8 +1435,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 7.4520273, z: 71.862366}
+  m_Center: {x: 0, y: -0.23344612, z: 2.5390701}
 --- !u!1 &496775411
 GameObject:
   m_ObjectHideFlags: 0
@@ -2774,7 +2774,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1091462270461060203, guid: e2f72e52e039c6a4b88eecc83c011ce7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -50
+      value: -48.1
       objectReference: {fileID: 0}
     - target: {fileID: 1091462270461060203, guid: e2f72e52e039c6a4b88eecc83c011ce7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4524,8 +4524,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2146579738}
-  - component: {fileID: 2146579740}
   - component: {fileID: 2146579739}
+  - component: {fileID: 2146579740}
   m_Layer: 0
   m_Name: Scriptsala2
   m_TagString: LevelSpawner
@@ -4543,7 +4543,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 52.7, y: -14.36, z: 22.99}
-  m_LocalScale: {x: 2.4696803, y: 5.8899183, z: 55.409863}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 387326452}
@@ -4567,8 +4567,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 21.150892, z: 59.61895}
+  m_Center: {x: 0, y: 3.6520433, z: -0.45259476}
 --- !u!114 &2146579740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4581,6 +4581,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bea3ccf30bb42c48b4b0bf8422587c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entranceDoor: {fileID: 2034882581}
+  exitDoor: {fileID: 236782131}
+  delayBetweenEnemies: 1
   waves:
   - enemySpawns:
     - enemy: {fileID: 1776565623}
@@ -4593,10 +4596,7 @@ MonoBehaviour:
     - enemy: {fileID: 1776565623}
       spawnPoint: {fileID: 1530979374}
     - enemy: {fileID: 1776565623}
-      spawnPoint: {fileID: 1530979374}
-  entranceDoor: {fileID: 2034882581}
-  exitDoor: {fileID: 236782131}
-  delayBetweenEnemies: 1
+      spawnPoint: {fileID: 1394293405}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -17,9 +17,15 @@ public class EnemyWave
 
 public class Level : MonoBehaviour
 {
-    public List<EnemyWave> waves;
-    public Door entranceDoor, exitDoor;
+    [Header("Doors config")]
+    public Door entranceDoor;
+    public Door exitDoor;
+
+
+    [Header("Waves config")]
     public float delayBetweenEnemies = 1f;
+    public List<EnemyWave> waves;
+
     private int currentWave = 0;
     private int defeatedEnemies = 0;
     private bool hasPlayerEntered = false;
@@ -49,10 +55,26 @@ public class Level : MonoBehaviour
     private IEnumerator SpawnWave(EnemyWave wave)
     {
         foreach (EnemySpawner enemySpawner in wave.enemySpawns)
-        {
-            Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
-            yield return new WaitForSeconds(delayBetweenEnemies);
-        }
+    {
+        Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
+        
+        // Almacena la escala y la rotación originales
+        Vector3 originalScale = newEnemy.transform.localScale;
+        Quaternion originalRotation = newEnemy.transform.rotation;
+
+        // Cambia el padre
+        newEnemy.transform.SetParent(this.transform, true);
+
+        // Espera un frame
+        yield return null;
+
+        // Restablece la escala y la rotación originales
+        newEnemy.transform.localScale = originalScale;
+        newEnemy.transform.rotation = originalRotation;
+
+        newEnemy.level = this; // Asegúrate de que el enemigo sepa a qué instancia de Level debe referirse
+        yield return new WaitForSeconds(delayBetweenEnemies);
+    }
     }
 
     public void EnemyDefeated(Enemy enemy)
