@@ -16,11 +16,6 @@ public class Enemy : MonoBehaviour
 
             if (health <= 0)
             {
-                //Debug.Log("Enemy defeated en enemy");
-                if (doorManager != null) // Verificar si doorManager es null
-                {
-                    doorManager.EnemyDefeated(); 
-                }
                 Destroy(gameObject);
             }
         }    
@@ -45,23 +40,9 @@ public class Enemy : MonoBehaviour
     
 
     void Start()
-    {
-        doorManager = GameObject.FindGameObjectWithTag("DoorManager").GetComponent<DoorManager>();
-        level = GameObject.FindGameObjectWithTag("Level").GetComponent<Level>();
-
-
+    { 
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
-        var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
-        if (waveManagerObject != null)
-        {
-            waveManager = waveManagerObject.GetComponent<WaveManager>();
-        }
-        var doorManagerObject = GameObject.FindGameObjectWithTag("DoorManager");
-        if (doorManagerObject != null) // Verificar si doorManagerObject es null
-        {
-            doorManager = doorManagerObject.GetComponent<DoorManager>();
-        }
     }
 
     public virtual void ReceiveDamage(float amount) // (en segundos)
@@ -70,10 +51,6 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             DropItem();
-            if (waveManager != null)
-            {
-                waveManager.EnemyDied();
-            }
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
 
