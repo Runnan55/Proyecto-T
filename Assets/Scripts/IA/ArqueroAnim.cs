@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -18,6 +18,7 @@ public class ArqueroAnim : Enemy
     private float lastShootTime = -999;
     private Animator animator;
     private bool isAttacking;
+    private bool empujar = true;
 
     private void Awake()
     {
@@ -41,50 +42,38 @@ public class ArqueroAnim : Enemy
         // Siempre mirar hacia el jugador
         transform.LookAt(player.position);
 
-        // ComprobaciÛn de lÌnea de visiÛn
+        // Comprobaci√≥n de l√≠nea de visi√≥n
         if (!Physics.Raycast(transform.position, directionToPlayer, distance, LayerMask.GetMask("Obstruction")))
         {
-            if (distance <= closeDistance)
-            {
-                // Moverse a una posiciÛn aleatoria si est· muy cerca
-                Vector3 randomDirection = Random.insideUnitSphere * randomMoveRadius;
-                randomDirection += transform.position;
-                NavMeshHit hit;
-                if (NavMesh.SamplePosition(randomDirection, out hit, randomMoveRadius, NavMesh.AllAreas))
-                {
-                    agent.SetDestination(hit.position);
-                    animator.SetBool("Walk", true);
-                    animator.SetBool("Attack", false);
-                }
-            }
-            else if (distance <= shootingRange)
+           
+             if (distance <= shootingRange)
             {
                 if (Time.time > lastShootTime + shootCooldown)
                 {
                     lastShootTime = Time.time;
                     isAttacking = true; // Comienza el ataque
-                    animator.SetBool("Attack", true);  // Activar animaciÛn de ataque
+                    animator.SetBool("Attack", true);  // Activar animaci√≥n de ataque
                     animator.SetBool("Walk", false);   // Asegurarse de que no camina mientras ataca
                 }
             }
             else
             {
-                // Ajustar posiciÛn manteniendo la distancia de disparo
+                // Ajustar posici√≥n manteniendo la distancia de disparo
                 Vector3 targetPosition = player.position - directionToPlayer * shootingRange;
                 NavMeshHit hit;
                 if (NavMesh.SamplePosition(targetPosition, out hit, 1.0f, NavMesh.AllAreas))
                 {
                     agent.SetDestination(hit.position);
-                    animator.SetBool("Walk", true);  // Activar animaciÛn de caminar
+                    animator.SetBool("Walk", true);  // Activar animaci√≥n de caminar
                 }
                 animator.SetBool("Attack", false);  // Asegurarse de que no ataca mientras camina
             }
         }
         else if (distance > shootingRange)
         {
-            // Seguir al jugador si est· fuera de rango
+            // Seguir al jugador si est√° fuera de rango
             agent.SetDestination(player.position);
-            animator.SetBool("Walk", true);  // Caminar si el jugador est· lejos
+            animator.SetBool("Walk", true);  // Caminar si el jugador est√° lejos
             animator.SetBool("Attack", false);
         }
         else
@@ -100,9 +89,9 @@ public class ArqueroAnim : Enemy
         Debug.Log("Ataque");
         isAttacking = true; // Comienza el ataque
         GameObject arrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
-        // Desactivar animaciÛn de caminar si est· atacando
+        // Desactivar animaci√≥n de caminar si est√° atacando
         animator.SetBool("Walk", false);
-        // Reactivar animaciÛn de ataque si es necesario (opcional dependiendo de cÛmo estÈ configurada la animaciÛn)
+        // Reactivar animaci√≥n de ataque si es necesario (opcional dependiendo de c√≥mo est√© configurada la animaci√≥n)
         animator.SetBool("Attack", true);
     }
 
@@ -112,7 +101,7 @@ public class ArqueroAnim : Enemy
         if (isAttacking)
         {
             isAttacking = false; // Cancela el ataque
-            animator.SetBool("Attack", false); // Cancela la animaciÛn de ataque
+            animator.SetBool("Attack", false); // Cancela la animaci√≥n de ataque
         }
 
         if (damageEffect != null)
@@ -121,6 +110,10 @@ public class ArqueroAnim : Enemy
 
             Invoke("DisableDamageEffect", 2f);
         }
+        if (empujar)
+        {
+            Empuje();
+        }
     }
 
     private void DisableDamageEffect()
@@ -128,6 +121,17 @@ public class ArqueroAnim : Enemy
         if (damageEffect != null)
         {
             damageEffect.SetActive(false);
+        }
+    }
+
+    public void Empuje()
+    {
+        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
+        if (enemyRigidbody != null)
+        {
+            // Cambia el valor de la fuerza segÔøΩn lo necesites
+            float force = 100f;
+            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
         }
     }
 

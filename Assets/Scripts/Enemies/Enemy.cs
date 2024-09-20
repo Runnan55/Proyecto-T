@@ -28,9 +28,6 @@ public class Enemy : MonoBehaviour
 
     private Vector3 dropspawn;
 
-    public WaveManager waveManager;
-    public DoorManager doorManager;
-
     public float knockbackDistance = 2f;
     public float knockbackDuration = 0.1f;
     public Level level;
