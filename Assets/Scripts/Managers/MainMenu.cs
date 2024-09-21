@@ -1,158 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-
     // No tiene singleton. Básicamente el script que controla todo del menú principal.
     // Interactúa con el EventSystem y con el SaveLoad
 
-    /* private GameObject menuCanvas = null;
-    private FPEMenuButton newGameButton = null;
-    private FPEMenuButton continueGameButton = null;
-    private FPEMenuButton quitGameButton = null;
-    private GameObject newGameConfirmationPanel = null;
-    private FPEMenuButton[] newGameConfirmationButtons;
-    private Text errorText = null;
+    public string startSceneName;
 
-    void Start()
-    {
-
-        menuCanvas = transform.Find("MenuCanvas").gameObject;
-        errorText = menuCanvas.transform.Find("ErrorText").gameObject.GetComponent<Text>();
-
-        if (!menuCanvas || !errorText)
-        {
-            Debug.LogError("FPEMainMenu:: Cannot find MenuCanvas or ErrorText! Did you rename or remove them?");
-        }
-
-        // Find buttons - will need to be updated if you add or remove buttons
-        FPEMenuButton[] menuButtons = menuCanvas.gameObject.GetComponentsInChildren<FPEMenuButton>();
-
-        for (int t = 0; t < menuButtons.Length; t++)
-        {
-
-            if (menuButtons[t].transform.name == "NewGameButton")
-            {
-                newGameButton = menuButtons[t];
-            }
-            else if (menuButtons[t].transform.name == "ContinueGameButton")
-            {
-                continueGameButton = menuButtons[t];
-            }
-            else if (menuButtons[t].transform.name == "QuitGameButton")
-            {
-                quitGameButton = menuButtons[t];
-            }
-
-        }
-
-        if (!newGameButton || !continueGameButton || !quitGameButton)
-        {
-            Debug.LogError("FPEMainMenu:: Cannot find one or more of the menu buttons! Did you rename or remove them?");
-        }
-
-        newGameConfirmationPanel = menuCanvas.gameObject.transform.Find("NewGameConfirmationPanel").gameObject;
-
-        if (!newGameConfirmationPanel)
-        {
-            Debug.LogError("FPEMainMenu:: Cannot find one or more of the menu panels! Did you rename or remove them?");
-        }
-
-        newGameConfirmationPanel.SetActive(true);
-        newGameConfirmationButtons = newGameConfirmationPanel.gameObject.GetComponentsInChildren<FPEMenuButton>();
-        newGameConfirmationPanel.SetActive(false);
-
-        refreshButtonStates();
-
-    }
- */
     void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             exitGame();
         }
-
     }
-
-   /*  private void refreshButtonStates()
-    {
-
-        newGameButton.enableButton();
-        quitGameButton.enableButton();
-
-        // Only allow for continue if saved game exists
-        if (FPESaveLoadManager.Instance.SavedGameExists())
-        {
-            continueGameButton.enableButton();
-            EventSystem.Instance.GetComponent<EventSystem>().SetSelectedGameObject(continueGameButton.gameObject);
-        }
-        else
-        {
-            continueGameButton.disableButton();
-            EventSystem.Instance.GetComponent<EventSystem>().SetSelectedGameObject(newGameButton.gameObject);
-        }
-
-    }
-
-    public void startNewGame()
-    {
-
-        if (FPESaveLoadManager.Instance.StartANewGame())
-        {
-            FPESaveLoadManager.Instance.ChangeSceneToNoSave(FPESaveLoadManager.Instance.FirstLevelSceneBuildIndex);
-            errorText.text = "";
-        }
-        else
-        {
-            errorText.text = "Something went wrong. Do you have read/write permissions to '" + Application.persistentDataPath + "'?";
-        }
-
-    }
-
-    public void confirmStartNewGame()
-    {
-
-        if (FPESaveLoadManager.Instance.SavedGameExists())
-        {
-
-            newGameConfirmationPanel.SetActive(true);
-            // Highlight the 'no' button by default
-            EventSystem.Instance.GetComponent<EventSystem>().SetSelectedGameObject(newGameConfirmationButtons[newGameConfirmationButtons.Length - 1].gameObject);
-
-        }
-        else
-        {
-            startNewGame();
-        }
-
-    }
-
-    public void hideNewGameConfirmationDialog()
-    {
-
-        newGameConfirmationPanel.SetActive(false);
-        refreshButtonStates();
-
-    }
-
-    public void continueGame()
-    {
-        FPESaveLoadManager.Instance.LoadGame();
-    } */
 
     public void exitGame()
     {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
 
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        #else
+            Application.Quit();
 
+        #endif
     }
 
+    #region Buttons
+
+    public void StartButton()
+    {
+        SceneManager.LoadScene(startSceneName);
+    }
+    
+    #endregion Buttons
 }
