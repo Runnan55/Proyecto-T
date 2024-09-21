@@ -123,7 +123,7 @@ public class Card : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
-            CE charger = hitCollider.GetComponent<CE>();
+            Charge charger = hitCollider.GetComponent<Charge>();
             ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
             EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
             if (enemy != null)
@@ -155,7 +155,7 @@ public class Card : MonoBehaviour
         {
             Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
             ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
-            CE charger = hitCollider.GetComponent<CE>();
+            Charge charger = hitCollider.GetComponent<Charge>();
             ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
             EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
             if (rb != null)

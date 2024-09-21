@@ -39,7 +39,7 @@ public class SwapCardProjectile : MonoBehaviour
     void ResetStart(Collider hitCollider)
     {
         ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
-        CE charger = hitCollider.GetComponent<CE>();
+        Charge charger = hitCollider.GetComponent<Charge>();
         ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
         EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
 
@@ -69,7 +69,7 @@ public class SwapCardProjectile : MonoBehaviour
     {
         Rigidbody rb = hitCollider.GetComponent<Rigidbody>();
         ZombiEnemy enemy = hitCollider.GetComponent<ZombiEnemy>();
-        CE charger = hitCollider.GetComponent<CE>();
+        Charge charger = hitCollider.GetComponent<Charge>();
         ArqueroAnim distance = hitCollider.GetComponent<ArqueroAnim>();
         EnemyTpA tp = hitCollider.GetComponent<EnemyTpA>();
 
