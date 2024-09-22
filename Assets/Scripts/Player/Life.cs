@@ -30,6 +30,47 @@ public class Life : MonoBehaviour
 
     public SHAKECAMERA m_shakeCamera;
 
+        IEnumerator FindHealthPanelReferences()
+    {
+        yield return new WaitForSeconds(0.1f); // Espera breve para permitir la inicialización de la UI
+
+        // Encontrar el DefaultHUD(Clone) globalmente
+        GameObject hud = GameObject.Find("DefaultHUD(Clone)");
+
+        if (hud != null)
+        {
+            // Buscar HealthPanel dentro de CombatUI en DefaultHUD(Clone)
+            Transform healthPanelTransform = hud.transform.Find("CombatUI/HealthPanel");
+
+            if (healthPanelTransform != null)
+            {
+                // Asignar la referencia al TextMeshProUGUI timeText (TMP_Health)
+                timeText = healthPanelTransform.Find("TMP_Health").GetComponent<TextMeshProUGUI>();
+
+                // Asignar la referencia al componente Image timeImage (HealthFill)
+                timeImage = healthPanelTransform.Find("HealthFill").GetComponent<Image>();
+
+                // Verificación de las referencias
+                if (timeText != null && timeImage != null)
+                {
+                    Debug.Log("timeText y timeImage encontrados correctamente.");
+                }
+                else
+                {
+                    Debug.LogError("No se encontraron timeText o timeImage.");
+                }
+            }
+            else
+            {
+                Debug.LogError("No se pudo encontrar HealthPanel dentro de CombatUI.");
+            }
+        }
+        else
+        {
+            Debug.LogError("No se pudo encontrar DefaultHUD(Clone). Asegúrate de que está en la escena.");
+        }
+    }
+
     void Start()
     {
         currentTime = maxTime;
@@ -51,6 +92,8 @@ public class Life : MonoBehaviour
         {
             Debug.Log("No se encontró el componente CharacterController.");
         }
+
+        StartCoroutine(FindHealthPanelReferences());
     }
 
     void Update()

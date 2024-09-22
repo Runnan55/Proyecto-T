@@ -78,6 +78,66 @@ public Image ultimateImage;
   public GameObject dashObjec;
 
 
+        IEnumerator FinRef()
+    {
+        yield return new WaitForSeconds(0.1f); // Espera breve para permitir la inicialización
+
+        // Encontrar el DefaultHUD(Clone) globalmente
+        GameObject hud = GameObject.Find("DefaultHUD(Clone)");
+
+        if (hud != null)
+        {
+            // Buscar CombatUI dentro de DefaultHUD(Clone) y encontrar el Image de Ultimate
+            Transform combatUITransform = hud.transform.Find("CombatUI");
+
+            if (combatUITransform != null)
+            {
+                // Asignar la referencia al componente Image de Ultimate
+                ultimateImage = combatUITransform.Find("Ultimate").GetComponent<Image>();
+
+                if (ultimateImage != null)
+                {
+                    Debug.Log("Ultimate Image encontrado correctamente.");
+                }
+                else
+                {
+                    Debug.LogError("No se encontró el componente Image en Ultimate.");
+                }
+            }
+            else
+            {
+                Debug.LogError("No se pudo encontrar CombatUI dentro de DefaultHUD(Clone).");
+            }
+
+            // Buscar Grimory dentro de DefaultHUD(Clone) y encontrar Grimorio1 y Grimorio2
+            Transform grimoryTransform = hud.transform.Find("Grimory");
+
+            if (grimoryTransform != null)
+            {
+                // Asignar las referencias a Grimorio1 y Grimorio2
+                grimorio1 = grimoryTransform.Find("Grimorio1").gameObject;
+                grimorio2 = grimoryTransform.Find("Grimorio2").gameObject;
+
+                if (grimorio1 != null && grimorio2 != null)
+                {
+                    Debug.Log("Grimorio1 y Grimorio2 encontrados correctamente.");
+                }
+                else
+                {
+                    Debug.LogError("No se pudieron encontrar Grimorio1 o Grimorio2.");
+                }
+            }
+            else
+            {
+                Debug.LogError("No se pudo encontrar Grimory dentro de DefaultHUD(Clone).");
+            }
+        }
+        else
+        {
+            Debug.LogError("No se pudo encontrar DefaultHUD(Clone). Asegúrate de que está en la escena.");
+        }
+    }
+    
         private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -105,7 +165,7 @@ public Image ultimateImage;
         cambioarma =true;
 
          originalColor = cambioColoAlPegar.material.color;
-          
+          StartCoroutine(FinRef());
 
          
     }

@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro; // Para trabajar con TextMeshPro
 using UnityEngine.UI; // Para trabajar con componentes UI Image
+using System.Collections;
+
 
 public class InventarioPlayer : MonoBehaviour 
 {
@@ -31,6 +33,49 @@ public class InventarioPlayer : MonoBehaviour
     public string mode;
     private ItemPlacer itemPlacer;
 
+    IEnumerator InitializeReferences()
+    {
+        yield return new WaitForSeconds(0.1f); // Espera 0.1 segundos para asegurarse de que DefaultHUD(Clone) se ha instanciado
+    GameObject hud = GameObject.Find("DefaultHUD(Clone)");
+
+    if (hud != null)
+    {
+        // Buscar CardsPanel dentro de la jerarquía de DefaultHUD(Clone)
+        Transform cardsPanelTransform = hud.transform.Find("CombatUI/CardsPanel");
+
+        if (cardsPanelTransform != null)
+        {
+            slot1 = cardsPanelTransform.Find("CardTxt_Left").GetComponent<TMP_Text>();
+            slot2 = cardsPanelTransform.Find("CardTxt_Main").GetComponent<TMP_Text>();
+            slot3 = cardsPanelTransform.Find("CardTxt_Right").GetComponent<TMP_Text>();
+
+            image1 = cardsPanelTransform.Find("izq").GetComponent<Image>();
+            image2 = cardsPanelTransform.Find("medio").GetComponent<Image>();
+            image3 = cardsPanelTransform.Find("der").GetComponent<Image>();
+        }
+        else
+        {
+            // Depuración adicional para mostrar la jerarquía si no se encuentra el CardsPanel
+            Debug.LogError("No se pudo encontrar el CardsPanel dentro de DefaultHUD(Clone). Asegúrate de que los nombres de la jerarquía son correctos.");
+            PrintChildren(hud.transform);  // Imprime la jerarquía de DefaultHUD(Clone)
+        }
+    }
+    else
+    {
+        Debug.LogError("No se pudo encontrar DefaultHUD(Clone). Asegúrate de que está en la escena.");
+    }
+    UpdateInventoryDisplay();
+    }
+    
+void PrintChildren(Transform parent)
+{
+    foreach (Transform child in parent)
+    {
+        Debug.Log("Child: " + child.name);
+        PrintChildren(child);  // Llamada recursiva para imprimir sub-hijos
+    }
+}
+    
     void Awake()
     {
         itemPlacer = GetComponent<ItemPlacer>();
@@ -42,6 +87,7 @@ public class InventarioPlayer : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
     }
 
     void Start()
@@ -51,6 +97,7 @@ public class InventarioPlayer : MonoBehaviour
         cards[1] = "Empty";
         cards[2] = "Empty";
         UpdateInventoryDisplay();
+        StartCoroutine(InitializeReferences());
     }
 
     void Update()
