@@ -53,7 +53,7 @@ public class Life : MonoBehaviour
                 // Verificación de las referencias
                 if (timeText != null && timeImage != null)
                 {
-                    Debug.Log("timeText y timeImage encontrados correctamente.");
+                    //Debug.Log("timeText y timeImage encontrados correctamente.");
                 }
                 else
                 {
@@ -81,7 +81,7 @@ public class Life : MonoBehaviour
         }
         else
         {
-            Debug.Log("timeImage es null.");
+            //Debug.Log("timeImage es null.");
         }
 
         levelManager = FindObjectOfType<LevelManager>();

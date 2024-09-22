@@ -17,7 +17,7 @@ public class EventSystem : MonoBehaviour
     {
         if (_instance != null)
         {
-            Debug.LogWarning("EventSystem:: Duplicate instance of EventSystem, deleting second one.");
+            //Debug.LogWarning("EventSystem:: Duplicate instance of EventSystem, deleting second one.");
              Destroy(this.gameObject);
         }
 

@@ -97,7 +97,7 @@ public Image ultimateImage;
 
                 if (ultimateImage != null)
                 {
-                    Debug.Log("Ultimate Image encontrado correctamente.");
+                    //Debug.Log("Ultimate Image encontrado correctamente.");
                 }
                 else
                 {
@@ -120,7 +120,7 @@ public Image ultimateImage;
 
                 if (grimorio1 != null && grimorio2 != null)
                 {
-                    Debug.Log("Grimorio1 y Grimorio2 encontrados correctamente.");
+                    //Debug.Log("Grimorio1 y Grimorio2 encontrados correctamente.");
                 }
                 else
                 {

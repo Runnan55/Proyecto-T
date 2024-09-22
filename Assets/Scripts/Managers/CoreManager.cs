@@ -101,7 +101,7 @@ public class CoreManager : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
-            Debug.Log("Anulando player al ser menú");
+            //Debug.Log("Anulando player al ser menú");
 
             GameObject player = GameObject.FindWithTag("Player");
             if (player != null)

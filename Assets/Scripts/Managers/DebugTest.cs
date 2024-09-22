@@ -19,7 +19,7 @@ public class DebugTest : MonoBehaviour
     {
         if (_instance != null)
         {
-            Debug.LogWarning("Debug:: Duplicate instance of Debug, deleting second one.");
+            //Debug.LogWarning("Debug:: Duplicate instance of Debug, deleting second one.");
             Destroy(this.gameObject);
         }
 
