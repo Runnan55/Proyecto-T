@@ -12,6 +12,9 @@ public class CoreManager : MonoBehaviour
     }
 
     [SerializeField, Tooltip("")]
+    private GameObject debugManagerPrefab = null;
+
+    [SerializeField, Tooltip("")]
     private GameObject eventSystemPrefab = null;
 
     [SerializeField, Tooltip("")]
@@ -36,15 +39,9 @@ public class CoreManager : MonoBehaviour
     
     void Awake()
     {
-
         if (_instance != null)
         {
-
-            // This warning is very harmless, and can be ignored. It should indicate that you are returning to the 
-            // first level in your game. If you get this warning in OTHER scenes, it means you have an FPECore
-            // prefab in that scene, which you don't need. You can also delete the Debug.Log call if you want.
             Debug.Log("Core:: Duplicate CoreManager, deleting duplicate instance. If you saw this message when loading a saved game into your 1st scene, ignore. Otherwise, it's still not a problem, but might indicate redundant FPECore in a secondary Scene file or something similar.");
-
             Destroy(this.gameObject);
         }
 
@@ -73,7 +70,7 @@ public class CoreManager : MonoBehaviour
 
     private void initialize()
     {
-        if (!HUDPrefab || !eventSystemPrefab || !interactionManagerPrefab || !playerPrefab || !inputManagerPrefab || !saveLoadManagerPrefab || !menuPrefab)
+        if (!HUDPrefab || !eventSystemPrefab || !interactionManagerPrefab || !playerPrefab || !inputManagerPrefab || !saveLoadManagerPrefab || !menuPrefab || !debugManagerPrefab)
         {
             Debug.LogError("Core:: Missing prefab for core component. Game will not function correctly. See Inspector for object '" + gameObject.name + "' to ensure all fields are populated correctly.");
             return;
@@ -85,6 +82,7 @@ public class CoreManager : MonoBehaviour
         Instantiate(inputManagerPrefab, null);
         Instantiate(saveLoadManagerPrefab, null);
         Instantiate(menuPrefab, null);
+        Instantiate(debugManagerPrefab, null);
 
         DefaultHUD.Instance.initialize();
         InteractionManager.Instance.initialize();
@@ -114,24 +112,30 @@ public class CoreManager : MonoBehaviour
 
         else
         {
-            // Spawnear al jugador en la nueva escena
-            GameObject player = Instantiate(playerPrefab, null);
-            PlayerStartLocation startLocation = GameObject.FindObjectOfType<PlayerStartLocation>();
+            StartCoroutine(SpawnPlayerWithDelay(0.25f));
+        }
+    }
 
-            if (startLocation != null)
-            {
-                player.transform.position = startLocation.gameObject.transform.position;
-                Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
-                player.transform.rotation = flatRotation;
-                Debug.Log("Spawneando player en " + player.transform.position);
-            }
+    private IEnumerator SpawnPlayerWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
 
-            else
-            {
-                Debug.LogWarning("Core:: PlayerStartLocation was not found. Placing player at origin");
-                player.transform.position = Vector3.zero;
-                player.transform.rotation = Quaternion.identity;
-            }
+        GameObject player = Instantiate(playerPrefab, null);
+        PlayerStartLocation startLocation = GameObject.FindObjectOfType<PlayerStartLocation>();
+
+        if (startLocation != null)
+        {
+            player.transform.position = startLocation.gameObject.transform.position;
+            Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
+            player.transform.rotation = flatRotation;
+            Debug.Log("Spawneando player en " + player.transform.position);
+        }
+
+        else
+        {
+            Debug.LogWarning("Core:: PlayerStartLocation was not found. Placing player at origin");
+            player.transform.position = Vector3.zero;
+            player.transform.rotation = Quaternion.identity;
         }
     }
 }
