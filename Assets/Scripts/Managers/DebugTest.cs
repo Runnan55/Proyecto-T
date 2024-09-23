@@ -56,6 +56,12 @@ public class DebugTest : MonoBehaviour
         }
     }
 
+    public void OpenDebugLevel()
+    {
+        SceneManager.LoadScene("DebugLevel");
+    }
+
+
     public void OpenMenu()
     {
         SceneManager.LoadScene("MainMenu");

@@ -37,6 +37,8 @@ public class CoreManager : MonoBehaviour
 
     private bool initialized = false;
     
+    private const float MinSafeHeight = 1.0f;
+
     void Awake()
     {
         if (_instance != null)
@@ -125,9 +127,16 @@ public class CoreManager : MonoBehaviour
 
         if (startLocation != null)
         {
-            player.transform.position = startLocation.gameObject.transform.position;
-            Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
-            player.transform.rotation = flatRotation;
+            Vector3 startPosition = startLocation.gameObject.transform.position;
+            if (startPosition.y < MinSafeHeight)
+            {
+                startPosition.y = MinSafeHeight;
+                Debug.LogWarning("Core:: PlayerStartLocation was below safe height. Adjusting player position.");
+            }
+
+            player.transform.position = startPosition;
+            //Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
+            //player.transform.rotation = flatRotation;
             Debug.Log("Spawneando player en " + player.transform.position);
         }
 
