@@ -41,6 +41,8 @@ public class Enemy : MonoBehaviour
 
     private bool empujar = true;
 
+    public float DropRate = 0.3f;
+
     void Start()
     {
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
@@ -135,7 +137,7 @@ public class Enemy : MonoBehaviour
             float chance = UnityEngine.Random.Range(0.0f, 1.0f);
 
             // Comprueba si el número generado es menor o igual a 0.3 (30%)
-            if (chance <= 0.3f)
+            if (chance <= DropRate)
             {
 
                 dropspawn = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);

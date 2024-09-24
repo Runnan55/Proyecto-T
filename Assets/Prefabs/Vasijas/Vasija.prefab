@@ -62,7 +62,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e61d3e67a06a1c34eb55d99bba759a49, type: 3}
       propertyPath: m_Name
-      value: Vasija Fire Card
+      value: Vasija
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e61d3e67a06a1c34eb55d99bba759a49, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e61d3e67a06a1c34eb55d99bba759a49, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -80,7 +84,7 @@ PrefabInstance:
       addedObject: {fileID: 9159876544148331907}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e61d3e67a06a1c34eb55d99bba759a49, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5377771895127935924}
+      addedObject: {fileID: 3889115148480022650}
   m_SourcePrefab: {fileID: 100100000, guid: e61d3e67a06a1c34eb55d99bba759a49, type: 3}
 --- !u!1 &4910101016618614278 stripped
 GameObject:
@@ -135,7 +139,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5377771895127935924
+--- !u!114 &3889115148480022650
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,7 +148,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 4910101016618614278}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bf30d273298cea408430cd2b97f5616, type: 3}
+  m_Script: {fileID: 11500000, guid: 5cfd5d872d064c741bbe5a0707d1e5ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropItem: {fileID: 6592644418209866909, guid: acd2097458943b94eaad5b6a6bd98019, type: 3}
+  _hp: 20
+  damage: 10
+  floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
+  dropPrefab: {fileID: 6592644418209866909, guid: df12d519ac3c1d046ac1598954fcc2e3, type: 3}
+  knockbackDistance: 2
+  knockbackDuration: 0.1
+  level: {fileID: 0}
+  damageEffect: {fileID: 0}
+  empujeF: 0
+  DropRate: 1
