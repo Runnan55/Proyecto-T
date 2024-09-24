@@ -12,7 +12,6 @@ public class ArqueroAnim : Enemy
     public float randomMoveRadius = 5.0f;
     public GameObject arrowPrefab;
     public Transform arrowSpawnPoint;
-    public GameObject damageEffect;
 
     private NavMeshAgent agent;
     private float lastShootTime = -999;
@@ -104,36 +103,11 @@ public class ArqueroAnim : Enemy
             animator.SetBool("Attack", false); // Cancela la animación de ataque
         }
 
-        if (damageEffect != null)
-        {
-            damageEffect.SetActive(true);
-
-            Invoke("DisableDamageEffect", 2f);
-        }
-        if (empujar)
-        {
-            Empuje();
-        }
+    
     }
 
-    private void DisableDamageEffect()
-    {
-        if (damageEffect != null)
-        {
-            damageEffect.SetActive(false);
-        }
-    }
 
-    public void Empuje()
-    {
-        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
-        if (enemyRigidbody != null)
-        {
-            // Cambia el valor de la fuerza seg�n lo necesites
-            float force = 100f;
-            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
-        }
-    }
+
 
     public void ActiveNavMesh()
     {

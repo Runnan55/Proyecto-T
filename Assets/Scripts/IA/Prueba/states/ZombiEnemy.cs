@@ -12,7 +12,6 @@ public class ZombiEnemy : Enemy
     public float attackRange = 1.5f;
     public float attackCooldown = 2f;
     public float visionAngle = 60f;
-    public GameObject damageEffect;
 
     private NavMeshAgent agent;
     private Vector3 targetPosition;
@@ -119,37 +118,10 @@ public class ZombiEnemy : Enemy
             Debug.Log("Ataque cancelado");
 
         }
-        if (damageEffect != null)
-        {
-            damageEffect.SetActive(true);
 
-            Invoke("DisableDamageEffect", 2f);
-        }
-
-        if (empujar)
-        {
-            Empuje();
-        }
     }
-    private void DisableDamageEffect()
-    {
-        if (damageEffect != null)
-        {
-            damageEffect.SetActive(false);
-
-        }
-    }
-    public void Empuje()
-    {
-        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
-        if (enemyRigidbody != null)
-        {
-            // Cambia el valor de la fuerza seg�n lo necesites
-            float force = 100f;
-            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
-        }
-    }
-
+  
+   
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Colliding with: " + other.tag + "" +other.gameObject.name);

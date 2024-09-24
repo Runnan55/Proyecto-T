@@ -132,40 +132,9 @@ public class Charge : Enemy
         return angleToPlayer > 0.5f;
     }
 
-    public override void ReceiveDamage(float amount)
-    {
-        base.ReceiveDamage(amount);
-
-        if (damageEffect != null)
-        {
-            damageEffect.SetActive(true);
-
-            Invoke("DisableDamageEffect", 2f);
-        }
-
-        if (empujar)
-        {
-            Empuje();
-        }
-    }
-    public void Empuje()
-    {
-        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
-        if (enemyRigidbody != null)
-        {
-            // Cambia el valor de la fuerza seg�n lo necesites
-            float force = 100f;
-            enemyRigidbody.AddForce(transform.forward * force, ForceMode.Impulse);
-        }
-    }
-    private void DisableDamageEffect()
-    {
-        if (damageEffect != null)
-        {
-            damageEffect.SetActive(false);
-
-        }
-    }
+  
+ 
+ 
 
     public void DesactivarMovimientos()
     {
