@@ -73,6 +73,7 @@ public class Life : MonoBehaviour
 
     void Start()
     {
+        isInvincible=false;
         currentTime = maxTime;
 
         if (timeImage != null)
@@ -191,5 +192,25 @@ public class Life : MonoBehaviour
         {
             timeImage.fillAmount = currentTime / maxTime;
         }
+    }
+
+    void enableInvencibility()
+    {
+        isInvincible = true;
+    }
+
+    void disableInvencibility()
+    {
+        isInvincible = false;
+    }
+
+    void fullHealth()
+    {
+        currentTime = maxTime;
+    }
+
+    void halfHealth()
+    {
+        currentTime = maxTime/2;
     }
 }
