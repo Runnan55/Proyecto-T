@@ -16,14 +16,12 @@ public class Charge : Enemy
     public float chargeDistance = 5f; 
     public float chargeDuration = 1f; 
     public Collider dano;
-    public GameObject damageEffect;
 
 
     private NavMeshAgent agent;
     private bool isAttacking = false;
     private bool isWaiting = false;
     private Animator animator;
-    private bool empujar = true;
     void Awake()
     {
 
@@ -138,7 +136,6 @@ public class Charge : Enemy
 
     public void DesactivarMovimientos()
     {
-        empujar = false;
 
         animator.applyRootMotion = false;
 
@@ -153,7 +150,6 @@ public class Charge : Enemy
 
         agent.enabled = true; // Desactiva el NavMeshAgent
         animator.applyRootMotion = true;
-        empujar = true;
 
         Debug.Log("22");
     }

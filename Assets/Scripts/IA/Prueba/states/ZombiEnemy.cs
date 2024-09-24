@@ -21,7 +21,6 @@ public class ZombiEnemy : Enemy
     private bool isChasingPlayer = false;
     private bool canAttack = true;
     private Animator animator;
-    private bool empujar = true;
 
 
 
@@ -147,14 +146,12 @@ public class ZombiEnemy : Enemy
 
         animator.applyRootMotion = true;
 
-        empujar = true;
         Debug.Log("fffffffffff");
 
     }
 
     public void DesactiveNavMesh()
     {
-        empujar = false;
         Debug.Log("sadsdasd");
         animator.applyRootMotion = false;
         agent.enabled = false;

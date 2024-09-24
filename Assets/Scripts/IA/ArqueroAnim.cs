@@ -17,7 +17,6 @@ public class ArqueroAnim : Enemy
     private float lastShootTime = -999;
     private Animator animator;
     private bool isAttacking;
-    private bool empujar = true;
 
     private void Awake()
     {

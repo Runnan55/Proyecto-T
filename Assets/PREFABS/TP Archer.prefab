@@ -1108,15 +1108,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51957cb6ebcfa9c40bd5819ba8ffc53e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hp: 20
   damage: 10
-  playerLife: {fileID: 0}
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
   dropPrefab: {fileID: 0}
-  waveManager: {fileID: 0}
   knockbackDistance: 2
   knockbackDuration: 0.1
+  level: {fileID: 0}
+  damageEffect: {fileID: 0}
+  empujeF: 0
+  DropRate: 0.3
+  materialChangeDuration: 0.2
+  damageMaterial: {fileID: 2100000, guid: d1bfa2acc52992c4f835a0b11abbd257, type: 2}
   enemyVision: {fileID: 2221461880178102986}
-  player: {fileID: 0}
   bulletPrefab: {fileID: 4182066159404826401, guid: e5f268ba2e123c84d9e4a87a60d4e770, type: 3}
   firePoint: {fileID: 1013669989398892236}
   fireRate: 1
@@ -1162,7 +1166,6 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
-  playerT: {fileID: 0}
 --- !u!1 &1798374027704638516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1679,7 +1682,7 @@ GameObject:
   - component: {fileID: 2667237173955881083}
   - component: {fileID: 6893235339483523624}
   m_Layer: 0
-  m_Name: Erika_Archer_Arrow_Mesh
+  m_Name: OriginalMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

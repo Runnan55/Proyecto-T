@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Enemy : MonoBehaviour
 {
     public float _hp = 20f;
+    private float maxHp;
     public float health
     {
         get { return _hp; }
@@ -43,15 +44,46 @@ public class Enemy : MonoBehaviour
 
     public float DropRate = 0.3f;
 
+    // Configuración para el cambio de material
+    public float materialChangeDuration = 0.2f; // Tiempo que el enemigo se mantendrá con otro material
+    public Material damageMaterial;             // Material que se aplicará cuando reciba daño
+    private SkinnedMeshRenderer childSkinnedMeshRenderer;  // Referencia al SkinnedMeshRenderer del GameObject hijo
+    private Material originalMaterial;           // Para guardar el material original del enemigo
+
+
     void Start()
     {
+        maxHp = _hp;
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
+                                                                                      // Obtener el MeshRenderer del GameObject hijo "OriginalMesh"
+        Transform originalMeshTransform = transform.Find("OriginalMesh");
+        if (originalMeshTransform != null)
+        {
+            childSkinnedMeshRenderer = originalMeshTransform.GetComponent<SkinnedMeshRenderer>();
+            if (childSkinnedMeshRenderer != null)
+            {
+                // Guardar el material original
+                originalMaterial = childSkinnedMeshRenderer.material;
+            }
+            else
+            {
+                Debug.LogError("No se encontró el SkinnedMeshRenderer en el GameObject hijo 'OriginalMesh'.");
+            }
+        }
     }
+
 
     public virtual void ReceiveDamage(float amount) // (en segundos)
     {
         health -= amount;
+
+        // Si la vida está en 25% o menos, desactivar empuje
+        if (health <= maxHp * 0.25f)
+        {
+            empujar = false;
+        }
+
         if (health <= 0)
         {
             DropItem();
@@ -82,13 +114,32 @@ public class Enemy : MonoBehaviour
             Empuje();
         }
 
+
+        StartCoroutine(ChangeMaterialOnDamage());
     }
 
+    // Corutina que gestiona el cambio temporal de material en el hijo "OriginalMesh"
+    private IEnumerator ChangeMaterialOnDamage()
+    {
+        if (childSkinnedMeshRenderer != null && damageMaterial != null)
+        {
+            // Cambiar el material del SkinnedMeshRenderer al material de daño
+            childSkinnedMeshRenderer.material = damageMaterial;
+
+            // Esperar el tiempo definido
+            yield return new WaitForSeconds(materialChangeDuration);
+
+            // Volver al material original
+            childSkinnedMeshRenderer.material = originalMaterial;
+        }
+    }
     IEnumerator DestroyAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
+
+   
 
     public void Empuje()
     {
