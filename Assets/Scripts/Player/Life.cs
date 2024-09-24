@@ -194,22 +194,22 @@ public class Life : MonoBehaviour
         }
     }
 
-    void enableInvencibility()
+    public void enableInvencibility()
     {
         isInvincible = true;
     }
 
-    void disableInvencibility()
+    public void disableInvencibility()
     {
         isInvincible = false;
     }
 
-    void fullHealth()
+    public void fullHealth()
     {
         currentTime = maxTime;
     }
 
-    void halfHealth()
+    public void halfHealth()
     {
         currentTime = maxTime/2;
     }
