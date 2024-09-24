@@ -8,9 +8,10 @@ using UnityEngine.UI;
 public class Enemy : MonoBehaviour
 {
     public float _hp = 20f;
-    public float health {
+    public float health
+    {
         get { return _hp; }
-        set 
+        set
         {
             _hp = math.clamp(value, 0, 200000000);
 
@@ -18,7 +19,7 @@ public class Enemy : MonoBehaviour
             {
                 Destroy(gameObject);
             }
-        }    
+        }
     }
 
     public float damage = 10f;
@@ -31,13 +32,17 @@ public class Enemy : MonoBehaviour
     public float knockbackDistance = 2f;
     public float knockbackDuration = 0.1f;
     public Level level;
-       PlayerMovement playerMovement;
+    PlayerMovement playerMovement;
 
+    public GameObject damageEffect;
 
-    
+    [Range(0f, 100f)]
+    public float empujeF;
+
+    private bool empujar = true;
 
     void Start()
-    { 
+    {
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
     }
@@ -62,15 +67,37 @@ public class Enemy : MonoBehaviour
             Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
             ShowFloatingText(amount);
         }
+
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(true);
+
+            Invoke("DisableDamageEffect", 2f);
+        }
+
+        if (empujar)
+        {
+            Empuje();
+        }
+
     }
 
-        IEnumerator DestroyAfterDelay(float delay)
+    IEnumerator DestroyAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
 
-    
+    public void Empuje()
+    {
+        Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
+        if (enemyRigidbody != null)
+        {
+            float force = empujeF;
+            enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
+        }
+    }
+
 
     public virtual void AttackPlayer()
     {
@@ -82,7 +109,15 @@ public class Enemy : MonoBehaviour
             playerLife.ModifyTime(-damage);
         }
     }
-   
+
+    private void DisableDamageEffect()
+    {
+        if (damageEffect != null)
+        {
+            damageEffect.SetActive(false);
+
+        }
+    }
 
     //* TEXTO
     void ShowFloatingText(float amount)
@@ -98,41 +133,41 @@ public class Enemy : MonoBehaviour
         if (dropPrefab != null)
         {
             float chance = UnityEngine.Random.Range(0.0f, 1.0f);
-        
-        // Comprueba si el número generado es menor o igual a 0.3 (30%)
-        if (chance <= 0.3f)
-        {
 
-            dropspawn = new Vector3(transform.position.x, transform.position.y+ 1, transform.position.z);
-            Instantiate(dropPrefab, dropspawn, Quaternion.identity);
-        }
+            // Comprueba si el número generado es menor o igual a 0.3 (30%)
+            if (chance <= 0.3f)
+            {
+
+                dropspawn = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
+                Instantiate(dropPrefab, dropspawn, Quaternion.identity);
+            }
         }
     }
-  
+
 
     public void Activar()
-    {    
-        gameObject.SetActive(true); 
+    {
+        gameObject.SetActive(true);
     }
 
 
     #region DEBUG //    ***** DEBUG ***** 
-/*     void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.G))
+    /*     void Update()
         {
-            Debug.Log("moricion");
-            //ReceiveDamage(health);
-            //Destroy(gameObject);
-            waveManager.EnemyDied();
-            Debug.Log("moricion fin");
-        }    
-    } */
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                Debug.Log("moricion");
+                //ReceiveDamage(health);
+                //Destroy(gameObject);
+                waveManager.EnemyDied();
+                Debug.Log("moricion fin");
+            }    
+        } */
     #endregion DEBUG
 
-public void FloatUltimate()
-{
-  playerMovement.IncrementFloatVariable();
-}
+    public void FloatUltimate()
+    {
+        playerMovement.IncrementFloatVariable();
+    }
 
 }
