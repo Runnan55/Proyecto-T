@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public float gravity = 20.0f;
        public bool speedbuff = false;
        public float DashSpeed;
+       public float DashAttack;
        private float lastDashTime = -Mathf.Infinity;
 
        public float dashTime;  
@@ -58,27 +59,27 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public float maxPuntosUltimate= 20f;
 
      // Buffos velocidad.
-    public float BuffSpeed = 1.0f;  // Controla el porcentaje de velocidad y animación
+       public float BuffSpeed = 1.0f;  // Controla el porcentaje de velocidad y animación
 
-    private float originalSpeed;  // Almacena la velocidad original del jugador
-    private float originalAnimatorSpeed;  // Almacena la velocidad original de las animaciones
+       private float originalSpeed;  // Almacena la velocidad original del jugador
+       private float originalAnimatorSpeed;  // Almacena la velocidad original de las animaciones
 
 
        public GameObject objectPrefab;
-private GameObject[] objects = new GameObject[3];
-public float radius = 5f;
-public float orbitDuration = 10f;
-public float rotationSpeedUlt = 20f;
+       private GameObject[] objects = new GameObject[3];
+       public float radius = 5f;
+       public float orbitDuration = 10f;
+       public float rotationSpeedUlt = 20f;
 
-private bool isButtonPressed = false;
-private float buttonPressTime = 0f;
-public Image ultimateImage;
-
-
-  public GameObject dashObjec;
+       private bool isButtonPressed = false;
+       private float buttonPressTime = 0f;
+       public Image ultimateImage;
 
 
-        IEnumerator FinRef()
+       public GameObject dashObjec;
+
+
+    IEnumerator FinRef()
     {
         yield return new WaitForSeconds(0.1f); // Espera breve para permitir la inicialización
 
@@ -161,11 +162,11 @@ public Image ultimateImage;
 
          animator = GetComponent<Animator>();
 
-        verificarArma = true;
-        cambioarma =true;
+         verificarArma = true;
+         cambioarma =true;
 
          originalColor = cambioColoAlPegar.material.color;
-          StartCoroutine(FinRef());
+         StartCoroutine(FinRef());
 
          
     }
@@ -207,7 +208,7 @@ void Update()
         StartCoroutine(Dash());
     }
 
- AtaquesGrimorios();
+    AtaquesGrimorios();
 
    if (Input.GetMouseButtonDown(0)) 
    {
@@ -219,7 +220,7 @@ void Update()
     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     RaycastHit hit;
 
-    if (Physics.Raycast(ray, out hit) && !hasRotated)
+    if (Physics.Raycast(ray, out hit))
      {
         Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 
@@ -264,13 +265,6 @@ else
         grimorio2.SetActive(true);
     }
 }
-
-
-
-
-
-
-
 
 }
 public void CambioArma()
