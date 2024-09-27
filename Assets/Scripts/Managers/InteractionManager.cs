@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class InteractionManager : MonoBehaviour
 {
+    #region Instance
     private static InteractionManager _instance;
     public static InteractionManager Instance 
     {
@@ -40,4 +41,11 @@ public class InteractionManager : MonoBehaviour
             initialized = true;
         }
     }
+    #endregion Instance
+
+    #region Rooms
+
+    
+
+    #endregion Rooms
 }
