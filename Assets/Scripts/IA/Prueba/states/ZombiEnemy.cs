@@ -22,27 +22,31 @@ public class ZombiEnemy : Enemy
     private bool canAttack = true;
     private Animator animator;
 
-
-
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         timer = wanderTimer;
         attackTimer = 0f;
         SetRandomDestination();
-        player = GameObject.FindGameObjectWithTag("Player");
-        animator = GetComponent<Animator>();  
+        animator = GetComponent<Animator>();
+        StartCoroutine(InitializePlayer());
+    }
 
+    private IEnumerator InitializePlayer()
+    {
+        yield return new WaitForSeconds(0.25f);
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     void Update()
     {
-       // Debug.Log("Can attack: " + canAttack);
+        // Debug.Log("Can attack: " + canAttack);
+
+        if (player == null) return;
 
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
         animator.SetBool("Walk", true);
-
 
         if (!isChasingPlayer && (distanceToPlayer <= detectionRange || distanceToPlayer <= minChaseRange))
         {
@@ -51,7 +55,6 @@ public class ZombiEnemy : Enemy
             if (angleToPlayer < visionAngle * 0.5f)
             {
                 isChasingPlayer = true;
-                
             }
         }
 
@@ -64,7 +67,6 @@ public class ZombiEnemy : Enemy
                 {
                     attackTimer = Time.time + attackCooldown;
                     animator.SetBool("Walk", false);
-
                     animator.SetBool("Attack", true);
                 }
             }
@@ -115,15 +117,12 @@ public class ZombiEnemy : Enemy
             canAttack = false;
             Invoke("ResetAttack", attackCooldown);  // Espera el tiempo de cooldown para poder atacar de nuevo
             Debug.Log("Ataque cancelado");
-
         }
-
     }
-  
-   
+
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Colliding with: " + other.tag + "" +other.gameObject.name);
+        Debug.Log("Colliding with: " + other.tag + "" + other.gameObject.name);
         if (other.CompareTag("Player") && canAttack)
         {
             Debug.Log("Attacking player");
@@ -141,13 +140,9 @@ public class ZombiEnemy : Enemy
 
     public void ActiveNavMesh()
     {
-
         agent.enabled = true;
-
         animator.applyRootMotion = true;
-
         Debug.Log("fffffffffff");
-
     }
 
     public void DesactiveNavMesh()

@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour
 
     public GameObject damageEffect;
 
-    [Range(0f, 100f)]
+    [Range(-100f, 100f)]
     public float empujeF;
 
     private bool empujar = true;
@@ -54,9 +54,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         maxHp = _hp;
-        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
-        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
-                                                                                      // Obtener el MeshRenderer del GameObject hijo "OriginalMesh"
+        StartCoroutine(InitializePlayerComponents());
+        // Obtener el MeshRenderer del GameObject hijo "OriginalMesh"
         Transform originalMeshTransform = transform.Find("OriginalMesh");
         if (originalMeshTransform != null)
         {
@@ -73,6 +72,12 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private IEnumerator InitializePlayerComponents()
+    {
+        yield return new WaitForSeconds(0.25f);
+        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
+    }
 
     public virtual void ReceiveDamage(float amount) // (en segundos)
     {

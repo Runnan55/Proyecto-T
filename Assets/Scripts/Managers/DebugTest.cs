@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class DebugTest : MonoBehaviour
 {
     public GameObject DebugMenu;
+    public GameObject player;
     public Life life;
 
     private static DebugTest _instance;
@@ -18,14 +19,34 @@ public class DebugTest : MonoBehaviour
 
     void Awake()
     {
+        if (_instance != null)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
         StartCoroutine(DelayedPlayerSearch());
     }
 
     IEnumerator DelayedPlayerSearch()
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1f);
 
-    GameObject player = GameObject.FindWithTag("Player");
+        player = GameObject.FindWithTag("Player");
         
         if (player != null)
         {
@@ -33,18 +54,10 @@ public class DebugTest : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PlayerCore(Clone) not found in the scene.");
-        }
-        
-        if (_instance != null)
-        {
-            //Debug.LogWarning("Debug:: Duplicate instance of Debug, deleting second one.");
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            _instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            if (SceneManager.GetActiveScene().name != "MainMenu")
+            {
+                Debug.LogWarning("Player not found in the scene.");
+            }
         }
     }
 
