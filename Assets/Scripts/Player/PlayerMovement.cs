@@ -272,7 +272,7 @@ public void CambioArma()
        if (Input.GetKeyDown(KeyCode.LeftShift) && cambioarma)
     {
       verificarArma = !verificarArma;
-      Debug.Log(verificarArma);
+      //Debug.Log(verificarArma);
     }
     
 }

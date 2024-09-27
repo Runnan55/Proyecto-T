@@ -18,10 +18,6 @@ public class Enemy : MonoBehaviour
 
             if (health <= 0)
             {
-                if (doorManager != null)
-                {
-                    doorManager.EnemyDefeated();
-                }
                 Destroy(gameObject);
             }
         }
@@ -47,9 +43,6 @@ public class Enemy : MonoBehaviour
     private bool empujar = true;
 
     public float DropRate = 0.3f;
-
-    public WaveManager waveManager;
-    public DoorManager doorManager;
 
     // Configuración para el cambio de material
     public float materialChangeDuration = 0.2f; // Tiempo que el enemigo se mantendrá con otro material
@@ -77,17 +70,6 @@ public class Enemy : MonoBehaviour
                 Debug.LogError("No se encontró el SkinnedMeshRenderer en el GameObject hijo 'OriginalMesh'.");
             }
         }
-
-        var waveManagerObject = GameObject.FindGameObjectWithTag("WaveManager");
-        if (waveManagerObject != null)
-        {
-            waveManager = waveManagerObject.GetComponent<WaveManager>();
-        }
-        var doorManagerObject = GameObject.FindGameObjectWithTag("DoorManager");
-        if (doorManagerObject != null) // Verificar si doorManagerObject es null
-        {
-            doorManager = doorManagerObject.GetComponent<DoorManager>();
-        }
     }
 
     private IEnumerator InitializePlayerComponents()
@@ -110,10 +92,6 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             DropItem();
-            if (waveManager != null)
-            {
-                waveManager.EnemyDied();
-            }
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
 
@@ -141,6 +119,7 @@ public class Enemy : MonoBehaviour
             Empuje();
         }
 
+
         StartCoroutine(ChangeMaterialOnDamage());
     }
 
@@ -165,6 +144,8 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
+   
+
     public void Empuje()
     {
         Rigidbody enemyRigidbody = GetComponent<Rigidbody>();
@@ -174,6 +155,7 @@ public class Enemy : MonoBehaviour
             enemyRigidbody.AddForce(-transform.forward * force, ForceMode.Impulse);
         }
     }
+
 
     public virtual void AttackPlayer()
     {
@@ -191,6 +173,7 @@ public class Enemy : MonoBehaviour
         if (damageEffect != null)
         {
             damageEffect.SetActive(false);
+
         }
     }
 
@@ -212,16 +195,19 @@ public class Enemy : MonoBehaviour
             // Comprueba si el número generado es menor o igual a 0.3 (30%)
             if (chance <= DropRate)
             {
+
                 dropspawn = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
                 Instantiate(dropPrefab, dropspawn, Quaternion.identity);
             }
         }
     }
 
+
     public void Activar()
     {
         gameObject.SetActive(true);
     }
+
 
     #region DEBUG //    ***** DEBUG ***** 
     /*     void Update()
@@ -241,4 +227,5 @@ public class Enemy : MonoBehaviour
     {
         playerMovement.IncrementFloatVariable();
     }
+
 }

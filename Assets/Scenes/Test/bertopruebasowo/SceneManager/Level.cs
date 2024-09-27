@@ -7,6 +7,7 @@ public class EnemySpawner
 {
     public Enemy enemy;
     public Transform spawnPoint;
+    public float spawnDelay; // Nuevo campo para el delay individual
 }
 
 [System.Serializable]
@@ -21,9 +22,7 @@ public class Level : MonoBehaviour
     public Door entranceDoor;
     public Door exitDoor;
 
-
     [Header("Waves config")]
-    public float delayBetweenEnemies = 1f;
     public List<EnemyWave> waves;
 
     private int currentWave = 0;
@@ -55,26 +54,26 @@ public class Level : MonoBehaviour
     private IEnumerator SpawnWave(EnemyWave wave)
     {
         foreach (EnemySpawner enemySpawner in wave.enemySpawns)
-    {
-        Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
-        
-        // Almacena la escala y la rotación originales
-        Vector3 originalScale = newEnemy.transform.localScale;
-        Quaternion originalRotation = newEnemy.transform.rotation;
+        {
+            Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
+            
+            // Almacena la escala y la rotación originales
+            Vector3 originalScale = newEnemy.transform.localScale;
+            Quaternion originalRotation = newEnemy.transform.rotation;
 
-        // Cambia el padre
-        newEnemy.transform.SetParent(this.transform, true);
+            // Cambia el padre
+            newEnemy.transform.SetParent(this.transform, true);
 
-        // Espera un frame
-        yield return null;
+            // Espera un frame
+            yield return null;
 
-        // Restablece la escala y la rotación originales
-        newEnemy.transform.localScale = originalScale;
-        newEnemy.transform.rotation = originalRotation;
+            // Restablece la escala y la rotación originales
+            newEnemy.transform.localScale = originalScale;
+            newEnemy.transform.rotation = originalRotation;
 
-        newEnemy.level = this; // Asegúrate de que el enemigo sepa a qué instancia de Level debe referirse
-        yield return new WaitForSeconds(delayBetweenEnemies);
-    }
+            newEnemy.level = this; // Asegúrate de que el enemigo sepa a qué instancia de Level debe referirse
+            yield return new WaitForSeconds(enemySpawner.spawnDelay); // Usa el delay individual
+        }
     }
 
     public void EnemyDefeated(Enemy enemy)
