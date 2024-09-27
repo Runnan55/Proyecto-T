@@ -116,16 +116,16 @@ public class ZombiEnemy : Enemy
             animator.SetBool("Attack", false);
             canAttack = false;
             Invoke("ResetAttack", attackCooldown);  // Espera el tiempo de cooldown para poder atacar de nuevo
-            Debug.Log("Ataque cancelado");
+            //Debug.Log("Ataque cancelado");
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Colliding with: " + other.tag + "" + other.gameObject.name);
+        //Debug.Log("Colliding with: " + other.tag + "" + other.gameObject.name);
         if (other.CompareTag("Player") && canAttack)
         {
-            Debug.Log("Attacking player");
+            //Debug.Log("Attacking player");
             AttackPlayer();
             canAttack = false;
             Invoke("ResetAttack", attackCooldown);
@@ -134,7 +134,7 @@ public class ZombiEnemy : Enemy
 
     private void ResetAttack()
     {
-        Debug.Log("Resetting attack");
+        //Debug.Log("Resetting attack");
         canAttack = true;
     }
 

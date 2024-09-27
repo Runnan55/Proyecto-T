@@ -47,7 +47,7 @@ public class Boomerang : MonoBehaviour
         }
                 if (Time.time - tiempoDeInstanciacion  > tiempoDeEspera+1f && !pp && pp2)
                 {
-                    Debug.Log("vuelve");
+                    //Debug.Log("vuelve");
                     pp = true;
                 GameObject jugador = GameObject.FindGameObjectWithTag(etiquetaJugador);
                 objetivo = jugador.transform.position;

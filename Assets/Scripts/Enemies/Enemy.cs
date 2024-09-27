@@ -103,7 +103,7 @@ public class Enemy : MonoBehaviour
         else
         {
             FloatUltimate();
-            Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
+            //Debug.Log("Daño inflingido: " + amount + ", Vida: " + health);
             ShowFloatingText(amount);
         }
 
@@ -180,7 +180,7 @@ public class Enemy : MonoBehaviour
     //* TEXTO
     void ShowFloatingText(float amount)
     {
-        Debug.Log("ShowFloatingText");
+        //Debug.Log("ShowFloatingText");
         Vector3 offset = new Vector3(0, 2, 0); // la y es es la altura
         var go = Instantiate(floatingTextPrefab, transform.position + offset, Quaternion.identity);
         go.GetComponentInChildren<DamageText>().SetText(amount.ToString());

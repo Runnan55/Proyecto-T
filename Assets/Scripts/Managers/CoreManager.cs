@@ -43,7 +43,7 @@ public class CoreManager : MonoBehaviour
     {
         if (_instance != null)
         {
-            Debug.Log("Core:: Duplicate CoreManager, deleting duplicate instance. If you saw this message when loading a saved game into your 1st scene, ignore. Otherwise, it's still not a problem, but might indicate redundant FPECore in a secondary Scene file or something similar.");
+            //Debug.Log("Core:: Duplicate CoreManager, deleting duplicate instance.");
             Destroy(this.gameObject);
         }
 
@@ -131,13 +131,13 @@ public class CoreManager : MonoBehaviour
             if (startPosition.y < MinSafeHeight)
             {
                 startPosition.y = MinSafeHeight;
-                Debug.LogWarning("Core:: PlayerStartLocation was below safe height. Adjusting player position.");
+                //Debug.LogWarning("player spawneado por debajo de la altura segura, ajustando.");
             }
 
             player.transform.position = startPosition;
             //Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
             //player.transform.rotation = flatRotation;
-            Debug.Log("Spawneando player en " + player.transform.position);
+            //Debug.Log("Spawneando player en " + player.transform.position);
         }
 
         else
