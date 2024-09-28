@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private IEnumerator InitializePlayerComponents()
+    public IEnumerator InitializePlayerComponents()
     {
         yield return new WaitForSeconds(0.25f);
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
@@ -227,5 +227,5 @@ public class Enemy : MonoBehaviour
     {
         playerMovement.IncrementFloatVariable();
     }
-
+  
 }

@@ -5,53 +5,100 @@ using UnityEngine.AI;
 
 public class MinasEnemy : Enemy
 {
-    private NavMeshAgent agent;           // El NavMeshAgent que maneja el movimiento del enemigo
-    private Transform player;             // Transform del jugador para seguimiento
+    private NavMeshAgent agent;          // Control del movimiento del enemigo
+    private Transform player;            // Transform del jugador para seguimiento
     public float mineThrowDistance = 10f; // Distancia a la que lanza minas
-    public GameObject minePrefab;        // Prefab de la mina
+    public GameObject bombPrefab;        // Prefab de la mina
     public float timeBetweenMines = 5f;  // Tiempo entre lanzamientos de minas
-    public float safeDistance = 5f;     // Distancia segura para alejarse del jugador
-
+    public float safeDistance = 5f;      // Distancia segura para alejarse del jugador
     private float mineCooldown;          // Enfriamiento entre minas
+    public Transform ShootBombs;         // Posición desde donde se disparan las minas
+
+    private float mineThrowDistanceSqr;  // Cuadrado de la distancia de lanzamiento para optimizar cálculos
+    private float safeDistanceSqr;       // Cuadrado de la distancia segura
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         mineCooldown = timeBetweenMines;
 
+        // Cachear las distancias al cuadrado para evitar cálculos repetidos
+        mineThrowDistanceSqr = mineThrowDistance * mineThrowDistance;
+        safeDistanceSqr = safeDistance * safeDistance;
+
+        // Encontrar el jugador por su etiqueta
+        StartCoroutine(InitializePlayerComponents());
+
+        StartCoroutine(InitializePlayerTransform());
+    }
+    public IEnumerator InitializePlayerTransform()
+    {
+        yield return new WaitForSeconds(0.25f);
         GameObject playerObject = GameObject.FindWithTag("Player");
         if (playerObject != null)
         {
             player = playerObject.transform;
         }
     }
-
     void Update()
     {
-        // Distancia actual entre el enemigo y el jugador
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if (player == null) return;
 
-        // Si el jugador está a menos de la distancia segura, alejarse
-        if (distanceToPlayer < mineThrowDistance)
+        float distanceToPlayerSqr = (transform.position - player.position).sqrMagnitude;
+
+        if (distanceToPlayerSqr < safeDistanceSqr)
         {
             MoveAwayFromPlayer();
         }
-        // Si el jugador está fuera del rango de lanzamiento de minas, acercarse
-        else if (distanceToPlayer > mineThrowDistance)
+        else if (distanceToPlayerSqr > mineThrowDistanceSqr)
         {
             MoveTowardsPlayer();
         }
         else
         {
-            // Detenerse en la posición actual cuando está en el rango de lanzamiento
-            agent.SetDestination(transform.position);
+            StopAgent();
         }
 
-        // Si está a una distancia adecuada para lanzar minas y el cooldown se ha completado
-        if (distanceToPlayer <= mineThrowDistance && mineCooldown <= 0f)
+        // Control de lanzamiento de minas
+        HandleMineLaunch(distanceToPlayerSqr);
+    }
+
+    // Moverse a una posición opuesta al jugador para mantener la distancia segura
+    void MoveAwayFromPlayer()
+    {
+        Vector3 directionToPlayer = transform.position - player.position;
+        Vector3 newPosition = transform.position + directionToPlayer.normalized * safeDistance;
+        if (agent.destination != newPosition)
+        {
+            agent.SetDestination(newPosition);
+        }
+    }
+
+    // Moverse hacia el jugador hasta estar a la distancia adecuada para lanzar minas
+    void MoveTowardsPlayer()
+    {
+        if (agent.destination != player.position)
+        {
+            agent.SetDestination(player.position);
+        }
+    }
+
+    // Detener al agente cuando está en rango de lanzamiento
+    void StopAgent()
+    {
+        if (agent.hasPath)
+        {
+            agent.ResetPath(); // Detener el movimiento
+        }
+    }
+
+    // Manejar el lanzamiento de minas
+    void HandleMineLaunch(float distanceToPlayerSqr)
+    {
+        if (distanceToPlayerSqr <= mineThrowDistanceSqr && mineCooldown <= 0f)
         {
             LaunchMine();
-            mineCooldown = timeBetweenMines;
+            mineCooldown = timeBetweenMines; // Reiniciar el cooldown
         }
         else
         {
@@ -60,25 +107,9 @@ public class MinasEnemy : Enemy
         }
     }
 
-    // Moverse a una posición opuesta al jugador para mantener la distancia segura
-    void MoveAwayFromPlayer()
-    {
-        Vector3 directionToPlayer = transform.position - player.position;
-        Vector3 newPosition = transform.position + directionToPlayer.normalized * safeDistance;
-        agent.SetDestination(newPosition);
-    }
-
-    // Moverse hacia el jugador hasta estar a la distancia adecuada para lanzar minas
-    void MoveTowardsPlayer()
-    {
-        // Mover directamente hacia la posición del jugador
-        agent.SetDestination(player.position);
-    }
-
-    // Lanza una mina al jugador o a una posición cercana a él
+    // Lanza una mina en la posición del jugador
     void LaunchMine()
     {
-        Vector3 mineSpawnPosition = player.position + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
-        Instantiate(minePrefab, mineSpawnPosition, Quaternion.identity);
+        Instantiate(bombPrefab, ShootBombs.position, ShootBombs.rotation);
     }
 }
