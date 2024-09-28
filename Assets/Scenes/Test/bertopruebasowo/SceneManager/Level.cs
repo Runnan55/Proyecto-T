@@ -56,44 +56,49 @@ public class Level : MonoBehaviour
 
 private IEnumerator SpawnWave(EnemyWave wave)
 {
-    float tiempoDesdeUltimoSpawn = 0f; // Esta variable mantendrá el tiempo transcurrido desde el último spawn
+    // Agrupamos los spawns por su spawnDelay
+    Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
 
     foreach (EnemySpawner enemySpawner in wave.enemySpawns)
     {
-        // Esperar el tiempo de delay desde el último enemigo
-        yield return new WaitForSeconds(enemySpawner.spawnDelay - tiempoDesdeUltimoSpawn);
+        if (!spawnsPorTiempo.ContainsKey(enemySpawner.spawnDelay))
+        {
+            spawnsPorTiempo[enemySpawner.spawnDelay] = new List<EnemySpawner>();
+        }
+        spawnsPorTiempo[enemySpawner.spawnDelay].Add(enemySpawner);
+    }
 
-        // Instanciar la advertencia en el punto de spawn
-        GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
+    float tiempoDesdeUltimoSpawn = 0f;
 
-        // Hacer que la advertencia mire hacia la cámara
-        warningInstance.transform.LookAt(Camera.main.transform);
+    foreach (var grupoSpawn in spawnsPorTiempo)
+    {
+        float delayGrupo = grupoSpawn.Key;
 
-        // Esperar 1 segundo para que la advertencia sea visible, luego destruirla
-        yield return new WaitForSeconds(1f);
-        Destroy(warningInstance);
+        // Esperamos el tiempo entre el último spawn y el actual grupo de spawns
+        yield return new WaitForSeconds(delayGrupo - tiempoDesdeUltimoSpawn);
 
-        // Instanciar el enemigo en el punto de spawn
-        Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
+        // Spawneamos todos los enemigos del grupo al mismo tiempo
+        foreach (EnemySpawner enemySpawner in grupoSpawn.Value)
+        {
+            // Instanciar la advertencia
+            GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
+            warningInstance.transform.LookAt(Camera.main.transform);
+            yield return new WaitForSeconds(0.1f);
+            Destroy(warningInstance);
 
-        // Guardar y restablecer la escala y la rotación originales
-        Vector3 escalaOriginal = newEnemy.transform.localScale;
-        Quaternion rotacionOriginal = newEnemy.transform.rotation;
+            // Instanciar el enemigo
+            Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
+            Vector3 escalaOriginal = newEnemy.transform.localScale;
+            Quaternion rotacionOriginal = newEnemy.transform.rotation;
+            newEnemy.transform.SetParent(this.transform, true);
+            yield return null;
+            newEnemy.transform.localScale = escalaOriginal;
+            newEnemy.transform.rotation = rotacionOriginal;
+            newEnemy.level = this;
+        }
 
-        // Establecer el padre del enemigo
-        newEnemy.transform.SetParent(this.transform, true);
-
-        // Esperar un frame antes de restaurar la escala y rotación
-        yield return null;
-
-        newEnemy.transform.localScale = escalaOriginal;
-        newEnemy.transform.rotation = rotacionOriginal;
-
-        // Asignar el nivel actual al enemigo
-        newEnemy.level = this;
-
-        // Actualizar el tiempo transcurrido desde el último spawn
-        tiempoDesdeUltimoSpawn = enemySpawner.spawnDelay;
+        // Actualizamos el tiempo transcurrido
+        tiempoDesdeUltimoSpawn = delayGrupo;
     }
 }
 

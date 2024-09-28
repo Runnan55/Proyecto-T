@@ -155,6 +155,22 @@ void PrintChildren(Transform parent)
             }
             else
             {
+                
+                    if (cards[1] == "Empty")
+                {
+                    // Prioriza la carta en el slot 1 si no está vacía
+                    if (cards[0] != "Empty")
+                    {
+                        cards[1] = cards[0]; // Mueve la carta del slot 1 al slot 2
+                        cards[0] = "Empty"; // Limpia el slot 1
+                    }
+                    // Si el slot 1 está vacío, revisa si el slot 3 tiene una carta
+                    else if (cards[2] != "Empty")
+                    {
+                        cards[1] = cards[2]; // Mueve la carta del slot 3 al slot 2
+                        cards[2] = "Empty"; // Limpia el slot 3
+                    }
+                }
                 UpdateInventoryDisplay();
             }
         }
