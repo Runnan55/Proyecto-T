@@ -5,26 +5,34 @@ using UnityEngine;
 public class ParabolicBomb : MonoBehaviour
 {
     private Transform player;                 // El objetivo al que se dirige la bomba (jugador)
-    public float heightOffset = 10f;         // Altura máxima de la parábola en relación a la posición actual
-    public float gravity = -9.81f;           // Gravedad personalizada para el proyectil
-    public float damageRadius = 5f;          // Radio de daño de la explosión
-    public float damageAmount = 20f;         // Daño infligido en el área
+    public float heightOffset = 10f;          // Altura máxima de la parábola en relación a la posición actual
+    public float gravity = -9.81f;            // Gravedad personalizada para el proyectil
+    public float damageRadius = 5f;           // Radio de daño de la explosión
+    public float damageAmount = 20f;          // Daño infligido en el área
     private string targetTag = "Player";      // La etiqueta del objetivo (Player)
-    public GameObject explosionEffect;       // Efecto visual para la explosión (opcional)
+    public GameObject explosionEffect;        // Efecto visual para la explosión (opcional)
+    public GameObject landingMarkerPrefab;    // Prefab para el marcador de aterrizaje
 
+    private GameObject landingMarker;         // Instancia del marcador de aterrizaje
     private Rigidbody rb;
-    private bool hasLaunched = false;        // Para controlar si ya se ha lanzado la bomba
+    private bool hasLaunched = false;         // Para controlar si ya se ha lanzado la bomba
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.useGravity = false;               // Desactivar la gravedad de Unity para controlar el movimiento manualmente
+        rb.useGravity = false;                // Desactivar la gravedad de Unity para controlar el movimiento manualmente
 
-        
         GameObject playerObject = GameObject.FindWithTag("Player");
         if (playerObject != null)
         {
             player = playerObject.transform;
+        }
+
+        // Mostrar el marcador en el punto de aterrizaje antes de lanzar la bomba
+        if (player != null && landingMarkerPrefab != null)
+        {
+            Vector3 targetPosition = player.position;
+            landingMarker = Instantiate(landingMarkerPrefab, targetPosition, Quaternion.identity);
         }
     }
 
@@ -78,11 +86,11 @@ public class ParabolicBomb : MonoBehaviour
         return initialVelocity;
     }
 
-    // Detectar colisión con el jugador usando OnTriggerEnter
+    // Detectar colisión con el jugador o el suelo
     private void OnTriggerEnter(Collider other)
     {
-        // Verificar si la colisión es con el objeto que tiene la etiqueta "Player"
-        if (other.CompareTag(targetTag)|| other.CompareTag("Ground"))
+        // Verificar si la colisión es con el objeto que tiene la etiqueta "Player" o "Ground"
+        if (other.CompareTag(targetTag) || other.CompareTag("Ground"))
         {
             Explode();
         }
@@ -110,6 +118,12 @@ public class ParabolicBomb : MonoBehaviour
         if (explosionEffect != null)
         {
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        }
+
+        // Destruir el marcador de aterrizaje si existe
+        if (landingMarker != null)
+        {
+            Destroy(landingMarker);
         }
 
         // Destruir la bomba tras la explosión

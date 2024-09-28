@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-
 public class Charge : Enemy
 {
     private Transform player;
@@ -13,18 +12,17 @@ public class Charge : Enemy
     public float waitTime = 2f;
     public float chargeSpeed = 10f;
     public float normalSpeed = 3.5f;
-    public float chargeDistance = 5f; 
-    public float chargeDuration = 1f; 
+    public float chargeDistance = 5f;
+    public float chargeDuration = 1f;
     public Collider dano;
-
 
     private NavMeshAgent agent;
     private bool isAttacking = false;
     private bool isWaiting = false;
     private Animator animator;
+
     void Awake()
     {
-
         GameObject playerObject = GameObject.FindWithTag("Player");
         if (playerObject != null)
         {
@@ -32,51 +30,53 @@ public class Charge : Enemy
         }
         agent = GetComponent<NavMeshAgent>();
         agent.speed = normalSpeed;
-        animator = GetComponent<Animator>(); 
+        animator = GetComponent<Animator>();
         dano.enabled = false;
-        
         attackCollider.enabled = false;
     }
 
     void Update()
     {
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if (player == null) return; // Salir si no hay jugador
 
-        
-        if (isWaiting && !IsPlayerBehindEnemy() && !isAttacking)
+        float distanceToPlayerSqr = (player.position - transform.position).sqrMagnitude;
+        float attackDistanceSqr = attackDistance * attackDistance;
+        float detectionRadiusSqr = detectionRadius * detectionRadius;
+
+        // Mantener al enemigo mirando al jugador si está en el rango de detección
+        if (distanceToPlayerSqr <= detectionRadiusSqr && !isAttacking)
         {
-            attackCollider.enabled = true;
+            LookAtPlayer(); // Girar hacia el jugador en cada frame, excepto cuando está atacando
         }
-        else
+
+        // Lógica para manejar las colisiones de ataque solo si el jugador está en rango y el enemigo no está atacando
+        attackCollider.enabled = isWaiting && !IsPlayerBehindEnemy() && !isAttacking;
+
+        if (distanceToPlayerSqr <= detectionRadiusSqr && !isAttacking && !isWaiting)
         {
-            attackCollider.enabled = false;
-        }
-        
-        if (distanceToPlayer <= detectionRadius && !isAttacking && !isWaiting)
-        {
-            if (distanceToPlayer > attackDistance)
+            if (distanceToPlayerSqr > attackDistanceSqr)
             {
-                agent.SetDestination(player.position);
-                animator.SetBool("Walk", true);
+                if (!agent.hasPath || agent.destination != player.position)
+                {
+                    agent.SetDestination(player.position);
+                    animator.SetBool("Walk", true);
+                }
             }
             else
             {
-                    
                 StartCoroutine(WaitAndAttack());
             }
         }
         else
         {
             animator.SetBool("Walk", false);
-
         }
-        
     }
 
     private IEnumerator WaitAndAttack()
     {
         isWaiting = true;
-        agent.isStopped = true; 
+        agent.isStopped = true;
         yield return new WaitForSeconds(waitTime);
 
         isWaiting = false;
@@ -87,26 +87,66 @@ public class Charge : Enemy
     {
         isAttacking = true;
         agent.isStopped = false;
-            dano.enabled = true;
+        dano.enabled = true;
         agent.speed = chargeSpeed;
         animator.SetBool("Walk", true);
+
         Vector3 chargeDirection = (player.position - transform.position).normalized;
         Vector3 chargeTarget = transform.position + chargeDirection * chargeDistance;
 
+        // Configurar destino de carga
         agent.SetDestination(chargeTarget);
 
         yield return new WaitForSeconds(chargeDuration);
 
         agent.speed = normalSpeed;
-        agent.SetDestination(transform.position);
-
-        transform.LookAt(player.position);
-        Debug.Log("Enemy charge completed and looking at player.");
-            dano.enabled = false;
-
-            isAttacking = false;
+        agent.SetDestination(transform.position); // Regresar a posición original
+        dano.enabled = false;
         animator.SetBool("Walk", false);
-        
+
+        // Esperar 0.5 segundos después de la carga antes de mirar al jugador
+        yield return new WaitForSeconds(0.5f);
+
+        // Activar la mirada hacia el jugador
+        StartCoroutine(LookAtPlayerForDuration(1f)); // Suavizar el giro al jugador por 1 segundo después de esperar
+        isAttacking = false;
+    }
+
+    /// <summary>
+    /// Mantiene al enemigo mirando hacia el jugador en todo momento.
+    /// </summary>
+    private void LookAtPlayer()
+    {
+        if (player == null) return;
+
+        Vector3 lookDirection = (player.position - transform.position).normalized;
+        lookDirection.y = 0; // Mantener solo la rotación en el plano horizontal
+        Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 5f); // Suavizar la rotación
+    }
+
+    /// <summary>
+    /// Mantiene al enemigo mirando hacia el jugador por una duración específica.
+    /// </summary>
+    private IEnumerator LookAtPlayerForDuration(float duration)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            if (player != null)
+            {
+                Vector3 lookDirection = (player.position - transform.position).normalized;
+                lookDirection.y = 0; // Mantener solo la rotación en el plano horizontal
+
+                // Suavizar la rotación hacia el jugador
+                Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+            }
+
+            elapsedTime += Time.deltaTime;
+            yield return null; // Esperar al siguiente frame
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -122,36 +162,23 @@ public class Charge : Enemy
     {
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         Vector3 forwardDirection = transform.forward;
-        forwardDirection.y = 0; 
-        directionToPlayer.y = 0; 
+        forwardDirection.y = 0;
+        directionToPlayer.y = 0;
 
-        float angleToPlayer = Vector3.Dot(forwardDirection.normalized, directionToPlayer.normalized);
-
-        return angleToPlayer > 0.5f;
+        return Vector3.Dot(forwardDirection.normalized, directionToPlayer.normalized) > 0.5f;
     }
-
-  
- 
- 
 
     public void DesactivarMovimientos()
     {
-
         animator.applyRootMotion = false;
-
         attackCollider.enabled = true;
         agent.enabled = false; // Desactiva el NavMeshAgent
-        Debug.Log("11");
     }
 
     public void ReactivarMovimientos()
     {
         attackCollider.enabled = false;
-
-        agent.enabled = true; // Desactiva el NavMeshAgent
+        agent.enabled = true; // Reactiva el NavMeshAgent
         animator.applyRootMotion = true;
-
-        Debug.Log("22");
     }
-
 }

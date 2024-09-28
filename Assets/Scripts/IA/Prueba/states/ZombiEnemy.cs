@@ -19,7 +19,7 @@ public class ZombiEnemy : Enemy
     private float attackTimer;
     private GameObject player;
     private bool isChasingPlayer = false;
-    private bool canAttack = true;
+    private bool isAttacking = false; // Nueva variable para controlar el estado de ataque
     private Animator animator;
 
     void Awake()
@@ -40,12 +40,19 @@ public class ZombiEnemy : Enemy
 
     void Update()
     {
-        // Debug.Log("Can attack: " + canAttack);
-
         if (player == null) return;
 
         Vector3 directionToPlayer = player.transform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
+
+        // Si está atacando, no debe moverse ni caminar
+        if (isAttacking)
+        {
+            agent.ResetPath();
+            return;
+        }
+
+        // Cambiar a estado de caminata si no está atacando
         animator.SetBool("Walk", true);
 
         if (!isChasingPlayer && (distanceToPlayer <= detectionRange || distanceToPlayer <= minChaseRange))
@@ -61,20 +68,18 @@ public class ZombiEnemy : Enemy
         if (isChasingPlayer)
         {
             agent.ResetPath();
-            if (distanceToPlayer <= attackRange + 1)
+            if (distanceToPlayer <= attackRange)
             {
                 if (Time.time >= attackTimer)
                 {
                     attackTimer = Time.time + attackCooldown;
-                    animator.SetBool("Walk", false);
-                    animator.SetBool("Attack", true);
+                    StartAttack(); // Iniciar ataque
                 }
             }
             else
             {
                 agent.SetDestination(player.transform.position);
                 animator.SetBool("Walk", true);
-                animator.SetBool("Attack", false);
             }
         }
         else
@@ -110,44 +115,57 @@ public class ZombiEnemy : Enemy
     public override void ReceiveDamage(float amount)
     {
         base.ReceiveDamage(amount);
-
-        if (animator.GetBool("Attack"))
-        {
-            animator.SetBool("Attack", false);
-            canAttack = false;
-            Invoke("ResetAttack", attackCooldown);  // Espera el tiempo de cooldown para poder atacar de nuevo
-            //Debug.Log("Ataque cancelado");
-        }
+        CancelAttack(); // Cancelar el ataque si recibe daño
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log("Colliding with: " + other.tag + "" + other.gameObject.name);
-        if (other.CompareTag("Player") && canAttack)
+        if (other.CompareTag("Player") && isAttacking)  // Solo si está en la animación de ataque
         {
-            //Debug.Log("Attacking player");
             AttackPlayer();
-            canAttack = false;
-            Invoke("ResetAttack", attackCooldown);
         }
     }
 
-    private void ResetAttack()
+    // Método para iniciar el ataque
+    private void StartAttack()
     {
-        //Debug.Log("Resetting attack");
-        canAttack = true;
+        isAttacking = true; // El zombi está atacando
+        agent.ResetPath(); // Detener el movimiento
+        animator.SetBool("Walk", false); // Detener la animación de caminar
+        animator.SetTrigger("Attack"); // Iniciar la animación de ataque
+    }
+
+    // Método llamado desde la animación para aplicar el daño
+    public void ApplyDamage()
+    {
+        if (player != null && Vector3.Distance(transform.position, player.transform.position) <= attackRange)
+        {
+            AttackPlayer();
+        }
+    }
+
+    // Método para cancelar el ataque
+    public void CancelAttack()
+    {
+        isAttacking = false; // El zombi ya no está atacando
+        animator.ResetTrigger("Attack"); // Resetear el trigger de ataque
+        animator.SetBool("Walk", true); // Retomar la animación de caminar
+    }
+
+    // Método para llamar desde el Animator cuando termina la animación de ataque
+    public void OnAttackAnimationEnd()
+    {
+        CancelAttack(); // Indicar que terminó el ataque
     }
 
     public void ActiveNavMesh()
     {
         agent.enabled = true;
         animator.applyRootMotion = true;
-        Debug.Log("fffffffffff");
     }
 
     public void DesactiveNavMesh()
     {
-        Debug.Log("sadsdasd");
         animator.applyRootMotion = false;
         agent.enabled = false;
     }
