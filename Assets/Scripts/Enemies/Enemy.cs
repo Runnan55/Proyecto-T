@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
     [Range(-100f, 100f)]
     public float empujeF;
 
-    private bool empujar = true;
+    public bool empujar = true;
 
     public float DropRate = 0.3f;
 
@@ -227,5 +227,8 @@ public class Enemy : MonoBehaviour
     {
         playerMovement.IncrementFloatVariable();
     }
+
+
+    
   
 }

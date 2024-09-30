@@ -86,7 +86,7 @@ public class BlackHoleCard : BaseCard
             if (charger != null)
             {
                 // Reinicia la velocidad lineal y angular
-                charger.DesactivarMovimientos();
+                charger.DesactiveNavMesh();
             }
 
         }
@@ -125,7 +125,7 @@ public class BlackHoleCard : BaseCard
             if (charger != null)
             {
                 // Reinicia la velocidad lineal y angular
-                charger.ReactivarMovimientos();
+                charger.ActiveNavMesh();
             }
         }
     }

@@ -48,8 +48,10 @@ public class ZombiEnemy : Enemy
         // Si está atacando, no debe moverse ni caminar
         if (isAttacking)
         {
-            agent.ResetPath();
-            return;
+            
+                agent.ResetPath();
+                return;
+            
         }
 
         // Cambiar a estado de caminata si no está atacando
@@ -67,35 +69,41 @@ public class ZombiEnemy : Enemy
 
         if (isChasingPlayer)
         {
-            agent.ResetPath();
-            if (distanceToPlayer <= attackRange)
+
+            if (agent != null && agent.enabled && agent.isOnNavMesh) // Verificación completa
             {
-                if (Time.time >= attackTimer)
+
+                agent.ResetPath();
+
+                if (distanceToPlayer <= attackRange)
                 {
-                    attackTimer = Time.time + attackCooldown;
-                    StartAttack(); // Iniciar ataque
+                    if (Time.time >= attackTimer)
+                    {
+                        attackTimer = Time.time + attackCooldown;
+                        StartAttack(); // Iniciar ataque
+                    }
+                }
+                else
+                {
+                    agent.SetDestination(player.transform.position);
+                    animator.SetBool("Walk", true);
                 }
             }
             else
             {
-                agent.SetDestination(player.transform.position);
-                animator.SetBool("Walk", true);
-            }
-        }
-        else
-        {
-            if (!agent.pathPending && agent.remainingDistance < 0.1f)
-            {
-                timer -= Time.deltaTime;
-                if (timer <= 0f)
+                if (agent != null && agent.enabled && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance < 0.1f)
                 {
-                    SetRandomDestination();
-                    timer = wanderTimer;
-                    animator.SetBool("Walk", true);
-                }
-                else
-                {
-                    animator.SetBool("Walk", false);
+                    timer -= Time.deltaTime;
+                    if (timer <= 0f)
+                    {
+                        SetRandomDestination();
+                        timer = wanderTimer;
+                        animator.SetBool("Walk", true);
+                    }
+                    else
+                    {
+                        animator.SetBool("Walk", false);
+                    }
                 }
             }
         }
@@ -103,13 +111,17 @@ public class ZombiEnemy : Enemy
 
     void SetRandomDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
-        randomDirection += transform.position;
-        NavMeshHit hit;
-        NavMesh.SamplePosition(randomDirection, out hit, wanderRadius, 1);
-        targetPosition = hit.position;
 
-        agent.SetDestination(targetPosition);
+        if (agent != null && agent.enabled && agent.isOnNavMesh) // Verificación completa
+        {
+            Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
+            randomDirection += transform.position;
+            NavMeshHit hit;
+            NavMesh.SamplePosition(randomDirection, out hit, wanderRadius, 1);
+            targetPosition = hit.position;
+
+            agent.SetDestination(targetPosition);
+        }
     }
 
     public override void ReceiveDamage(float amount)
@@ -129,10 +141,12 @@ public class ZombiEnemy : Enemy
     // Método para iniciar el ataque
     private void StartAttack()
     {
-        isAttacking = true; // El zombi está atacando
-        agent.ResetPath(); // Detener el movimiento
-        animator.SetBool("Walk", false); // Detener la animación de caminar
-        animator.SetTrigger("Attack"); // Iniciar la animación de ataque
+        
+            isAttacking = true; // El zombi está atacando
+            agent.ResetPath(); // Detener el movimiento
+            animator.SetBool("Walk", false); // Detener la animación de caminar
+            animator.SetTrigger("Attack"); // Iniciar la animación de ataque
+        
     }
 
     // Método llamado desde la animación para aplicar el daño
@@ -160,12 +174,16 @@ public class ZombiEnemy : Enemy
 
     public void ActiveNavMesh()
     {
+
+        empujar = true;
+
         agent.enabled = true;
         animator.applyRootMotion = true;
     }
 
     public void DesactiveNavMesh()
     {
+        empujar = false;
         animator.applyRootMotion = false;
         agent.enabled = false;
     }

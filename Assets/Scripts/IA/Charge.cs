@@ -19,7 +19,9 @@ public class Charge : Enemy
     private NavMeshAgent agent;
     private bool isAttacking = false;
     private bool isWaiting = false;
+    private bool isCharging = false; // Nueva variable para controlar la carga
     private Animator animator;
+    public GameObject visualEspalda;
 
     void Awake()
     {
@@ -43,14 +45,25 @@ public class Charge : Enemy
         float attackDistanceSqr = attackDistance * attackDistance;
         float detectionRadiusSqr = detectionRadius * detectionRadius;
 
+        if (IsPlayerBehindEnemy())
+        {
+            desactivarVisual();
+
+        }
+        else
+        {
+            activarVisual();
+
+        }
+
         // Mantener al enemigo mirando al jugador si está en el rango de detección
         if (distanceToPlayerSqr <= detectionRadiusSqr && !isAttacking)
         {
             LookAtPlayer(); // Girar hacia el jugador en cada frame, excepto cuando está atacando
         }
 
-        // Lógica para manejar las colisiones de ataque solo si el jugador está en rango y el enemigo no está atacando
-        attackCollider.enabled = isWaiting && !IsPlayerBehindEnemy() && !isAttacking;
+        // Permitir daño solo si el jugador está detrás del enemigo durante la carga o cuando no está atacando
+        attackCollider.enabled = (isWaiting && !IsPlayerBehindEnemy() && !isAttacking) || (isCharging && !IsPlayerBehindEnemy());
 
         if (distanceToPlayerSqr <= detectionRadiusSqr && !isAttacking && !isWaiting)
         {
@@ -86,6 +99,7 @@ public class Charge : Enemy
     private IEnumerator ChargeAttack()
     {
         isAttacking = true;
+        isCharging = true; // Marcar que está cargando
         agent.isStopped = false;
         dano.enabled = true;
         agent.speed = chargeSpeed;
@@ -104,8 +118,9 @@ public class Charge : Enemy
         dano.enabled = false;
         animator.SetBool("Walk", false);
 
+        isCharging = false; // Termina la carga
         // Esperar 0.5 segundos después de la carga antes de mirar al jugador
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         // Activar la mirada hacia el jugador
         StartCoroutine(LookAtPlayerForDuration(1f)); // Suavizar el giro al jugador por 1 segundo después de esperar
@@ -164,19 +179,38 @@ public class Charge : Enemy
         Vector3 forwardDirection = transform.forward;
         forwardDirection.y = 0;
         directionToPlayer.y = 0;
-
         return Vector3.Dot(forwardDirection.normalized, directionToPlayer.normalized) > 0.5f;
     }
 
-    public void DesactivarMovimientos()
+    public void activarVisual()
     {
+        if (visualEspalda != null)
+        {
+            visualEspalda.SetActive(true);
+
+        }
+    }
+
+    public void desactivarVisual()
+    {
+        if (visualEspalda != null)
+        {
+            visualEspalda.SetActive(false);
+
+        }
+    }
+
+    public  void ActiveNavMesh()
+    {
+        empujar = true;
         animator.applyRootMotion = false;
         attackCollider.enabled = true;
         agent.enabled = false; // Desactiva el NavMeshAgent
     }
 
-    public void ReactivarMovimientos()
+    public  void  DesactiveNavMesh()
     {
+        empujar = false;
         attackCollider.enabled = false;
         agent.enabled = true; // Reactiva el NavMeshAgent
         animator.applyRootMotion = true;

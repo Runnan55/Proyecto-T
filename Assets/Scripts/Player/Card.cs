@@ -143,7 +143,7 @@ public class Card : MonoBehaviour
             if (charger != null)
             {
                 // Reinicia la velocidad lineal y angular
-                charger.DesactivarMovimientos();
+                charger.DesactiveNavMesh();
             }
            
         }
@@ -181,7 +181,7 @@ public class Card : MonoBehaviour
             if (charger != null)
             {
                 // Reinicia la velocidad lineal y angular
-                charger.ReactivarMovimientos();
+                charger.ActiveNavMesh();
             }
         }
     }

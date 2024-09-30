@@ -2854,8 +2854,8 @@ Transform:
   m_GameObject: {fileID: 8862381955484637296}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.903, z: 0}
-  m_LocalScale: {x: 0.14102542, y: 0.14102542, z: 0.14102542}
+  m_LocalPosition: {x: 0, y: 1.274, z: -0.349}
+  m_LocalScale: {x: 0.20461321, y: 0.20461321, z: 0.20461321}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7932474098193903868}
@@ -3039,15 +3039,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c87525528c35bda479bed03cbb9295c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hp: 20
+  _hp: 50
   damage: 10
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
   dropPrefab: {fileID: 0}
   knockbackDistance: 2
   knockbackDuration: 0.1
   level: {fileID: 0}
-  damageEffect: {fileID: 8862381955484637296}
-  empujeF: 0
+  damageEffect: {fileID: 0}
+  empujeF: -30
   DropRate: 0.3
   materialChangeDuration: 0.2
   damageMaterial: {fileID: 2100000, guid: d1bfa2acc52992c4f835a0b11abbd257, type: 2}
@@ -3060,6 +3060,7 @@ MonoBehaviour:
   chargeDistance: 15
   chargeDuration: 2
   dano: {fileID: 2104093509803833574}
+  visualEspalda: {fileID: 8862381955484637296}
 --- !u!195 &364161279494112525
 NavMeshAgent:
   m_ObjectHideFlags: 0

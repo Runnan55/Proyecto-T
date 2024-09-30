@@ -446,10 +446,14 @@ MonoBehaviour:
   damage: 20
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
   dropPrefab: {fileID: 6592644418209866909, guid: e1ef189d93100394b96d4b64182c5a2c, type: 3}
-  boss2: {fileID: 0}
-  doorManager: {fileID: 0}
   knockbackDistance: 6
   knockbackDuration: 0.1
+  level: {fileID: 0}
+  damageEffect: {fileID: 2066769124665026777}
+  empujeF: 71
+  DropRate: 0.3
+  materialChangeDuration: 0.2
+  damageMaterial: {fileID: 0}
   wanderRadius: 10
   wanderTimer: 5
   detectionRange: 100
@@ -457,7 +461,6 @@ MonoBehaviour:
   attackRange: 1.5
   attackCooldown: 2
   visionAngle: 360
-  damageEffect: {fileID: 2066769124665026777}
 --- !u!136 &2555362124336605486
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -61,7 +61,7 @@ public class SwapCardProjectile : MonoBehaviour
         if (charger != null)
         {
             // Reinicia la velocidad lineal y angular
-            charger.DesactivarMovimientos();
+            charger.ActiveNavMesh();
         }
     }
 
@@ -97,7 +97,7 @@ public class SwapCardProjectile : MonoBehaviour
         if (charger != null)
         {
             // Reinicia la velocidad lineal y angular
-            charger.ReactivarMovimientos();
+            charger.ActiveNavMesh();
         }
     }
 }

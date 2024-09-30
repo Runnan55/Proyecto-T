@@ -105,17 +105,16 @@ public class ArqueroAnim : Enemy
     
     }
 
-
-
-
     public void ActiveNavMesh()
     {
+        empujar = true;
         enabled = true;
         animator.applyRootMotion = true;
     }
 
     public void DesactiveNavMesh()
     {
+        empujar = false;
         enabled = false;
         animator.applyRootMotion = false;
     }
