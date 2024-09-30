@@ -18,7 +18,8 @@ public class PlayerMovement : MonoBehaviour, IEffectable
        public float gravity = 20.0f;
        public bool speedbuff = false;
        public float DashSpeed;
-       public float DashAttack;
+       public float MeleeAttack;
+        public float DistanciaAttack;
        private float lastDashTime = -Mathf.Infinity;
 
        public float dashTime;  

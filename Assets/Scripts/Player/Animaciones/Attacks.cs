@@ -29,10 +29,13 @@ public class Attacks : StateMachineBehaviour
         switch (attackNumber)
         {
             case "Attack1":
-                break;
-            case "Attack2":             
+            playerMovement.StartCoroutine(DashBackward(playerMovement));
+                break;                
+            case "Attack2":  
+            playerMovement.StartCoroutine(DashBackward(playerMovement));           
                 break;
             case "Attack3":
+            playerMovement.StartCoroutine(DashBackward(playerMovement));
                 break;
             case "Attack1P":
                 if (damageZoneG2 != null)
@@ -105,9 +108,9 @@ public class Attacks : StateMachineBehaviour
     }
 
     // Coroutine to gradually increase the player's position
- private IEnumerator DashForward(PlayerMovement playerMovement)
+private IEnumerator DashForward(PlayerMovement playerMovement)
 {
-    float dashDistance = playerMovement.DashAttack;
+    float dashDistance = playerMovement.MeleeAttack;
     float dashTime = 0.1f; // Time over which the dash occurs
     float elapsedTime = 0f;
 
@@ -123,6 +126,36 @@ public class Attacks : StateMachineBehaviour
         if (Physics.Raycast(playerMovement.transform.position, playerMovement.transform.forward, out RaycastHit hit, step))
         {
             // If an obstacle is detected, stop the dash at the hit point
+            playerMovement.transform.position = hit.point;
+            yield break;
+        }
+
+        playerMovement.transform.position = nextPosition;
+        elapsedTime += Time.deltaTime;
+        yield return null;
+    }
+
+    playerMovement.transform.position = endPosition;
+}
+
+private IEnumerator DashBackward(PlayerMovement playerMovement)
+{
+    float dashDistance = playerMovement.DistanciaAttack;
+    float dashTime = 0.1f; // Tiempo durante el cual ocurre el dash
+    float elapsedTime = 0f;
+
+    Vector3 startPosition = playerMovement.transform.position;
+    Vector3 endPosition = startPosition - playerMovement.transform.forward * dashDistance;
+
+    while (elapsedTime < dashTime)
+    {
+        float step = (elapsedTime / dashTime) * dashDistance;
+        Vector3 nextPosition = Vector3.Lerp(startPosition, endPosition, elapsedTime / dashTime);
+
+        // Realizar un raycast para verificar obstáculos
+        if (Physics.Raycast(playerMovement.transform.position, -playerMovement.transform.forward, out RaycastHit hit, step))
+        {
+            // Si se detecta un obstáculo, detener el dash en el punto de impacto
             playerMovement.transform.position = hit.point;
             yield break;
         }
