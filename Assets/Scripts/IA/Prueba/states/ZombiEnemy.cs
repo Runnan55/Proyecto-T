@@ -48,10 +48,12 @@ public class ZombiEnemy : Enemy
         // Si está atacando, no debe moverse ni caminar
         if (isAttacking)
         {
-            
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+            {
                 agent.ResetPath();
+
                 return;
-            
+            }
         }
 
         // Cambiar a estado de caminata si no está atacando
