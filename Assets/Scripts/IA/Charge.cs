@@ -45,7 +45,7 @@ public class Charge : Enemy
         float attackDistanceSqr = attackDistance * attackDistance;
         float detectionRadiusSqr = detectionRadius * detectionRadius;
 
-        if (IsPlayerBehindEnemy())
+        if (attackCollider.enabled == false)
         {
             desactivarVisual();
 
