@@ -10,9 +10,9 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour, IEffectable
 {
-       public float speed = 15.0f;
+       public float speed;
        public float reduccionVelocidad = 4f;
-
+       public float raycastDistance = 1.0f;
        public float reduccionVelocidadOriginal;
        public float rotationSpeed = 10.0f;
        public float gravity = 20.0f;
@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
        PlayerMovement playerMovement;
        private CharacterController controller;
-       private Vector3 moveDirection = Vector3.zero;
+       private Vector3 velocity;
        bool canMove = true;   
        bool isLookingAtTarget = false;      
        public static bool hasRotated = false; // Añade esta variable al principio de tu clase
@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
      // Buffos velocidad.
        public float BuffSpeed = 1.0f;  // Controla el porcentaje de velocidad y animación
 
-       private float originalSpeed;  // Almacena la velocidad original del jugador
+       public float originalSpeed;  // Almacena la velocidad original del jugador
        private float originalAnimatorSpeed;  // Almacena la velocidad original de las animaciones
 
 
@@ -338,120 +338,106 @@ public void MovimientoJugador()
 {
     if (canMove && controller.isGrounded)
     {
-       // Get the player's input
-    float horizontal = Input.GetAxisRaw("Horizontal");
-    float vertical = Input.GetAxisRaw("Vertical");
+        // Obtener la entrada del jugador
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
 
-    // Create a movement vector based on the player's input
-    Vector3 moveInput = new Vector3(horizontal, vertical, 0);
+        // Crear un vector de movimiento basado en la entrada del jugador
+        Vector3 moveInput = new Vector3(horizontal, 0, vertical);
 
-         // Check if any movement keys are pressed
-      if ((horizontal != 0 || vertical != 0) && enterAttack == false)
-{
-    // If any movement keys are pressed and the player is not attacking, set the "Run" parameter to true
-    animator.SetBool("Run", true);
-
-}
-         else if (enterAttack == true) 
+        // Verificar si se presionan las teclas de movimiento
+        if ((horizontal != 0 || vertical != 0) && !enterAttack)
         {
-            // If no movement keys are pressed, set the "Run" parameter to false
-            animator.SetBool("Run", false);
+            // Si se presionan las teclas de movimiento y el jugador no está atacando, establecer el parámetro "Run" en true
+            animator.SetBool("Run", true);
         }
         else
         {
-            // If the player is attacking, set the "Run" parameter to false
+            // Si no se presionan las teclas de movimiento o el jugador está atacando, establecer el parámetro "Run" en false
             animator.SetBool("Run", false);
         }
 
-    moveInput = Camera.main.transform.TransformDirection(moveInput);
+        // Normalizar el vector de movimiento para asegurar que la velocidad del jugador sea constante
+        if (moveInput.magnitude > 1)
+        {
+            moveInput.Normalize();
+        }
 
-    // Transform the movement vector from the camera's local coordinates to world coordinates
-    Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.z);
+        // Multiplicar el vector de movimiento por la velocidad del jugador para obtener la velocidad final
+        Vector3 moveDirection = moveInput * speed;
 
-    // Normalize the movement vector to ensure the player's speed is constant
-    moveDirection.Normalize();
+        // Aplicar el movimiento si el jugador está en el suelo o atacando
+        if (controller.isGrounded || enterAttack)
+        {
+            controller.Move(moveDirection * Time.deltaTime);
+        }
 
-    // Multiply the movement vector by the player's speed to get the final velocity
-    moveDirection *= speed;
+        if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
+        {
+            Quaternion targetRotation = Quaternion.identity;
 
-    // If the player is grounded or attacking, apply the movement
-    if (controller.isGrounded || enterAttack)
-    {
-        controller.Move(moveDirection * Time.deltaTime);
+            switch (vertical)
+            {
+                case 1: // W key
+                    switch (horizontal)
+                    {
+                        case 1: // D key
+                            targetRotation = Quaternion.Euler(0, 45, 0);
+                            break;
+                        case -1: // A key
+                            targetRotation = Quaternion.Euler(0, -45, 0);
+                            break;
+                        default:
+                            targetRotation = Quaternion.Euler(0, 0, 0);
+                            break;
+                    }
+                    break;
+                case -1: // S key
+                    switch (horizontal)
+                    {
+                        case 1: // D key
+                            targetRotation = Quaternion.Euler(0, 135, 0);
+                            break;
+                        case -1: // A key
+                            targetRotation = Quaternion.Euler(0, -135, 0);
+                            break;
+                        default:
+                            targetRotation = Quaternion.Euler(0, 180, 0);
+                            break;
+                    }
+                    break;
+                default:
+                    switch (horizontal)
+                    {
+                        case 1: // D key
+                            targetRotation = Quaternion.Euler(0, 90, 0);
+                            break;
+                        case -1: // A key
+                            targetRotation = Quaternion.Euler(0, -90, 0);
+                            break;
+                        default:
+                            targetRotation = transform.rotation;
+                            break;
+                    }
+                    break;
+            }
+
+            // Aplicar la rotación al objeto del jugador
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
+        else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y hay una posición de click guardada
+        {
+            // Calcular la rotación objetivo
+            Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
+
+            // Aplicar la rotación al jugador
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
     }
 
-if (moveDirection != Vector3.zero) // Si el jugador se está moviendo
-{
- if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
-{
-    // Obtén la rotación de la cámara
-    Quaternion cameraRotation = Camera.main.transform.rotation;
-
-    // Crea una nueva rotación que ignore la inclinación de la cámara
-    Quaternion targetRotation = Quaternion.Euler(0, cameraRotation.eulerAngles.y, 0);
- 
-     switch (vertical)
-{
-    case 1: // W key
-        switch (horizontal)
-        {
-            case 1: // D key
-                targetRotation *= Quaternion.Euler(0, 45, 0);
-                break;
-            case -1: // A key
-                targetRotation *= Quaternion.Euler(0, -45, 0);
-                break;
-        }
-        break;
-    case -1: // S key
-        switch (horizontal)
-        {
-            case 1: // D key
-                targetRotation *= Quaternion.Euler(0, 135, 0);
-                break;
-            case -1: // A key
-                targetRotation *= Quaternion.Euler(0, -135, 0);
-                break;
-            default:
-                targetRotation *= Quaternion.Euler(0, 180, 0);
-                break;
-        }
-        break;
-    default:
-        switch (horizontal)
-        {
-            case 1: // D key
-                targetRotation *= Quaternion.Euler(0, 90, 0);
-                break;
-            case -1: // A key
-                targetRotation *= Quaternion.Euler(0, -90, 0);
-                break;
-        }
-        break;
-        
-}         
-    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);     
-      
-}        
-else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y hay una posición de click guardada
-{
-    // Calculate the target rotation
-    Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
-
-    // Apply the rotation to the player
-    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
-}
-    }      
-
-
-}
-
-
     // Aplicar gravedad
-    moveDirection.y -= gravity * Time.deltaTime;
-
-    // Mover al personaje
-    controller.Move(moveDirection * Time.deltaTime);
+    Vector3 gravityVector = new Vector3(0, -gravity * Time.deltaTime, 0);
+    controller.Move(gravityVector * Time.deltaTime);
 }
 IEnumerator Dash()
 {
