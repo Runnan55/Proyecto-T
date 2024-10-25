@@ -14,15 +14,16 @@ public class DefaultHUD : MonoBehaviour
     protected bool initialized = false;
     public string startSceneName;
 
+    public GameObject BTClockImage;
+    public GameObject BTPanelImage;
+
     protected void Awake()
     {
-
         if (_instance != null)
         {
             Debug.LogWarning("DefaultHUD:: Duplicate instance of DefaultHUD, deleting second one (called '"+ this.gameObject.name + "').");
             Destroy(this.gameObject);
         }
-
         else
         {
             _instance = this;
@@ -40,6 +41,32 @@ public class DefaultHUD : MonoBehaviour
         if (!initialized)
         {
             initialized = true;
+        }
+    }
+
+    public void EnableBulletTimeUI()
+    {
+        if (BTClockImage != null)
+        {
+            BTClockImage.SetActive(true);
+        }
+
+        if (BTPanelImage != null)
+        {
+            BTPanelImage.SetActive(true);
+        }
+    }
+
+    public void DisableBulletTimeUI()
+    {
+        if (BTClockImage != null)
+        {
+            BTClockImage.SetActive(false);
+        }
+
+        if (BTPanelImage != null)
+        {
+            BTPanelImage.SetActive(false);
         }
     }
 

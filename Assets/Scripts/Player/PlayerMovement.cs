@@ -79,6 +79,53 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
        public GameObject dashObjec;
 
+    //
+    public float bulletTimeDuration = 7f;
+    public bool bulletTime = false;
+    public TestAfterImage afterImageEffect;
+
+    public static float bulletTimeScale = 1f;
+
+    FMODUnity.StudioEventEmitter FmodEmitter;
+
+       private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("DodgeArea") && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
+        {
+            if (afterImageEffect != null)
+            {
+                StartCoroutine(ActivateBulletTime());
+            }
+            else
+            {
+                Debug.LogError("afterImageEffect no está asignado en el Inspector.");
+            }
+        }
+    }
+
+    private IEnumerator ActivateBulletTime()
+    {
+        Debug.Log("Bullet time on");
+        FmodEmitter.Play();
+        bulletTime = true;
+        afterImageEffect.enabled = true;
+        bulletTimeScale = 0.1f;
+        DefaultHUD.Instance.EnableBulletTimeUI();
+
+        yield return new WaitForSeconds(bulletTimeDuration);
+
+        bulletTime = false;
+        afterImageEffect.enabled = false;
+        bulletTimeScale = 1f;
+        Debug.Log("Bullet time off");
+        DefaultHUD.Instance.DisableBulletTimeUI();
+    }
+
+    public bool IsBulletTimeActive()
+    {
+        return bulletTime; // Devuelve el estado del bullet time
+    }
+
 
     IEnumerator FinRef()
     {
@@ -169,7 +216,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
          originalColor = cambioColoAlPegar.material.color;
          StartCoroutine(FinRef());
 
-         
+         FmodEmitter = GetComponent<FMODUnity.StudioEventEmitter>();
     }
 
 void Update()

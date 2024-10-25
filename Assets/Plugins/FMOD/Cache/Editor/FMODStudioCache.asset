@@ -15,10 +15,10 @@ MonoBehaviour:
   Path: FMod/TarotFMOD/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638621828625217606
+  lastModified: 638654184422968085
   FileSizes:
   - Name: Desktop
-    Value: 808
+    Value: 1024
   Exists: 1
 --- !u!114 &-6483636181659658726
 MonoBehaviour:
@@ -35,10 +35,10 @@ MonoBehaviour:
   Path: FMod/TarotFMOD/Build/Desktop/Bank A.bank
   Name: Bank A
   StudioPath: bank:/Bank A
-  lastModified: 638621828625207601
+  lastModified: 638654142530442901
   FileSizes:
   - Name: Desktop
-    Value: 490560
+    Value: 494
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -56,15 +56,94 @@ MonoBehaviour:
   - {fileID: -8262532540077584438}
   - {fileID: -6483636181659658726}
   - {fileID: 5548139031648704302}
+  - {fileID: 7875437462452566770}
+  - {fileID: 4460794989985118016}
   EditorEvents:
-  - {fileID: 7123766132399052293}
+  - {fileID: 4942999866610048678}
+  - {fileID: 8882074144467832858}
+  - {fileID: 1026513553137339676}
+  - {fileID: 7659084249088151318}
   EditorParameters: []
   MasterBanks:
   - {fileID: 5548139031648704302}
   StringsBanks:
   - {fileID: -8262532540077584438}
-  cacheTime: 638621828625217606
+  cacheTime: 638654184423370125
   cacheVersion: 131618
+--- !u!114 &1026513553137339676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/DebugMusic
+  m_EditorClassIdentifier: 
+  Path: event:/DebugMusic
+  Guid:
+    Data1: -1909767718
+    Data2: 1288595983
+    Data3: 289211790
+    Data4: 650907973
+  Banks:
+  - {fileID: 4460794989985118016}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &4460794989985118016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Music.bank
+  m_EditorClassIdentifier: 
+  Path: FMod/TarotFMOD/Build/Desktop/Music.bank
+  Name: Music
+  StudioPath: bank:/Music
+  lastModified: 638654184423370125
+  FileSizes:
+  - Name: Desktop
+    Value: 6941888
+  Exists: 1
+--- !u!114 &4942999866610048678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/BulletTimeFx
+  m_EditorClassIdentifier: 
+  Path: event:/BulletTimeFx
+  Guid:
+    Data1: 2133559701
+    Data2: 1319800560
+    Data3: 1383539639
+    Data4: -162819539
+  Banks:
+  - {fileID: 7875437462452566770}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &5548139031648704302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,12 +159,12 @@ MonoBehaviour:
   Path: FMod/TarotFMOD/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638621828625217606
+  lastModified: 638654184422957981
   FileSizes:
   - Name: Desktop
     Value: 1036
   Exists: 1
---- !u!114 &7123766132399052293
+--- !u!114 &7659084249088151318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,16 +174,63 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/New Event
+  m_Name: event:/TimeResume
   m_EditorClassIdentifier: 
-  Path: event:/New Event
+  Path: event:/TimeResume
+  Guid:
+    Data1: 1233083729
+    Data2: 1284362480
+    Data3: 1727969422
+    Data4: -64092209
+  Banks:
+  - {fileID: 7875437462452566770}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &7875437462452566770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Fx.bank
+  m_EditorClassIdentifier: 
+  Path: FMod/TarotFMOD/Build/Desktop/Fx.bank
+  Name: Fx
+  StudioPath: bank:/Fx
+  lastModified: 638654184422900217
+  FileSizes:
+  - Name: Desktop
+    Value: 39424
+  Exists: 1
+--- !u!114 &8882074144467832858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/MusicMenu
+  m_EditorClassIdentifier: 
+  Path: event:/MusicMenu
   Guid:
     Data1: -1959273045
     Data2: 1306714062
     Data3: 715157388
     Data4: 481495351
   Banks:
-  - {fileID: -6483636181659658726}
+  - {fileID: 4460794989985118016}
   IsStream: 1
   Is3D: 0
   IsOneShot: 1

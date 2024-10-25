@@ -5994,6 +5994,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1091462270461060203}
   - component: {fileID: 1491954316779802418}
+  - component: {fileID: 4254598981043421469}
   - component: {fileID: 4790660789468634435}
   - component: {fileID: 1498834021130079469}
   - component: {fileID: 4798911550929232948}
@@ -6003,6 +6004,7 @@ GameObject:
   - component: {fileID: 1448756053162247022}
   - component: {fileID: 4595932509230696522}
   - component: {fileID: 706574955169949573}
+  - component: {fileID: 7173084650599760298}
   m_Layer: 7
   m_Name: PlayerCore
   m_TagString: Player
@@ -6062,6 +6064,24 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.58, z: 0}
+--- !u!114 &4254598981043421469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7548333083626667019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c630920bfb14d4585a758b47ea9dc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _skinnedMeshRenderers:
+  - {fileID: 6648767391976750792}
+  customMaterial: {fileID: 2100000, guid: 4729f8fd18666bf4892fe665b8d19721, type: 2}
+  creationInterval: 0.05
+  imageLifetime: 0.4
+  fadeDuration: 0.35
 --- !u!114 &4790660789468634435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6108,6 +6128,9 @@ MonoBehaviour:
   rotationSpeedUlt: 5
   ultimateImage: {fileID: 0}
   dashObjec: {fileID: 7792695117262202249}
+  bulletTimeDuration: 7
+  bulletTime: 0
+  afterImageEffect: {fileID: 4254598981043421469}
 --- !u!114 &1498834021130079469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6270,6 +6293,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37ac8b707a921c4f987d7987dfab6ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7173084650599760298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7548333083626667019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 2133559701
+      Data2: 1319800560
+      Data3: 1383539639
+      Data4: -162819539
+    Path: event:/BulletTimeFx
+  Event: 
+  PlayEvent: 0
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  AllowNonRigidbodyDoppler: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1 &7792695117262202249
 GameObject:
   m_ObjectHideFlags: 0
