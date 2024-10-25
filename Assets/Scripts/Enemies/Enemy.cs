@@ -91,7 +91,6 @@ public class Enemy : MonoBehaviour
 
         if (health <= 0)
         {
-            DropItem();
             ShowFloatingText(amount);
             StartCoroutine(DestroyAfterDelay(1f));
 
@@ -168,15 +167,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void DisableDamageEffect()
-    {
-        if (damageEffect != null)
-        {
-            damageEffect.SetActive(false);
-
-        }
-    }
-
     //* TEXTO
     void ShowFloatingText(float amount)
     {
@@ -186,22 +176,7 @@ public class Enemy : MonoBehaviour
         go.GetComponentInChildren<DamageText>().SetText(amount.ToString());
     }
 
-    void DropItem()
-    {
-        if (dropPrefab != null)
-        {
-            float chance = UnityEngine.Random.Range(0.0f, 1.0f);
-
-            // Comprueba si el número generado es menor o igual a 0.3 (30%)
-            if (chance <= DropRate)
-            {
-
-                dropspawn = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
-                Instantiate(dropPrefab, dropspawn, Quaternion.identity);
-            }
-        }
-    }
-
+  
 
     public void Activar()
     {
@@ -209,19 +184,7 @@ public class Enemy : MonoBehaviour
     }
 
 
-    #region DEBUG //    ***** DEBUG ***** 
-    /*     void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                Debug.Log("moricion");
-                //ReceiveDamage(health);
-                //Destroy(gameObject);
-                waveManager.EnemyDied();
-                Debug.Log("moricion fin");
-            }    
-        } */
-    #endregion DEBUG
+ 
 
     public void FloatUltimate()
     {
