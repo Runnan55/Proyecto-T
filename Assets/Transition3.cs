@@ -1,57 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.VFX;
 
-public class dash : StateMachineBehaviour
+public class Transition3 : StateMachineBehaviour
 {
-
-  private Life lifeInstance;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-      override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       PlayerMovement.hasRotated = false;   
-    
-       lifeInstance = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
-     
+       PlayerMovement.hasRotated = false;
 
-        Invulnerable();
-        
+        PlayerMovement.cambioarma = false;
     }
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+
+      override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (MovimientoJugador.ataqueP)
+        
+    if (MovimientoJugador.ataqueL)
+        {           
+             MovimientoJugador.instance.animator.Play("Attack1");
+        }
+            if (MovimientoJugador.ataqueP)
         {                         
              MovimientoJugador.instance.animator.Play("Attack1P");
         }
+
+          if (MovimientoJugador.ataqueD)
+        {                         
+             MovimientoJugador.instance.animator.Play("AttackD");
+        }
+       
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-      Vulnerable();
-    
+        MovimientoJugador.ataqueL = false; 
+          PlayerMovement.hasRotated = false;
+
+   
     }
-
-    void Invulnerable()
-    {
-        if (lifeInstance != null)
-        {
-            lifeInstance.isInvincible = true;
-        }
-    }
-
-    void Vulnerable()
-    {
-        if (lifeInstance != null)
-        {
-            lifeInstance.isInvincible = false;
-        }
-    }
-
-
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

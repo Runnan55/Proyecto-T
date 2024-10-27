@@ -15,29 +15,41 @@ public class Transition1Script : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       if (PlayerMovement.instance.isAttacking)
-        {
-            PlayerMovement.instance.animator.Play("Attack2");
+
+
+        if (MovimientoJugador.ataqueL)
+        {                         
+             MovimientoJugador.instance.animator.Play("Attack2");
         }
 
-        if (PlayerMovement.instance.isAttackingP)
-        {
-            PlayerMovement.instance.animator.Play("Attack2P");
+            if (MovimientoJugador.ataqueP)
+        {                         
+             MovimientoJugador.instance.animator.Play("Attack1P");
         }
 
-     PlayerMovement.cambioarma = false;
-   
+          if (MovimientoJugador.ataqueD)
+        {                         
+             MovimientoJugador.instance.animator.Play("AttackD");
+        }
+      
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            MovimientoJugador.instance.animator.Play("Dash");
+        }
         
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        PlayerMovement.instance.isAttacking = false;
+       MovimientoJugador.ataqueL = false; 
+       MovimientoJugador.ataqueP = false; 
+       MovimientoJugador.ataqueD = false; 
 
-        PlayerMovement.instance.isAttackingP = false;
+         PlayerMovement.hasRotated = false;
 
-         PlayerMovement.cambioarma = true;
+       
+       
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

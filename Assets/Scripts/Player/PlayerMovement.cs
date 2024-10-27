@@ -353,7 +353,7 @@ public void GrimorioDistancia()
                 // Instanciar el boomerang en la posición del jugador y con su rotación
                 GameObject boomerang = Instantiate(boomerangPrefab2, A.transform.position, Quaternion.identity);
                 // Iniciar el movimiento del boomerang con la dirección hacia adelante del jugador
-                boomerang.GetComponent<Boomerang>().IniciarMovimiento(direccion);
+               // boomerang.GetComponent<Boomerang>().IniciarMovimiento(direccion);
             }
                
 }
@@ -371,7 +371,7 @@ public void GrimorioDistanciaVuelta()
                 // Instanciar el boomerang en la posición del jugador y con su rotación
                 GameObject boomerang = Instantiate(boomerangPrefab, A.transform.position, Quaternion.identity);
                 // Iniciar el movimiento del boomerang con la dirección hacia adelante del jugador
-                boomerang.GetComponent<Boomerang>().IniciarMovimiento(direccion);
+               // boomerang.GetComponent<Boomerang>().IniciarMovimiento(direccion);
             }
                
 }
@@ -709,7 +709,7 @@ public void GrimorioDistancia2()
 private void InstantiateBoomerangAtPosition(Vector3 position, Vector3 direction, GameObject boomerangPrefab)
 {
     GameObject boomerang = Instantiate(boomerangPrefab, position, Quaternion.identity);
-    boomerang.GetComponent<Boomerang>().IniciarMovimiento(direction);
+    //boomerang.GetComponent<Boomerang>().IniciarMovimiento(direction);
 }
 
 public void SpeedChange()
