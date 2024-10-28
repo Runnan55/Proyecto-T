@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2075379416081180533}
   - component: {fileID: 1094158338469838336}
+  - component: {fileID: 8201706788016652550}
   m_Layer: 7
   m_Name: AtaqueL1
   m_TagString: Untagged
@@ -48,12 +49,25 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 8, y: 1, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8201706788016652550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480068947750960837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5379f9793bf5714e98ccd5a8986ff3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 50
 --- !u!1 &749482811249757973
 GameObject:
   m_ObjectHideFlags: 0
@@ -698,6 +712,7 @@ MonoBehaviour:
   ataqueMesh: {fileID: 3921060784826048150}
   rangoMaximo: 10
   velocidadExpansion: 20
+  tiempoEsperaAtaque: 3
   prefab: {fileID: 869544359345168942, guid: 4e42d2531c0782f48b6258f5b3a43abd, type: 3}
   spawnPosition: {fileID: 8395996024345522474}
   maxBalas: 3
@@ -708,7 +723,7 @@ MonoBehaviour:
   verificarArma: 0
   cambioColoAlPegar: {fileID: 0}
   DashSpeed: 50
-  dashObjec: {fileID: 2790481805149438217}
+  dashObjec: {fileID: 0}
   dashTime: 0.2
   bulletTimeDuration: 7
   bulletTime: 0
@@ -793,6 +808,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1746208229570570543}
   - component: {fileID: 5424697970195922401}
+  - component: {fileID: 5305056419564104193}
   m_Layer: 7
   m_Name: AtaqueL2
   m_TagString: Untagged
@@ -831,12 +847,25 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 4, y: 1, z: 6}
   m_Center: {x: 0, y: 0, z: 1}
+--- !u!114 &5305056419564104193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6630314869855961425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5379f9793bf5714e98ccd5a8986ff3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 20
 --- !u!1 &7015044678420779903
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,6 +876,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3575205443288047318}
   - component: {fileID: 4385682705219024864}
+  - component: {fileID: 7978776080494700769}
   m_Layer: 7
   m_Name: AtaqueL3
   m_TagString: Untagged
@@ -885,12 +915,25 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 2, y: 1, z: 10}
   m_Center: {x: 0, y: 0, z: 3}
+--- !u!114 &7978776080494700769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7015044678420779903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5379f9793bf5714e98ccd5a8986ff3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 45
 --- !u!1 &7292229098214589496
 GameObject:
   m_ObjectHideFlags: 0

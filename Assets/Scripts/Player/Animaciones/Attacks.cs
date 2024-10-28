@@ -98,7 +98,8 @@ public class Attacks : StateMachineBehaviour
                     animator.GetComponent<MonoBehaviour>().StartCoroutine(playerMovement.EmpujarJugadorAL3(0.1f)); // Empuje durante 0.1 segundos
                 break;
             case "AttackP":  
-            MovimientoJugador.ataqueP = false;          
+            MovimientoJugador.ataqueP = false;  
+             animator.SetBool("Dash", false);       
                 break;
             case "Attack2P":           
                 break;
@@ -118,12 +119,12 @@ public class Attacks : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+/*
          if (Input.GetKeyDown(KeyCode.Space))
         {
             MovimientoJugador.instance.animator.Play("Dash");
         }
-
+*/
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state

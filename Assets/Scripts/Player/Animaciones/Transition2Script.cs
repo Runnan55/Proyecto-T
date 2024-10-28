@@ -17,9 +17,7 @@ public class Transition2Script : StateMachineBehaviour
       
       
       if (MovimientoJugador.ataqueL)
-        {            
-         
-            
+        {                    
              MovimientoJugador.instance.animator.Play("Attack3");
         }  
 
@@ -37,9 +35,9 @@ public class Transition2Script : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       MovimientoJugador.ataqueL = false;       
-         MovimientoJugador.ataqueD = false; 
-           PlayerMovement.hasRotated = false;
+        MovimientoJugador.ataqueL = false;       
+        MovimientoJugador.ataqueD = false; 
+        PlayerMovement.hasRotated = false;
 
         
     }

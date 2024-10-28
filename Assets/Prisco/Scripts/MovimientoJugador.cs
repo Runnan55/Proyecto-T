@@ -462,7 +462,7 @@ public void AtaquePesado()
 {
     if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado)
     {
-        
+        Debug.Log("sipi");
         ataqueP = true;
         ataqueEjecutado = true;
         tiempoUltimoAtaque = Time.time; // Actualizar el tiempo del último ataque
