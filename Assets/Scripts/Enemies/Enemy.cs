@@ -96,7 +96,7 @@ public class Enemy : MonoBehaviour
 
             if (level != null)
             {
-                level.EnemyDefeated(this);
+                //level.EnemyDefeated(this);
             }
         }
         else

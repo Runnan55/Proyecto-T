@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Mathematics;
 
-
 public class EnemyLife : MonoBehaviour
 {
     [Header("Vida del Enemigo")]
@@ -19,37 +18,33 @@ public class EnemyLife : MonoBehaviour
 
             if (health <= 0)
             {
+                if (level != null)
+                {
+                    level.EnemyDefeated(this);
+                }
                 Destroy(gameObject);
             }
         }
     }
     [SerializeField] private Slider healthBar;
-    [SerializeField] private float pushForce = 5f; // Fuerza del empuje
-    [SerializeField] private float colorChangeDuration = 0.5f; // Duración del cambio de color
+    [SerializeField] private float pushForce = 5f;
+    [SerializeField] private float colorChangeDuration = 0.5f;
 
-   
     private Rigidbody rb;
+    public Level level; // Referencia al nivel
 
-    // Dirección de golpe predeterminada
-    private Vector3 hitDirection = new Vector3(1, 0, 0); // Ejemplo: hacia la derecha
+    private Vector3 hitDirection = new Vector3(1, 0, 0);
 
-    // Inicialización
     void Start()
     {
         maxHp = _hp;
-
         rb = GetComponent<Rigidbody>();
     }
 
-    // Método para recibir daño
     public void ReceiveDamage(float damage)
     {
         health -= damage;
-        
-     
 
-
-        // Empujar al enemigo usando la dirección de golpe establecida
         if (rb != null)
         {
             rb.AddForce(hitDirection.normalized * pushForce, ForceMode.Impulse);
@@ -57,13 +52,11 @@ public class EnemyLife : MonoBehaviour
 
         if (health <= 0)
         {
+            if (level != null)
+            {
+                level.EnemyDefeated(this);
+            }
             Destroy(gameObject);
         }
     }
-
-    // Coroutine para cambiar el color del enemigo
-    
-
-    // Método para manejar la "muerte" del enemigo
-   
 }

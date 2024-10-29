@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class EnemySpawner
 {
-    public Enemy enemy;
+    public EnemyLife enemy;
     public Transform spawnPoint;
     public float spawnDelay;
 }
@@ -59,7 +59,6 @@ public class Level : MonoBehaviour
 
     private IEnumerator SpawnWave(EnemyWave wave)
     {
-        // Agrupamos los spawns por su spawnDelay
         Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
 
         foreach (EnemySpawner enemySpawner in wave.enemySpawns)
@@ -77,20 +76,16 @@ public class Level : MonoBehaviour
         {
             float delayGrupo = grupoSpawn.Key;
 
-            // Esperamos el tiempo entre el último spawn y el actual grupo de spawns
             yield return new WaitForSeconds(delayGrupo - tiempoDesdeUltimoSpawn);
 
-            // Spawneamos todos los enemigos del grupo al mismo tiempo
             foreach (EnemySpawner enemySpawner in grupoSpawn.Value)
             {
-                // Instanciar la advertencia
                 GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
                 warningInstance.transform.LookAt(Camera.main.transform);
                 yield return new WaitForSeconds(0.1f);
                 Destroy(warningInstance);
 
-                // Instanciar el enemigo
-                Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
+                EnemyLife newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
                 Vector3 escalaOriginal = newEnemy.transform.localScale;
                 Quaternion rotacionOriginal = newEnemy.transform.rotation;
                 newEnemy.transform.SetParent(this.transform, true);
@@ -100,12 +95,11 @@ public class Level : MonoBehaviour
                 newEnemy.level = this;
             }
 
-            // Actualizamos el tiempo transcurrido
             tiempoDesdeUltimoSpawn = delayGrupo;
         }
     }
 
-    public void EnemyDefeated(Enemy enemy)
+    public void EnemyDefeated(EnemyLife enemy)
     {
         Debug.Log("Enemy defeated");
         defeatedEnemies--;

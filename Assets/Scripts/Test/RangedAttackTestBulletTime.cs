@@ -26,7 +26,7 @@ public class RangedAttackTestBulletTime : MonoBehaviour
     void Update()
     {
         // Ajustar el tiempo acumulado usando la escala de tiempo del bullet time
-        timeSinceLastFire += Time.deltaTime * PlayerMovement.bulletTimeScale;
+        timeSinceLastFire += Time.deltaTime * MovimientoJugador.bulletTimeScale;
 
         // Disparar cuando se haya alcanzado el intervalo ajustado
         if (timeSinceLastFire >= fireInterval)

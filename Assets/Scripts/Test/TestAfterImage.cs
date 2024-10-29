@@ -6,9 +6,9 @@ public class TestAfterImage : MonoBehaviour
 {
     [SerializeField] private SkinnedMeshRenderer[] _skinnedMeshRenderers;
     [SerializeField] private Material customMaterial;
-    [SerializeField] private float creationInterval = 0.5f;
-    [SerializeField] private float imageLifetime = 1.5f;
-    [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private float creationInterval = 0.05f;
+    [SerializeField] private float imageLifetime = 0.4f;
+    [SerializeField] private float fadeDuration = 0.35f;
 
     private MovimientoJugador playerMovement; // Referencia al script de PlayerMovement
 
