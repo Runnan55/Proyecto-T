@@ -8,11 +8,12 @@ public class DamageDealer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Enemy enemy = other.GetComponent<Enemy>();
+        EnemyLife enemy = other.GetComponent<EnemyLife>();
         BossHealth bossHealth = other.GetComponent<BossHealth>();
         if (enemy != null)
         {
             enemy.ReceiveDamage(damageAmount);
+            Debug.Log("dano");
         }
 
         if (bossHealth != null)

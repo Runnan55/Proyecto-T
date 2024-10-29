@@ -2,85 +2,68 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Mathematics;
+
 
 public class EnemyLife : MonoBehaviour
 {
     [Header("Vida del Enemigo")]
-    [SerializeField] private float maxHealth = 100f;
+    public float _hp = 100f;
+    private float maxHp;
+    public float health
+    {
+        get { return _hp; }
+        set
+        {
+            _hp = math.clamp(value, 0, 200000000);
+
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
     [SerializeField] private Slider healthBar;
     [SerializeField] private float pushForce = 5f; // Fuerza del empuje
-    [SerializeField] private Color damageColor = Color.red; // Color al recibir daño
     [SerializeField] private float colorChangeDuration = 0.5f; // Duración del cambio de color
 
-    private float currentHealth;
-    private Renderer enemyRenderer;
-    private Color originalColor;
+   
     private Rigidbody rb;
+
+    // Dirección de golpe predeterminada
+    private Vector3 hitDirection = new Vector3(1, 0, 0); // Ejemplo: hacia la derecha
 
     // Inicialización
     void Start()
     {
-        // Configura la vida actual al máximo
-        currentHealth = maxHealth;
+        maxHp = _hp;
 
-        // Configura la barra de vida
-        if (healthBar != null)
-        {
-            healthBar.maxValue = maxHealth;
-            healthBar.value = currentHealth;
-        }
-
-        // Obtiene el componente Renderer para cambiar el color
-        enemyRenderer = GetComponent<Renderer>();
-        originalColor = enemyRenderer.material.color;
-
-        // Obtiene el Rigidbody para el empuje
         rb = GetComponent<Rigidbody>();
     }
 
     // Método para recibir daño
-    public void ReceiveDamage(float damage, Vector3 hitDirection)
+    public void ReceiveDamage(float damage)
     {
-        currentHealth -= damage;
+        health -= damage;
+        
+     
 
-        // Asegura que la vida no baje de 0
-        if (currentHealth < 0)
-            currentHealth = 0;
 
-        // Actualiza la barra de vida
-        if (healthBar != null)
-        {
-            healthBar.value = currentHealth;
-        }
-
-        // Cambiar el color a rojo
-        StartCoroutine(ChangeColor(damageColor));
-
-        // Empujar al enemigo
+        // Empujar al enemigo usando la dirección de golpe establecida
         if (rb != null)
         {
             rb.AddForce(hitDirection.normalized * pushForce, ForceMode.Impulse);
         }
 
-        // Si la vida llega a 0, destruye al enemigo
-        if (currentHealth <= 0)
+        if (health <= 0)
         {
-            Die();
+            Destroy(gameObject);
         }
     }
 
     // Coroutine para cambiar el color del enemigo
-    private IEnumerator ChangeColor(Color newColor)
-    {
-        enemyRenderer.material.color = newColor; // Cambia al nuevo color
-        yield return new WaitForSeconds(colorChangeDuration); // Espera un tiempo
-        enemyRenderer.material.color = originalColor; // Restaura el color original
-    }
+    
 
     // Método para manejar la "muerte" del enemigo
-    private void Die()
-    {
-        Debug.Log("El enemigo ha sido destruido.");
-        Destroy(gameObject); // Destruye al enemigo en la escena
-    }
+   
 }
