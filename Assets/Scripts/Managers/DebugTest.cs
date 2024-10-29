@@ -76,6 +76,12 @@ public class DebugTest : MonoBehaviour
     void Update()
     {
         OpenDebugMenu();
+
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            SceneManager.LoadScene("DebugLevel");
+        }
+
         //healthString = ("") life != null ? life.currentHealth.ToString() : "No player found";
         //speedString = movement != null ? movement.speed.ToString() : "No player found";
     }

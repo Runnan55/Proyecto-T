@@ -128,11 +128,11 @@ public class CoreManager : MonoBehaviour
         if (startLocation != null)
         {
             Vector3 startPosition = startLocation.gameObject.transform.position;
-            if (startPosition.y < MinSafeHeight)
+            /* if (startPosition.y < MinSafeHeight)
             {
                 startPosition.y = MinSafeHeight;
                 //Debug.LogWarning("player spawneado por debajo de la altura segura, ajustando.");
-            }
+            } */
 
             player.transform.position = startPosition;
             //Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
