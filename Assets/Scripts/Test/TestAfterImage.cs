@@ -10,12 +10,12 @@ public class TestAfterImage : MonoBehaviour
     [SerializeField] private float imageLifetime = 1.5f;
     [SerializeField] private float fadeDuration = 1f;
 
-    private PlayerMovement playerMovement; // Referencia al script de PlayerMovement
+    private MovimientoJugador playerMovement; // Referencia al script de PlayerMovement
 
     void Start()
     {
         _skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
-        playerMovement = GetComponent<PlayerMovement>(); // Obtener el componente PlayerMovement en el mismo objeto
+        playerMovement = GetComponent<MovimientoJugador>(); // Obtener el componente PlayerMovement en el mismo objeto
         StartCoroutine(CreateAfterImage());
     }
 

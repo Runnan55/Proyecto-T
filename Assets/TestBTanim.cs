@@ -22,9 +22,9 @@ public class TestBTanim : MonoBehaviour
     void Update()
     {
         // Asegurarse de que la velocidad del Animator esté correctamente ajustada en tiempo real
-        if (PlayerMovement.bulletTimeScale < 1f)
+        if (MovimientoJugador.bulletTimeScale < 1f)
         {
-            animator.speed = PlayerMovement.bulletTimeScale; // Ajustar la velocidad a la escala de bullet time
+            animator.speed = MovimientoJugador.bulletTimeScale; // Ajustar la velocidad a la escala de bullet time
         }
         else
         {

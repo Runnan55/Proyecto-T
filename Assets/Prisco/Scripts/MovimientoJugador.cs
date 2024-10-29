@@ -67,7 +67,7 @@ public class MovimientoJugador : MonoBehaviour
     public bool bulletTime = false;
     public TestAfterImage afterImageEffect;
     public static float bulletTimeScale = 1f;
-     FMODUnity.StudioEventEmitter FmodEmitter;
+    FMODUnity.StudioEventEmitter FmodEmitter;
 
     
 
@@ -88,20 +88,20 @@ public class MovimientoJugador : MonoBehaviour
 
     private IEnumerator ActivateBulletTime()
     {
-        Debug.Log("Bullet time on");
         //FmodEmitter.Play();
         bulletTime = true;
         afterImageEffect.enabled = true;
         bulletTimeScale = 0.1f;
         DefaultHUD.Instance.EnableBulletTimeUI();
+        Debug.Log("Bullet time on, time scale = " + bulletTimeScale);
 
         yield return new WaitForSeconds(bulletTimeDuration);
 
         bulletTime = false;
         afterImageEffect.enabled = false;
         bulletTimeScale = 1f;
-        Debug.Log("Bullet time off");
         DefaultHUD.Instance.DisableBulletTimeUI();
+        Debug.Log("Bullet time off, time scale = " + bulletTimeScale);
     }
 
     public bool IsBulletTimeActive()
@@ -579,7 +579,18 @@ private void RecargarBalas()
     }
 
 
+#region Berto
+    public void speedUp()
+    {
+        speed = +5f;
+    }
 
+        public void speedDown()
+    {
+        speed = -5f;
+    }
+
+#endregion Berto
 
 
 

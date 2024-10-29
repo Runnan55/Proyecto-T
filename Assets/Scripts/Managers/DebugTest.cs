@@ -8,6 +8,11 @@ public class DebugTest : MonoBehaviour
     public GameObject DebugMenu;
     public GameObject player;
     public Life life;
+    public MovimientoJugador movement;
+
+    //
+    public string healthString;
+    public string speedString;
 
     private static DebugTest _instance;
     public static DebugTest Instance 
@@ -51,7 +56,9 @@ public class DebugTest : MonoBehaviour
         if (player != null)
         {
             life = player.GetComponent<Life>();
+            movement = player.GetComponent<MovimientoJugador>();
         }
+
         else
         {
             if (SceneManager.GetActiveScene().name != "MainMenu")
@@ -69,6 +76,8 @@ public class DebugTest : MonoBehaviour
     void Update()
     {
         OpenDebugMenu();
+        //healthString = ("") life != null ? life.currentHealth.ToString() : "No player found";
+        //speedString = movement != null ? movement.speed.ToString() : "No player found";
     }
 
     public void initialize()
@@ -86,6 +95,8 @@ public class DebugTest : MonoBehaviour
             DebugMenu.SetActive(!DebugMenu.activeSelf);
         }
     }
+
+    #region Levels
 
     public void OpenDebugLevel()
     {
@@ -127,7 +138,11 @@ public class DebugTest : MonoBehaviour
         string currentSceneName = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(currentSceneName);
     }
-     
+
+    #endregion Levels
+
+    #region Player
+
     public void EnableInvencibility()
     {
         if (life != null)
@@ -159,4 +174,38 @@ public class DebugTest : MonoBehaviour
             life.halfHealth();
         }
     }
+
+    public void plus30Secs()
+    {
+        if (life != null)
+        {
+            life.plus30Secs();
+        }
+    }
+
+    public void minus30Secs()
+    {
+        if (life != null)
+        {
+            life.minus30Secs();
+        }
+    }
+
+    public void speedUp()
+    {
+        if (movement != null)
+        {
+            movement.speedUp();
+        }
+    }
+
+    public void speedDown()
+    {
+        if (movement != null)
+        {
+            movement.speedDown();
+        }
+    }
+
+    #endregion Player
 }

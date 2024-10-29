@@ -32,7 +32,7 @@ public class Life : MonoBehaviour
 
         IEnumerator FindHealthPanelReferences()
     {
-        yield return new WaitForSeconds(0.1f); // Espera breve para permitir la inicialización de la UI
+        yield return new WaitForSeconds(0.5f); // Espera breve para permitir la inicialización de la UI
 
         // Encontrar el DefaultHUD(Clone) globalmente
         GameObject hud = GameObject.Find("DefaultHUD(Clone)");
@@ -212,5 +212,15 @@ public class Life : MonoBehaviour
     public void halfHealth()
     {
         currentTime = maxTime/2;
+    }
+
+    public void plus30Secs()
+    {
+        maxTime = maxTime +30;
+    }
+
+    public void minus30Secs()
+    {
+        maxTime = maxTime -30;
     }
 }

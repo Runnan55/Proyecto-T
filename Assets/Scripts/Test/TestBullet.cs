@@ -18,7 +18,7 @@ public class TestBullet : MonoBehaviour
     void Update()
     {
         // Ajustar la velocidad de la bala usando la escala de tiempo global
-        transform.position += transform.forward * speed * PlayerMovement.bulletTimeScale * Time.deltaTime;
+        transform.position += transform.forward * speed * MovimientoJugador.bulletTimeScale * Time.deltaTime;
     }
 
     // Método que se llama cuando la bala colisiona con otro objeto

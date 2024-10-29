@@ -36,7 +36,10 @@ public class Level : MonoBehaviour
     {
         if (other.CompareTag("Player") && !hasPlayerEntered)
         {
-            StartCoroutine(entranceDoor.Close());
+            if (entranceDoor != null)
+            {
+                StartCoroutine(entranceDoor.Close());
+            }
             Debug.Log(hasPlayerEntered);
             StartNextWave();
             hasPlayerEntered = true; 
@@ -54,53 +57,53 @@ public class Level : MonoBehaviour
         }
     }
 
-private IEnumerator SpawnWave(EnemyWave wave)
-{
-    // Agrupamos los spawns por su spawnDelay
-    Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
-
-    foreach (EnemySpawner enemySpawner in wave.enemySpawns)
+    private IEnumerator SpawnWave(EnemyWave wave)
     {
-        if (!spawnsPorTiempo.ContainsKey(enemySpawner.spawnDelay))
+        // Agrupamos los spawns por su spawnDelay
+        Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
+
+        foreach (EnemySpawner enemySpawner in wave.enemySpawns)
         {
-            spawnsPorTiempo[enemySpawner.spawnDelay] = new List<EnemySpawner>();
-        }
-        spawnsPorTiempo[enemySpawner.spawnDelay].Add(enemySpawner);
-    }
-
-    float tiempoDesdeUltimoSpawn = 0f;
-
-    foreach (var grupoSpawn in spawnsPorTiempo)
-    {
-        float delayGrupo = grupoSpawn.Key;
-
-        // Esperamos el tiempo entre el último spawn y el actual grupo de spawns
-        yield return new WaitForSeconds(delayGrupo - tiempoDesdeUltimoSpawn);
-
-        // Spawneamos todos los enemigos del grupo al mismo tiempo
-        foreach (EnemySpawner enemySpawner in grupoSpawn.Value)
-        {
-            // Instanciar la advertencia
-            GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
-            warningInstance.transform.LookAt(Camera.main.transform);
-            yield return new WaitForSeconds(0.1f);
-            Destroy(warningInstance);
-
-            // Instanciar el enemigo
-            Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
-            Vector3 escalaOriginal = newEnemy.transform.localScale;
-            Quaternion rotacionOriginal = newEnemy.transform.rotation;
-            newEnemy.transform.SetParent(this.transform, true);
-            yield return null;
-            newEnemy.transform.localScale = escalaOriginal;
-            newEnemy.transform.rotation = rotacionOriginal;
-            newEnemy.level = this;
+            if (!spawnsPorTiempo.ContainsKey(enemySpawner.spawnDelay))
+            {
+                spawnsPorTiempo[enemySpawner.spawnDelay] = new List<EnemySpawner>();
+            }
+            spawnsPorTiempo[enemySpawner.spawnDelay].Add(enemySpawner);
         }
 
-        // Actualizamos el tiempo transcurrido
-        tiempoDesdeUltimoSpawn = delayGrupo;
+        float tiempoDesdeUltimoSpawn = 0f;
+
+        foreach (var grupoSpawn in spawnsPorTiempo)
+        {
+            float delayGrupo = grupoSpawn.Key;
+
+            // Esperamos el tiempo entre el último spawn y el actual grupo de spawns
+            yield return new WaitForSeconds(delayGrupo - tiempoDesdeUltimoSpawn);
+
+            // Spawneamos todos los enemigos del grupo al mismo tiempo
+            foreach (EnemySpawner enemySpawner in grupoSpawn.Value)
+            {
+                // Instanciar la advertencia
+                GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
+                warningInstance.transform.LookAt(Camera.main.transform);
+                yield return new WaitForSeconds(0.1f);
+                Destroy(warningInstance);
+
+                // Instanciar el enemigo
+                Enemy newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
+                Vector3 escalaOriginal = newEnemy.transform.localScale;
+                Quaternion rotacionOriginal = newEnemy.transform.rotation;
+                newEnemy.transform.SetParent(this.transform, true);
+                yield return null;
+                newEnemy.transform.localScale = escalaOriginal;
+                newEnemy.transform.rotation = rotacionOriginal;
+                newEnemy.level = this;
+            }
+
+            // Actualizamos el tiempo transcurrido
+            tiempoDesdeUltimoSpawn = delayGrupo;
+        }
     }
-}
 
     public void EnemyDefeated(Enemy enemy)
     {
@@ -112,8 +115,14 @@ private IEnumerator SpawnWave(EnemyWave wave)
         {
             if (currentWave == waves.Count)
             {
-                StartCoroutine(entranceDoor.Open());
-                StartCoroutine(exitDoor.Open());
+                if (entranceDoor != null)
+                {
+                    StartCoroutine(entranceDoor.Open());
+                }
+                if (exitDoor != null)
+                {
+                    StartCoroutine(exitDoor.Open());
+                }
             }
             else
             {
