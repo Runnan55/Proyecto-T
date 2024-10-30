@@ -9,6 +9,7 @@ public class EnemyLife : MonoBehaviour
     [Header("Vida del Enemigo")]
     public float _hp = 100f;
     private float maxHp;
+
     public float health
     {
         get { return _hp; }
@@ -26,28 +27,37 @@ public class EnemyLife : MonoBehaviour
             }
         }
     }
-    [SerializeField] private Slider healthBar;
-    [SerializeField] private float pushForce = 5f;
-    [SerializeField] private float colorChangeDuration = 0.5f;
 
-    private Rigidbody rb;
+    [SerializeField] private Slider healthBar;
     public Level level; // Referencia al nivel
 
-    private Vector3 hitDirection = new Vector3(1, 0, 0);
+    [Header("Materiales")]
+    public Material newMaterial; // Material para aplicar cuando reciba daño
+    private Material originalMaterial; // Para restaurar el material original
+    private MeshRenderer enemyMeshRenderer; // MeshRenderer del enemigo
 
     void Start()
     {
         maxHp = _hp;
-        rb = GetComponent<Rigidbody>();
+
+        // Intenta obtener el MeshRenderer desde el propio objeto, sus hijos o algún objeto padre
+        enemyMeshRenderer = GetComponentInChildren<MeshRenderer>();
+
+        if (enemyMeshRenderer != null)
+        {
+            originalMaterial = enemyMeshRenderer.material;
+        }
     }
 
     public void ReceiveDamage(float damage)
     {
         health -= damage;
 
-        if (rb != null)
+        Debug.Log("Recibiendo daño: " + damage);
+
+        if (newMaterial != null && enemyMeshRenderer != null)
         {
-            rb.AddForce(hitDirection.normalized * pushForce, ForceMode.Impulse);
+            StartCoroutine(ChangeMaterialTemporarily());
         }
 
         if (health <= 0)
@@ -58,5 +68,17 @@ public class EnemyLife : MonoBehaviour
             }
             Destroy(gameObject);
         }
+    }
+
+    private IEnumerator ChangeMaterialTemporarily()
+    {
+        // Cambia el material al nuevo
+        enemyMeshRenderer.material = newMaterial;
+
+        // Espera 0.2 segundos
+        yield return new WaitForSeconds(0.2f);
+
+        // Restaura el material original
+        enemyMeshRenderer.material = originalMaterial;
     }
 }

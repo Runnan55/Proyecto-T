@@ -20,8 +20,7 @@ public class MeleIA : EnemyLife
     [Header("Cubo de Estado")]
     public GameObject statusCube;      // Referencia al cubo que cambiará de color
 
-    void Start()
-    {
+    void Awake() { 
         agent = GetComponent<NavMeshAgent>();
         currentState = EnemyState.Searching;
         attackTimer = 0; // Comienza el cooldown en cero

@@ -22,7 +22,7 @@ public class RangedIA : EnemyLife
     [Header("Cubo de Estado")]
     public GameObject statusCube;      // Referencia al cubo que cambiará de color
 
-    void Start()
+    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         currentState = EnemyState.Searching;
