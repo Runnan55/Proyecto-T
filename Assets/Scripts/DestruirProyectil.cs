@@ -19,7 +19,7 @@ public class DestruirProyectil : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
          // Si el objeto con el que el proyectil está colisionando no tiene la etiqueta "Player"
-        if (other.gameObject.tag != "Player")
+        if (other.gameObject.tag == "Enemy")
         {
             // Destruye el proyectil
             Destroy(gameObject);
