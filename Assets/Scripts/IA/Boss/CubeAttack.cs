@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class CubeAttack : MonoBehaviour
 {
-    public float damageAmount = 10f; // Cantidad de daño que se aplica al jugador
-    public float destroyDelay = 2f;   // Retraso antes de destruir el cubo
+    public float damageAmount = 20f; // Cantidad de daño que se aplica al jugador
+    private Life playerLife;
 
     void Start()
     {
-        // Destruir el cubo después de un retraso, independientemente de si colisiona con el jugador o no
-        Destroy(gameObject, destroyDelay);
+        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
     }
 
     private void OnTriggerEnter(Collider other)
@@ -18,10 +17,7 @@ public class CubeAttack : MonoBehaviour
         // Verificar si el trigger colisionó con el jugador
         if (other.CompareTag("Player"))
         {
-            // Obtener el componente Life del jugador
-            Life playerLife = other.GetComponent<Life>();
-
-            // Verificar si el jugador tiene el componente Life
+       
             if (playerLife != null)
             {
                 // Aplicar daño al jugador

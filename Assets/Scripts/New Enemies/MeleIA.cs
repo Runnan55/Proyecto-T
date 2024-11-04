@@ -26,6 +26,11 @@ public class MeleIA : EnemyLife
 
     private Rigidbody rb; // Referencia al Rigidbody del enemigo
 
+    [Header("Ataque")]
+    public GameObject attackEffectPrefab;
+    public float spawnTime=0.3f;
+    public Transform AttackSpawn;
+
     [Header("Cubo de Estado")]
     public GameObject statusCube; // Referencia al cubo que cambiará de color
 
@@ -154,16 +159,17 @@ public class MeleIA : EnemyLife
     // Método para atacar al jugador
     private void AttackPlayer()
     {
-        // Hacer que el enemigo mire al jugador
-        Vector3 direction = player.position - transform.position;
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // Rotación suave hacia el jugador
+        
 
         // Si el jugador está en el rango de ataque y el cooldown ha terminado
         if (attackTimer <= 0)
         {
             Debug.Log("El enemigo ha atacado al jugador!");
-            player.GetComponent<Life>().ModifyTime(-20); // Infligir daño
+            if (attackEffectPrefab != null)
+            {
+                GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);
+                Destroy(effect, spawnTime); // Destruye el efecto después de 0.1 segundos
+            }
             attackTimer = attackCooldown; // Reinicia el temporizador de ataque
         }
 
