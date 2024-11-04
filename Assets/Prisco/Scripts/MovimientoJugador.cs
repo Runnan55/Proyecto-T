@@ -69,11 +69,29 @@ public class MovimientoJugador : MonoBehaviour
     public static float bulletTimeScale = 1f;
     FMODUnity.StudioEventEmitter FmodEmitter;
 
-    
+    private bool isInDodgeArea = false;
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("DodgeArea") && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
+        if (other.CompareTag("DodgeArea"))
+        {
+            isInDodgeArea = true;
+            //Debug.Log("Dodge area entered");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("DodgeArea"))
+        {
+            isInDodgeArea = false;
+            //Debug.Log("Dodge area exited");
+        }
+    }
+
+   /*  private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("DodgeArea") && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B)) && !bulletTime)
         {
             if (afterImageEffect != null)
             {
@@ -84,7 +102,7 @@ public class MovimientoJugador : MonoBehaviour
                 Debug.LogError("afterImageEffect no está asignado en el Inspector.");
             }
         }
-    }
+    } */
 
     private IEnumerator ActivateBulletTime()
     {
@@ -130,16 +148,28 @@ public class MovimientoJugador : MonoBehaviour
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
     }
     void Update()
-{
+    {
         
-   
+    if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B) && !bulletTime)
+    {
+        if (afterImageEffect != null)
+        {
+            StartCoroutine(ActivateBulletTime());
+            StartCoroutine(Dash());
+        }
+
+        else
+        {
+            Debug.LogError("afterImageEffect no está asignado en el Inspector.");
+        }
+    }
 
     if (canMove)
     {
         Movimientojugador();
     }   
 
-    if (Input.GetKeyDown(KeyCode.Space))
+    if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
     {
         StartCoroutine(Dash());
     }

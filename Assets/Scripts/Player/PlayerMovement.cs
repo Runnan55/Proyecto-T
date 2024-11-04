@@ -1,3 +1,21 @@
+/* 
+
+
+
+
+
+
+
+SCRIPT ANTIGUO, NO USAR. SE DEJA COMO REFERENCIA PARA EL DESARROLLO DE NUEVOS SCRIPTS.
+
+
+
+
+
+
+
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
@@ -88,7 +106,28 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
     FMODUnity.StudioEventEmitter FmodEmitter;
 
-       private void OnTriggerStay(Collider other)
+    private bool isInDodgeArea = false;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("DodgeArea"))
+        {
+            isInDodgeArea = true;
+            Debug.Log("Dodge area entered");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("DodgeArea"))
+        {
+            isInDodgeArea = false;
+            Debug.Log("Dodge area exited");
+        }
+    }
+
+
+/*     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("DodgeArea") && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
         {
@@ -101,7 +140,7 @@ public class PlayerMovement : MonoBehaviour, IEffectable
                 Debug.LogError("afterImageEffect no está asignado en el Inspector.");
             }
         }
-    }
+    } */
 
     private IEnumerator ActivateBulletTime()
     {
@@ -123,9 +162,8 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
     public bool IsBulletTimeActive()
     {
-        return bulletTime; // Devuelve el estado del bullet time
+        return bulletTime;
     }
-
 
     IEnumerator FinRef()
     {
@@ -221,9 +259,18 @@ public class PlayerMovement : MonoBehaviour, IEffectable
 
 void Update()
 {
+        if (isInDodgeArea && Input.GetKeyDown(KeyCode.B) && !bulletTime)
+    {
+        if (afterImageEffect != null)
+        {
+            StartCoroutine(ActivateBulletTime());
+        }
+        else
+        {
+            Debug.LogError("afterImageEffect no está asignado en el Inspector.");
+        }
+    }
 
-    
- 
     if (!slowless)
     {
 

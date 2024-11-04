@@ -20,7 +20,7 @@ public class Flecha : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        transform.Translate(Vector3.forward * speed * MovimientoJugador.bulletTimeScale * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
