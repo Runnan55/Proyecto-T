@@ -7,7 +7,7 @@ public class RangedIA : EnemyLife
     public enum EnemyState { Searching, Moving, Shooting, Waiting, Stunned }
     public EnemyState currentState;
 
-    [Header("Configuración de Movimiento")]
+    [Header("ConfiguraciÃ³n de Movimiento")]
     public float chaseDistance = 15f;
     public float attackDistance = 10f;
     public float waitTimeBetweenShots = 2f;
@@ -38,7 +38,7 @@ public class RangedIA : EnemyLife
 
         if (player == null)
         {
-            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
+            Debug.LogError("No se encontrÃ³ un objeto con la etiqueta 'Player'");
         }
 
         UpdateStatusCubeColor();
@@ -46,7 +46,7 @@ public class RangedIA : EnemyLife
 
     void Update()
     {
-        if (player == null || isBeingPushed) return; // No hacer nada si el jugador no está o el enemigo está siendo empujado
+        if (player == null || isBeingPushed) return; // No hacer nada si el jugador no estÃ¡ o el enemigo estÃ¡ siendo empujado
 
         LookAtPlayer();
 
@@ -65,7 +65,7 @@ public class RangedIA : EnemyLife
                 WaitBeforeNextShot();
                 break;
             case EnemyState.Stunned:
-                // No hacer nada mientras está aturdido
+                // No hacer nada mientras estÃ¡ aturdido
                 break;
         }
 
@@ -73,7 +73,7 @@ public class RangedIA : EnemyLife
 
         if (waitTimer > 0)
         {
-            waitTimer -= Time.deltaTime;
+            waitTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
         }
     }
 
@@ -86,7 +86,7 @@ public class RangedIA : EnemyLife
             StartCoroutine(PushBack());
         }
 
-        if (currentState == EnemyState.Shooting || currentState == EnemyState.Waiting)
+          if (currentState == EnemyState.Shooting || currentState == EnemyState.Waiting)
         {
             currentState = EnemyState.Stunned;
             waitTimer = 0;  // Reinicia el temporizador para asegurar que espere antes de otro ataque
@@ -108,7 +108,7 @@ public class RangedIA : EnemyLife
         Vector3 pushDirection = (transform.position - player.position).normalized;
         rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
 
-        yield return new WaitForSeconds(pushDuration);
+        yield return new WaitForSeconds(pushDuration * MovimientoJugador.bulletTimeScale);
 
         rb.isKinematic = true;
         agent.enabled = true;
@@ -137,7 +137,7 @@ public class RangedIA : EnemyLife
             Vector3 direction = player.position - transform.position;
             direction.y = 0;
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f * MovimientoJugador.bulletTimeScale);
         }
     }
 
@@ -156,6 +156,7 @@ public class RangedIA : EnemyLife
         Vector3 direction = (player.position - transform.position).normalized;
         Vector3 shootingPosition = player.position - direction * attackDistance;
 
+        agent.speed = agent.speed * MovimientoJugador.bulletTimeScale;
         agent.SetDestination(shootingPosition);
 
         if (Vector3.Distance(transform.position, shootingPosition) <= 1f)
@@ -170,7 +171,7 @@ public class RangedIA : EnemyLife
         {
             Instantiate(projectilePrefab, shootingPoint.position, shootingPoint.rotation);
             Debug.Log("El enemigo ha disparado al jugador!");
-            waitTimer = waitTimeBetweenShots;
+            waitTimer = waitTimeBetweenShots / MovimientoJugador.bulletTimeScale;
             currentState = EnemyState.Waiting;
         }
     }
@@ -204,13 +205,13 @@ public class RangedIA : EnemyLife
                     cubeRenderer.material.color = Color.magenta;
                     break;
                 case EnemyState.Stunned:
-                    cubeRenderer.material.color = Color.blue; 
+                    cubeRenderer.material.color = Color.blue;
                     break;
             }
         }
         else
         {
-            Debug.LogError("El cubo de estado no está asignado en el inspector.");
+            Debug.LogError("El cubo de estado no estÃ¡ asignado en el inspector.");
         }
     }
 }

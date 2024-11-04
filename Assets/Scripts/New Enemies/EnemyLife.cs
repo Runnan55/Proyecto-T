@@ -8,7 +8,10 @@ public class EnemyLife : MonoBehaviour
 {
     [Header("Vida del Enemigo")]
     public float _hp = 100f;
+    
     private float maxHp;
+
+    public GameObject floatingTextPrefab;
 
     public float health
     {
@@ -16,6 +19,12 @@ public class EnemyLife : MonoBehaviour
         set
         {
             _hp = math.clamp(value, 0, 200000000);
+
+            if (healthBar != null)
+            {
+                healthBar.gameObject.SetActive(_hp < maxHp);
+                healthBar.value = _hp / maxHp;
+            }
 
             if (health <= 0)
             {
@@ -32,7 +41,7 @@ public class EnemyLife : MonoBehaviour
     public Level level; // Referencia al nivel
 
     [Header("Materiales")]
-    public Material newMaterial; // Material para aplicar cuando reciba daño
+    public Material newMaterial; // Material para aplicar cuando reciba daï¿½o
     private Material originalMaterial; // Para restaurar el material original
     private MeshRenderer enemyMeshRenderer; // MeshRenderer del enemigo
 
@@ -40,12 +49,17 @@ public class EnemyLife : MonoBehaviour
     {
         maxHp = _hp;
 
-        // Intenta obtener el MeshRenderer desde el propio objeto, sus hijos o algún objeto padre
+        // Intenta obtener el MeshRenderer desde el propio objeto, sus hijos o algï¿½n objeto padre
         enemyMeshRenderer = GetComponentInChildren<MeshRenderer>();
 
         if (enemyMeshRenderer != null)
         {
             originalMaterial = enemyMeshRenderer.material;
+        }
+
+        if (healthBar != null)
+        {
+            healthBar.gameObject.SetActive(false);
         }
     }
 
@@ -53,7 +67,7 @@ public class EnemyLife : MonoBehaviour
     {
         health -= damage;
 
-        Debug.Log("Recibiendo daño: " + damage);
+        Debug.Log("Recibiendo daï¿½o: " + damage);
 
         if (newMaterial != null && enemyMeshRenderer != null)
         {
@@ -68,6 +82,15 @@ public class EnemyLife : MonoBehaviour
             }
             Destroy(gameObject);
         }
+
+        ShowFloatingText(damage);
+    }
+
+    void ShowFloatingText(float amount)
+    {
+        Vector3 offset = new Vector3(0, 2, 0); // la y es la altura
+        var go = Instantiate(floatingTextPrefab, transform.position + offset, Quaternion.identity);
+        go.GetComponentInChildren<DamageText>().SetText(amount.ToString());
     }
 
     private IEnumerator ChangeMaterialTemporarily()
