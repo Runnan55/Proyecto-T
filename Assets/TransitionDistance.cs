@@ -2,14 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class idleScript : StateMachineBehaviour
-{
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-       PlayerMovement.hasRotated = false;
+public class TransitionDistance : StateMachineBehaviour
+{ override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {  
+        
+       MovimientoJugador.hasRotated = false;
        
-       PlayerMovement.enterAttack = false;
+       MovimientoJugador.enterAttack = false;     
  
     }
 
@@ -25,12 +24,7 @@ public class idleScript : StateMachineBehaviour
         if (MovimientoJugador.ataqueP)
         {                         
              MovimientoJugador.instance.animator.Play("Attack1P");
-        }
-
-          if (MovimientoJugador.ataqueD)
-        {                         
-             MovimientoJugador.instance.animator.Play("Transition3P 0 0");
-        }
+        }     
         
        
     }
@@ -41,9 +35,8 @@ public class idleScript : StateMachineBehaviour
          
        MovimientoJugador.ataqueL = false;    
        MovimientoJugador.ataqueP = false;
-       MovimientoJugador.ataqueD = false;   
-        
-           
+       MovimientoJugador.ataqueD = false;        
+                   
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

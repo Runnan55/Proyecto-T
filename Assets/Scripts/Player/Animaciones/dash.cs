@@ -30,7 +30,10 @@ public class dash : StateMachineBehaviour
     {
       Vulnerable();
     
-
+  if (MovimientoJugador.ataqueL)
+        {                         
+             MovimientoJugador.instance.animator.Play("Attack1L");
+        }
     if (MovimientoJugador.ataqueP)
         {                         
              MovimientoJugador.instance.animator.Play("Attack1P");

@@ -7,7 +7,7 @@ public class MovimientoJugador : MonoBehaviour
         // Variables del player
     [Header("Player Settings")]
     [SerializeField] public static float speed = 15.0f;
-    public static float fuerzaEmpujeAL2 = 2.0f;  
+    public static float fuerzaEmpujeAL2 = 5.0f;  
     public static float fuerzaEmpujeAP3 = 50.0f;  
     public  float rotationSpeed = 10.0f;
     public float gravity = 20.0f;
@@ -149,6 +149,15 @@ public class MovimientoJugador : MonoBehaviour
     }
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+           enterAttack = true;
+        }
+          if (Input.GetKeyDown(KeyCode.P))
+        {
+           enterAttack = false;
+        }
         
     if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B) && !bulletTime)
     {
@@ -235,7 +244,8 @@ public class MovimientoJugador : MonoBehaviour
         if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
         {
             Quaternion targetRotation = Quaternion.identity;
-
+         
+             
             switch (vertical)
             {
                 case 1: // W key
@@ -450,12 +460,14 @@ public void hasRotatedFalse()
     hasRotated = false;
 }
 public void AtaqueLigero()
-    {
-        if (Input.GetButtonDown("Fire1") && !ataqueL)
-    {
-       ataqueL = true;
+{
+    if (Input.GetButtonDown("Fire1") && !ataqueL)
+    {      
+    
+      ataqueL = true;
+       
     }
-    }
+}
 
 public IEnumerator MirarAlMouseAL3()
 {
@@ -492,7 +504,8 @@ public void AtaquePesado()
 {
     if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado)
     {
-        Debug.Log("sipi");
+        enterAttack = true;
+        hasAttacked = true;
         ataqueP = true;
         ataqueEjecutado = true;
         tiempoUltimoAtaque = Time.time; // Actualizar el tiempo del último ataque
@@ -534,7 +547,7 @@ private void ExpandirCollider()
 {
     if (Input.GetButtonDown("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
     {
-        speed = 0;
+        enterAttack = true;
         ataqueD = true;
         if (mirarCoroutine != null)
         {
@@ -542,6 +555,7 @@ private void ExpandirCollider()
         }
         mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
     }
+  
 }
 
 private IEnumerator MirarAlMousePorUnSegundo()
@@ -553,7 +567,7 @@ private IEnumerator MirarAlMousePorUnSegundo()
     {
         if (Input.GetButtonUp("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
         {
-            EjecutarAtaqueDistancia();
+            //EjecutarAtaqueDistancia();
             
             yield break;
         }
@@ -579,12 +593,12 @@ private IEnumerator MirarAlMousePorUnSegundo()
     }
 
     // Ejecutar el ataque a distancia después de 1 segundo
-    EjecutarAtaqueDistancia();
+    //EjecutarAtaqueDistancia();
 }
 
 private void EjecutarAtaqueDistancia()
 {
-    speed = 15.0f;
+    
     tiempoUltimoDisparo = Time.time;
     balasActuales--;
 

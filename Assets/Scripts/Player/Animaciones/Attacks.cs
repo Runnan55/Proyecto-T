@@ -26,7 +26,7 @@ public class Attacks : StateMachineBehaviour
            
         switch (attackNumber)
         {
-            case "Attack1":                                     
+            case "Attack1":                        
                 MovimientoJugador.ataqueL = false;
                 if (ataqueL1 != null)
                 {
@@ -97,11 +97,19 @@ public class Attacks : StateMachineBehaviour
                     
                     animator.GetComponent<MonoBehaviour>().StartCoroutine(playerMovement.EmpujarJugadorAL3(0.1f)); // Empuje durante 0.1 segundos
                 break;
-            case "AttackP":  
+            case "AttackP": 
+            MovimientoJugador.speed = 0; 
+            if (playerMovement.EstaMoviendose())
+                {
+                    Vector3 direccionEmpuje = playerMovement.ObtenerDireccionEmpuje();
+                    animator.GetComponent<MonoBehaviour>().StartCoroutine(playerMovement.EmpujarJugadorAL2(direccionEmpuje, 0.1f)); // Empuje durante 0.5 segundos
+                } 
             MovimientoJugador.ataqueP = false;  
              animator.SetBool("Dash", false);       
                 break;
-            case "Attack2P":           
+            case "AttackD": 
+            MovimientoJugador.ataqueD = false;
+            MovimientoJugador.speed = 0;          
                 break;
             case "Attack3P":         
                 break;
@@ -206,11 +214,13 @@ public class Attacks : StateMachineBehaviour
         }
     }  
                 break;
-            case "Attack1P":
-                MovimientoJugador.ataqueP = false;    
+            case "AttackP":
+            MovimientoJugador.speed = 15; 
+            MovimientoJugador.hasRotated = false;
+            MovimientoJugador.ataqueP = false;    
                 break;
-            case "Attack2P":
-                
+            case "AttackD":
+                MovimientoJugador.speed = 15;
                 break;
             case "Attack3P":
              
