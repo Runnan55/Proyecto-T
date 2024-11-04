@@ -1,30 +1,37 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class RangedIA : EnemyLife
 {
-    public enum EnemyState { Searching, Moving, Shooting, Waiting }
+    public enum EnemyState { Searching, Moving, Shooting, Waiting, Stunned }
     public EnemyState currentState;
 
     [Header("Configuración de Movimiento")]
-    public float chaseDistance = 15f;  // Distancia a la que comienza a perseguir
-    public float attackDistance = 10f;  // Distancia a la que puede atacar
-    public float waitTimeBetweenShots = 2f; // Tiempo entre disparos
-    public GameObject projectilePrefab; // Prefab del proyectil
-    public Transform shootingPoint; // Punto desde el cual se disparará el proyectil
+    public float chaseDistance = 15f;
+    public float attackDistance = 10f;
+    public float waitTimeBetweenShots = 2f;
+    public GameObject projectilePrefab;
+    public Transform shootingPoint;
 
-    private NavMeshAgent agent;        // Referencia al agente de NavMesh
-    private Transform player;          // Referencia al transform del jugador
-    private float waitTimer;           // Temporizador para gestionar el tiempo de espera entre disparos
+    private NavMeshAgent agent;
+    private Transform player;
+    private float waitTimer;
 
     [Header("Cubo de Estado")]
-    public GameObject statusCube;      // Referencia al cubo que cambiará de color
+    public GameObject statusCube;
+
+    [Header("Empuje")]
+    public float pushForce = 10f;
+    public float pushDuration = 0.5f;
+
+    private bool isBeingPushed = false;
+    private Rigidbody rb;
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
         currentState = EnemyState.Searching;
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -34,12 +41,12 @@ public class RangedIA : EnemyLife
             Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
         }
 
-        UpdateStatusCubeColor(); // Cambia el color del cubo al iniciar
+        UpdateStatusCubeColor();
     }
 
     void Update()
     {
-        if (player == null) return; // Si no se encontró el jugador, no se ejecuta el resto
+        if (player == null || isBeingPushed) return; // No hacer nada si el jugador no está o el enemigo está siendo empujado
 
         LookAtPlayer();
 
@@ -57,14 +64,63 @@ public class RangedIA : EnemyLife
             case EnemyState.Waiting:
                 WaitBeforeNextShot();
                 break;
+            case EnemyState.Stunned:
+                // No hacer nada mientras está aturdido
+                break;
         }
 
-        UpdateStatusCubeColor(); // Actualiza el color del cubo en cada frame
+        UpdateStatusCubeColor();
 
-        // Gestionar el temporizador de espera
         if (waitTimer > 0)
         {
-            waitTimer -= Time.deltaTime; // Resta el tiempo transcurrido
+            waitTimer -= Time.deltaTime;
+        }
+    }
+
+    public override void ReceiveDamage(float damage)
+    {
+        base.ReceiveDamage(damage);
+
+        if (!isBeingPushed)
+        {
+            StartCoroutine(PushBack());
+        }
+    }
+
+    private IEnumerator PushBack()
+    {
+        if (rb == null) yield break;
+
+        // Cambia el estado a "Stunned" y desactiva el agente para que no se mueva
+        isBeingPushed = true;
+        agent.enabled = false;
+        rb.isKinematic = false;
+
+        currentState = EnemyState.Stunned;
+
+        // Aplica la fuerza de empuje
+        Vector3 pushDirection = (transform.position - player.position).normalized;
+        rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
+
+        yield return new WaitForSeconds(pushDuration);
+
+        rb.isKinematic = true;
+        agent.enabled = true;
+
+        isBeingPushed = false;
+
+        // Restaura el estado dependiendo de la distancia al jugador
+        if (Vector3.Distance(transform.position, player.position) <= attackDistance)
+        {
+            currentState = EnemyState.Shooting;
+        }
+        else if (Vector3.Distance(transform.position, player.position) <= chaseDistance)
+        {
+            currentState = EnemyState.Moving;
+        }
+        else
+        {
+            currentState = EnemyState.Searching;
         }
     }
 
@@ -72,16 +128,13 @@ public class RangedIA : EnemyLife
     {
         if (player != null)
         {
-            // Calcular dirección hacia el jugador
             Vector3 direction = player.position - transform.position;
-            direction.y = 0; // Ignorar la altura para rotación
+            direction.y = 0;
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // Rotación suave hacia el jugador
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
     }
 
-
-    // Método para localizar al jugador
     private void SearchForPlayer()
     {
         if (Vector3.Distance(transform.position, player.position) <= chaseDistance)
@@ -90,46 +143,40 @@ public class RangedIA : EnemyLife
         }
     }
 
-    // Método para moverse a una posición de disparo
     private void MoveToShootingPosition()
     {
+        if (!agent.enabled) return;
+
         Vector3 direction = (player.position - transform.position).normalized;
         Vector3 shootingPosition = player.position - direction * attackDistance;
 
-        agent.SetDestination(shootingPosition); // Establece la posición de disparo como destino
+        agent.SetDestination(shootingPosition);
 
-        if (Vector3.Distance(transform.position, shootingPosition) <= 1f) // Umbral para llegar
+        if (Vector3.Distance(transform.position, shootingPosition) <= 1f)
         {
-            currentState = EnemyState.Shooting; // Cambia al estado de disparo
+            currentState = EnemyState.Shooting;
         }
     }
 
-    // Método para disparar al jugador
     private void ShootAtPlayer()
     {
-
-
         if (waitTimer <= 0)
         {
-            GameObject Shoot = Instantiate(projectilePrefab, shootingPoint.position, shootingPoint.rotation);
+            Instantiate(projectilePrefab, shootingPoint.position, shootingPoint.rotation);
             Debug.Log("El enemigo ha disparado al jugador!");
-            waitTimer = waitTimeBetweenShots; // Reinicia el temporizador de espera
-            currentState = EnemyState.Waiting; // Cambia al estado de espera
+            waitTimer = waitTimeBetweenShots;
+            currentState = EnemyState.Waiting;
         }
     }
 
-    // Método para esperar antes de disparar nuevamente
     private void WaitBeforeNextShot()
     {
         if (waitTimer <= 0)
         {
-            currentState = EnemyState.Moving; // Regresa al estado de movimiento después de esperar
+            currentState = EnemyState.Moving;
         }
     }
 
-    /// <summary>
-    /// Cambia el color del cubo según el estado del enemigo.
-    /// </summary>
     private void UpdateStatusCubeColor()
     {
         if (statusCube != null)
@@ -139,16 +186,19 @@ public class RangedIA : EnemyLife
             switch (currentState)
             {
                 case EnemyState.Searching:
-                    cubeRenderer.material.color = Color.green; // Color verde para el estado de búsqueda
+                    cubeRenderer.material.color = Color.green;
                     break;
                 case EnemyState.Moving:
-                    cubeRenderer.material.color = Color.yellow; // Color amarillo para el estado de movimiento
+                    cubeRenderer.material.color = Color.yellow;
                     break;
                 case EnemyState.Shooting:
-                    cubeRenderer.material.color = Color.red; // Color rojo al disparar
+                    cubeRenderer.material.color = Color.red;
                     break;
                 case EnemyState.Waiting:
-                    cubeRenderer.material.color = Color.magenta; // Color magenta durante la espera
+                    cubeRenderer.material.color = Color.magenta;
+                    break;
+                case EnemyState.Stunned:
+                    cubeRenderer.material.color = Color.blue; // Azul para el estado aturdido
                     break;
             }
         }

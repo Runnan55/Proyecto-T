@@ -49,7 +49,7 @@ public class EnemyLife : MonoBehaviour
         }
     }
 
-    public void ReceiveDamage(float damage)
+    public virtual void ReceiveDamage(float damage)
     {
         health -= damage;
 

@@ -17,10 +17,20 @@ public class MeleIA : EnemyLife
     private float attackTimer;         // Temporizador para controlar los ataques
     private Transform player;          // Referencia al transform del jugador
 
-    [Header("Cubo de Estado")]
-    public GameObject statusCube;      // Referencia al cubo que cambiará de color
+    [Header("Empuje al Recibir Daño")]
+    public float pushForce = 10f; // Fuerza del empuje
+    public float pushDuration = 0.5f; // Duración del empuje
+    private bool isBeingPushed = false; // Estado para controlar si está en empuje
+    private float pushCooldown = 1f; // Cooldown para evitar empujes continuos
+    private float lastPushTime = -1f; // Último tiempo de empuje
 
-    void Awake() { 
+    private Rigidbody rb; // Referencia al Rigidbody del enemigo
+
+    [Header("Cubo de Estado")]
+    public GameObject statusCube; // Referencia al cubo que cambiará de color
+
+    void Awake()
+    {
         agent = GetComponent<NavMeshAgent>();
         currentState = EnemyState.Searching;
         attackTimer = 0; // Comienza el cooldown en cero
@@ -32,12 +42,19 @@ public class MeleIA : EnemyLife
             Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
         }
 
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            Debug.LogError("El enemigo necesita un Rigidbody para el empuje.");
+        }
+
         UpdateStatusCubeColor(); // Cambia el color del cubo al iniciar
     }
 
     void Update()
     {
-        if (player == null) return; // Si no se encontró el jugador, no se ejecuta el resto
+
+        if (player == null || isBeingPushed) return; // Detiene el comportamiento si está siendo empujado
 
         switch (currentState)
         {
@@ -61,6 +78,37 @@ public class MeleIA : EnemyLife
         }
     }
 
+    public override void ReceiveDamage(float damage)
+    {
+        base.ReceiveDamage(damage); // Llama al método base para reducir la vida y gestionar el cambio de material
+
+        // Verifica si puede aplicar el empuje
+        if (Time.time > lastPushTime + pushCooldown)
+        {
+            lastPushTime = Time.time;
+            StartCoroutine(PushBack());
+        }
+    }
+
+    private IEnumerator PushBack()
+    {
+        if (rb == null) yield break; // Salir si no hay Rigidbody
+
+        isBeingPushed = true;
+        agent.enabled = false; // Desactiva el NavMeshAgent
+        rb.isKinematic = false; // Cambia el Rigidbody a modo no-kinemático para aplicar la física
+
+        // Aplica una fuerza de empuje en la dirección opuesta a la posición del jugador
+        Vector3 pushDirection = (transform.position - player.position).normalized;
+        rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
+
+        yield return new WaitForSeconds(pushDuration);
+
+        // Restaurar el estado del Rigidbody y NavMeshAgent
+        rb.isKinematic = true; // Cambia de nuevo a kinemático
+        agent.enabled = true; // Reactiva el NavMeshAgent
+        isBeingPushed = false;
+    }
     // Método para localizar al jugador
     private void SearchForPlayer()
     {
@@ -73,6 +121,8 @@ public class MeleIA : EnemyLife
     // Método para perseguir al jugador
     private void ChasePlayer()
     {
+        if (!agent.enabled) return; // Salir si el NavMeshAgent está desactivado
+
         agent.SetDestination(player.position); // Establece la posición del jugador como destino
 
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
