@@ -17,6 +17,7 @@ public class RangedIA : EnemyLife
     private NavMeshAgent agent;
     private Transform player;
     private float waitTimer;
+    private float originalAgentSpeed;  // Almacena la velocidad original del agente
 
     [Header("Cubo de Estado")]
     public GameObject statusCube;
@@ -31,6 +32,7 @@ public class RangedIA : EnemyLife
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        originalAgentSpeed = agent.speed; // Almacena la velocidad original del agente
         rb = GetComponent<Rigidbody>();
         currentState = EnemyState.Searching;
 
@@ -75,6 +77,9 @@ public class RangedIA : EnemyLife
         {
             waitTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
         }
+
+        // Ajustar la velocidad del agente en función de bulletTimeScale
+        agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale;
     }
 
     public override void ReceiveDamage(float damage)
@@ -86,7 +91,7 @@ public class RangedIA : EnemyLife
             StartCoroutine(PushBack());
         }
 
-          if (currentState == EnemyState.Shooting || currentState == EnemyState.Waiting)
+        if (currentState == EnemyState.Shooting || currentState == EnemyState.Waiting)
         {
             currentState = EnemyState.Stunned;
             waitTimer = 0;  // Reinicia el temporizador para asegurar que espere antes de otro ataque
@@ -156,7 +161,6 @@ public class RangedIA : EnemyLife
         Vector3 direction = (player.position - transform.position).normalized;
         Vector3 shootingPosition = player.position - direction * attackDistance;
 
-        agent.speed = agent.speed * MovimientoJugador.bulletTimeScale;
         agent.SetDestination(shootingPosition);
 
         if (Vector3.Distance(transform.position, shootingPosition) <= 1f)
