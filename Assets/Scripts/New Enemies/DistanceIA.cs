@@ -85,6 +85,12 @@ public class RangedIA : EnemyLife
         {
             StartCoroutine(PushBack());
         }
+
+        if (currentState == EnemyState.Shooting || currentState == EnemyState.Waiting)
+        {
+            currentState = EnemyState.Stunned;
+            waitTimer = 0;  // Reinicia el temporizador para asegurar que espere antes de otro ataque
+        }
     }
 
     private IEnumerator PushBack()
@@ -198,7 +204,7 @@ public class RangedIA : EnemyLife
                     cubeRenderer.material.color = Color.magenta;
                     break;
                 case EnemyState.Stunned:
-                    cubeRenderer.material.color = Color.blue; // Azul para el estado aturdido
+                    cubeRenderer.material.color = Color.blue; 
                     break;
             }
         }

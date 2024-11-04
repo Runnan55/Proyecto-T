@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class MeleIA : EnemyLife
 {
-    public enum EnemyState { Searching, Chasing, Attacking }
+    public enum EnemyState { Searching, Chasing, PreparingToAttack, Attacking }
     public EnemyState currentState;
 
     [Header("Configuración de Movimiento")]
@@ -21,7 +21,7 @@ public class MeleIA : EnemyLife
     public float pushForce = 10f; // Fuerza del empuje
     public float pushDuration = 0.5f; // Duración del empuje
     private bool isBeingPushed = false; // Estado para controlar si está en empuje
-    private float pushCooldown = 1f; // Cooldown para evitar empujes continuos
+    public float pushCooldown = 0.5f; // Cooldown para evitar empujes continuos
     private float lastPushTime = -1f; // Último tiempo de empuje
 
     private Rigidbody rb; // Referencia al Rigidbody del enemigo
@@ -53,8 +53,9 @@ public class MeleIA : EnemyLife
 
     void Update()
     {
-
         if (player == null || isBeingPushed) return; // Detiene el comportamiento si está siendo empujado
+
+        LookAtPlayer();
 
         switch (currentState)
         {
@@ -64,12 +65,16 @@ public class MeleIA : EnemyLife
             case EnemyState.Chasing:
                 ChasePlayer();
                 break;
+            case EnemyState.PreparingToAttack:
+                PrepareToAttack();
+                break;
             case EnemyState.Attacking:
                 AttackPlayer();
                 break;
         }
 
-        UpdateStatusCubeColor(); // Actualiza el color del cubo en cada frame
+        // Actualiza el color del cubo en cada frame
+        UpdateStatusCubeColor();
 
         // Gestionar el temporizador de cooldown
         if (attackTimer > 0)
@@ -109,6 +114,7 @@ public class MeleIA : EnemyLife
         agent.enabled = true; // Reactiva el NavMeshAgent
         isBeingPushed = false;
     }
+
     // Método para localizar al jugador
     private void SearchForPlayer()
     {
@@ -127,12 +133,21 @@ public class MeleIA : EnemyLife
 
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
         {
-            currentState = EnemyState.Attacking;
+            currentState = EnemyState.PreparingToAttack; // Cambia a estado de preparación para atacar
             agent.isStopped = true; // Detiene al agente para el ataque
         }
         else if (Vector3.Distance(transform.position, player.position) > chaseDistance)
         {
             currentState = EnemyState.Searching; // Vuelve a buscar si el jugador se aleja demasiado
+        }
+    }
+
+    // Método para preparar el ataque
+    private void PrepareToAttack()
+    {
+        if (attackTimer <= 0)
+        {
+            currentState = EnemyState.Attacking; // Cambia al estado de ataque
         }
     }
 
@@ -160,9 +175,17 @@ public class MeleIA : EnemyLife
         }
     }
 
-    /// <summary>
-    /// Cambia el color del cubo según el estado del enemigo.
-    /// </summary>
+    private void LookAtPlayer()
+    {
+        if (player != null)
+        {
+            Vector3 direction = player.position - transform.position;
+            direction.y = 0;
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
+    }
+
     private void UpdateStatusCubeColor()
     {
         if (statusCube != null)
@@ -177,16 +200,12 @@ public class MeleIA : EnemyLife
                 case EnemyState.Chasing:
                     cubeRenderer.material.color = Color.yellow; // Color amarillo para el estado de persecución
                     break;
+                case EnemyState.PreparingToAttack:
+                    cubeRenderer.material.color = Color.magenta; // Color naranja para la preparación del ataque
+                    break;
                 case EnemyState.Attacking:
-                    // Siempre cambia a rojo al atacar
                     cubeRenderer.material.color = Color.red; // Color rojo al atacar
                     break;
-            }
-
-            // Cambia a magenta si el ataque está en cooldown
-            if (currentState == EnemyState.Attacking && attackTimer > 0)
-            {
-                cubeRenderer.material.color = Color.magenta; // Color magenta durante el cooldown
             }
         }
         else
@@ -194,7 +213,4 @@ public class MeleIA : EnemyLife
             Debug.LogError("El cubo de estado no está asignado en el inspector.");
         }
     }
-
 }
-    
-

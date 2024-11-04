@@ -390,8 +390,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hp: 100
   healthBar: {fileID: 0}
-  pushForce: 5
-  colorChangeDuration: 0.5
+  level: {fileID: 0}
+  newMaterial: {fileID: 0}
   currentState: 0
   chaseDistance: 15
   attackDistance: 10
@@ -399,6 +399,8 @@ MonoBehaviour:
   projectilePrefab: {fileID: 4182066159404826401, guid: e5f268ba2e123c84d9e4a87a60d4e770, type: 3}
   shootingPoint: {fileID: 3870920301961431463}
   statusCube: {fileID: 5897662878122391933}
+  pushForce: 5
+  pushDuration: 0.5
 --- !u!54 &7872666360780257890
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -422,7 +424,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 36
   m_CollisionDetection: 0
