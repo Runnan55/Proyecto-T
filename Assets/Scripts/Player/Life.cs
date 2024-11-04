@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Life : MonoBehaviour
 {
     public float maxTime = 600;
     private float currentTime;
     public bool isInvincible = false;
+
+    public bool isAlive = true;
     public Canvas canvas;
 
     public TextMeshProUGUI timeText;
@@ -21,7 +24,6 @@ public class Life : MonoBehaviour
     public float invincibilityTime = 1;
     public GameObject shield;
 
-
     public CharacterController playerController;  
 
     PlayerMovement playerMovement;
@@ -30,7 +32,13 @@ public class Life : MonoBehaviour
 
     public SHAKECAMERA m_shakeCamera;
 
-        IEnumerator FindHealthPanelReferences()
+    [Header("Materiales")]
+    public Material invincibleMaterial;
+    public Material damageMaterial;
+    public Material originalMaterial;
+    public SkinnedMeshRenderer skinnedMeshRenderer;
+
+    IEnumerator FindHealthPanelReferences()
     {
         yield return new WaitForSeconds(0.5f); // Espera breve para permitir la inicialización de la UI
 
@@ -64,6 +72,17 @@ public class Life : MonoBehaviour
             {
                 Debug.LogError("No se pudo encontrar HealthPanel dentro de CombatUI.");
             }
+
+            // Buscar DeathPanel dentro de CombatUI en DefaultHUD(Clone)
+            Transform deathPanelTransform = hud.transform.Find("DeathPanel");
+            if (deathPanelTransform != null)
+            {
+                deathScreen = deathPanelTransform.gameObject;
+            }
+            else
+            {
+                Debug.LogError("No se pudo encontrar DeathPanel dentro de CombatUI.");
+            }
         }
         else
         {
@@ -73,7 +92,7 @@ public class Life : MonoBehaviour
 
     void Start()
     {
-        isInvincible=false;
+        isInvincible = false;
         currentTime = maxTime;
 
         if (timeImage != null)
@@ -94,6 +113,16 @@ public class Life : MonoBehaviour
             Debug.Log("No se encontró el componente CharacterController.");
         }
 
+/*         skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
+        if (skinnedMeshRenderer != null)
+        {
+            originalMaterial = skinnedMeshRenderer.material;
+        }
+        else
+        {
+            //Debug.LogError("No se encontró el componente SkinnedMeshRenderer.");
+        }
+ */
         StartCoroutine(FindHealthPanelReferences());
     }
 
@@ -106,58 +135,98 @@ public class Life : MonoBehaviour
             UpdateTimeImage();
         }
         else
-            Debug.Log("muerte");
-
-/*         if (Input.GetKeyDown(KeyCode.O))
         {
-            ModifyTime(60);
+            if (isAlive == true)
+            {
+                Death();
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (isAlive == false)
         {
-            ModifyTime(-60);
-        } */
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                deathScreen.gameObject.SetActive(false);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+        }
 
         //shield.SetActive(isInvincible);
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            DebugChangeMaterial();
+        }
+    }
+
+    private void DebugChangeMaterial()
+    {
+        if (skinnedMeshRenderer != null)
+        {
+            // Alternar entre el material original y el material de invencibilidad
+            if (skinnedMeshRenderer.material == originalMaterial)
+            {
+                ChangeMaterial(invincibleMaterial);
+            }
+            
+            else
+            {
+                ChangeMaterial(originalMaterial);
+            }
+        }
+    }
+
+
+    public void Death()
+    {
+        currentTime = 0;
+        UpdateTimeText();
+        UpdateTimeImage();
+
+        Debug.Log("muerte");
+        isAlive = false;
+        deathScreen.gameObject.SetActive(true);
     }
 
     public void ModifyTime(float amount)
     {
-       
         DamagePlayer = true;
-    
+
         if (isInvincible && amount < 0) return;
-  
+
         currentTime += amount;
 
         //StartCoroutine(m_shakeCamera.shake());
-        
-     
 
         if (currentTime > maxTime)
         {
-            currentTime = maxTime;        
- 
+            currentTime = maxTime;
         }
         else if (currentTime < 0)
-        {            
+        {
             //levelManager.OnLevelFailed();
             deathScreen.gameObject.SetActive(true);
             LoseManager.Lose();
             currentTime = 0;
         }
         UpdateTimeImage();
-   
-        if (amount < 0) StartCoroutine(InvincibilityFrames());   
+
+        if (amount < 0)
+        {
+            ChangeMaterial(damageMaterial);
+            StartCoroutine(InvincibilityFrames());
+        }
     }
 
     IEnumerator InvincibilityFrames()
     {
         isInvincible = true;
         shield.SetActive(true);
+        ChangeMaterial(invincibleMaterial);
         yield return new WaitForSeconds(invincibilityTime);
         isInvincible = false;
         shield.SetActive(false);
+        ChangeMaterial(originalMaterial);
     }
 
     public IEnumerator Knockback(Vector3 direction, float duration, float speed)
@@ -197,11 +266,13 @@ public class Life : MonoBehaviour
     public void enableInvencibility()
     {
         isInvincible = true;
+        ChangeMaterial(invincibleMaterial);
     }
 
     public void disableInvencibility()
     {
         isInvincible = false;
+        ChangeMaterial(originalMaterial);
     }
 
     public void fullHealth()
@@ -211,16 +282,24 @@ public class Life : MonoBehaviour
 
     public void halfHealth()
     {
-        currentTime = maxTime/2;
+        currentTime = maxTime / 2;
     }
 
     public void plus30Secs()
     {
-        maxTime = maxTime +30;
+        maxTime = maxTime + 30;
     }
 
     public void minus30Secs()
     {
-        maxTime = maxTime -30;
+        maxTime = maxTime - 30;
+    }
+
+    private void ChangeMaterial(Material newMaterial)
+    {
+        if (skinnedMeshRenderer != null && newMaterial != null)
+        {
+            skinnedMeshRenderer.material = new Material(newMaterial);
+        }
     }
 }

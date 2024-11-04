@@ -40,7 +40,7 @@ public class RangedIA : EnemyLife
 
         if (player == null)
         {
-            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
+            //Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
         }
 
         UpdateStatusCubeColor();

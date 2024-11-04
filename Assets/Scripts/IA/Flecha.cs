@@ -5,7 +5,7 @@ using UnityEngine;
 public class Flecha : MonoBehaviour
 {
     public float speed = 10f;
-    public float lifetime = 2f;
+    public float lifetime = 30f;
     public float damage = 5f;
 
     private Life playerLife;

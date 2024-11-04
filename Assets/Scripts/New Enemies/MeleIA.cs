@@ -46,7 +46,7 @@ public class MeleIA : EnemyLife
 
         if (player == null)
         {
-            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
+           // Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
         }
 
         rb = GetComponent<Rigidbody>();

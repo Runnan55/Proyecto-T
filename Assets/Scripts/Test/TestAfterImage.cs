@@ -14,7 +14,6 @@ public class TestAfterImage : MonoBehaviour
 
     void Start()
     {
-        _skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
         playerMovement = GetComponent<MovimientoJugador>(); // Obtener el componente PlayerMovement en el mismo objeto
         StartCoroutine(CreateAfterImage());
     }
