@@ -71,27 +71,33 @@ public class MovimientoJugador : MonoBehaviour
 
     private bool isInDodgeArea = false;
 
-    private void OnTriggerEnter(Collider other)
+/*     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("DodgeArea"))
         {
             isInDodgeArea = true;
-            //Debug.Log("Dodge area entered");
+            Debug.Log("Dodge area entered");
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        ForceTriggerExit (other);
+    }
+
+    public void ForceTriggerExit (Collider other)
+    {
         if (other.CompareTag("DodgeArea"))
         {
             isInDodgeArea = false;
-            //Debug.Log("Dodge area exited");
+            Debug.Log("Dodge area exited");
         }
-    }
+    } */
 
-   /*  private void OnTriggerStay(Collider other)
+/*   private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("DodgeArea") && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B)) && !bulletTime)
+        Debug.Log("Trigger stay " + other.gameObject.name);
+        if (other.CompareTag("DodgeArea") && Input.GetKeyDown(KeyCode.Space)  && !bulletTime)
         {
             if (afterImageEffect != null)
             {
@@ -103,6 +109,15 @@ public class MovimientoJugador : MonoBehaviour
             }
         }
     } */
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("DodgeArea") && !bulletTime)
+        {
+            Debug.Log("Trigger stay " + other.gameObject.name);
+            isInDodgeArea = true;
+        }
+    }
 
     private IEnumerator ActivateBulletTime()
     {
@@ -124,7 +139,7 @@ public class MovimientoJugador : MonoBehaviour
 
     public bool IsBulletTimeActive()
     {
-        return bulletTime; // Devuelve el estado del bullet time
+        return bulletTime;
     }
 
    void Awake()
@@ -138,18 +153,19 @@ public class MovimientoJugador : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     void Start()
     {
-         controller = GetComponent<CharacterController>();      
+        controller = GetComponent<CharacterController>();      
 
-         instance = GetComponent<MovimientoJugador>();
+        instance = GetComponent<MovimientoJugador>();
 
-         animator = GetComponent<Animator>();   
+        animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
     }
+
     void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.O))
         {
            enterAttack = true;
@@ -159,19 +175,19 @@ public class MovimientoJugador : MonoBehaviour
            enterAttack = false;
         }
         
-    if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B) && !bulletTime)
-    {
-        if (afterImageEffect != null)
+        if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B) && !bulletTime)
         {
-            StartCoroutine(ActivateBulletTime());
-            StartCoroutine(Dash());
-        }
+            if (afterImageEffect != null)
+            {
+                StartCoroutine(ActivateBulletTime());
+                StartCoroutine(Dash());
+            }
 
         else
         {
             Debug.LogError("afterImageEffect no está asignado en el Inspector.");
         }
-    }
+    } 
 
     if (canMove)
     {

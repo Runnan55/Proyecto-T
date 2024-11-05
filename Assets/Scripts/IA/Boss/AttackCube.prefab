@@ -27,8 +27,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.4462731, y: 85.57779, z: 3.293541}
-  m_LocalScale: {x: 2.9508173, y: 2.2374, z: 3.108075}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 3.3999999, y: 2.577984, z: 3.5811958}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2769282887499183535}
   - {fileID: 70419089799333096}
@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b7e1c02574de174a8a338bb6ffb8267, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 10
   dodgeChild: {fileID: 4927680983123154956}
   damageChild: {fileID: 5884835707112716946}
 --- !u!1 &4927680983123154956
@@ -165,6 +164,7 @@ GameObject:
   - component: {fileID: 70419089799333096}
   - component: {fileID: 599526425693106665}
   - component: {fileID: 5017092183841866906}
+  - component: {fileID: 6694160741319051313}
   - component: {fileID: 7498038466599316563}
   m_Layer: 0
   m_Name: Damage
@@ -238,6 +238,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6694160741319051313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5884835707112716946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3108ecd4192b75446a1afcd17c969895, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 10
 --- !u!65 &7498038466599316563
 BoxCollider:
   m_ObjectHideFlags: 0
