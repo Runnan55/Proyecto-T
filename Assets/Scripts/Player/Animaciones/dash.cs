@@ -10,7 +10,9 @@ public class dash : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
       override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       PlayerMovement.hasRotated = false;   
+
+       MovimientoJugador.hasRotated = false;  
+     
     
        lifeInstance = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
      
@@ -38,7 +40,10 @@ public class dash : StateMachineBehaviour
         {                         
              MovimientoJugador.instance.animator.Play("Attack1P");
         }
+
+         MovimientoJugador.isInDodgeArea = false;
     }
+
 
     void Invulnerable()
     {

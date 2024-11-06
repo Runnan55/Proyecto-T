@@ -12,6 +12,7 @@ public class EnemyLife : MonoBehaviour
     private float maxHp;
 
     public GameObject floatingTextPrefab;
+    public Animator healthBarAnimator;    
 
     public float health
     {
@@ -32,7 +33,8 @@ public class EnemyLife : MonoBehaviour
                 {
                     level.EnemyDefeated(this);
                 }
-                Destroy(gameObject);
+                StartCoroutine(DestroyHealthBar());
+                Destroy(gameObject, 0.2f); // Destruye el objeto después de 0.2 segundos
             }
         }
     }
@@ -41,7 +43,7 @@ public class EnemyLife : MonoBehaviour
     public Level level; // Referencia al nivel
 
     [Header("Materiales")]
-    public Material newMaterial; // Material para aplicar cuando reciba da�o
+    public Material newMaterial; // Material para aplicar cuando reciba daño
     private Material originalMaterial; // Para restaurar el material original
     private MeshRenderer enemyMeshRenderer; // MeshRenderer del enemigo
 
@@ -49,7 +51,7 @@ public class EnemyLife : MonoBehaviour
     {
         maxHp = _hp;
 
-        // Intenta obtener el MeshRenderer desde el propio objeto, sus hijos o alg�n objeto padre
+        // Intenta obtener el MeshRenderer desde el propio objeto, sus hijos o algún objeto padre
         enemyMeshRenderer = GetComponentInChildren<MeshRenderer>();
 
         if (enemyMeshRenderer != null)
@@ -59,6 +61,7 @@ public class EnemyLife : MonoBehaviour
 
         if (healthBar != null)
         {
+            healthBarAnimator.Play("EnemyBarDeath");
             healthBar.gameObject.SetActive(false);
         }
     }
@@ -67,7 +70,7 @@ public class EnemyLife : MonoBehaviour
     {
         health -= damage;
 
-        Debug.Log("Recibiendo da�o: " + damage);
+        Debug.Log("Recibiendo daño: " + damage);
 
         if (newMaterial != null && enemyMeshRenderer != null)
         {
@@ -80,7 +83,8 @@ public class EnemyLife : MonoBehaviour
             {
                 level.EnemyDefeated(this);
             }
-            Destroy(gameObject);
+            StartCoroutine(DestroyHealthBar());
+            Destroy(gameObject, 0.2f); // Destruye el objeto después de 0.2 segundos
         }
 
         ShowFloatingText(damage);
@@ -103,5 +107,17 @@ public class EnemyLife : MonoBehaviour
 
         // Restaura el material original
         enemyMeshRenderer.material = originalMaterial;
+    }
+
+    private IEnumerator DestroyHealthBar()
+    {
+        // Espera 0.2 segundos
+        yield return new WaitForSeconds(0.2f);
+
+        // Desactiva la barra de salud
+        if (healthBar != null)
+        {
+            healthBar.gameObject.SetActive(false);
+        }
     }
 }

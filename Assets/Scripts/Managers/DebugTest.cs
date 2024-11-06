@@ -169,7 +169,7 @@ public class DebugTest : MonoBehaviour
     {
         if (life != null)
         {
-            life.enableInvencibility();
+            life.fullHealth();
         }
     }
 

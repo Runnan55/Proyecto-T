@@ -69,7 +69,7 @@ public class MovimientoJugador : MonoBehaviour
     public static float bulletTimeScale = 1f;
     FMODUnity.StudioEventEmitter FmodEmitter;
 
-    private bool isInDodgeArea = false;
+    public static bool isInDodgeArea = false;
 
 /*     private void OnTriggerEnter(Collider other)
     {

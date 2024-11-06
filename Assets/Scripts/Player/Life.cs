@@ -278,21 +278,36 @@ public class Life : MonoBehaviour
     public void fullHealth()
     {
         currentTime = maxTime;
+        UpdateTimeText();
+        UpdateTimeImage();
     }
 
     public void halfHealth()
     {
         currentTime = maxTime / 2;
+        UpdateTimeText();
+        UpdateTimeImage();
     }
 
     public void plus30Secs()
     {
         maxTime = maxTime + 30;
+        UpdateTimeText();
+        UpdateTimeImage();
     }
 
     public void minus30Secs()
     {
-        maxTime = maxTime - 30;
+        if (maxTime > 30)
+        {
+            maxTime -= 30;
+            if (currentTime > maxTime)
+            {
+                currentTime = maxTime;
+            }
+            UpdateTimeText();
+            UpdateTimeImage();
+        }
     }
 
     private void ChangeMaterial(Material newMaterial)
