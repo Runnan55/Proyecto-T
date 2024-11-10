@@ -35,19 +35,14 @@ public class MeleIA : EnemyLife
     [Header("Cubo de Estado")]
     public GameObject statusCube; // Referencia al cubo que cambiará de color
 
-    void Awake()
+   void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         originalAgentSpeed = agent.speed; // Almacena la velocidad original del agente
         currentState = EnemyState.Searching;
         attackTimer = 0; // Comienza el cooldown en cero
 
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        if (player == null)
-        {
-           // Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
-        }
+        StartCoroutine(FindPlayerWithDelay());
 
         rb = GetComponent<Rigidbody>();
         if (rb == null)
@@ -56,6 +51,18 @@ public class MeleIA : EnemyLife
         }
 
         UpdateStatusCubeColor(); // Cambia el color del cubo al iniciar
+    }
+
+    private IEnumerator FindPlayerWithDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (player == null)
+        {
+            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
+        }
     }
 
     void Update()

@@ -12,7 +12,9 @@ public class EnemyLife : MonoBehaviour
     private float maxHp;
 
     public GameObject floatingTextPrefab;
-    public Animator healthBarAnimator;    
+    //public Animator healthBarAnimator;    
+
+    private bool isDefeated = false;
 
     public float health
     {
@@ -31,7 +33,7 @@ public class EnemyLife : MonoBehaviour
             {
                 if (level != null)
                 {
-                    level.EnemyDefeated(this);
+                    //level.EnemyDefeated(this);
                 }
                 StartCoroutine(DestroyHealthBar());
                 Destroy(gameObject, 0.2f); // Destruye el objeto después de 0.2 segundos
@@ -61,13 +63,15 @@ public class EnemyLife : MonoBehaviour
 
         if (healthBar != null)
         {
-            healthBarAnimator.Play("EnemyBarDeath");
+            //healthBarAnimator.Play("EnemyBarDeath");
             healthBar.gameObject.SetActive(false);
         }
     }
 
     public virtual void ReceiveDamage(float damage)
     {
+        if (isDefeated) return; // Si el enemigo ya está derrotado, no hacer nada
+
         health -= damage;
 
         Debug.Log("Recibiendo daño: " + damage);
@@ -77,8 +81,9 @@ public class EnemyLife : MonoBehaviour
             StartCoroutine(ChangeMaterialTemporarily());
         }
 
-        if (health <= 0)
+        if (health <= 0 && !isDefeated)
         {
+            isDefeated = true; // Marca al enemigo como derrotado
             if (level != null)
             {
                 level.EnemyDefeated(this);

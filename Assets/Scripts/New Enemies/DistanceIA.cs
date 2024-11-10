@@ -36,14 +36,21 @@ public class RangedIA : EnemyLife
         rb = GetComponent<Rigidbody>();
         currentState = EnemyState.Searching;
 
+        StartCoroutine(FindPlayerWithDelay());
+
+        UpdateStatusCubeColor();
+    }
+
+    private IEnumerator FindPlayerWithDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player == null)
         {
-            //Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
+            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
         }
-
-        UpdateStatusCubeColor();
     }
 
     void Update()
