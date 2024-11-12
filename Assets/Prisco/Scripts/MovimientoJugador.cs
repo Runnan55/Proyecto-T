@@ -79,12 +79,20 @@ public class MovimientoJugador : MonoBehaviour
             Debug.Log("Dodge area entered");
         }
     }
+    */
+
 
     private void OnTriggerExit(Collider other)
     {
-        ForceTriggerExit (other);
+        //ForceTriggerExit (other);
+        if (other.CompareTag("DodgeArea"))
+        {
+            isInDodgeArea = false;
+            Debug.Log("Dodge area exited");
+        }
     }
 
+/*
     public void ForceTriggerExit (Collider other)
     {
         if (other.CompareTag("DodgeArea"))
@@ -92,9 +100,9 @@ public class MovimientoJugador : MonoBehaviour
             isInDodgeArea = false;
             Debug.Log("Dodge area exited");
         }
-    } */
+    }
 
-/*   private void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         Debug.Log("Trigger stay " + other.gameObject.name);
         if (other.CompareTag("DodgeArea") && Input.GetKeyDown(KeyCode.Space)  && !bulletTime)

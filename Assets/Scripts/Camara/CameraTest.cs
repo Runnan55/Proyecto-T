@@ -27,14 +27,14 @@ public class CameraTest : MonoBehaviour
             framingTransposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
         }
 
-        fovSlider.minValue = 5;
+        fovSlider.minValue = 0;
         fovSlider.maxValue = 100;
 
         rotationXSlider.minValue = 0;
         rotationXSlider.maxValue = 90;
 
         distanceSlider.minValue = 5;
-        distanceSlider.maxValue = 90;
+        distanceSlider.maxValue = 500;
 
         fovSlider.onValueChanged.AddListener(UpdateFOV);
         rotationXSlider.onValueChanged.AddListener(UpdateRotationX);
@@ -114,12 +114,12 @@ public class CameraTest : MonoBehaviour
     {
         if (virtualCamera != null)
         {
-            virtualCamera.m_Lens.FieldOfView = 60;
+            virtualCamera.m_Lens.FieldOfView = 5;
             virtualCamera.transform.eulerAngles = new Vector3(50, 0, 0);
 
             if (framingTransposer != null)
             {
-                framingTransposer.m_CameraDistance = 34;
+                framingTransposer.m_CameraDistance = 450;
             }
 
             fovSlider.value = virtualCamera.m_Lens.FieldOfView;

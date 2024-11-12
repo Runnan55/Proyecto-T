@@ -12,7 +12,7 @@ public class EnemyLife : MonoBehaviour
     private float maxHp;
 
     public GameObject floatingTextPrefab;
-    //public Animator healthBarAnimator;    
+    public Animator healthBarAnimator;    
 
     private bool isDefeated = false;
 
@@ -116,6 +116,13 @@ public class EnemyLife : MonoBehaviour
 
     private IEnumerator DestroyHealthBar()
     {
+        // Desasocia la barra de salud del objeto padre
+        if (healthBar != null)
+        {
+            Debug.Log("ola");
+            healthBar.transform.SetParent(null);
+        }
+
         // Espera 0.2 segundos
         yield return new WaitForSeconds(0.2f);
 
