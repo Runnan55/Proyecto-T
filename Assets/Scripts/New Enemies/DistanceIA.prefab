@@ -307,7 +307,6 @@ GameObject:
   - component: {fileID: 1161306274039602810}
   - component: {fileID: 6338194728831853780}
   - component: {fileID: 3452587364823250339}
-  - component: {fileID: 1518525986928760100}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -380,27 +379,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &1518525986928760100
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5897662878122391933}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6353529304137081306
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,7 +390,6 @@ GameObject:
   - component: {fileID: 4369720286871329518}
   - component: {fileID: 4645231186619398658}
   - component: {fileID: 311447653935451763}
-  - component: {fileID: 4833648963104187285}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -485,27 +462,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4833648963104187285
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6353529304137081306}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7544139369576059090
 GameObject:
   m_ObjectHideFlags: 0
@@ -630,7 +586,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 6.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -656,6 +612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hp: 100
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
+  healthBarAnimator: {fileID: 0}
   healthBar: {fileID: 4411024193626805515}
   level: {fileID: 0}
   newMaterial: {fileID: 0}
