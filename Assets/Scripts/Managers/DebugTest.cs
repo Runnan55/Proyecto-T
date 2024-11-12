@@ -96,7 +96,7 @@ public class DebugTest : MonoBehaviour
 
     public void OpenDebugMenu()
     {
-        if (Input.GetKeyDown(KeyCode.F1) && Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.P))
         {
             DebugMenu.SetActive(!DebugMenu.activeSelf);
         }
