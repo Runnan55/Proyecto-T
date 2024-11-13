@@ -29,6 +29,7 @@ public class CubeAttack : MonoBehaviour
         if (dodgeChild != null)
         {
             dodgeChild.SetActive(false);
+            MovimientoJugador.isInDodgeArea = false;
         }
 
         if (damageChild != null)
