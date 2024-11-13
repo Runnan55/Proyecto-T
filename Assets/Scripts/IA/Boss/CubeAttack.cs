@@ -12,6 +12,11 @@ public class CubeAttack : MonoBehaviour
         StartCoroutine(ActivateChildren());
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        MovimientoJugador.isInDodgeArea = false;
+    }
+
     private IEnumerator ActivateChildren()
     {
         if (dodgeChild != null)

@@ -28,6 +28,8 @@ public class Flecha : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerLife.ModifyTime(-damage);
+            MovimientoJugador.isInDodgeArea = false;
+            Debug.Log("buenas tardes " +MovimientoJugador.isInDodgeArea);
 
             Destroy(gameObject);
         }
