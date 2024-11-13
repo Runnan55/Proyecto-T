@@ -7,7 +7,7 @@ public class MovimientoJugador : MonoBehaviour
         // Variables del player
     [Header("Player Settings")]
     [SerializeField] public static float speed = 15.0f;
-    public static float fuerzaEmpujeAL2 = 5.0f;  
+    public static float fuerzaEmpujeAL2 = 3.0f;  
     public static float fuerzaEmpujeAP3 = 50.0f;  
     public  float rotationSpeed = 10.0f;
     public float gravity = 20.0f;
@@ -28,8 +28,8 @@ public class MovimientoJugador : MonoBehaviour
     public static bool ataqueD = false;  
     public Collider ataqueCollider;
     public MeshRenderer ataqueMesh;
-    public float rangoMaximo = 6.0f;
-    public float velocidadExpansion = 1.0f;
+    public float rangoMaximo = 10.0f;
+    public float velocidadExpansion = 2.0f;
     private bool atacando = false; 
     private Coroutine mirarCoroutine; 
     public float tiempoEsperaAtaque = 3.0f; 

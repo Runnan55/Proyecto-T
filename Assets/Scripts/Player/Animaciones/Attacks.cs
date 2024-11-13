@@ -71,7 +71,7 @@ public class Attacks : StateMachineBehaviour
                 if (playerMovement.EstaMoviendose())
                 {
                     Vector3 direccionEmpuje = playerMovement.ObtenerDireccionEmpuje();
-                    animator.GetComponent<MonoBehaviour>().StartCoroutine(playerMovement.EmpujarJugadorAL2(direccionEmpuje, 0.2f)); // Empuje durante 0.5 segundos
+                    animator.GetComponent<MonoBehaviour>().StartCoroutine(playerMovement.EmpujarJugadorAL2(direccionEmpuje, 0.1f)); // Empuje durante 0.5 segundos
                 }
                 
                 break;

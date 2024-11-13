@@ -16,10 +16,7 @@ public class Transition3 : StateMachineBehaviour
       override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         
-    if (MovimientoJugador.ataqueL)
-        {           
-             MovimientoJugador.instance.animator.Play("Attack1");
-        }
+   
             if (MovimientoJugador.ataqueP)
         {                         
              MovimientoJugador.instance.animator.Play("Attack1P");
