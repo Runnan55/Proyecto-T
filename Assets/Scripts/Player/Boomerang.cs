@@ -25,6 +25,11 @@ public class Boomerang : MonoBehaviour
         }
 
         transform.position += direccion * velocidad * Time.deltaTime;
+
+        if (direccion != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(direccion);
+        }
     }
 
     GameObject FindNearestEnemy()

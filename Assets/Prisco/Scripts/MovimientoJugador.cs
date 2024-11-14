@@ -62,11 +62,12 @@ public class MovimientoJugador : MonoBehaviour
     public float dashTime = 0.2f;   
     private float lastDashTime = -Mathf.Infinity;
 
-    // Variables del Bullet Time
+    [Header("Bullet time")]     
     public float bulletTimeDuration = 7f;
     public bool bulletTime = false;
     public TestAfterImage afterImageEffect;
     public static float bulletTimeScale = 1f;
+    public float slowedBulletTimeScale = 0.05f;
     FMODUnity.StudioEventEmitter FmodEmitter;
 
     public static bool isInDodgeArea = false;
@@ -132,7 +133,7 @@ public class MovimientoJugador : MonoBehaviour
         //FmodEmitter.Play();
         bulletTime = true;
         afterImageEffect.enabled = true;
-        bulletTimeScale = 0.1f;
+        bulletTimeScale = slowedBulletTimeScale;
         DefaultHUD.Instance.EnableBulletTimeUI();
         Debug.Log("Bullet time on, time scale = " + bulletTimeScale);
 
