@@ -8,12 +8,17 @@ public class MovimientoJugador : MonoBehaviour
     [Header("Player Settings")]
     [SerializeField] public static float speed = 15.0f;
     public static float fuerzaEmpujeAL2 = 3.0f;  
-    public static float fuerzaEmpujeAP3 = 300f;  
+    public static float fuerzaEmpujeAP3 = 100.0f;  
     public  float rotationSpeed = 10.0f;
     public float gravity = 20.0f;
     public static bool hasAttacked = false;
     public static bool hasRotated = false;
     public static MovimientoJugador instance; 
+
+    public DamageDealer damageDealerL1;    
+    public DamageDealer damageDealerL2;     
+    public DamageDealer damageDealerL3;     
+    public DamageDealer damageDealerP; 
       
 
     [Header("Movement Settings")]
@@ -643,6 +648,24 @@ private void RecargarBalas()
         }
     }
 
+
+public void OnAttackEndl1()
+    {
+        damageDealerL1.ResetDamage();
+    }
+
+       public void OnAttackEndl2()
+    {
+        damageDealerL2.ResetDamage();
+    }
+   public void OnAttackEndl3()
+    {
+        damageDealerL3.ResetDamage();
+    }
+       public void OnAttackEndP()
+    {
+        damageDealerP.ResetDamage();
+    }
 
 #region Berto
     public void speedUp()
