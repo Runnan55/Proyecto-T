@@ -33,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.9967325, y: 3.2673707, z: 2.5868187}
-  m_LocalScale: {x: 1, y: 0.12356, z: 1}
+  m_LocalScale: {x: 0.33506, y: 0.05250682, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -7791486788655378091, guid: ddba3b9063356b547822aebac4272251, type: 3}
+  - {fileID: 2100000, guid: 730d19bcdbf09944c87cb5fb625239f8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -162,7 +162,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50d099e8760fdc24b919b7f942230f1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocidad: 20
+  velocidad: 25
+  magnetRange: 3
+  magnetSpeed: 10
 --- !u!114 &8294010444708646898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,4 +177,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5379f9793bf5714e98ccd5a8986ff3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 20
+  damageAmount: 15

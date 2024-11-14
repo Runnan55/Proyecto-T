@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class MovimientoJugador : MonoBehaviour
 {
-        // Variables del player
+    // Variables del player
     [Header("Player Settings")]
     [SerializeField] public static float speed = 15.0f;
     public static float fuerzaEmpujeAL2 = 3.0f;  
-    public static float fuerzaEmpujeAP3 = 50.0f;  
+    public static float fuerzaEmpujeAP3 = 300f;  
     public  float rotationSpeed = 10.0f;
     public float gravity = 20.0f;
     public static bool hasAttacked = false;
@@ -444,36 +444,32 @@ IEnumerator Dash()
 }
    
 public void AtaqueJugador()
- {
-if (Input.GetMouseButtonDown(0)) 
-   {
-    enterAttack = true;
-    hasAttacked = true;
-      
+{
+    if (Input.GetMouseButtonDown(0))
+    {
+        enterAttack = true;
+        hasAttacked = true;
 
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
 
-    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 
-    if (Physics.Raycast(ray, out hit) && !hasRotated)
-     {
-        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            // Calcular la dirección hacia la que el jugador debe mirar
+            Vector3 directionToLook = (targetPosition - transform.position).normalized;
 
-        // Calcular la dirección hacia la que el jugador debe mirar
-        Vector3 directionToLook = (targetPosition - transform.position).normalized;
+            // Crear una rotación que mire en la dirección del objetivo
+            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
 
-        // Crear una rotación que mire en la dirección del objetivo
-        Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+            // Aplicar la rotación al jugador
+            transform.rotation = targetRotation;
 
-        // Aplicar la rotación al jugador
-        transform.rotation = targetRotation;
-
-           hasRotated = true;
-           
-     }
-   } 
-   
- }
+            hasRotated = true;
+        }
+    }
+}
 
 public void hasRotatedTrue()
 {
