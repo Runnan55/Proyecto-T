@@ -397,7 +397,7 @@ public Vector3 ObtenerDireccionEmpuje()
 }
 IEnumerator Dash()
 {
-    if (!isDashing && Time.time >= lastDashTime)
+    if (!isDashing && Time.time >= lastDashTime + dashTime)
     {
         float originalY = transform.position.y;
 

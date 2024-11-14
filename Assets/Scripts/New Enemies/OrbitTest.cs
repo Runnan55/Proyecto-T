@@ -27,16 +27,12 @@ public class OrbitTest : EnemyLife
 
     private Rigidbody rb; // Referencia al Rigidbody del enemigo
 
-    [Header("Ataque")]
-    public GameObject attackEffectPrefab;
-    public float spawnTime = 0.3f;
-    public Transform AttackSpawn;
-
     [Header("Cubo de Estado")]
     public GameObject statusCube; // Referencia al cubo que cambiará de color
 
     [Header("Órbita y Disparo")]
     public float orbitSpeed = 5f; // Velocidad de órbita
+    public float orbitDistance = 5f; // Distancia de órbita
     public float shootingInterval = 2f; // Intervalo de disparo
     public GameObject bulletPrefab; // Prefab del proyectil
     public float bulletSpeed = 10f; // Velocidad del proyectil
@@ -190,11 +186,6 @@ public class OrbitTest : EnemyLife
         if (attackTimer <= 0)
         {
             Debug.Log("El enemigo ha atacado al jugador!");
-            if (attackEffectPrefab != null)
-            {
-                GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);
-                Destroy(effect, spawnTime); // Destruye el efecto después de 0.1 segundos
-            }
             attackTimer = attackCooldown / MovimientoJugador.bulletTimeScale; // Reinicia el temporizador de ataque
         }
 
@@ -249,19 +240,29 @@ public class OrbitTest : EnemyLife
     {
         if (player != null)
         {
-            transform.RotateAround(player.position, Vector3.up, orbitSpeed * Time.deltaTime);
+            // Calcula la posición deseada en la órbita
+            Vector3 direction = (transform.position - player.position).normalized;
+            Vector3 targetPosition = player.position + direction * orbitDistance;
+
+            // Calcula la posición de órbita usando un ángulo
+            float angle = orbitSpeed * Time.deltaTime;
+            Vector3 offset = Quaternion.Euler(0, angle, 0) * (transform.position - player.position);
+            targetPosition = player.position + offset;
+
+            // Mueve al enemigo hacia la posición deseada
+            agent.SetDestination(targetPosition);
         }
     }
 
     private void ShootAtPlayer()
     {
-        if (player != null && bulletPrefab != null)
+        if (bulletPrefab != null)
         {
-            GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+            GameObject bullet = Instantiate(bulletPrefab, transform.position + transform.forward, transform.rotation);
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                Vector3 direction = (player.position - transform.position).normalized;
+                Vector3 direction = transform.forward; // Dirección hacia donde mira el enemigo
                 rb.velocity = direction * bulletSpeed;
             }
         }

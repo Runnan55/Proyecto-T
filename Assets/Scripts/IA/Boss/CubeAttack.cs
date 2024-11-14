@@ -24,7 +24,7 @@ public class CubeAttack : MonoBehaviour
             dodgeChild.SetActive(true);
         }
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.25f);
 
         if (dodgeChild != null)
         {
@@ -37,7 +37,7 @@ public class CubeAttack : MonoBehaviour
             damageChild.SetActive(true);
         }
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.05f);
 
         if (damageChild != null)
         {
