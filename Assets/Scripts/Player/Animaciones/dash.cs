@@ -49,7 +49,8 @@ public class dash : StateMachineBehaviour
     {
         if (lifeInstance != null)
         {
-            lifeInstance.isInvincible = true;
+            lifeInstance.enableInvencibility();
+            lifeInstance.setInvincibleMat();
         }
     }
 
@@ -57,7 +58,8 @@ public class dash : StateMachineBehaviour
     {
         if (lifeInstance != null)
         {
-            lifeInstance.isInvincible = false;
+            lifeInstance.disableInvencibility();
+            lifeInstance.setOriginalMat();
         }
     }
 

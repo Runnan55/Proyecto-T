@@ -397,7 +397,7 @@ public Vector3 ObtenerDireccionEmpuje()
 }
 IEnumerator Dash()
 {
-    if (!isDashing && Time.time >= lastDashTime + dashTime)
+    if (!isDashing && Time.time >= lastDashTime)
     {
         float originalY = transform.position.y;
 
@@ -429,11 +429,11 @@ IEnumerator Dash()
 
         animator.SetBool("Dash", false);
 
-        dashObjec.SetActive(true);
+        //dashObjec.SetActive(true);
 
         yield return new WaitForSeconds(0.5f); 
 
-        dashObjec.SetActive(false);
+        //dashObjec.SetActive(false);
 
         Vector3 finalPosition = transform.position;
         finalPosition.y = originalY;

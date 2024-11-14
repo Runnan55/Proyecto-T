@@ -150,32 +150,7 @@ public class Life : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
         }
-
-        //shield.SetActive(isInvincible);
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            DebugChangeMaterial();
-        }
     }
-
-    private void DebugChangeMaterial()
-    {
-        if (skinnedMeshRenderer != null)
-        {
-            // Alternar entre el material original y el material de invencibilidad
-            if (skinnedMeshRenderer.material == originalMaterial)
-            {
-                ChangeMaterial(invincibleMaterial);
-            }
-            
-            else
-            {
-                ChangeMaterial(originalMaterial);
-            }
-        }
-    }
-
 
     public void Death()
     {
@@ -221,11 +196,18 @@ public class Life : MonoBehaviour
     IEnumerator InvincibilityFrames()
     {
         isInvincible = true;
-        shield.SetActive(true);
-        ChangeMaterial(invincibleMaterial);
-        yield return new WaitForSeconds(invincibilityTime);
+        float elapsedTime = 0f;
+        bool isDamageMaterial = true;
+
+        while (elapsedTime < invincibilityTime)
+        {
+            ChangeMaterial(isDamageMaterial ? damageMaterial : originalMaterial);
+            isDamageMaterial = !isDamageMaterial;
+            elapsedTime += 0.1f; // velocidad parpadeo
+            yield return new WaitForSeconds(0.1f);
+        }
+
         isInvincible = false;
-        shield.SetActive(false);
         ChangeMaterial(originalMaterial);
     }
 
@@ -266,12 +248,25 @@ public class Life : MonoBehaviour
     public void enableInvencibility()
     {
         isInvincible = true;
-        ChangeMaterial(invincibleMaterial);
     }
 
     public void disableInvencibility()
     {
         isInvincible = false;
+    }
+
+    public void setInvincibleMat()
+    {
+        ChangeMaterial(invincibleMaterial);
+    }
+    
+    public void setDamagedMat()
+    {
+        ChangeMaterial(damageMaterial);
+    }
+
+    public void setOriginalMat()
+    {
         ChangeMaterial(originalMaterial);
     }
 
