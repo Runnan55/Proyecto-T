@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 386297521332108353}
   - component: {fileID: 9195202438361791363}
   - component: {fileID: 2763613694402501565}
+  - component: {fileID: -8199533018033439095}
   - component: {fileID: 6907179700855247023}
   m_Layer: 0
   m_Name: Flecha curva
@@ -86,6 +87,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-8199533018033439095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4182066159404826401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 206c6b23020e839449a03d2839860b64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 20
+  initialRadius: 0.1
+  radiusGrowthRate: 1
+  lifetime: 10
+  damage: 5
 --- !u!135 &6907179700855247023
 SphereCollider:
   m_ObjectHideFlags: 0
