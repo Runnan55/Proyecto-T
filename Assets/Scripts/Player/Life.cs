@@ -11,6 +11,9 @@ public class Life : MonoBehaviour
     private float currentTime;
     public bool isInvincible = false;
 
+    public float timeBank = 0;
+    public TextMeshProUGUI timeBankText;
+
     public bool isAlive = true;
     public Canvas canvas;
 
@@ -83,6 +86,18 @@ public class Life : MonoBehaviour
             {
                 Debug.LogError("No se pudo encontrar DeathPanel dentro de CombatUI.");
             }
+
+            // Buscar TimeBankText dentro de CombatUI en DefaultHUD(Clone)
+            Transform timeBankTextTransform = healthPanelTransform.Find("TimeBankText");
+
+            if (timeBankTextTransform != null)
+            {
+                timeBankText = timeBankTextTransform.GetComponent<TextMeshProUGUI>();
+            }
+            else
+            {
+                Debug.LogError("No se pudo encontrar TimeBankText dentro de CombatUI.");
+            }
         }
         else
         {
@@ -113,44 +128,57 @@ public class Life : MonoBehaviour
             Debug.Log("No se encontró el componente CharacterController.");
         }
 
-/*         skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
-        if (skinnedMeshRenderer != null)
-        {
-            originalMaterial = skinnedMeshRenderer.material;
-        }
-        else
-        {
-            //Debug.LogError("No se encontró el componente SkinnedMeshRenderer.");
-        }
- */
         StartCoroutine(FindHealthPanelReferences());
     }
 
     void Update()
+{
+    if (currentTime > 0)
     {
-        if (currentTime > 0)
-        {
-            currentTime -= Time.deltaTime;
-            UpdateTimeText();
-            UpdateTimeImage();
-        }
-        else
-        {
-            if (isAlive == true)
-            {
-                Death();
-            }
-        }
+        currentTime -= Time.deltaTime;
+    }
 
-        if (isAlive == false)
+    else if (timeBank > 0)
+    {
+        timeBank -= Time.deltaTime;
+
+/*         if (timeBank < 0)
         {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                deathScreen.gameObject.SetActive(false);
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            }
+            currentTime += timeBank; // Añadir el tiempo restante del banco
+            timeBank = 0;
+        } */
+    }
+    else
+    {
+        if (isAlive)
+        {
+            Death();
         }
     }
+
+    // Asegurarse de que currentTime no sea negativo
+    if (currentTime < 0)
+    {
+        currentTime = 0;
+    }
+
+    UpdateTimeText();
+    UpdateTimeImage();
+    UpdateTimeBankText(); // Actualizar el texto del banco del tiempo
+
+    if (!isAlive && Input.GetKeyDown(KeyCode.F))
+    {
+        deathScreen.gameObject.SetActive(false);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // Depuración: Sumar 10 segundos al banco del tiempo al pulsar B
+    if (Input.GetKeyDown(KeyCode.B))
+    {
+        timeBank += 6;
+        UpdateTimeBankText();
+    }
+}
 
     public void Death()
     {
@@ -245,6 +273,31 @@ public class Life : MonoBehaviour
         }
     }
 
+    private void UpdateTimeBankText()
+    {
+        if (timeBankText != null)
+        {
+            if (timeBank > 0)
+            {
+                timeBankText.gameObject.SetActive(true);
+                int seconds = Mathf.FloorToInt(timeBank);
+                if (timeBank < 5)
+                {
+                    int hundredths = Mathf.FloorToInt((timeBank - seconds) * 100);
+                    timeBankText.text = "+" + seconds.ToString("00") + ":" + hundredths.ToString("00");
+                }
+                else
+                {
+                    timeBankText.text = "+" + seconds.ToString("00");
+                }
+            }
+            else
+            {
+                timeBankText.gameObject.SetActive(false);
+            }
+        }
+    }
+
     public void enableInvencibility()
     {
         isInvincible = true;
@@ -311,5 +364,37 @@ public class Life : MonoBehaviour
         {
             skinnedMeshRenderer.material = new Material(newMaterial);
         }
+    }
+
+    // Método para ir a la siguiente sala
+    public void GoToNextRoom(float newMaxTime)
+    {
+        // Ajustar la vida máxima y la vida actual
+        maxTime = newMaxTime;
+        currentTime = maxTime;
+
+        // Guardar tiempo sobrante en el banco del tiempo
+        if (currentTime > 0 && currentTime <= 10)
+        {
+            timeBank += currentTime;
+        }
+
+        // Limitar el banco del tiempo a un máximo de 10 segundos
+        if (timeBank > 10)
+        {
+            timeBank = 10;
+        }
+
+        // Actualizar la UI
+        UpdateTimeText();
+        UpdateTimeImage();
+        UpdateTimeBankText();
+    }
+
+    // Método para limpiar el banco del tiempo
+    public void ClearTimeBank()
+    {
+        timeBank = 0;
+        UpdateTimeBankText();
     }
 }

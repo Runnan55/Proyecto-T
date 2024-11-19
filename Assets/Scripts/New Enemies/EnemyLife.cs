@@ -105,13 +105,13 @@ public class EnemyLife : MonoBehaviour
     private IEnumerator ChangeMaterialTemporarily()
     {
         // Cambia el material al nuevo
-        enemyMeshRenderer.material = newMaterial;
+        ChangeMaterial(newMaterial);
 
         // Espera 0.2 segundos
         yield return new WaitForSeconds(0.2f);
 
         // Restaura el material original
-        enemyMeshRenderer.material = originalMaterial;
+        ChangeMaterial(originalMaterial);
     }
 
     private IEnumerator DestroyHealthBar()
@@ -130,6 +130,14 @@ public class EnemyLife : MonoBehaviour
         if (healthBar != null)
         {
             healthBar.gameObject.SetActive(false);
+        }
+    }
+
+    private void ChangeMaterial(Material newMaterial)
+    {
+        if (enemyMeshRenderer != null && newMaterial != null)
+        {
+            enemyMeshRenderer.material = new Material(newMaterial);
         }
     }
 }
