@@ -95,13 +95,12 @@ public class BouncingIA : EnemyLife
         if (isMoving && other.CompareTag("Walls"))
         {
             // Calcula la dirección de rebote reflejando la velocidad actual en el plano XZ
-            Vector3 incomingDirection = new Vector3(rb.velocity.x, 0f, rb.velocity.z).normalized; // Solo consideramos la velocidad en X y Z
-            Vector3 normal = other.transform.forward; // Usamos la normal del objeto (pared)
+            Vector3 incomingDirection = new Vector3(rb.velocity.x, 0f, rb.velocity.z).normalized; 
+            Vector3 normal = other.transform.forward; 
             Vector3 bounceDirection = Vector3.Reflect(incomingDirection, normal);
 
-            // Introducimos una mayor variabilidad en el ángulo de rebote, pero solo en el plano XZ
-            float angleVariation = Random.Range(-30f, 30f);  // Variabilidad más amplia entre -30 y 30 grados
-            Quaternion rotation = Quaternion.AngleAxis(angleVariation, Vector3.up); // Rota alrededor del eje Y (eje vertical)
+            float angleVariation = Random.Range(-30f, 30f);  
+            Quaternion rotation = Quaternion.AngleAxis(angleVariation, Vector3.up); 
 
             // Aplica la variabilidad a la dirección de rebote
             bounceDirection = rotation * bounceDirection;
@@ -112,7 +111,6 @@ public class BouncingIA : EnemyLife
             // Verificamos si la dirección de rebote es muy pequeña y forzamos un ángulo de rebote mínimo
             if (Mathf.Abs(bounceDirection.x) < 0.1f && Mathf.Abs(bounceDirection.z) < 0.1f)
             {
-                // Si la dirección de rebote es demasiado pequeña (casi paralela), forzamos una dirección de rebote más alejada
                 bounceDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
             }
 
