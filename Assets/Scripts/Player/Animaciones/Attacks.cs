@@ -13,6 +13,11 @@ public class Attacks : StateMachineBehaviour
      private GameObject Cubo2;
      private GameObject Cubo3; 
 
+    [SerializeField] private FMODUnity.EventReference attack1;
+    [SerializeField] private FMODUnity.EventReference attack2;
+    [SerializeField] private FMODUnity.EventReference attack3;
+
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -35,6 +40,7 @@ public class Attacks : StateMachineBehaviour
                     {
                         ataqueL1Collider.enabled = true; 
                     }
+                    FMODUnity.RuntimeManager.PlayOneShot(attack1);
                 }    
               if (Cubo1 != null)
     {
@@ -57,6 +63,8 @@ public class Attacks : StateMachineBehaviour
                     {
                         ataqueL2Collider.enabled = true; 
                     }
+                    FMODUnity.RuntimeManager.PlayOneShot(attack2);
+
                 }  
 
                if (Cubo2 != null)
@@ -84,6 +92,8 @@ public class Attacks : StateMachineBehaviour
                     {
                         ataqueL3Collider.enabled = true; 
                     }
+                    FMODUnity.RuntimeManager.PlayOneShot(attack3);
+
                 }  
 
                     if (Cubo3 != null)

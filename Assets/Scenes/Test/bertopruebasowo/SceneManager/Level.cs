@@ -24,6 +24,7 @@ public class Level : MonoBehaviour
 
     [Header("Warning config")]
     public GameObject warning;
+    [SerializeField] private FMODUnity.EventReference waveStart;
 
     [Header("Waves config")]
     public List<EnemyWave> waves;
@@ -51,6 +52,7 @@ public class Level : MonoBehaviour
     {
         if (currentWave < waves.Count)
         {
+            FMODUnity.RuntimeManager.PlayOneShot(waveStart);
             defeatedEnemies = waves[currentWave].enemySpawns.Count;
             StartCoroutine(SpawnWave(waves[currentWave]));
             currentWave++;

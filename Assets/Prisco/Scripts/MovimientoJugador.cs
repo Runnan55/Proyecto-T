@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MovimientoJugador : MonoBehaviour
 {
@@ -49,6 +50,9 @@ public class MovimientoJugador : MonoBehaviour
     private float tiempoUltimoDisparo = -Mathf.Infinity;
     public float tiempoRecarga = 2.0f;
     private float tiempoUltimaRecarga = -Mathf.Infinity;    
+    public Slider[] balaSliders;
+    public Color fullColor = Color.green;
+    public Color emptyColor = Color.red;
 
     [Header("Animation Settings")]
     public Animator animator;    
@@ -73,7 +77,14 @@ public class MovimientoJugador : MonoBehaviour
     public TestAfterImage afterImageEffect;
     public static float bulletTimeScale = 1f;
     public float slowedBulletTimeScale = 0.05f;
-    FMODUnity.StudioEventEmitter FmodEmitter;
+
+    [Header("Sounds")]     
+    [SerializeField] private FMODUnity.EventReference bulletTimeStart;
+    [SerializeField] private FMODUnity.EventReference bulletTimeEnd;
+    [SerializeField] private FMODUnity.EventReference shot;
+    [SerializeField] private FMODUnity.EventReference heavy;
+    [SerializeField] private FMODUnity.EventReference dash;
+
 
     public static bool isInDodgeArea = false;
 
@@ -135,14 +146,18 @@ public class MovimientoJugador : MonoBehaviour
 
     private IEnumerator ActivateBulletTime()
     {
-        //FmodEmitter.Play();
+        FMODUnity.RuntimeManager.PlayOneShot(bulletTimeStart);
         bulletTime = true;
         afterImageEffect.enabled = true;
         bulletTimeScale = slowedBulletTimeScale;
         DefaultHUD.Instance.EnableBulletTimeUI();
         Debug.Log("Bullet time on, time scale = " + bulletTimeScale);
 
-        yield return new WaitForSeconds(bulletTimeDuration);
+        yield return new WaitForSeconds(bulletTimeDuration - 0.3f);
+
+        FMODUnity.RuntimeManager.PlayOneShot(bulletTimeEnd);
+
+        yield return new WaitForSeconds(0.3f);
 
         bulletTime = false;
         afterImageEffect.enabled = false;
@@ -229,7 +244,7 @@ public class MovimientoJugador : MonoBehaviour
         
 
         RecargarBalas();
-
+        UpdateBalaSliders();
       
     }
     public void Movimientojugador()   
@@ -409,6 +424,7 @@ IEnumerator Dash()
         isDashing = true;
         animator.SetBool("Dash", true);
         float startTime = Time.time;
+        FMODUnity.RuntimeManager.PlayOneShot(dash);
 
         // Obtener la dirección de movimiento actual del jugador
         Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
@@ -535,6 +551,7 @@ public void AtaquePesado()
         ataqueP = true;
         ataqueEjecutado = true;
         tiempoUltimoAtaque = Time.time; // Actualizar el tiempo del último ataque
+        FMODUnity.RuntimeManager.PlayOneShot(heavy);
     }
 
     // Restablecer ataqueEjecutado después del tiempo de espera
@@ -573,6 +590,7 @@ private void ExpandirCollider()
 {
     if (Input.GetButtonDown("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
     {
+        FMODUnity.RuntimeManager.PlayOneShot(shot);
         enterAttack = true;
         ataqueD = true;
         if (mirarCoroutine != null)
@@ -632,7 +650,7 @@ private void EjecutarAtaqueDistancia()
     Boomerang boomerang = boomerangObj.GetComponent<Boomerang>();
     boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
 }
-private void RecargarBalas()
+    private void RecargarBalas()
     {
         if (balasActuales < maxBalas)
         {
@@ -645,6 +663,29 @@ private void RecargarBalas()
         else
         {
             tiempoUltimaRecarga = Time.time; // Resetear el tiempo de recarga cuando las balas están al máximo
+        }
+    }
+
+    private void UpdateBalaSliders()
+    {
+        for (int i = 0; i < balaSliders.Length; i++)
+        {
+            if (i < balasActuales)
+            {
+                balaSliders[i].value = 1; // Bala cargada
+                balaSliders[i].fillRect.GetComponent<Image>().color = fullColor; // Cambiar color a lleno
+            }
+            else if (i == balasActuales)
+            {
+                float tiempoDesdeUltimaRecarga = Time.time - tiempoUltimaRecarga;
+                balaSliders[i].value = Mathf.Clamp01(tiempoDesdeUltimaRecarga / tiempoRecarga); // Progreso de recarga
+                balaSliders[i].fillRect.GetComponent<Image>().color = emptyColor; // Color de recarga
+            }
+            else
+            {
+                balaSliders[i].value = 0; // Bala no cargada
+                balaSliders[i].fillRect.GetComponent<Image>().color = emptyColor; // Cambiar color a vacío
+            }
         }
     }
 

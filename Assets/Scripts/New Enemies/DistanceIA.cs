@@ -29,6 +29,9 @@ public class RangedIA : EnemyLife
     private bool isBeingPushed = false;
     private Rigidbody rb;
 
+    [Header("Sounds")]
+    [SerializeField] private FMODUnity.EventReference crossbow;
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -180,6 +183,7 @@ public class RangedIA : EnemyLife
     {
         if (waitTimer <= 0)
         {
+            FMODUnity.RuntimeManager.PlayOneShot(crossbow);
             Instantiate(projectilePrefab, shootingPoint.position, shootingPoint.rotation);
             Debug.Log("El enemigo ha disparado al jugador!");
             waitTimer = waitTimeBetweenShots / MovimientoJugador.bulletTimeScale;

@@ -7,12 +7,16 @@ public class Boomerang : MonoBehaviour
     public float velocidad = 10f; // Velocidad del boomerang
     public float magnetRange = 5f;
     public float magnetSpeed = 5f;
+    public float serpentineFrequency = 2f; // Frecuencia del movimiento en "S"
+    public float serpentineMagnitude = 0.5f; // Magnitud del movimiento en "S"
     private Vector3 direccion; // Dirección del boomerang
-    
+    private float serpentineOffset; // Desplazamiento para el movimiento en "S"
+
     // Método para establecer la dirección del boomerang
     public void Lanzar(Vector3 direccionInicial)
     {
         direccion = direccionInicial.normalized;
+        serpentineOffset = Random.Range(0f, 2f * Mathf.PI); // Desplazamiento aleatorio para el movimiento en "S"
     }
 
     void Update()
@@ -24,11 +28,15 @@ public class Boomerang : MonoBehaviour
             direccion = Vector3.Lerp(direccion, enemyDirection, magnetSpeed * Time.deltaTime);
         }
 
-        transform.position += direccion * velocidad * Time.deltaTime;
+        // Movimiento en "S"
+        Vector3 serpentine = transform.right * Mathf.Sin(Time.time * serpentineFrequency + serpentineOffset) * serpentineMagnitude;
+        Vector3 moveDirection = direccion + serpentine;
 
-        if (direccion != Vector3.zero)
+        transform.position += moveDirection * velocidad * Time.deltaTime;
+
+        if (moveDirection != Vector3.zero)
         {
-            transform.rotation = Quaternion.LookRotation(direccion);
+            transform.rotation = Quaternion.LookRotation(moveDirection);
         }
     }
 

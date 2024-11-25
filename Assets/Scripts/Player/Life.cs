@@ -35,11 +35,14 @@ public class Life : MonoBehaviour
 
     public SHAKECAMERA m_shakeCamera;
 
-    [Header("Materiales")]
+    [Header("Materials")]
     public Material invincibleMaterial;
     public Material damageMaterial;
     public Material originalMaterial;
     public SkinnedMeshRenderer skinnedMeshRenderer;
+
+    [Header("Sounds")]
+    [SerializeField] private FMODUnity.EventReference damage;
 
     IEnumerator FindHealthPanelReferences()
     {
@@ -218,6 +221,7 @@ public class Life : MonoBehaviour
         {
             ChangeMaterial(damageMaterial);
             StartCoroutine(InvincibilityFrames());
+            FMODUnity.RuntimeManager.PlayOneShot(damage);
         }
     }
 

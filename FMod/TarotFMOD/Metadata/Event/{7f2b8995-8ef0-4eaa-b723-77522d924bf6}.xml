@@ -2,13 +2,13 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{7f2b8995-8ef0-4eaa-b723-77522d924bf6}">
 		<property name="name">
-			<value>BulletTimeFx</value>
+			<value>bulletTimeStart</value>
 		</property>
 		<property name="outputFormat">
-			<value>0</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
-			<destination>{95ad856a-e064-4894-a50a-b64034f62020}</destination>
+			<destination>{6285f2b3-3412-4f3c-972a-19427e1e1f79}</destination>
 		</relationship>
 		<relationship name="mixer">
 			<destination>{4aedda9f-0b89-4a11-a881-284c02fae7c7}</destination>
@@ -73,7 +73,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{54d00205-8a37-4128-9e2c-73bfb72d3706}">
 		<property name="volume">
-			<value>-6</value>
+			<value>-12.5</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{9f5a068c-05bc-4da4-ac8f-23f945368d1c}</destination>
@@ -87,7 +87,7 @@
 	</object>
 	<object class="MultiSound" id="{43bd215f-466f-49f9-ab9a-a5fe9e18c71d}">
 		<relationship name="sounds">
-			<destination>{4e78269d-4e93-4ffe-98bb-8774e919b2c2}</destination>
+			<destination>{70abd586-22bc-4d1b-9fa6-6d4d083c3c63}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{20ca2adf-59d7-4903-8eec-1889e5a47de0}">
@@ -102,12 +102,9 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{1118f081-a38b-46ff-960f-f6cf0c4c6c76}" />
-	<object class="SingleSound" id="{4e78269d-4e93-4ffe-98bb-8774e919b2c2}">
-		<property name="startOffset">
-			<value>2</value>
-		</property>
+	<object class="SingleSound" id="{70abd586-22bc-4d1b-9fa6-6d4d083c3c63}">
 		<relationship name="audioFile">
-			<destination>{3d410a15-811f-4a6d-9718-090e2107966d}</destination>
+			<destination>{8b569da7-6fd6-41b5-9e90-87b0ffc11062}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{e9901174-c187-4c5b-83fb-1fcbd05c544b}" />

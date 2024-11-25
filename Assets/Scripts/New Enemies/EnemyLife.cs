@@ -16,6 +16,9 @@ public class EnemyLife : MonoBehaviour
 
     private bool isDefeated = false;
 
+    [SerializeField] private FMODUnity.EventReference hit;
+
+
     public float health
     {
         get { return _hp; }
@@ -91,7 +94,8 @@ public class EnemyLife : MonoBehaviour
             StartCoroutine(DestroyHealthBar());
             Destroy(gameObject, 0.2f); // Destruye el objeto después de 0.2 segundos
         }
-
+        
+        FMODUnity.RuntimeManager.PlayOneShot(hit);
         ShowFloatingText(damage);
     }
 

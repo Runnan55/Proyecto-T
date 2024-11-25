@@ -695,7 +695,7 @@ GameObject:
   - component: {fileID: 6072360894315801547}
   - component: {fileID: 4974988330269885014}
   m_Layer: 7
-  m_Name: Ammo1
+  m_Name: Ammo2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1173,7 +1173,6 @@ GameObject:
   - component: {fileID: 3834022199377096293}
   - component: {fileID: 587994345431153848}
   - component: {fileID: 8431527252385674206}
-  - component: {fileID: 607224365715254855}
   - component: {fileID: 1176030203751019751}
   - component: {fileID: 7445508455057988435}
   - component: {fileID: 1139948659433245110}
@@ -1263,7 +1262,13 @@ MonoBehaviour:
   maxBalas: 3
   balasActuales: 3
   tiempoEntreDisparos: 0.5
-  tiempoRecarga: 2
+  tiempoRecarga: 2.25
+  balaSliders:
+  - {fileID: 5471276946857453531}
+  - {fileID: 4974988330269885014}
+  - {fileID: 8894385914695501736}
+  fullColor: {r: 0.5260449, g: 1, b: 0.1745283, a: 1}
+  emptyColor: {r: 0.86132485, g: 1, b: 0.5424528, a: 1}
   animator: {fileID: 7445508455057988435}
   verificarArma: 0
   cambioColoAlPegar: {fileID: 0}
@@ -1274,37 +1279,41 @@ MonoBehaviour:
   bulletTime: 0
   afterImageEffect: {fileID: 1176030203751019751}
   slowedBulletTimeScale: 0.05
---- !u!114 &607224365715254855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4960533126060132673}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
+  bulletTimeStart:
     Guid:
       Data1: 2133559701
       Data2: 1319800560
       Data3: 1383539639
       Data4: -162819539
-    Path: event:/BulletTimeFx
-  Event: 
-  PlayEvent: 0
-  StopEvent: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  AllowNonRigidbodyDoppler: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
+    Path: event:/bulletTimeStart
+  bulletTimeEnd:
+    Guid:
+      Data1: 1233083729
+      Data2: 1284362480
+      Data3: 1727969422
+      Data4: -64092209
+    Path: event:/bulletTimeEnd
+  shot:
+    Guid:
+      Data1: 1668582977
+      Data2: 1286862755
+      Data3: -1110795114
+      Data4: -1009823778
+    Path: event:/shot
+  heavy:
+    Guid:
+      Data1: -863422852
+      Data2: 1099417376
+      Data3: 952454823
+      Data4: 1678605132
+    Path: event:/heavyAttack
+  dash:
+    Guid:
+      Data1: 123731833
+      Data2: 1138651238
+      Data3: -1266741086
+      Data4: -1119923729
+    Path: event:/dash
 --- !u!114 &1176030203751019751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1358,6 +1367,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxTime: 600
   isInvincible: 0
+  timeBank: 0
+  timeBankText: {fileID: 0}
   isAlive: 1
   canvas: {fileID: 0}
   timeText: {fileID: 0}
@@ -1374,6 +1385,13 @@ MonoBehaviour:
   damageMaterial: {fileID: 2100000, guid: 1ea1950e8d06cd14c8705cd9bcceda36, type: 2}
   originalMaterial: {fileID: 4542270011227178163, guid: 7c3cd409064dcba4fa5c64d784bd8301, type: 3}
   skinnedMeshRenderer: {fileID: 2011191862148346463}
+  damage:
+    Guid:
+      Data1: -726199358
+      Data2: 1223051841
+      Data3: -1652539473
+      Data4: 1495769422
+    Path: event:/damage
 --- !u!1 &5870965677031724453
 GameObject:
   m_ObjectHideFlags: 0
@@ -1385,7 +1403,7 @@ GameObject:
   - component: {fileID: 2510475641089430729}
   - component: {fileID: 8894385914695501736}
   m_Layer: 7
-  m_Name: Ammo1 (1)
+  m_Name: Ammo1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1473,7 +1491,7 @@ GameObject:
   - component: {fileID: 3526367557342637722}
   - component: {fileID: 5471276946857453531}
   m_Layer: 7
-  m_Name: Ammo1 (2)
+  m_Name: Ammo3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1973,8 +1991,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6072360894315801547}
   - {fileID: 2510475641089430729}
+  - {fileID: 6072360894315801547}
   - {fileID: 3526367557342637722}
   m_Father: {fileID: 7429596522430256343}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

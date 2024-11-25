@@ -35,6 +35,9 @@ public class MeleIA : EnemyLife
     [Header("Cubo de Estado")]
     public GameObject statusCube; // Referencia al cubo que cambiará de color
 
+    [Header("Sounds")]
+    [SerializeField] private FMODUnity.EventReference enemySwoosh;
+
    void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -170,13 +173,14 @@ public class MeleIA : EnemyLife
 
     // Método para atacar al jugador
     private void AttackPlayer()
-    {
+    {        
         // Si el jugador está en el rango de ataque y el cooldown ha terminado
         if (attackTimer <= 0)
         {
             Debug.Log("El enemigo ha atacado al jugador!");
             if (attackEffectPrefab != null)
             {
+                FMODUnity.RuntimeManager.PlayOneShot(enemySwoosh);
                 GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);
                 Destroy(effect, spawnTime); // Destruye el efecto después de 0.1 segundos
             }
