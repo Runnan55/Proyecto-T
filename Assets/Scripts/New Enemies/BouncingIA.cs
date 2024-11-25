@@ -89,26 +89,42 @@ public class BouncingIA : EnemyLife
         ).normalized;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    // Cambiar OnCollisionEnter por OnTriggerEnter
+    private void OnTriggerEnter(Collider other)
     {
-        if (isMoving)
+        if (isMoving && other.CompareTag("Walls"))
         {
-            // Calcula la dirección de rebote inicial
-            Vector3 incomingDirection = rb.velocity.normalized;
-            Vector3 normal = collision.contacts[0].normal;
+            // Calcula la dirección de rebote reflejando la velocidad actual en el plano XZ
+            Vector3 incomingDirection = new Vector3(rb.velocity.x, 0f, rb.velocity.z).normalized; // Solo consideramos la velocidad en X y Z
+            Vector3 normal = other.transform.forward; // Usamos la normal del objeto (pared)
             Vector3 bounceDirection = Vector3.Reflect(incomingDirection, normal);
 
-            // Introducimos una pequeña variabilidad en el ángulo de rebote
-            float angleVariation = Random.Range(-15f, 15f);  // Variabilidad entre -15 y 15 grados
+            // Introducimos una mayor variabilidad en el ángulo de rebote, pero solo en el plano XZ
+            float angleVariation = Random.Range(-30f, 30f);  // Variabilidad más amplia entre -30 y 30 grados
             Quaternion rotation = Quaternion.AngleAxis(angleVariation, Vector3.up); // Rota alrededor del eje Y (eje vertical)
 
             // Aplica la variabilidad a la dirección de rebote
             bounceDirection = rotation * bounceDirection;
 
-            // Ajusta la velocidad para mantener el rebote constante
-            rb.velocity = bounceDirection.normalized * bounceSpeed;
+            // Aseguramos que la velocidad en Y sea 0 para que el enemigo no se eleve
+            bounceDirection.y = 0f;
 
-            Debug.Log($"Rebote con variación! Dirección: {bounceDirection}");
+            // Verificamos si la dirección de rebote es muy pequeña y forzamos un ángulo de rebote mínimo
+            if (Mathf.Abs(bounceDirection.x) < 0.1f && Mathf.Abs(bounceDirection.z) < 0.1f)
+            {
+                // Si la dirección de rebote es demasiado pequeña (casi paralela), forzamos una dirección de rebote más alejada
+                bounceDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
+            }
+
+            // Añadir un pequeño impulso para evitar quedarse pegado a la pared, solo en XZ
+            float extraForce = Random.Range(0.5f, 2f);  // Impulso aleatorio para asegurar que no se quede pegado
+            bounceDirection += bounceDirection.normalized * extraForce;
+
+            // Ajusta la velocidad para mantener el rebote constante en el plano XZ
+            rb.velocity = bounceDirection.normalized * bounceSpeed * Random.Range(1f, 1.5f); // Agregar un factor extra de velocidad
+
+            // Debugging para verificar la dirección y la velocidad del rebote
+            Debug.Log($"Rebote con variación! Dirección: {bounceDirection}, Velocidad: {rb.velocity}");
         }
     }
 
