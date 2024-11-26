@@ -44,6 +44,8 @@ public class Life : MonoBehaviour
     [Header("Sounds")]
     [SerializeField] private FMODUnity.EventReference damage;
 
+    public Effect effect;
+
     IEnumerator FindHealthPanelReferences()
     {
         yield return new WaitForSeconds(0.5f); // Espera breve para permitir la inicialización de la UI
@@ -221,6 +223,7 @@ public class Life : MonoBehaviour
         {
             ChangeMaterial(damageMaterial);
             StartCoroutine(InvincibilityFrames());
+            effect.ScreenDamageEffect(Random.Range(0.1f, 1));
             FMODUnity.RuntimeManager.PlayOneShot(damage);
         }
     }
