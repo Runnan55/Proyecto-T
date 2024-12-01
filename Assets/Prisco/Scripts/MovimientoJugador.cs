@@ -71,12 +71,19 @@ public class MovimientoJugador : MonoBehaviour
     public float dashTime = 0.2f;   
     private float lastDashTime = -Mathf.Infinity;
 
-    [Header("Bullet time")]     
-    public float bulletTimeDuration = 7f;
+    [Header("Bullet time")]
+    public float bulletTimeDuration = 6f;
     public bool bulletTime = false;
     public TestAfterImage afterImageEffect;
     public static float bulletTimeScale = 1f;
     public float slowedBulletTimeScale = 0.05f;
+    public float bulletTimeCooldown = 5f;
+    private float lastBulletTimeUse = -Mathf.Infinity;
+    public Image bulletTimeCooldownImage;
+
+    [Header("Fall")]     
+    private Queue<Vector3> safePositions = new Queue<Vector3>();
+    private bool isGrounded;
 
     [Header("Sounds")]     
     [SerializeField] private FMODUnity.EventReference bulletTimeStart;
@@ -88,16 +95,48 @@ public class MovimientoJugador : MonoBehaviour
 
     public static bool isInDodgeArea = false;
 
-/*     private void OnTriggerEnter(Collider other)
+     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("DodgeArea"))
+/*         if (other.CompareTag("DodgeArea"))
         {
             isInDodgeArea = true;
             Debug.Log("Dodge area entered");
+        } */
+
+        if (other.CompareTag("FallZone"))
+        {
+            Debug.Log("Caída detectada, teletransportando a la última posición segura.");
+            StartCoroutine(TeleportToLastSafePosition());
         }
     }
-    */
 
+    private IEnumerator UpdateSafePosition()
+    {
+        while (true)
+        {
+            if (isGrounded)
+            {
+                if (safePositions.Count >= 5)
+                {
+                    safePositions.Dequeue();
+                }
+                safePositions.Enqueue(transform.position);
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    private IEnumerator TeleportToLastSafePosition()
+    {
+        controller.enabled = false;
+
+        // Teletransportar a la posición más antigua
+        transform.position = safePositions.Peek();
+
+        yield return null;
+
+        controller.enabled = true;
+    }
 
     private void OnTriggerExit(Collider other)
     {
@@ -143,7 +182,6 @@ public class MovimientoJugador : MonoBehaviour
             isInDodgeArea = true;
         }
     }
-
     private IEnumerator ActivateBulletTime()
     {
         FMODUnity.RuntimeManager.PlayOneShot(bulletTimeStart);
@@ -151,7 +189,7 @@ public class MovimientoJugador : MonoBehaviour
         afterImageEffect.enabled = true;
         bulletTimeScale = slowedBulletTimeScale;
         DefaultHUD.Instance.EnableBulletTimeUI();
-        Debug.Log("Bullet time on, time scale = " + bulletTimeScale);
+        //Debug.Log("Bullet time on, time scale = " + bulletTimeScale);
 
         yield return new WaitForSeconds(bulletTimeDuration - 0.3f);
 
@@ -163,7 +201,9 @@ public class MovimientoJugador : MonoBehaviour
         afterImageEffect.enabled = false;
         bulletTimeScale = 1f;
         DefaultHUD.Instance.DisableBulletTimeUI();
-        Debug.Log("Bullet time off, time scale = " + bulletTimeScale);
+        //Debug.Log("Bullet time off, time scale = " + bulletTimeScale);
+
+        lastBulletTimeUse = Time.time;
     }
 
     public bool IsBulletTimeActive()
@@ -183,70 +223,87 @@ public class MovimientoJugador : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();      
-
         instance = GetComponent<MovimientoJugador>();
-
         animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
+
+        for (int i = 0; i < 5; i++)
+        {
+            safePositions.Enqueue(transform.position);
+        }
+
+        StartCoroutine(UpdateSafePosition());
     }
 
-    void Update()
+   void Update()
     {
         if (Input.GetKeyDown(KeyCode.O))
         {
-           enterAttack = true;
+            enterAttack = true;
         }
-          if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P))
         {
-           enterAttack = false;
+            enterAttack = false;
         }
-        
-        if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B) && !bulletTime)
+
+        if ((isInDodgeArea && Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B)) && !bulletTime)
         {
-            if (afterImageEffect != null)
+            if (Time.time >= lastBulletTimeUse + bulletTimeCooldown)
             {
-                StartCoroutine(ActivateBulletTime());
-                StartCoroutine(Dash());
+                if (afterImageEffect != null)
+                {
+                    StartCoroutine(ActivateBulletTime());
+                    StartCoroutine(Dash());
+                }
+                else
+                {
+                    Debug.LogError("afterImageEffect no está asignado en el Inspector.");
+                }
             }
-
-        else
-        {
-            Debug.LogError("afterImageEffect no está asignado en el Inspector.");
         }
-    } 
 
-    if (canMove)
-    {
-        Movimientojugador();
-    }   
+        if (canMove)
+        {
+            Movimientojugador();
+        }
 
-    if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
-    {
-        StartCoroutine(Dash());
-    }
+        if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
+        {
+            StartCoroutine(Dash());
+        }
 
         AtaqueJugador();
-
-        AtaqueLigero();        
-        
+        AtaqueLigero();
         AtaquePesado();
 
-           if (atacando)
+        if (atacando)
         {
             ExpandirCollider();
         }
-      
-            
-        AtaqueDistancia();      
-        
 
+        AtaqueDistancia();
         RecargarBalas();
         UpdateBalaSliders();
-      
+
+        if (bulletTimeCooldownImage != null)
+        {
+            float cooldownProgress = Mathf.Clamp01((Time.time - lastBulletTimeUse) / bulletTimeCooldown);
+            bulletTimeCooldownImage.fillAmount = cooldownProgress;
+
+            bulletTimeCooldownImage.gameObject.SetActive(cooldownProgress < 1);
+        }
+
+        isGrounded = controller.isGrounded;
+
+        if (isGrounded)
+        {
+            //Debug.Log("is grounded");
+        }
     }
+    
     public void Movimientojugador()   
 
 {

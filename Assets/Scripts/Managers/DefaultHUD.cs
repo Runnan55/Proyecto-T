@@ -16,6 +16,7 @@ public class DefaultHUD : MonoBehaviour
 
     public GameObject BTClockImage;
     public GameObject BTPanelImage;
+    public GameObject transitionPanel;
 
     protected void Awake()
     {
@@ -67,6 +68,32 @@ public class DefaultHUD : MonoBehaviour
         if (BTPanelImage != null)
         {
             BTPanelImage.SetActive(false);
+        }
+    }
+
+    public void EnableTransition()
+    {
+        if (transitionPanel != null)
+        {
+            transitionPanel.SetActive(true);
+        }
+
+        if (transitionPanel != null)
+        {
+            transitionPanel.SetActive(true);
+        }
+    }
+
+    public void DisableTransition()
+    {
+        if (transitionPanel != null)
+        {
+            transitionPanel.SetActive(false);
+        }
+
+        if (transitionPanel != null)
+        {
+            transitionPanel.SetActive(false);
         }
     }
 

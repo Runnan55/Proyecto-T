@@ -63,7 +63,7 @@ public class DebugTest : MonoBehaviour
         {
             if (SceneManager.GetActiveScene().name != "MainMenu")
             {
-                Debug.LogWarning("Player not found in the scene.");
+                //Debug.LogWarning("Player not found in the scene.");
             }
         }
     }
@@ -112,6 +112,11 @@ public class DebugTest : MonoBehaviour
     public void OpenMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void OpenBTBoss()
+    {
+        SceneManager.LoadScene("BTBoss");
     }
 
     public void OpenTuto()

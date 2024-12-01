@@ -223,7 +223,7 @@ public class Life : MonoBehaviour
         {
             ChangeMaterial(damageMaterial);
             StartCoroutine(InvincibilityFrames());
-            effect.ScreenDamageEffect(Random.Range(0.1f, 1));
+            effect.ScreenDamageEffect(Random.Range(1f, 1));
             FMODUnity.RuntimeManager.PlayOneShot(damage);
         }
     }

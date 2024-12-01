@@ -114,7 +114,7 @@ public class CoreManager : MonoBehaviour
 
         else
         {
-            StartCoroutine(SpawnPlayerWithDelay(0.25f));
+            StartCoroutine(SpawnPlayerWithDelay(0.5f));
         }
     }
 
@@ -123,28 +123,39 @@ public class CoreManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         GameObject player = Instantiate(playerPrefab, null);
+        CharacterController characterController = player.GetComponent<CharacterController>();
+
+        if (characterController != null)
+        {
+            characterController.enabled = false;
+        }
+
         PlayerStartLocation startLocation = GameObject.FindObjectOfType<PlayerStartLocation>();
 
         if (startLocation != null)
         {
             Vector3 startPosition = startLocation.gameObject.transform.position;
-            /* if (startPosition.y < MinSafeHeight)
+            if (startPosition.y < MinSafeHeight)
             {
                 startPosition.y = MinSafeHeight;
-                //Debug.LogWarning("player spawneado por debajo de la altura segura, ajustando.");
-            } */
+                Debug.LogWarning("Player spawneado por debajo de la altura segura, ajustando.");
+            }
 
             player.transform.position = startPosition;
-            //Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
-            //player.transform.rotation = flatRotation;
-            //Debug.Log("Spawneando player en " + player.transform.position);
+            Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
+            player.transform.rotation = flatRotation;
+            Debug.Log("Spawneando player en " + player.transform.position);
         }
-
         else
         {
-            Debug.LogWarning("Core:: PlayerStartLocation was not found. Placing player at origin");
+            Debug.LogWarning("Core:: PlayerStartLocation no fue encontrado. Colocando player en el origen");
             player.transform.position = Vector3.zero;
             player.transform.rotation = Quaternion.identity;
+        }
+
+        if (characterController != null)
+        {
+            characterController.enabled = true;
         }
     }
 }
