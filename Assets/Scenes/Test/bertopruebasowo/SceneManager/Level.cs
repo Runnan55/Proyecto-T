@@ -22,6 +22,11 @@ public class Level : MonoBehaviour
     public Door entranceDoor;
     public Door exitDoor;
 
+    [Header("Teleport config")]
+    public bool teleportAfterLastWave = false;
+    public float teleportDelay = 1f;
+    public Teleporter teleporter;
+
     [Header("Warning config")]
     public GameObject warning;
     [SerializeField] private FMODUnity.EventReference waveStart;
@@ -115,15 +120,32 @@ public class Level : MonoBehaviour
                 {
                     StartCoroutine(entranceDoor.Open());
                 }
+
                 if (exitDoor != null)
                 {
                     StartCoroutine(exitDoor.Open());
+                }
+
+                if (teleportAfterLastWave && teleporter != null)
+                {
+                    StartCoroutine(TeleportPlayerWithDelay());
                 }
             }
             else
             {
                 StartNextWave();
             }
+        }
+    }
+
+    private IEnumerator TeleportPlayerWithDelay()
+    {
+        yield return new WaitForSeconds(teleportDelay);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null && teleporter.exitPoint != null)
+        {
+            teleporter.Teleport(player, teleporter.exitPoint);
+            Debug.Log("Player teleported to exit portal.");
         }
     }
 }

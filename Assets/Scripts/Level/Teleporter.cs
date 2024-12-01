@@ -7,9 +7,9 @@ public class Teleporter : MonoBehaviour
     public bool isBidirectional = false;
     public Transform entryPoint;
     public Transform exitPoint;
-    public float teleportCooldown = 1.0f; // Tiempo de espera en segundos
+    public float teleportCooldown = 1.0f;
     private float lastTeleportTime = -Mathf.Infinity;
-    public bool hasTransition = false; // Variable para elegir si tiene transición
+    public bool hasTransition = true;
 
     void Start()
     {
@@ -23,15 +23,16 @@ public class Teleporter : MonoBehaviour
     {
         if (Time.time - lastTeleportTime < teleportCooldown)
         {
-            return; // Si no ha pasado suficiente tiempo, no teletransportar
+            return;
         }
 
-        lastTeleportTime = Time.time; // Actualiza el tiempo del último teletransporte
+        lastTeleportTime = Time.time;
 
         if (hasTransition)
         {
             StartCoroutine(TeleportWithTransition(player, targetPoint));
         }
+
         else
         {
             PerformTeleport(player, targetPoint);
@@ -63,15 +64,15 @@ public class Teleporter : MonoBehaviour
                 rb.angularVelocity = Vector3.zero; // Detén cualquier rotación
             }
 
-            // Mueve al jugador a la posición del punto de destino
             player.transform.position = targetPoint.position;
 
-            // Reactiva el CharacterController y Rigidbody del jugador si existen
             if (controller != null) controller.enabled = true;
+
             if (rb != null) rb.isKinematic = false;
 
             Debug.Log("Player teleported to: " + targetPoint.position);
         }
+
         else
         {
             Debug.LogError("TargetPoint is not assigned.");
