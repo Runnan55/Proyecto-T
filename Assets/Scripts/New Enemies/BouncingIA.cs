@@ -15,6 +15,9 @@ public class BouncingIA : EnemyLife
     [Header("Movimiento")]
     public float bounceSpeed = 20f; // Velocidad del enemigo
 
+    [Header("Visuales")]
+    public GameObject explosionPrefab; // Prefab de la explosión visual (asignar en el inspector)
+
     private Rigidbody rb;
     private bool isCharging = false;
     private bool isMoving = false;
@@ -67,6 +70,15 @@ public class BouncingIA : EnemyLife
         // Simulación de ataque en área
         yield return new WaitForSeconds(1f);
 
+        // Instanciar la explosión visual en el lugar del ataque
+        if (explosionPrefab != null)
+        {
+            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+
+            // Destruimos la explosión después de un tiempo (por ejemplo, 2 segundos)
+            Destroy(explosion, 2f); // Ajusta el tiempo según la duración que desees
+        }
+
         // Detecta jugadores en el radio de ataque
         Collider[] hitPlayers = Physics.OverlapSphere(transform.position, attackRadius, playerLayer);
         foreach (Collider player in hitPlayers)
@@ -95,12 +107,12 @@ public class BouncingIA : EnemyLife
         if (isMoving && other.CompareTag("Walls"))
         {
             // Calcula la dirección de rebote reflejando la velocidad actual en el plano XZ
-            Vector3 incomingDirection = new Vector3(rb.velocity.x, 0f, rb.velocity.z).normalized; 
-            Vector3 normal = other.transform.forward; 
+            Vector3 incomingDirection = new Vector3(rb.velocity.x, 0f, rb.velocity.z).normalized;
+            Vector3 normal = other.transform.forward;
             Vector3 bounceDirection = Vector3.Reflect(incomingDirection, normal);
 
-            float angleVariation = Random.Range(-30f, 30f);  
-            Quaternion rotation = Quaternion.AngleAxis(angleVariation, Vector3.up); 
+            float angleVariation = Random.Range(-30f, 30f);
+            Quaternion rotation = Quaternion.AngleAxis(angleVariation, Vector3.up);
 
             // Aplica la variabilidad a la dirección de rebote
             bounceDirection = rotation * bounceDirection;

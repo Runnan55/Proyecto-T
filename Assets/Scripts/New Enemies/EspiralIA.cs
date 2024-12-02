@@ -7,16 +7,16 @@ public class EspiralIA : EnemyLife
     public EnemyState currentState;
 
     [Header("Configuración de Ataque")]
-    public float waitTimeBeforeShooting = 2f;
-    public int minProjectiles = 6;
-    public int maxProjectiles = 8;
+    public int projectilesToShoot = 6; // Número fijo de proyectiles
     public GameObject projectilePrefab;
     public Transform shootingPoint;
     public float shootingInterval = 0.2f;
+    public float attackCooldownTime = 2f; // Tiempo que el enemigo no podrá atacar después de recibir daño
 
     [Header("Configuración de Teletransporte")]
     public float teleportRadius = 10f;
     public float heightOffset = 1f;
+    public GameObject teleportMarkerPrefab;
 
     [Header("Empuje")]
     public float pushForce = 10f;
@@ -29,11 +29,13 @@ public class EspiralIA : EnemyLife
     [Header("Cubo de Estado")]
     public GameObject statusCube;
 
+    private bool isTeleporting = false;
+    private bool canAttack = true; // Booleano que controla si el enemigo puede atacar
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         currentState = EnemyState.Waiting;
-
         StartCoroutine(FindPlayerWithDelay());
         UpdateStatusCubeColor();
     }
@@ -41,29 +43,26 @@ public class EspiralIA : EnemyLife
     private IEnumerator FindPlayerWithDelay()
     {
         yield return new WaitForSeconds(0.5f);
-
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        if (player == null)
-        {
-            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
-        }
+        if (player == null) Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
     }
 
     private void Update()
     {
         if (player == null || isBeingPushed) return;
 
-        // Actualizar rotación del enemigo hacia el jugador
         LookAtPlayer();
 
         switch (currentState)
         {
             case EnemyState.Waiting:
-                StartCoroutine(WaitAndShoot());
+                if (canAttack) // Solo se inicia el ataque si puede atacar
+                {
+                    StartCoroutine(WaitAndShoot());
+                }
                 break;
             case EnemyState.Shooting:
-                // El disparo ocurre en una corrutina separada.
+                // Disparo ocurre en la corrutina.
                 break;
             case EnemyState.Teleporting:
                 TeleportAroundPlayer();
@@ -80,52 +79,51 @@ public class EspiralIA : EnemyLife
     {
         base.ReceiveDamage(damage);
 
-        if (!isBeingPushed)
+        if (!isBeingPushed && canAttack)
         {
+            // Si puede atacar, desactivar el ataque y comenzar el tiempo de recarga
+            StartCoroutine(HandleAttackCooldown());
             StartCoroutine(PushBack());
         }
+    }
+
+    private IEnumerator HandleAttackCooldown()
+    {
+        canAttack = false; // Bloquear el ataque
+        yield return new WaitForSeconds(attackCooldownTime); // Esperar el tiempo de recarga
+        canAttack = true; // Permitir nuevamente el ataque
     }
 
     private IEnumerator PushBack()
     {
         if (rb == null || player == null) yield break;
 
-        // Cambiar estado y deshabilitar movimiento lógico
         isBeingPushed = true;
         currentState = EnemyState.Stunned;
         rb.isKinematic = false;
 
-        // Aplicar fuerza de empuje
         Vector3 pushDirection = (transform.position - player.position).normalized;
         rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
 
-        // Esperar la duración del empuje
         yield return new WaitForSeconds(pushDuration);
 
-        // Restaurar control del enemigo
         rb.isKinematic = true;
         isBeingPushed = false;
-
-        // Volver al ciclo normal
         currentState = EnemyState.Waiting;
     }
 
     private IEnumerator WaitAndShoot()
     {
         currentState = EnemyState.Shooting;
+        yield return new WaitForSeconds(2f); // Tiempo de espera antes de disparar
 
-        // Esperar antes de disparar
-        yield return new WaitForSeconds(waitTimeBeforeShooting);
-
-        // Verificar que el prefab no sea nulo antes de instanciar
         if (projectilePrefab == null)
         {
             Debug.LogError("ProjectilePrefab no está asignado o ha sido destruido.");
-            yield break; // Salir de la corrutina si no hay un prefab válido
+            yield break; // Salir si no hay prefab
         }
 
-        // Disparar proyectiles
-        int projectilesToShoot = Random.Range(minProjectiles, maxProjectiles + 1);
+        // Disparar el número fijo de proyectiles
         for (int i = 0; i < projectilesToShoot; i++)
         {
             if (shootingPoint != null)
@@ -140,41 +138,59 @@ public class EspiralIA : EnemyLife
             yield return new WaitForSeconds(shootingInterval);
         }
 
-        // Cambiar al estado de teletransporte
         currentState = EnemyState.Teleporting;
     }
 
     private void TeleportAroundPlayer()
     {
-        if (player == null) return;
+        if (player == null || isTeleporting) return;
 
-        // Generar una posición aleatoria dentro de un círculo
-        Vector2 randomCircle = Random.insideUnitCircle * teleportRadius;
-        Vector3 teleportPosition = new Vector3(
-            player.position.x + randomCircle.x,
-            player.position.y + heightOffset,
-            player.position.z + randomCircle.y
-        );
+        isTeleporting = true;
+        Vector3 teleportPosition = GenerateTeleportPosition();
 
-        // Mover al enemigo
+        if (teleportMarkerPrefab != null)
+        {
+            GameObject marker = Instantiate(teleportMarkerPrefab, teleportPosition, Quaternion.identity);
+            Destroy(marker, 1f); // Eliminar el marcador después de un segundo
+        }
+
+        StartCoroutine(TeleportAfterDelay(teleportPosition));
+    }
+
+    private Vector3 GenerateTeleportPosition()
+    {
+        float minDistance = 10f;
+        float maxDistance = teleportRadius;
+
+        Vector3 teleportPosition;
+        do
+        {
+            Vector3 randomDirection = Random.onUnitSphere;
+            randomDirection.y = 0; // Mantener el teletransporte en el plano horizontal
+            float randomDistance = Random.Range(minDistance, maxDistance);
+            teleportPosition = player.position + randomDirection * randomDistance;
+        } while (Vector3.Distance(player.position, teleportPosition) < minDistance);
+
+        return teleportPosition;
+    }
+
+    private IEnumerator TeleportAfterDelay(Vector3 teleportPosition)
+    {
+        yield return new WaitForSeconds(1.8f); // Esperar antes de teletransportarse
+
         transform.position = teleportPosition;
-
-        // Debug para verificar teletransporte
         Debug.Log("Teletransportado a: " + teleportPosition);
 
-        // Cambiar al estado de espera para reiniciar el ciclo
         currentState = EnemyState.Waiting;
+        isTeleporting = false;
     }
 
     private void LookAtPlayer()
     {
         if (player != null)
         {
-            // Calcular la dirección hacia el jugador
             Vector3 direction = player.position - transform.position;
-            direction.y = 0; // Mantener la rotación únicamente en el plano horizontal
-
-            // Rotar suavemente hacia el jugador
+            direction.y = 0; // Mantener la rotación en el plano horizontal
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
@@ -186,21 +202,16 @@ public class EspiralIA : EnemyLife
         {
             Renderer cubeRenderer = statusCube.GetComponent<Renderer>();
 
-            switch (currentState)
+            Color stateColor = currentState switch
             {
-                case EnemyState.Waiting:
-                    cubeRenderer.material.color = Color.green;
-                    break;
-                case EnemyState.Shooting:
-                    cubeRenderer.material.color = Color.red;
-                    break;
-                case EnemyState.Teleporting:
-                    cubeRenderer.material.color = Color.blue;
-                    break;
-                case EnemyState.Stunned:
-                    cubeRenderer.material.color = Color.yellow;
-                    break;
-            }
+                EnemyState.Waiting => Color.green,
+                EnemyState.Shooting => Color.red,
+                EnemyState.Teleporting => Color.blue,
+                EnemyState.Stunned => Color.yellow,
+                _ => Color.white
+            };
+
+            cubeRenderer.material.color = stateColor;
         }
         else
         {
