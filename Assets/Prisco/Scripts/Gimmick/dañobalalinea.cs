@@ -41,11 +41,8 @@ public class dañobalalinea : MonoBehaviour
                 Debug.LogError("playerLife is not initialized.");
             }
 
-            Destroy(gameObject);
+            
         }
-        else if (other.CompareTag("Walls"))
-        {
-            Destroy(gameObject);
-        }
+       
     }
 }
