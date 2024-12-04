@@ -4,19 +4,52 @@ using UnityEngine;
 
 public class BossMovement : MonoBehaviour
 {
-    public Transform[] zonePoints; // Array de puntos fijos para las zonas
-    private Transform player;       // Referencia al jugador
+    [Header("Jugador y Movimiento")]
+    public Transform[] zonePoints; // Puntos fijos para las zonas
+    private Transform player;      // Referencia al jugador
     public float moveSpeed = 5f;   // Velocidad de movimiento del Boss
-    public float rotationSpeed = 5f; // Velocidad para ajustar la rotación
+    public float rotationSpeed = 5f; // Velocidad de rotación
 
     private Vector3 currentTarget; // Punto al que se mueve el Boss
 
+    [Header("Rangos de Distancia")]
+    public float closeRange = 5f; // Distancia considerada cuerpo a cuerpo
+    public float midRange = 15f; // Distancia considerada rango medio
+    public float farRange = 25f; // Distancia considerada largo alcance
+
+    [Header("Fases y Daño")]
+    public int phase = 1; // Fase del combate
+    public float coreDamageThreshold = 30f; // Umbral para activar explosión propia
+    private float coreDamageTaken = 0f; // Daño recibido en el núcleo
+
+    [Header("Detección del Jugador")]
+    private float behindTime = 0f; // Tiempo que el jugador ha pasado detrás del jefe
+    public float behindThreshold = 3f; // Tiempo necesario para el ataque de giro
+
+    [Header("Prefabs y Arena")]
+    public GameObject gearProjectile; // Prefab del engranaje cortante
+    public GameObject gearTrapBot; // Prefab del robot trampa
+    public Transform[] arenaBounds; // Límites de la arena para rebotar engranajes
+    public Transform coreTransform; // Transform del núcleo del jefe
+
+    [Header("Cooldowns de Ataques")]
+    private float lastSpinAttackTime = -10f; // Momento del último Spin Attack
+    public float spinAttackCooldown = 5f;   // Tiempo entre Spin Attacks
+
+    private float lastSweepingStrikeTime = -10f;
+    public float sweepingStrikeCooldown = 8f;
+
+    private float lastCoreBurstTime = -10f;
+    public float coreBurstCooldown = 12f;
+
+    private float lastGearTrapTime = -10f;
+    public float gearTrapCooldown = 15f;
+
     void Start()
     {
-        // Inicializa el objetivo al punto de la primera zona por defecto (opcional)
+        // Inicializa el objetivo al punto de la primera zona por defecto
         currentTarget = zonePoints[0].position;
         StartCoroutine(FindPlayerWithDelay());
-
     }
 
     private IEnumerator FindPlayerWithDelay()
@@ -30,6 +63,7 @@ public class BossMovement : MonoBehaviour
             Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
         }
     }
+
     // Este método es llamado cuando el jugador entra en una zona
     public void OnPlayerEnterZone(int zoneID)
     {
@@ -43,16 +77,15 @@ public class BossMovement : MonoBehaviour
     {
         MoveTowardsTarget(); // Mueve al Boss hacia el destino actual
         RotateTowardsPlayer(); // Ajusta la rotación del Boss para mirar al jugador
+        EvaluateConditions(); // Evalúa condiciones para ataques
     }
 
-    // Mueve al Boss hacia el punto objetivo
     private void MoveTowardsTarget()
     {
         // Mueve al Boss hacia el objetivo (sin NavMesh)
         transform.position = Vector3.MoveTowards(transform.position, currentTarget, moveSpeed * Time.deltaTime);
     }
 
-    // Ajusta la rotación del Boss para mirar hacia el jugador
     void RotateTowardsPlayer()
     {
         // Calcula la dirección hacia el jugador
@@ -65,4 +98,79 @@ public class BossMovement : MonoBehaviour
         // Aplica la rotación de manera suave
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
+
+    void EvaluateConditions()
+    {
+        Vector3 toPlayer = player.position - transform.position;
+        float angle = Vector3.Angle(transform.forward, toPlayer);
+        float distance = toPlayer.magnitude;
+
+        // Condición: Si el jugador está detrás del jefe
+        if (angle > 120f)
+        {
+            behindTime += Time.deltaTime;
+            if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
+            {
+                SpinAttack();
+                behindTime = 0f;
+                lastSpinAttackTime = Time.time;
+            }
+        }
+        else
+        {
+            behindTime = 0f;
+        }
+
+        // Condición: Si el jugador está a distancia
+        if (distance > farRange && Time.time > lastCoreBurstTime + coreBurstCooldown)
+        {
+            CoreBurst();
+            lastCoreBurstTime = Time.time;
+        }
+        else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
+        {
+            SweepingStrike();
+            lastSweepingStrikeTime = Time.time;
+        }
+
+        // Condición: Usa la Trampa de Engranajes ocasionalmente
+        if (phase == 1 && Time.time > lastGearTrapTime + gearTrapCooldown)
+        {
+            GearTrap();
+            lastGearTrapTime = Time.time;
+        }
+    }
+
+    void SpinAttack()
+    {
+        Debug.Log("Realizando Spin Attack!");
+        // Animación y daño en área
+    }
+
+    void SweepingStrike()
+    {
+        Debug.Log("Realizando Sweeping Strike!");
+        // Animación de barrido
+        for (int i = 0; i < 3; i++)
+        {
+           // Instantiate(gearProjectile, transform.position, Quaternion.identity);
+        }
+    }
+
+    public void CoreBurst()
+    {
+        if (coreDamageTaken >= coreDamageThreshold)
+        {
+            Debug.Log("Realizando Explosión Propia!");
+            coreDamageTaken = 0f;
+        }
+    }
+
+   void GearTrap()
+    {
+        Debug.Log("Realizando Trampa de Engranajes!");
+      //  Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);
+        // Instantiate(gearTrapBot, arenaBounds[1].position, Quaternion.identity);
+    }
+     
 }
