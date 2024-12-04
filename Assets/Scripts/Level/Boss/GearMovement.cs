@@ -65,4 +65,14 @@ public class GearMovement : MonoBehaviour
             playerController = null; // Limpiar la referencia al salir del engranaje
         }
     }
+
+    private void StopMovement()
+    {
+        rotationSpeed = 0;
+    }
+
+    private void ResumeMovement()
+    {
+        rotationSpeed = 10;
+    }
 }
