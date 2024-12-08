@@ -19,8 +19,7 @@ public class BossMovement : MonoBehaviour
 
     [Header("Fases y Daño")]
     public int phase = 1; // Fase del combate
-    public float coreDamageThreshold = 30f; // Umbral para activar explosión propia
-    private float coreDamageTaken = 0f; // Daño recibido en el núcleo
+  
 
     [Header("Detección del Jugador")]
     private float behindTime = 0f; // Tiempo que el jugador ha pasado detrás del jefe
@@ -29,8 +28,12 @@ public class BossMovement : MonoBehaviour
     [Header("Prefabs y Arena")]
     public GameObject gearProjectile; // Prefab del engranaje cortante
     public GameObject gearTrapBot; // Prefab del robot trampa
+    public GameObject gearTrapBot2; // Prefab del robot trampa
     public Transform[] arenaBounds; // Límites de la arena para rebotar engranajes
     public Transform coreTransform; // Transform del núcleo del jefe
+    public GameObject barrido;
+    public GameObject explosionPrefab; // Prefab de la explosión
+
 
     [Header("Cooldowns de Ataques")]
     private float lastSpinAttackTime = -10f; // Momento del último Spin Attack
@@ -111,7 +114,7 @@ public class BossMovement : MonoBehaviour
             behindTime += Time.deltaTime;
             if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
             {
-                SpinAttack();
+                CoreBurst();
                 behindTime = 0f;
                 lastSpinAttackTime = Time.time;
             }
@@ -124,12 +127,12 @@ public class BossMovement : MonoBehaviour
         // Condición: Si el jugador está a distancia
         if (distance > farRange && Time.time > lastCoreBurstTime + coreBurstCooldown)
         {
-            CoreBurst();
+            SweepingStrike();
             lastCoreBurstTime = Time.time;
         }
         else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
         {
-            SweepingStrike();
+            SpinAttack();
             lastSweepingStrikeTime = Time.time;
         }
 
@@ -145,6 +148,9 @@ public class BossMovement : MonoBehaviour
     {
         Debug.Log("Realizando Spin Attack!");
         // Animación y daño en área
+        GameObject barridoAtk = Instantiate(barrido, coreTransform.position, Quaternion.identity);
+        barridoAtk.GetComponent<Barrido>().ExecuteSweep();
+
     }
 
     void SweepingStrike()
@@ -153,24 +159,27 @@ public class BossMovement : MonoBehaviour
         // Animación de barrido
         for (int i = 0; i < 3; i++)
         {
-           // Instantiate(gearProjectile, transform.position, Quaternion.identity);
+            Instantiate(gearProjectile, transform.position, Quaternion.identity);
         }
     }
 
     public void CoreBurst()
     {
-        if (coreDamageTaken >= coreDamageThreshold)
-        {
+       
+        
             Debug.Log("Realizando Explosión Propia!");
-            coreDamageTaken = 0f;
-        }
+            GameObject explosion = Instantiate(explosionPrefab, coreTransform.position, Quaternion.identity);
+
+            // Llamar al método TriggerExplosion del objeto recién instanciado
+            explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
+        
     }
 
    void GearTrap()
     {
         Debug.Log("Realizando Trampa de Engranajes!");
-      //  Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);
-        // Instantiate(gearTrapBot, arenaBounds[1].position, Quaternion.identity);
+        Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);
+        Instantiate(gearTrapBot2, arenaBounds[1].position, Quaternion.identity);
     }
      
 }

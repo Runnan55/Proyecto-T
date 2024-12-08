@@ -47,9 +47,7 @@ public class Barrido : MonoBehaviour
         foreach (var spawn in projectileSpawns)
         {
             GameObject projectile = Instantiate(projectilePrefab, spawn.position, spawn.rotation);
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
-            rb.velocity = spawn.forward * projectileSpeed; // Aplicar movimiento al proyectil
-            Destroy(projectile, 5f); // Destruir el proyectil tras 5 segundos
+           
         }
 
         isSweeping = false; // Marca que el barrido ha terminado
