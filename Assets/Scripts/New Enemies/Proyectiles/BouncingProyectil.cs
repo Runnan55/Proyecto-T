@@ -32,8 +32,15 @@ public class BouncingProyectil : MonoBehaviour
                 // Calcular el rebote usando la normal de la pared
                 Vector3 normal = other.transform.forward;
 
-                // Reflejar la dirección de la velocidad usando la normal
-                velocity = Vector3.Reflect(velocity, normal);
+                // Agregar una ligera desviación al ángulo de la normal para obtener un rebote con ángulo
+                Vector3 reflectDir = Vector3.Reflect(velocity, normal);
+
+                // Aplicar un pequeño ángulo aleatorio para desviar ligeramente el rebote
+                float angleVariance = Random.Range(-15f, 15f);  // Desviación entre -15 y 15 grados
+                reflectDir = Quaternion.Euler(0, angleVariance, 0) * reflectDir;
+
+                // Asegurarnos de que la dirección del movimiento sea normalizada y multiplicada por la velocidad
+                velocity = reflectDir.normalized * speed;
 
                 bounceCount++; // Incrementar el contador de rebotes
             }
