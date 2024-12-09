@@ -16,7 +16,7 @@ public class DamageDealer : MonoBehaviour
         }
 
         EnemyLife enemy = other.GetComponent<EnemyLife>();
-        BossHealth bossHealth = other.GetComponent<BossHealth>();
+        BossLIfe bossLife = other.GetComponent<BossLIfe>();
 
         if (enemy != null)
         {
@@ -25,9 +25,9 @@ public class DamageDealer : MonoBehaviour
             damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
         }
 
-        if (bossHealth != null)
+        if (bossLife != null)
         {
-            bossHealth.TakeDamage(damageAmount);
+            bossLife.TakeDamage(damageAmount);
             damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
         }
     }

@@ -14,10 +14,18 @@ public class EnemyVision : MonoBehaviour
 
     private void Start()
     {
-        GameObject playerObject = GameObject.FindWithTag("Player");
-        if (playerObject != null)
+        StartCoroutine(FindPlayerWithDelay());
+    }
+
+    private IEnumerator FindPlayerWithDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (player == null)
         {
-            player = playerObject.transform;
+            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
         }
     }
     public bool PlayerEnRango()
