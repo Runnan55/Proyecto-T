@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossMovement : MonoBehaviour
+public class BossMovement : BossLIfe
 {
     [Header("Jugador y Movimiento")]
     public Transform[] zonePoints; // Puntos fijos para las zonas
@@ -11,7 +11,7 @@ public class BossMovement : MonoBehaviour
     public float rotationSpeed = 5f; // Velocidad de rotación
 
     private Vector3 currentTarget; // Punto al que se mueve el Boss
-
+    
     [Header("Rangos de Distancia")]
     public float closeRange = 5f; // Distancia considerada cuerpo a cuerpo
     public float midRange = 15f; // Distancia considerada rango medio
@@ -48,8 +48,10 @@ public class BossMovement : MonoBehaviour
     private float lastGearTrapTime = -10f;
     public float gearTrapCooldown = 15f;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         // Inicializa el objetivo al punto de la primera zona por defecto
         currentTarget = zonePoints[0].position;
         StartCoroutine(FindPlayerWithDelay());
@@ -81,6 +83,11 @@ public class BossMovement : MonoBehaviour
         MoveTowardsTarget(); // Mueve al Boss hacia el destino actual
         RotateTowardsPlayer(); // Ajusta la rotación del Boss para mirar al jugador
         EvaluateConditions(); // Evalúa condiciones para ataques
+        if (currentHealth <= maxHealth / 2 && phase == 1)
+        {
+            phase = 2;
+            Debug.Log("entramos en fase2");
+        }
     }
 
     private void MoveTowardsTarget()
@@ -108,41 +115,82 @@ public class BossMovement : MonoBehaviour
         float angle = Vector3.Angle(transform.forward, toPlayer);
         float distance = toPlayer.magnitude;
 
-        // Condición: Si el jugador está detrás del jefe
-        if (angle > 120f)
+        // Fase 1
+        if (phase == 1)
         {
-            behindTime += Time.deltaTime;
-            if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
+            if (angle > 120f)
             {
-                CoreBurst();
+                behindTime += Time.deltaTime;
+                if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
+                {
+                    CoreBurst();
+                    behindTime = 0f;
+                    lastSpinAttackTime = Time.time;
+                }
+            }
+            else
+            {
                 behindTime = 0f;
-                lastSpinAttackTime = Time.time;
+            }
+
+            if (distance > farRange && Time.time > lastCoreBurstTime + coreBurstCooldown)
+            {
+                SweepingStrike();
+                lastCoreBurstTime = Time.time;
+            }
+            else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
+            {
+                SpinAttack();
+                lastSweepingStrikeTime = Time.time;
+            }
+
+            if (phase == 1 && Time.time > lastGearTrapTime + gearTrapCooldown)
+            {
+                GearTrap();
+                lastGearTrapTime = Time.time;
             }
         }
-        else
-        {
-            behindTime = 0f;
-        }
 
-        // Condición: Si el jugador está a distancia
-        if (distance > farRange && Time.time > lastCoreBurstTime + coreBurstCooldown)
+        // Fase 2
+        if (phase == 2)
         {
-            SweepingStrike();
-            lastCoreBurstTime = Time.time;
-        }
-        else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
-        {
-            SpinAttack();
-            lastSweepingStrikeTime = Time.time;
-        }
+            // Realizar el salto aplastante si el jugador está detrás durante 3 segundos
+            if (angle > 120f)
+            {
+                behindTime += Time.deltaTime;
+                if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
+                {
 
-        // Condición: Usa la Trampa de Engranajes ocasionalmente
-        if (phase == 1 && Time.time > lastGearTrapTime + gearTrapCooldown)
-        {
-            GearTrap();
-            lastGearTrapTime = Time.time;
+                    behindTime = 0f; // Reiniciamos el temporizador
+                    lastSpinAttackTime = Time.time;
+                }
+            }
+            else
+            {
+                behindTime = 0f; // Reiniciamos si el jugador no está detrás
+            }
+
+            // Llamada a la Tormenta de Engranajes
+            if (Time.time > lastCoreBurstTime + coreBurstCooldown)
+            {
+                TormentaDeEngranajes(); // Realizamos la tormenta de engranajes
+                lastCoreBurstTime = Time.time;
+            }
+
+            // Llamar a la descarga de orbes (attack)
+            if (distance > farRange && Time.time > lastGearTrapTime + gearTrapCooldown)
+            {
+                OrbeAttack(); // Realizamos la descarga de orbes
+                lastCoreBurstTime = Time.time;
+            }
+            else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
+            {
+                SpinAttack();
+                lastSweepingStrikeTime = Time.time;
+            }
         }
     }
+
 
     void SpinAttack()
     {
@@ -181,5 +229,21 @@ public class BossMovement : MonoBehaviour
         Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);
         Instantiate(gearTrapBot2, arenaBounds[1].position, Quaternion.identity);
     }
-     
+
+
+    void OrbeAttack()
+    {
+        Debug.Log("Realizando Descarga de Orbes");
+        // Lógica para liberar 10 orbes de energía alrededor del jefe
+        // Se pueden instanciar los orbes y hacer que se muevan
+    }
+
+    // Salto Aplastante
+
+    // Tormenta de Engranajes
+    void TormentaDeEngranajes()
+    {
+        Debug.Log("Realizando Tormenta de Engranajes");
+        // Lógica para lanzar múltiples engranajes desde el techo
+    }
 }

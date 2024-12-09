@@ -5,14 +5,14 @@ using UnityEngine;
 public class BossLIfe : MonoBehaviour
 {
     public float maxHealth = 100f;
-    private float currentHealth;
+    public float currentHealth;
 
     public EnemyVision enemyVision; // Referencia al script de visión
 
     public float frontDamageMultiplier = 0.25f;
     public float normalDamageMultiplier = 1f;
 
-    private void Start()
+    protected virtual void Start()
     {
         currentHealth = maxHealth;
     }
