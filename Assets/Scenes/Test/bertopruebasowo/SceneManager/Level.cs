@@ -27,6 +27,11 @@ public class Level : MonoBehaviour
     public float teleportDelay = 1f;
     public Teleporter teleporter;
 
+    [Header("Time config")]
+    public bool modifyTime = false;
+    public float maxTime = 600f;
+    private Life playerLife;
+
     [Header("Warning config")]
     public GameObject warning;
     [SerializeField] private FMODUnity.EventReference waveStart;
@@ -50,6 +55,16 @@ public class Level : MonoBehaviour
             StartNextWave();
             hasPlayerEntered = true; 
             Debug.Log(hasPlayerEntered);
+
+            if (modifyTime)
+            {
+                playerLife = other.GetComponent<Life>();
+                if (playerLife != null)
+                {
+                    playerLife.maxTime = maxTime;
+                    playerLife.StartTimer();
+                }
+            }
         }
     }
 
@@ -129,6 +144,11 @@ public class Level : MonoBehaviour
                 if (teleportAfterLastWave && teleporter != null)
                 {
                     StartCoroutine(TeleportPlayerWithDelay());
+                }
+
+                if (modifyTime && playerLife != null)
+                {
+                    playerLife.StopTimer();
                 }
             }
             else

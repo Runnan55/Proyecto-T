@@ -137,53 +137,66 @@ public class Life : MonoBehaviour
     }
 
     void Update()
-{
-    if (currentTime > 0)
     {
-        currentTime -= Time.deltaTime;
-    }
-
-    else if (timeBank > 0)
-    {
-        timeBank -= Time.deltaTime;
-
-/*         if (timeBank < 0)
+        if (!isAlive && Input.GetKeyDown(KeyCode.F))
         {
-            currentTime += timeBank; // Añadir el tiempo restante del banco
-            timeBank = 0;
-        } */
-    }
-    else
-    {
-        if (isAlive)
-        {
-            Death();
+            deathScreen.gameObject.SetActive(false);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-    }
 
-    // Asegurarse de que currentTime no sea negativo
-    if (currentTime < 0)
-    {
-        currentTime = 0;
-    }
-
-    UpdateTimeText();
-    UpdateTimeImage();
-    UpdateTimeBankText(); // Actualizar el texto del banco del tiempo
-
-    if (!isAlive && Input.GetKeyDown(KeyCode.F))
-    {
-        deathScreen.gameObject.SetActive(false);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    // Depuración: Sumar 10 segundos al banco del tiempo al pulsar B
-    if (Input.GetKeyDown(KeyCode.B))
-    {
-        timeBank += 6;
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            timeBank += 6;
+            UpdateTimeBankText();
+        }
+            
+        UpdateTimeText();
+        UpdateTimeImage();
         UpdateTimeBankText();
     }
-}
+
+    public void StartTimer()
+    {
+        StartCoroutine(TimerCoroutine());
+    }
+
+    public void StopTimer()
+    {
+        StopCoroutine(TimerCoroutine());
+    }
+
+    IEnumerator TimerCoroutine()
+    {
+        while (currentTime > 0 || timeBank > 0)
+        {
+            if (currentTime > 0)
+            {
+                currentTime -= Time.deltaTime;
+            }
+            else if (timeBank > 0)
+            {
+                timeBank -= Time.deltaTime;
+            }
+            else
+            {
+                if (isAlive)
+                {
+                    Death();
+                }
+            }
+
+            if (currentTime < 0)
+            {
+                currentTime = 0;
+            }
+
+            UpdateTimeText();
+            UpdateTimeImage();
+            UpdateTimeBankText();
+
+            yield return null;
+        }
+    }
 
     public void Death()
     {
@@ -373,32 +386,26 @@ public class Life : MonoBehaviour
         }
     }
 
-    // Método para ir a la siguiente sala
     public void GoToNextRoom(float newMaxTime)
     {
-        // Ajustar la vida máxima y la vida actual
         maxTime = newMaxTime;
         currentTime = maxTime;
 
-        // Guardar tiempo sobrante en el banco del tiempo
         if (currentTime > 0 && currentTime <= 10)
         {
             timeBank += currentTime;
         }
 
-        // Limitar el banco del tiempo a un máximo de 10 segundos
         if (timeBank > 10)
         {
             timeBank = 10;
         }
 
-        // Actualizar la UI
         UpdateTimeText();
         UpdateTimeImage();
         UpdateTimeBankText();
     }
 
-    // Método para limpiar el banco del tiempo
     public void ClearTimeBank()
     {
         timeBank = 0;
