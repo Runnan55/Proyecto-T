@@ -28,7 +28,10 @@ public class BossMovement : BossLIfe
 
     [Header("Prefabs y Arena")]
     public GameObject gearProjectile; // Prefab del engranaje cortante
-    public GameObject orbeProjectile;
+    public GameObject orbePrefab; // Prefab del orbe
+    public GameObject tormenta; // Prefab del orbe
+    public Transform[] orbePositions; // Posiciones predefinidas para los orbes
+    public Transform[] stormGearPositions;
     public GameObject gearTrapBot; // Prefab del robot trampa
     public GameObject gearTrapBot2; // Prefab del robot trampa
     public GameObject[] smokeTramps;
@@ -51,11 +54,15 @@ public class BossMovement : BossLIfe
     private float lastGearTrapTime = -10f;
     public float gearTrapCooldown = 15f;
 
+    public float orbeCooldown = 5f;  // Tiempo entre cada ataque de orbes
+    private float lastOrbeAttackTime = -10f;  // Marca el último momento de invocación de orbes
+
     private int zonaActual=0;
     private bool saltos=false;
 
     [Header("Referencias a Ataques y Otros Componentes")]
     private BossJumpAttack jumpAttack; // Referencia al script de salto
+    public OrbeAttackControler orbeAttackController;
     protected override void Start()
     {
         base.Start();
@@ -214,10 +221,10 @@ public class BossMovement : BossLIfe
             }
 
             // Llamar a la descarga de orbes (attack)
-            if (distance > midRange && Time.time > lastGearTrapTime + gearTrapCooldown)
+            if (distance > midRange && Time.time > lastOrbeAttackTime + orbeCooldown)
             {
-                OrbeAttack(); // Realizamos la descarga de orbes
-                lastCoreBurstTime = Time.time;
+                orbeAttackController.PerformOrbeAttack(); // Llamamos al script OrbeAttackController
+                lastOrbeAttackTime = Time.time;
             }
             else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
             {
@@ -286,39 +293,31 @@ public class BossMovement : BossLIfe
     }
 
 
-    void OrbeAttack()
-    {
-        Debug.Log("Realizando Descarga de Orbes");
-
-        float radius = 5f;
-
-        int orbeCount = 10;
-
-        float angleStep = 360f / orbeCount;
-
-        for (int i = 0; i < orbeCount; i++)
-        {
-            float angle = i * angleStep * Mathf.Deg2Rad;
-
-            Vector3 orbePosition = new Vector3(
-                transform.position.x + Mathf.Cos(angle) * radius,
-                transform.position.y,
-                transform.position.z + Mathf.Sin(angle) * radius
-            );
-
-            GameObject orbe = Instantiate(orbeProjectile, orbePosition, Quaternion.identity);
-
-            Vector3 direction = (orbePosition - transform.position).normalized;
-            orbe.GetComponent<Rigidbody>().velocity = direction * 5f; // Velocidad del orbe
-
-            orbe.transform.rotation = Quaternion.LookRotation(direction);
-        }
-    }
 
     // Tormenta de Engranajes
     void TormentaDeEngranajes()
     {
         Debug.Log("Realizando Tormenta de Engranajes");
-        // Lógica para lanzar múltiples engranajes desde el techo
+
+        // Seleccionamos el número de engranajes a instanciar (puedes ajustarlo a tu gusto)
+        int numEngranajes = 5;
+
+        // Aseguramos que tengamos al menos una posición válida para instanciar
+        if (stormGearPositions.Length == 0)
+        {
+            Debug.LogWarning("No hay posiciones definidas para la tormenta de engranajes");
+            return;
+        }
+
+        // Instanciamos los engranajes en posiciones aleatorias
+        for (int i = 0; i < numEngranajes; i++)
+        {
+            // Seleccionamos una posición aleatoria del array de posiciones
+            int randomIndex = Random.Range(0, stormGearPositions.Length);
+            Transform randomPosition = stormGearPositions[randomIndex];
+
+            // Instanciamos el prefab del engranaje en la posición seleccionada
+            Instantiate(gearProjectile, randomPosition.position, Quaternion.identity);
+        }
     }
 }
