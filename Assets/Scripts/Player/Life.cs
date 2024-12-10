@@ -155,14 +155,19 @@ public class Life : MonoBehaviour
         UpdateTimeBankText();
     }
 
-    public void StartTimer()
+    public void StartTimer(float initialTime)
     {
+        currentTime = initialTime;
+        UpdateTimeText();
+        UpdateTimeImage();
+        UpdateTimeBankText();
+
         StartCoroutine(TimerCoroutine());
     }
 
     public void StopTimer()
     {
-        StopCoroutine(TimerCoroutine());
+        StopAllCoroutines();
     }
 
     IEnumerator TimerCoroutine()

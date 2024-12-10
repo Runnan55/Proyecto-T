@@ -62,7 +62,7 @@ public class Level : MonoBehaviour
                 if (playerLife != null)
                 {
                     playerLife.maxTime = maxTime;
-                    playerLife.StartTimer();
+                    playerLife.StartTimer(maxTime);
                 }
             }
         }
