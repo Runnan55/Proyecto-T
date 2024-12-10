@@ -11,6 +11,8 @@ public class BossMovement : BossLIfe
     public float rotationSpeed = 5f; // Velocidad de rotación
 
     private Vector3 currentTarget; // Punto al que se mueve el Boss
+    private Vector3 FallTarget;
+
     
     [Header("Rangos de Distancia")]
     public float closeRange = 5f; // Distancia considerada cuerpo a cuerpo
@@ -29,6 +31,7 @@ public class BossMovement : BossLIfe
     public GameObject gearProjectile; // Prefab del engranaje cortante
     public GameObject gearTrapBot; // Prefab del robot trampa
     public GameObject gearTrapBot2; // Prefab del robot trampa
+    public GameObject[] smokeTramps;
     public Transform[] arenaBounds; // Límites de la arena para rebotar engranajes
     public Transform coreTransform; // Transform del núcleo del jefe
     public GameObject barrido;
@@ -48,6 +51,11 @@ public class BossMovement : BossLIfe
     private float lastGearTrapTime = -10f;
     public float gearTrapCooldown = 15f;
 
+    private int zonaActual=0;
+    private bool saltos=false;
+
+    [Header("Referencias a Ataques y Otros Componentes")]
+    private BossJumpAttack jumpAttack; // Referencia al script de salto
     protected override void Start()
     {
         base.Start();
@@ -55,6 +63,7 @@ public class BossMovement : BossLIfe
         // Inicializa el objetivo al punto de la primera zona por defecto
         currentTarget = zonePoints[0].position;
         StartCoroutine(FindPlayerWithDelay());
+        jumpAttack = GetComponent<BossJumpAttack>();
     }
 
     private IEnumerator FindPlayerWithDelay()
@@ -72,10 +81,30 @@ public class BossMovement : BossLIfe
     // Este método es llamado cuando el jugador entra en una zona
     public void OnPlayerEnterZone(int zoneID)
     {
-        if (zoneID >= 0 && zoneID < zonePoints.Length)
+        if (saltos)
         {
-            currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
+            if (zoneID == zonaActual)
+            {
+                if (zoneID >= 0 && zoneID < zonePoints.Length)
+                {
+                    currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
+                    zonaActual = zoneID;
+                    saltos = false;
+                    
+                        Debug.Log("trampas desactivas");
+                    
+                }
+            }
         }
+        else
+        {
+            if (zoneID >= 0 && zoneID < zonePoints.Length)
+            {
+                currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
+                zonaActual = zoneID;
+            }
+        }
+       
     }
 
     void Update()
@@ -160,7 +189,14 @@ public class BossMovement : BossLIfe
                 behindTime += Time.deltaTime;
                 if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
                 {
+                    OnPlayerEnterZone(GetRandomIndexExcluding(zonaActual));                   
+                    
+                    jumpAttack.SaltoAplastante(currentTarget);
 
+                    saltos = true;
+                    StartCoroutine(cultdown());
+                   
+                    
                     behindTime = 0f; // Reiniciamos el temporizador
                     lastSpinAttackTime = Time.time;
                 }
@@ -191,6 +227,25 @@ public class BossMovement : BossLIfe
         }
     }
 
+    
+    private IEnumerator cultdown()
+    {
+        yield return new WaitForSeconds(3);  // Esperar 1 segundo.
+        Debug.Log("trampas activas");
+
+    }
+
+    public int GetRandomIndexExcluding(int excludedIndex)
+    {
+        // Obtener un índice aleatorio del rango total
+        int randomIndex;
+        do
+        {
+            randomIndex = Random.Range(0, zonePoints.Length);
+        } while (randomIndex == excludedIndex);
+
+        return randomIndex;
+    }
 
     void SpinAttack()
     {
@@ -238,7 +293,6 @@ public class BossMovement : BossLIfe
         // Se pueden instanciar los orbes y hacer que se muevan
     }
 
-    // Salto Aplastante
 
     // Tormenta de Engranajes
     void TormentaDeEngranajes()
