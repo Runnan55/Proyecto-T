@@ -11,7 +11,6 @@ public class BossMovement : BossLIfe
     public float rotationSpeed = 5f; // Velocidad de rotación
 
     private Vector3 currentTarget; // Punto al que se mueve el Boss
-    private Vector3 FallTarget;
 
     
     [Header("Rangos de Distancia")]
@@ -29,6 +28,7 @@ public class BossMovement : BossLIfe
 
     [Header("Prefabs y Arena")]
     public GameObject gearProjectile; // Prefab del engranaje cortante
+    public GameObject orbeProjectile;
     public GameObject gearTrapBot; // Prefab del robot trampa
     public GameObject gearTrapBot2; // Prefab del robot trampa
     public GameObject[] smokeTramps;
@@ -214,7 +214,7 @@ public class BossMovement : BossLIfe
             }
 
             // Llamar a la descarga de orbes (attack)
-            if (distance > farRange && Time.time > lastGearTrapTime + gearTrapCooldown)
+            if (distance > midRange && Time.time > lastGearTrapTime + gearTrapCooldown)
             {
                 OrbeAttack(); // Realizamos la descarga de orbes
                 lastCoreBurstTime = Time.time;
@@ -289,10 +289,31 @@ public class BossMovement : BossLIfe
     void OrbeAttack()
     {
         Debug.Log("Realizando Descarga de Orbes");
-        // Lógica para liberar 10 orbes de energía alrededor del jefe
-        // Se pueden instanciar los orbes y hacer que se muevan
-    }
 
+        float radius = 5f;
+
+        int orbeCount = 10;
+
+        float angleStep = 360f / orbeCount;
+
+        for (int i = 0; i < orbeCount; i++)
+        {
+            float angle = i * angleStep * Mathf.Deg2Rad;
+
+            Vector3 orbePosition = new Vector3(
+                transform.position.x + Mathf.Cos(angle) * radius,
+                transform.position.y,
+                transform.position.z + Mathf.Sin(angle) * radius
+            );
+
+            GameObject orbe = Instantiate(orbeProjectile, orbePosition, Quaternion.identity);
+
+            Vector3 direction = (orbePosition - transform.position).normalized;
+            orbe.GetComponent<Rigidbody>().velocity = direction * 5f; // Velocidad del orbe
+
+            orbe.transform.rotation = Quaternion.LookRotation(direction);
+        }
+    }
 
     // Tormenta de Engranajes
     void TormentaDeEngranajes()
