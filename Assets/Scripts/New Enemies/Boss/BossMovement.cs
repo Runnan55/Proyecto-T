@@ -28,9 +28,6 @@ public class BossMovement : BossLIfe
 
     [Header("Prefabs y Arena")]
     public GameObject gearProjectile; // Prefab del engranaje cortante
-    public GameObject orbePrefab; // Prefab del orbe
-    public GameObject tormenta; // Prefab del orbe
-    public Transform[] orbePositions; // Posiciones predefinidas para los orbes
     public Transform[] stormGearPositions;
     public GameObject gearTrapBot; // Prefab del robot trampa
     public GameObject gearTrapBot2; // Prefab del robot trampa
@@ -63,6 +60,7 @@ public class BossMovement : BossLIfe
     [Header("Referencias a Ataques y Otros Componentes")]
     private BossJumpAttack jumpAttack; // Referencia al script de salto
     public OrbeAttackControler orbeAttackController;
+    public GearStorm gearStorm;
     protected override void Start()
     {
         base.Start();
@@ -297,27 +295,13 @@ public class BossMovement : BossLIfe
     // Tormenta de Engranajes
     void TormentaDeEngranajes()
     {
-        Debug.Log("Realizando Tormenta de Engranajes");
-
-        // Seleccionamos el número de engranajes a instanciar (puedes ajustarlo a tu gusto)
-        int numEngranajes = 5;
-
-        // Aseguramos que tengamos al menos una posición válida para instanciar
-        if (stormGearPositions.Length == 0)
+        if (gearStorm != null)
         {
-            Debug.LogWarning("No hay posiciones definidas para la tormenta de engranajes");
-            return;
+            gearStorm.IniciarTormenta(transform.position);
         }
-
-        // Instanciamos los engranajes en posiciones aleatorias
-        for (int i = 0; i < numEngranajes; i++)
+        else
         {
-            // Seleccionamos una posición aleatoria del array de posiciones
-            int randomIndex = Random.Range(0, stormGearPositions.Length);
-            Transform randomPosition = stormGearPositions[randomIndex];
-
-            // Instanciamos el prefab del engranaje en la posición seleccionada
-            Instantiate(gearProjectile, randomPosition.position, Quaternion.identity);
+            Debug.LogError("GearStormController no asignado en el Boss.");
         }
     }
 }
