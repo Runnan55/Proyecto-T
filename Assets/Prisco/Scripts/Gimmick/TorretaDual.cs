@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class TorretaDual : MonoBehaviour
 {
-     public GameObject bulletPrefabA; // Prefab de la bala A
+    public GameObject bulletPrefabA; // Prefab de la bala A
     public GameObject bulletPrefabB; // Prefab de la bala B
     public GameObject firePointA; // Punto de disparo A
     public GameObject firePointB; // Punto de disparo B
@@ -41,7 +42,7 @@ public class TorretaDual : MonoBehaviour
     {
         // Instanciar la bala en firePointA
         GameObject bulletA = Instantiate(bulletPrefabA, firePointA.transform.position, firePointA.transform.rotation);
-        BalaDual_A bulletScriptA = bulletA.GetComponent<BalaDual_A>();
+        TestBullet bulletScriptA = bulletA.GetComponent<TestBullet>();
         if (bulletScriptA != null)
         {
             bulletScriptA.speed = bulletSpeed; // Ajustar la velocidad de la bala
@@ -49,7 +50,7 @@ public class TorretaDual : MonoBehaviour
 
         // Instanciar la bala en firePointB
         GameObject bulletB = Instantiate(bulletPrefabB, firePointB.transform.position, firePointB.transform.rotation);
-        BalaDual_B bulletScriptB = bulletB.GetComponent<BalaDual_B>();
+        TestBullet bulletScriptB = bulletB.GetComponent<TestBullet>();
         if (bulletScriptB != null)
         {
             bulletScriptB.speed = bulletSpeed; // Ajustar la velocidad de la bala

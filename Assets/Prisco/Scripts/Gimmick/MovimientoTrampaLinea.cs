@@ -10,20 +10,20 @@ public class MovimientoTrampaLinea : MonoBehaviour
 
     private bool moviendoHaciaA = true;
 
-
     // Start is called before the first frame update
     void Start()
     {
-          
         
     }
 
     // Update is called once per frame
     void Update()
     {
+        float adjustedSpeed = velocidad * MovimientoJugador.bulletTimeScale;
+
         if (moviendoHaciaA)
         {
-            transform.position = Vector3.MoveTowards(transform.position, puntoA.transform.position, velocidad * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, puntoA.transform.position, adjustedSpeed * Time.deltaTime);
             if (transform.position == puntoA.transform.position)
             {
                 moviendoHaciaA = false;
@@ -31,13 +31,11 @@ public class MovimientoTrampaLinea : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.MoveTowards(transform.position, puntoB.transform.position, velocidad * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, puntoB.transform.position, adjustedSpeed * Time.deltaTime);
             if (transform.position == puntoB.transform.position)
             {
                 moviendoHaciaA = true;
             }
         }
     }
-
-  
 }

@@ -7,11 +7,12 @@ public class TestBullet : MonoBehaviour
     public float speed = 10f; // Velocidad de la bala
     public float lifetime = 20f; // Tiempo de vida de la bala en segundos
 
+    public float startTime; // Tiempo de inicio para el tiempo de vida
+
     // Start is called before the first frame update
     void Start()
     {
-        // Llamar al método DestroyBullet después de 'lifetime' segundos
-        Invoke("DestroyBullet", lifetime);
+        startTime = Time.time; // Guardar el tiempo de inicio
     }
 
     // Update is called once per frame
@@ -19,12 +20,21 @@ public class TestBullet : MonoBehaviour
     {
         // Ajustar la velocidad de la bala usando la escala de tiempo global
         transform.position += transform.forward * speed * MovimientoJugador.bulletTimeScale * Time.deltaTime;
+
+        // Calcular el tiempo transcurrido desde la instanciación
+        float elapsedTime = (Time.time - startTime) * MovimientoJugador.bulletTimeScale;
+
+        // Destruir la bala después de que haya pasado su tiempo de vida
+        if (elapsedTime >= lifetime)
+        {
+            DestroyBullet();
+        }
     }
 
     // Método que se llama cuando la bala colisiona con otro objeto
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !MovimientoJugador.isDashing)
         {
             DestroyBullet();
         }

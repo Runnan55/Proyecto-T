@@ -19,7 +19,6 @@ public class TorretaSimple : MonoBehaviour
 
     private float timeSinceLastBurst = 0f; // Tiempo desde la última ráfaga 
 
-
     void Update()
     {
         // Ajustar el tiempo acumulado usando la escala de tiempo del bullet time
@@ -37,7 +36,7 @@ public class TorretaSimple : MonoBehaviour
         for (int i = 0; i < bulletsPerBurst; i++)
         {
             FireBullet();
-            yield return new WaitForSeconds(fireInterval);
+            yield return new WaitForSeconds(fireInterval * MovimientoJugador.bulletTimeScale);
         }
     }
 
