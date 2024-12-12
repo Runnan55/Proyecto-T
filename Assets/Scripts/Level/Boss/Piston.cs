@@ -7,7 +7,8 @@ public class Piston : MonoBehaviour
     public float moveDistance = 10f;
     public float moveDurationForward = 2f;
     public float moveDurationBackward = 2f;
-    public float waitDuration = 3f;
+    public float waitDurationForwardToBackward = 3f;
+    public float waitDurationBackwardToForward = 3f;
     public DamageZone damageZone;
 
     private Vector3 initialPosition;
@@ -28,13 +29,13 @@ public class Piston : MonoBehaviour
                 damageZone.ActivateDamage();
                 yield return MoveToPosition(initialPosition + transform.forward * moveDistance, moveDurationForward);
                 damageZone.DeactivateDamage();
-                yield return new WaitForSeconds(waitDuration);
+                yield return new WaitForSeconds(waitDurationForwardToBackward);
                 isMovingForward = false;
             }
             else
             {
                 yield return MoveToPosition(initialPosition, moveDurationBackward);
-                yield return new WaitForSeconds(waitDuration);
+                yield return new WaitForSeconds(waitDurationBackwardToForward);
                 isMovingForward = true;
             }
         }
