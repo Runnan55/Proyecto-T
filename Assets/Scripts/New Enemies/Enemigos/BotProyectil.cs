@@ -9,7 +9,7 @@ public class BotProyectil : MonoBehaviour
     public GameObject projectilePrefab; // Prefab del proyectil
     public float shootCooldown = 1f; // Tiempo entre disparos
     private float shootTimer;
-
+    public float lifetime=8;
     private Transform player; // Referencia al jugador
     private Vector3 direction; // Dirección de movimiento del robot
 
@@ -22,7 +22,7 @@ public class BotProyectil : MonoBehaviour
         // Obtener la referencia al jugador por su tag
         player = GameObject.FindGameObjectWithTag("Player").transform;
         shootTimer = shootCooldown;
-
+        Destroy(gameObject, lifetime);
         // Definir la dirección de movimiento según moveLeft
         direction = moveLeft ? Vector3.left : Vector3.right;
     }

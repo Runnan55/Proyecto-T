@@ -7,14 +7,21 @@ public class BouncingProyectil2 : MonoBehaviour
     public int maxBounces = 3; // Número máximo de rebotes
     private int bounceCount = 0; // Contador de rebotes
     public float speed = 5f; // Velocidad del objeto
+    public float damage = 5f;
+
     private Vector3 velocity; // Dirección del movimiento
+    private Life playerLife;
 
     // Método para inicializar la dirección del proyectil desde el script que lo instancia
     public void Initialize(Vector3 initialDirection)
     {
         velocity = initialDirection.normalized * speed;
     }
+     void Start()
+    {
+        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
 
+    }
     void Update()
     {
         // Mover el objeto continuamente
@@ -47,10 +54,13 @@ public class BouncingProyectil2 : MonoBehaviour
                 Destroy(gameObject); // Destruir el objeto tras el cuarto rebote
             }
         }
-        else if (other.CompareTag("Player")) // Colisión con el jugador
+        else if (other.CompareTag("Player"))
         {
-            // Aquí puedes agregar lógica adicional, por ejemplo, restar vida al jugador
-            Destroy(gameObject); // Destruir el objeto al colisionar con el jugador
+            playerLife.ModifyTime(-damage);
+            MovimientoJugador.isInDodgeArea = false;
+            Debug.Log("buenas tardes " + MovimientoJugador.isInDodgeArea);
+
+            Destroy(gameObject);
         }
     }
 }

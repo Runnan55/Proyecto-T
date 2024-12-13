@@ -265,13 +265,12 @@ public class BossMovement : BossLIfe
     {
         Debug.Log("Realizando Sweeping Strike!");
         // Animación de barrido
-        for (int i = 0; i < 3; i++)
-        {
+      
             GameObject proyectil = Instantiate(gearProjectile, coreTransform.position, Quaternion.identity);
 
             Vector3 direction = coreTransform.forward;
             proyectil.GetComponent<BouncingProyectil2>().Initialize(direction);
-        }
+        
     }
 
     public void CoreBurst()
