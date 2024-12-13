@@ -21,7 +21,7 @@ public class DamageDealer : MonoBehaviour
         if (enemy != null)
         {
             enemy.ReceiveDamage(damageAmount);
-            Debug.Log("dano");
+           // Debug.Log("dano");
             damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
         }
 

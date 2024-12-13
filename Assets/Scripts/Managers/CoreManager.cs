@@ -144,7 +144,7 @@ public class CoreManager : MonoBehaviour
             player.transform.position = startPosition;
             Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
             player.transform.rotation = flatRotation;
-            Debug.Log("Spawneando player en " + player.transform.position);
+           // Debug.Log("Spawneando player en " + player.transform.position);
         }
         else
         {

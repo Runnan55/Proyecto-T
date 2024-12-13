@@ -51,10 +51,10 @@ public class Level : MonoBehaviour
             {
                 StartCoroutine(entranceDoor.Close());
             }
-            Debug.Log(hasPlayerEntered);
+          //  Debug.Log(hasPlayerEntered);
             StartNextWave();
             hasPlayerEntered = true; 
-            Debug.Log(hasPlayerEntered);
+         //   Debug.Log(hasPlayerEntered);
 
             if (modifyTime)
             {

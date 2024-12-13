@@ -77,7 +77,7 @@ public class EnemyLife : MonoBehaviour
 
         health -= damage;
 
-        Debug.Log("Recibiendo daño: " + damage);
+      //  Debug.Log("Recibiendo daño: " + damage);
 
         if (newMaterial != null && enemyMeshRenderer != null)
         {

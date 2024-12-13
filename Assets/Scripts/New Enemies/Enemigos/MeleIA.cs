@@ -14,7 +14,7 @@ public class MeleIA : EnemyLife
     public float attackCooldown = 2f;  // Tiempo entre ataques
 
     private NavMeshAgent agent;        // Referencia al agente de NavMesh
-    private float attackTimer;         // Temporizador para controlar los ataques
+    public float attackTimer;         // Temporizador para controlar los ataques
     private Transform player;          // Referencia al transform del jugador
     private float originalAgentSpeed;  // Almacena la velocidad original del agente
 
@@ -38,8 +38,13 @@ public class MeleIA : EnemyLife
     [Header("Sounds")]
     [SerializeField] private FMODUnity.EventReference enemySwoosh;
 
+    private MovimientoJugador movimientoJugador;
+    [SerializeField] private bool entro = false;
+    private float guardarVelocidadTiempo=0;
+
    void Awake()
     {
+        
         agent = GetComponent<NavMeshAgent>();
         originalAgentSpeed = agent.speed; // Almacena la velocidad original del agente
         currentState = EnemyState.Searching;
@@ -54,33 +59,18 @@ public class MeleIA : EnemyLife
         }
 
         UpdateStatusCubeColor(); // Cambia el color del cubo al iniciar
-        MovimientoJugador.OnBulletTimeEnd += HandleBulletTimeEnd;
     }
 
-    void OnDestroy()
-    {
-        MovimientoJugador.OnBulletTimeEnd -= HandleBulletTimeEnd;
-    }
-
-    private void HandleBulletTimeEnd()
-    {
-        // Recalcular tiempos y estados cuando el tiempo bala termina
-        if (currentState == EnemyState.Attacking && attackTimer > 0)
-        {
-            attackTimer = attackCooldown; // Reiniciar el temporizador de ataque
-        }
-        else if (currentState == EnemyState.PreparingToAttack)
-        {
-            currentState = EnemyState.Chasing; // Volver a perseguir si estaba preparando un ataque
-        }
-    }
+   
+   
 
     private IEnumerator FindPlayerWithDelay()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
+        movimientoJugador = player.GetComponent<MovimientoJugador>();
+        
         if (player == null)
         {
             Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
@@ -90,6 +80,9 @@ public class MeleIA : EnemyLife
     void Update()
     {
         if (player == null || isBeingPushed) return; // Detiene el comportamiento si está siendo empujado
+
+        actualizarTiempo();
+
 
         LookAtPlayer();
 
@@ -115,7 +108,7 @@ public class MeleIA : EnemyLife
         // Gestionar el temporizador de cooldown
         if (attackTimer > 0)
         {
-            attackTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale; // Resta el tiempo transcurrido
+            attackTimer -= Time.deltaTime; // Resta el tiempo transcurrido
         }
 
         // Ajustar la velocidad del agente en función de bulletTimeScale
@@ -192,18 +185,22 @@ public class MeleIA : EnemyLife
 
     // Método para atacar al jugador
     private void AttackPlayer()
-    {        
+    {
+
+    
         // Si el jugador está en el rango de ataque y el cooldown ha terminado
         if (attackTimer <= 0)
         {
-            Debug.Log("El enemigo ha atacado al jugador!");
+          //  Debug.Log("El enemigo ha atacado al jugador!");
             if (attackEffectPrefab != null)
             {
                 FMODUnity.RuntimeManager.PlayOneShot(enemySwoosh);
                 GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);
                 Destroy(effect, spawnTime); // Destruye el efecto después de 0.1 segundos
             }
-            attackTimer = attackCooldown / MovimientoJugador.bulletTimeScale; // Reinicia el temporizador de ataque
+
+            attackTimer = attackCooldown;
+      
         }
 
         // Si el jugador sale del rango de ataque, vuelve a perseguir
@@ -250,6 +247,34 @@ public class MeleIA : EnemyLife
         else
         {
             Debug.LogError("El cubo de estado no está asignado en el inspector.");
+        }
+    }
+
+    private void actualizarTiempo()
+    {
+        if (movimientoJugador.IsBulletTimeActive() == true)
+        {
+            Debug.Log("intento division");
+            if (entro == false)
+            {
+                attackTimer = attackTimer / (MovimientoJugador.bulletTimeScale);
+                guardarVelocidadTiempo = MovimientoJugador.bulletTimeScale;
+                Debug.Log("dividido");
+                entro = true;
+            }
+        }
+        if (movimientoJugador.IsBulletTimeActive() == false)
+        {
+            Debug.Log("intento multi");
+
+            if (entro == true)
+            {
+
+                attackTimer = attackTimer * guardarVelocidadTiempo;
+                Debug.Log("multiplica");
+
+                entro = false;
+            }
         }
     }
 }
