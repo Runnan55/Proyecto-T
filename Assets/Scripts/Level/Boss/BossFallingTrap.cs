@@ -14,24 +14,39 @@ public class BossFallingTrap : MonoBehaviour
 
     private Rigidbody rb;
     private Vector3 initialPosition;
+    private bool hasExploded = false;
+    private MovimientoJugador player;
 
-    private void Start()
+    private IEnumerator Start()
     {
         rb = GetComponent<Rigidbody>();
         initialPosition = transform.position;
         StartFalling();
+
+        yield return new WaitForSeconds(0.5f);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<MovimientoJugador>();
     }
 
     private void StartFalling()
     {
+        hasExploded = false;
         transform.position = new Vector3(initialPosition.x, fallHeight, initialPosition.z);
         rb.velocity = new Vector3(0, -fallSpeed, 0);
     }
 
+    private void Update()
+    {
+        if (player != null && player.bulletTime)
+        {
+            rb.velocity = new Vector3(0, -fallSpeed * MovimientoJugador.bulletTimeScale, 0);
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground") && !hasExploded)
         {
+            hasExploded = true;
             Explode();
             if (respawnInfinite)
             {
@@ -66,7 +81,7 @@ public class BossFallingTrap : MonoBehaviour
 
     private IEnumerator RespawnAfterDelay(float delay)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(delay * MovimientoJugador.bulletTimeScale);
         StartFalling();
     }
 }
