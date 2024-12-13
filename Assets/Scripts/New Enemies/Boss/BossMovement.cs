@@ -140,7 +140,7 @@ public class BossMovement : BossLIfe
         Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
 
         // Aplica la rotación de manera suave
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime *MovimientoJugador.bulletTimeScale* rotationSpeed);
     }
 
     void EvaluateConditions()
@@ -167,7 +167,7 @@ public class BossMovement : BossLIfe
                 behindTime = 0f;
             }
 
-            if (distance > farRange && Time.time > lastCoreBurstTime + coreBurstCooldown)
+            if (distance > midRange && Time.time > lastCoreBurstTime + coreBurstCooldown)
             {
                 SweepingStrike();
                 lastCoreBurstTime = Time.time;
@@ -256,7 +256,7 @@ public class BossMovement : BossLIfe
     {
         Debug.Log("Realizando Spin Attack!");
         // Animación y daño en área
-        GameObject barridoAtk = Instantiate(barrido, coreTransform.position, Quaternion.identity);
+        GameObject barridoAtk = Instantiate(barrido, coreTransform.position, coreTransform.rotation);
         barridoAtk.GetComponent<Barrido>().ExecuteSweep();
 
     }
@@ -267,7 +267,10 @@ public class BossMovement : BossLIfe
         // Animación de barrido
         for (int i = 0; i < 3; i++)
         {
-            Instantiate(gearProjectile, transform.position, Quaternion.identity);
+            GameObject proyectil = Instantiate(gearProjectile, coreTransform.position, Quaternion.identity);
+
+            Vector3 direction = coreTransform.forward;
+            proyectil.GetComponent<BouncingProyectil2>().Initialize(direction);
         }
     }
 
@@ -276,7 +279,7 @@ public class BossMovement : BossLIfe
        
         
             Debug.Log("Realizando Explosión Propia!");
-            GameObject explosion = Instantiate(explosionPrefab, coreTransform.position, Quaternion.identity);
+            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
             // Llamar al método TriggerExplosion del objeto recién instanciado
             explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
