@@ -54,6 +54,25 @@ public class MeleIA : EnemyLife
         }
 
         UpdateStatusCubeColor(); // Cambia el color del cubo al iniciar
+        MovimientoJugador.OnBulletTimeEnd += HandleBulletTimeEnd;
+    }
+
+    void OnDestroy()
+    {
+        MovimientoJugador.OnBulletTimeEnd -= HandleBulletTimeEnd;
+    }
+
+    private void HandleBulletTimeEnd()
+    {
+        // Recalcular tiempos y estados cuando el tiempo bala termina
+        if (currentState == EnemyState.Attacking && attackTimer > 0)
+        {
+            attackTimer = attackCooldown; // Reiniciar el temporizador de ataque
+        }
+        else if (currentState == EnemyState.PreparingToAttack)
+        {
+            currentState = EnemyState.Chasing; // Volver a perseguir si estaba preparando un ataque
+        }
     }
 
     private IEnumerator FindPlayerWithDelay()

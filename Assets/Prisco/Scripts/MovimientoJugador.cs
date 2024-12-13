@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class MovimientoJugador : MonoBehaviour
 {
@@ -92,10 +93,11 @@ public class MovimientoJugador : MonoBehaviour
     [SerializeField] private FMODUnity.EventReference heavy;
     [SerializeField] private FMODUnity.EventReference dash;
 
-
     public static bool isInDodgeArea = false;
 
-     private void OnTriggerEnter(Collider other)
+    #region Fall
+    
+    private void OnTriggerEnter(Collider other)
     {
 /*         if (other.CompareTag("DodgeArea"))
         {
@@ -137,7 +139,9 @@ public class MovimientoJugador : MonoBehaviour
 
         controller.enabled = true;
     }
+    #endregion Fall
 
+    #region BulletTime
     private void OnTriggerExit(Collider other)
     {
         //ForceTriggerExit (other);
@@ -206,11 +210,22 @@ public class MovimientoJugador : MonoBehaviour
         lastBulletTimeUse = Time.time;
     }
 
+    public static event Action OnBulletTimeEnd;
+
+    public static void EndBulletTime()
+    {
+        bulletTimeScale = 1f;
+        OnBulletTimeEnd?.Invoke();
+    }
+
     public bool IsBulletTimeActive()
     {
         return bulletTime;
     }
 
+    #endregion BulletTime
+
+    #region priscada
    void Awake()
     {
         if (instance == null)
@@ -764,6 +779,7 @@ public void OnAttackEndl1()
     {
         damageDealerP.ResetDamage();
     }
+    #endregion priscada
 
 #region Berto
     public void speedUp()

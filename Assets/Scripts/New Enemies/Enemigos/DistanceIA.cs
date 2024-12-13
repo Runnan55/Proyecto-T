@@ -44,6 +44,16 @@ public class RangedIA : EnemyLife
         UpdateStatusCubeColor();
     }
 
+    void OnEnable()
+    {
+        MovimientoJugador.OnBulletTimeEnd += HandleBulletTimeEnd;
+    }
+
+    void OnDisable()
+    {
+        MovimientoJugador.OnBulletTimeEnd -= HandleBulletTimeEnd;
+    }
+
     private IEnumerator FindPlayerWithDelay()
     {
         yield return new WaitForSeconds(0.5f);
@@ -228,5 +238,14 @@ public class RangedIA : EnemyLife
         {
             Debug.LogError("El cubo de estado no está asignado en el inspector.");
         }
+    }
+
+    private void HandleBulletTimeEnd()
+    {
+        // Ajustar el temporizador de espera
+        waitTimer /= MovimientoJugador.bulletTimeScale;
+
+        // Ajustar la velocidad del agente
+        agent.speed = originalAgentSpeed;
     }
 }
