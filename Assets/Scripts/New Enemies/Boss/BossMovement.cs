@@ -97,7 +97,18 @@ public class BossMovement : BossLIfe
                     saltos = false;
                     
                         Debug.Log("trampas desactivas");
-                    
+                    foreach (var trap in smokeTramps)
+                    {
+                        if (trap != null)
+                        {
+                            BigDamageZone damageZone = trap.GetComponent<BigDamageZone>();
+                            if (damageZone != null)
+                            {
+                                damageZone.DeactivateDamage();
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -236,8 +247,19 @@ public class BossMovement : BossLIfe
     private IEnumerator cultdown()
     {
         yield return new WaitForSeconds(3);  // Esperar 1 segundo.
+       
         Debug.Log("trampas activas");
-
+        foreach (var trap in smokeTramps)
+        {
+            if (trap != null)
+            {
+                BigDamageZone damageZone = trap.GetComponent<BigDamageZone>();
+                if (damageZone != null)
+                {
+                    damageZone.ActivateDamage();
+                }
+            }
+        }
     }
 
     public int GetRandomIndexExcluding(int excludedIndex)
@@ -306,4 +328,6 @@ public class BossMovement : BossLIfe
             Debug.LogError("GearStormController no asignado en el Boss.");
         }
     }
+
+
 }
