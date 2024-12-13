@@ -95,6 +95,19 @@ public class MovimientoJugador : MonoBehaviour
 
     public static bool isInDodgeArea = false;
 
+    #region Bertadas
+    public void speedUp()
+    {
+        speed = +5f;
+    }
+
+        public void speedDown()
+    {
+        speed = -5f;
+    }
+
+    #endregion Bertadas
+
     #region Fall
     
     private void OnTriggerEnter(Collider other)
@@ -780,26 +793,6 @@ public void OnAttackEndl1()
         damageDealerP.ResetDamage();
     }
     #endregion priscada
-
-#region Berto
-    public void speedUp()
-    {
-        speed = +5f;
-    }
-
-        public void speedDown()
-    {
-        speed = -5f;
-    }
-
-#endregion Berto
-
-
-
-
-
-      
-
 }
 
 

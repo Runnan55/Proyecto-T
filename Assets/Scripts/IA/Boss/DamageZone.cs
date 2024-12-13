@@ -6,6 +6,7 @@ public class DamageZone : MonoBehaviour
 {
     public float damageAmount = 10f;
     public Material activeMaterial;
+    public Material preActiveMaterial;
     public Material inactiveMaterial;
     public bool autoToggleMode = false;
     public float activeDuration = 5f;
@@ -68,10 +69,18 @@ public class DamageZone : MonoBehaviour
     {
         while (true)
         {
-            ActivateDamage();
-            yield return new WaitForSeconds(activeDuration);
-            DeactivateDamage();
-            yield return new WaitForSeconds(inactiveDuration);
+            StartCoroutine(PreActivateRoutine());
+            yield return new WaitForSeconds(activeDuration + inactiveDuration);
         }
+    }
+
+    private IEnumerator PreActivateRoutine()
+    {
+        yield return new WaitForSeconds(inactiveDuration - 1f);
+        zoneRenderer.material = preActiveMaterial;
+        yield return new WaitForSeconds(1f);
+        ActivateDamage();
+        yield return new WaitForSeconds(activeDuration);
+        DeactivateDamage();
     }
 }
