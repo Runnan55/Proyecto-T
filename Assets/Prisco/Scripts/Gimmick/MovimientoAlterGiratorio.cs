@@ -21,7 +21,7 @@ public class MovimientoAlterGiratorio : MonoBehaviour
         if (objetoCentro != null)
         {
             // Rotar el objeto alrededor del objetoCentro en sentido contrario
-            transform.RotateAround(objetoCentro.transform.position, Vector3.up, -velocidadRotacion * Time.deltaTime);
+            transform.RotateAround(objetoCentro.transform.position, Vector3.up, -velocidadRotacion * Time.deltaTime * MovimientoJugador.bulletTimeScale);
         }
     }
 }

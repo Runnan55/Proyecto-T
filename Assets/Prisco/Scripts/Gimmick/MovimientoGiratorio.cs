@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class MovimientoGiratorio : MonoBehaviour
 {
-   // Variable pública para ajustar la velocidad de rotación
+    // Variable pública para ajustar la velocidad de rotación
     public float velocidadRotacion = 10f;
     // El objeto alrededor del cual girar
     public GameObject objetoCentro;
@@ -21,7 +20,7 @@ public class MovimientoGiratorio : MonoBehaviour
         if (objetoCentro != null)
         {
             // Rotar el objeto alrededor del objetoCentro
-            transform.RotateAround(objetoCentro.transform.position, Vector3.up, velocidadRotacion * Time.deltaTime);
+            transform.RotateAround(objetoCentro.transform.position, Vector3.up, velocidadRotacion * Time.deltaTime * MovimientoJugador.bulletTimeScale);
         }
     }
 }

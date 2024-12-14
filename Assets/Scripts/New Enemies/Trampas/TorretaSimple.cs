@@ -12,7 +12,7 @@ public class TorretaSimple : MonoBehaviour
     [Range(0.1f, 3f)]
     public float fireInterval = 1f; // Intervalo de disparo en segundos
 
-    public Transform firePoint; // Transform desde el cual se disparan las balas
+    public List<Transform> firePoints; // Lista de Transforms desde los cuales se disparan las balas
 
     public int bulletsPerBurst = 3; // Cantidad de balas por ráfaga
     public float burstInterval = 2f; // Intervalo entre ráfagas
@@ -42,22 +42,25 @@ public class TorretaSimple : MonoBehaviour
 
     void FireBullet()
     {
-        // Usar el firePoint para determinar la posición de la bala
-        if (firePoint != null)
+        // Usar los firePoints para determinar la posición de las balas
+        foreach (Transform firePoint in firePoints)
         {
-            Vector3 spawnPosition = firePoint.position; // Usamos la posición del firePoint
-            Quaternion spawnRotation = firePoint.rotation; // Usamos la rotación del firePoint
-
-            GameObject bullet = Instantiate(bulletPrefab, spawnPosition, spawnRotation);
-            TestBullet bulletScript = bullet.GetComponent<TestBullet>();
-            if (bulletScript != null)
+            if (firePoint != null)
             {
-                bulletScript.speed = bulletSpeed;
+                Vector3 spawnPosition = firePoint.position; // Usamos la posición del firePoint
+                Quaternion spawnRotation = firePoint.rotation; // Usamos la rotación del firePoint
+
+                GameObject bullet = Instantiate(bulletPrefab, spawnPosition, spawnRotation);
+                TestBullet bulletScript = bullet.GetComponent<TestBullet>();
+                if (bulletScript != null)
+                {
+                    bulletScript.speed = bulletSpeed;
+                }
             }
-        }
-        else
-        {
-            Debug.LogWarning("El firePoint no ha sido asignado en el Inspector.");
+            else
+            {
+                Debug.LogWarning("Uno de los firePoints no ha sido asignado en el Inspector.");
+            }
         }
     }
 }

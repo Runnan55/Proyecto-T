@@ -23,13 +23,13 @@ public class BalaDual_A : MonoBehaviour
     void Update()
     {
         // Calcular el tiempo transcurrido desde la instanciación
-        float elapsedTime = (Time.time - startTime) * MovimientoJugador.bulletTimeScale;
+        float elapsedTime = (Time.time - startTime);
 
-        // Movimiento en "S"
+        // Movimiento en "S" (sin afectar por el tiempo bala)
         Vector3 serpentine = transform.right * Mathf.Sin(elapsedTime * serpentineFrequency) * serpentineMagnitude;
         Vector3 moveDirection = direction + serpentine;
 
-        // Aplicar el movimiento combinado
+        // Aplicar el movimiento combinado con la velocidad ajustada por el tiempo bala
         transform.position += moveDirection * speed * Time.deltaTime * MovimientoJugador.bulletTimeScale;
 
         // Ajustar la rotación para que la bala mire en la dirección del movimiento
@@ -39,7 +39,7 @@ public class BalaDual_A : MonoBehaviour
         }
 
         // Destruir la bala después de que haya pasado su tiempo de vida
-        if (elapsedTime >= lifetime)
+        if (elapsedTime * MovimientoJugador.bulletTimeScale >= lifetime)
         {
             DestroyBullet();
         }
