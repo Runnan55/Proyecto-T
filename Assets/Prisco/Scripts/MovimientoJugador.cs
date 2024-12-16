@@ -561,31 +561,35 @@ IEnumerator Dash()
         isDashing = false;
     }
 }
-   
-public void AtaqueJugador()
+  
+   public void AtaqueJugador()
 {
     if (Input.GetMouseButtonDown(0))
     {
         enterAttack = true;
         hasAttacked = true;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
+        // Verificar si el jugador ya ha rotado
+        if (!hasRotated)
         {
-            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
 
-            // Calcular la dirección hacia la que el jugador debe mirar
-            Vector3 directionToLook = (targetPosition - transform.position).normalized;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 
-            // Crear una rotación que mire en la dirección del objetivo
-            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+                // Calcular la dirección hacia la que el jugador debe mirar
+                Vector3 directionToLook = (targetPosition - transform.position).normalized;
 
-            // Aplicar la rotación al jugador
-            transform.rotation = targetRotation;
+                // Crear una rotación que mire en la dirección del objetivo
+                Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
 
-            hasRotated = true;
+                // Aplicar la rotación al jugador
+                transform.rotation = targetRotation;
+
+                hasRotated = true;
+            }
         }
     }
 }
