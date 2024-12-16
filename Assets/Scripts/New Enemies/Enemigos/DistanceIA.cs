@@ -16,7 +16,7 @@ public class RangedIA : EnemyLife
 
     private NavMeshAgent agent;
     private Transform player;
-    private float waitTimer;
+    public float waitTimer;
     private float originalAgentSpeed;  // Almacena la velocidad original del agente
 
     [Header("Cubo de Estado")]
@@ -32,6 +32,9 @@ public class RangedIA : EnemyLife
     [Header("Sounds")]
     [SerializeField] private FMODUnity.EventReference crossbow;
 
+    private MovimientoJugador movimientoJugador;
+    [SerializeField] private bool entro = false;
+    private float guardarVelocidadTiempo = 0;
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -46,12 +49,12 @@ public class RangedIA : EnemyLife
 
     void OnEnable()
     {
-        MovimientoJugador.OnBulletTimeEnd += HandleBulletTimeEnd;
+        // Aquí no necesitamos un evento, solo verificamos el valor de bulletTimeScale
     }
 
     void OnDisable()
     {
-        MovimientoJugador.OnBulletTimeEnd -= HandleBulletTimeEnd;
+        // Limpiar si fuera necesario
     }
 
     private IEnumerator FindPlayerWithDelay()
@@ -59,6 +62,7 @@ public class RangedIA : EnemyLife
         yield return new WaitForSeconds(0.5f);
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        movimientoJugador = player.GetComponent<MovimientoJugador>();
 
         if (player == null)
         {
@@ -71,6 +75,9 @@ public class RangedIA : EnemyLife
         if (player == null || isBeingPushed) return; // No hacer nada si el jugador no está o el enemigo está siendo empujado
 
         LookAtPlayer();
+        actualizarTiempo();
+        // Verificar si el Bullet Time ha terminado (bulletTimeScale vuelve a 1)
+       
 
         switch (currentState)
         {
@@ -240,12 +247,31 @@ public class RangedIA : EnemyLife
         }
     }
 
-    private void HandleBulletTimeEnd()
+    private void actualizarTiempo()
     {
-        // Ajustar el temporizador de espera
-        waitTimer /= MovimientoJugador.bulletTimeScale;
+        if (movimientoJugador.IsBulletTimeActive() == true)
+        {
+            Debug.Log("intento division");
+            if (entro == false)
+            {
+                waitTimer = waitTimer / (MovimientoJugador.bulletTimeScale);
+                guardarVelocidadTiempo = MovimientoJugador.bulletTimeScale;
+                Debug.Log("dividido");
+                entro = true;
+            }
+        }
+        if (movimientoJugador.IsBulletTimeActive() == false)
+        {
+            Debug.Log("intento multi");
 
-        // Ajustar la velocidad del agente
-        agent.speed = originalAgentSpeed;
+            if (entro == true)
+            {
+
+                waitTimer = waitTimer * guardarVelocidadTiempo;
+                Debug.Log("multiplica");
+
+                entro = false;
+            }
+        }
     }
 }

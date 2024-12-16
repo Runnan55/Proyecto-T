@@ -629,7 +629,7 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 9008801229625791759}
   level: {fileID: 0}
   newMaterial: {fileID: -5848219874270610933, guid: 78b3e22bd381fd34d9292a8018430902, type: 3}
   chargeTime: 2
@@ -638,8 +638,13 @@ MonoBehaviour:
   attackDamage: 20
   playerLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
   bounceSpeed: 30
+  safeDistanceFromWall: 10
+  maxRebounces: 3
   explosionPrefab: {fileID: 1636806931387756, guid: 448e8d4f82f29da4298ec7ad31825184, type: 3}
 --- !u!1 &8233392507507829158
 GameObject:

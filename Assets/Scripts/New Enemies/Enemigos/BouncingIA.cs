@@ -131,7 +131,7 @@ public class BouncingIA : EnemyLife
             bounceDirection += bounceDirection.normalized * extraForce;
 
             // Ajusta la velocidad para mantener el rebote constante en el plano XZ
-            rb.velocity = bounceDirection.normalized * bounceSpeed * Random.Range(1f, 1.5f); // Agregar un factor extra de velocidad
+            rb.velocity = bounceDirection.normalized * bounceSpeed * Random.Range(1f, 1.5f)*MovimientoJugador.bulletTimeScale; // Agregar un factor extra de velocidad
 
             // Debugging para verificar la dirección y la velocidad del rebote
             Debug.Log($"Rebote con variación! Dirección: {bounceDirection}, Velocidad: {rb.velocity}");

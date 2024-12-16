@@ -176,7 +176,7 @@ public class EspiralIA : EnemyLife
 
     private IEnumerator TeleportAfterDelay(Vector3 teleportPosition)
     {
-        yield return new WaitForSeconds(1.8f); // Esperar antes de teletransportarse
+        yield return new WaitForSeconds(1.8f*MovimientoJugador.bulletTimeScale); // Esperar antes de teletransportarse
 
         transform.position = teleportPosition;
         Debug.Log("Teletransportado a: " + teleportPosition);
