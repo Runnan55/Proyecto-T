@@ -39,17 +39,20 @@ public class BossMovement : BossLIfe
 
 
     [Header("Cooldowns de Ataques")]
-    private float lastSpinAttackTime = -10f; // Momento del último Spin Attack
-    public float spinAttackCooldown = 5f;   // Tiempo entre Spin Attacks
+    private float lastExplosionTrasera = -10f; // Momento del último Spin Attack
+    public float explosionTraseraCooldown = 5f;   // Tiempo entre Spin Attacks
 
-    private float lastSweepingStrikeTime = -10f;
-    public float sweepingStrikeCooldown = 8f;
+    private float lastBarrido = -10f;
+    public float barridoCooldown = 8f;
 
-    private float lastCoreBurstTime = -10f;
-    public float coreBurstCooldown = 12f;
+    private float lastTormenta = -10f;
+    public float tormentaEngranaje = 6;
 
-    private float lastGearTrapTime = -10f;
-    public float gearTrapCooldown = 15f;
+    private float lastDisparo1 = -10f;
+    public float Disparo1 = 12f;
+
+    private float lastTrampaRobot = -10f;
+    public float TrampaRobotCooldown = 15f;
 
     public float orbeCooldown = 5f;  // Tiempo entre cada ataque de orbes
     private float lastOrbeAttackTime = -10f;  // Marca el último momento de invocación de orbes
@@ -73,7 +76,7 @@ public class BossMovement : BossLIfe
 
     private IEnumerator FindPlayerWithDelay()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
@@ -166,11 +169,11 @@ public class BossMovement : BossLIfe
             if (angle > 120f)
             {
                 behindTime += Time.deltaTime;
-                if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
+                if (behindTime >= behindThreshold && Time.time > lastExplosionTrasera + explosionTraseraCooldown)
                 {
                     CoreBurst();
                     behindTime = 0f;
-                    lastSpinAttackTime = Time.time;
+                    lastExplosionTrasera = Time.time;
                 }
             }
             else
@@ -178,21 +181,21 @@ public class BossMovement : BossLIfe
                 behindTime = 0f;
             }
 
-            if (distance > midRange && Time.time > lastCoreBurstTime + coreBurstCooldown)
+            if (distance > midRange && Time.time > lastDisparo1 + Disparo1)
             {
-                SweepingStrike();
-                lastCoreBurstTime = Time.time;
+                ProyectilUnaDir();
+                lastDisparo1 = Time.time;
             }
-            else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
+            else if (distance < closeRange && Time.time > lastBarrido + barridoCooldown)
             {
-                SpinAttack();
-                lastSweepingStrikeTime = Time.time;
+                Barrido();
+                lastBarrido = Time.time;
             }
 
-            if (phase == 1 && Time.time > lastGearTrapTime + gearTrapCooldown)
+            if (phase == 1 && Time.time > lastTrampaRobot + TrampaRobotCooldown)
             {
-                GearTrap();
-                lastGearTrapTime = Time.time;
+                TrampaRobots();
+                lastTrampaRobot = Time.time;
             }
         }
 
@@ -203,7 +206,7 @@ public class BossMovement : BossLIfe
             if (angle > 120f)
             {
                 behindTime += Time.deltaTime;
-                if (behindTime >= behindThreshold && Time.time > lastSpinAttackTime + spinAttackCooldown)
+                if (behindTime >= behindThreshold && Time.time > lastExplosionTrasera + explosionTraseraCooldown)
                 {
                     OnPlayerEnterZone(GetRandomIndexExcluding(zonaActual));                   
                     
@@ -214,7 +217,7 @@ public class BossMovement : BossLIfe
                    
                     
                     behindTime = 0f; // Reiniciamos el temporizador
-                    lastSpinAttackTime = Time.time;
+                    lastExplosionTrasera = Time.time;
                 }
             }
             else
@@ -223,10 +226,10 @@ public class BossMovement : BossLIfe
             }
 
             // Llamada a la Tormenta de Engranajes
-            if (Time.time > lastCoreBurstTime + coreBurstCooldown)
+            if (distance > midRange && Time.time > lastTormenta + tormentaEngranaje)
             {
                 TormentaDeEngranajes(); // Realizamos la tormenta de engranajes
-                lastCoreBurstTime = Time.time;
+                lastTormenta = Time.time;
             }
 
             // Llamar a la descarga de orbes (attack)
@@ -235,10 +238,10 @@ public class BossMovement : BossLIfe
                 orbeAttackController.PerformOrbeAttack(); // Llamamos al script OrbeAttackController
                 lastOrbeAttackTime = Time.time;
             }
-            else if (distance < closeRange && Time.time > lastSweepingStrikeTime + sweepingStrikeCooldown)
+            else if (distance < closeRange && Time.time > lastBarrido + barridoCooldown)
             {
-                SpinAttack();
-                lastSweepingStrikeTime = Time.time;
+                Barrido();
+                lastBarrido = Time.time;
             }
         }
     }
@@ -274,7 +277,7 @@ public class BossMovement : BossLIfe
         return randomIndex;
     }
 
-    void SpinAttack()
+    void Barrido()
     {
         Debug.Log("Realizando Spin Attack!");
         // Animación y daño en área
@@ -283,7 +286,7 @@ public class BossMovement : BossLIfe
 
     }
 
-    void SweepingStrike()
+    void ProyectilUnaDir()
     {
         Debug.Log("Realizando Sweeping Strike!");
         // Animación de barrido
@@ -307,7 +310,7 @@ public class BossMovement : BossLIfe
         
     }
 
-   void GearTrap()
+   void TrampaRobots()
     {
         Debug.Log("Realizando Trampa de Engranajes!");
         Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);

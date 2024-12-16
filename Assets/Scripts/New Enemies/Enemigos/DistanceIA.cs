@@ -59,7 +59,7 @@ public class RangedIA : EnemyLife
 
     private IEnumerator FindPlayerWithDelay()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         movimientoJugador = player.GetComponent<MovimientoJugador>();

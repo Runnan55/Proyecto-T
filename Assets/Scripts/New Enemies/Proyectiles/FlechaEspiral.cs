@@ -33,7 +33,7 @@ public class FlechaEspiral: MonoBehaviour
 
         // Mantener velocidad constante ajustando el incremento del ángulo
         float angularSpeed = speed / currentRadius; // Velocidad angular adaptada al radio actual
-        angle += angularSpeed * Time.deltaTime;
+        angle += angularSpeed * Time.deltaTime * MovimientoJugador.bulletTimeScale;
 
         // Calcular la nueva posición en espiral en el plano XZ
         float xOffset = Mathf.Cos(angle) * currentRadius;

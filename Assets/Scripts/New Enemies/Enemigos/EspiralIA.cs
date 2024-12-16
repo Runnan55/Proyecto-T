@@ -11,7 +11,7 @@ public class EspiralIA : EnemyLife
     public GameObject projectilePrefab;
     public Transform shootingPoint;
     public float shootingInterval = 0.2f;
-    public float attackCooldownTime = 2f; // Tiempo que el enemigo no podrá atacar después de recibir daño
+    public float attackCooldownTime = 1.5f; // Tiempo que el enemigo no podrá atacar después de recibir daño
 
     [Header("Configuración de Teletransporte")]
     public float teleportRadius = 10f;
@@ -42,7 +42,7 @@ public class EspiralIA : EnemyLife
 
     private IEnumerator FindPlayerWithDelay()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (player == null) Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
     }
@@ -135,7 +135,7 @@ public class EspiralIA : EnemyLife
                 Debug.LogError("ShootingPoint no está asignado.");
             }
 
-            yield return new WaitForSeconds(shootingInterval);
+            yield return new WaitForSeconds(shootingInterval* MovimientoJugador.bulletTimeScale);
         }
 
         currentState = EnemyState.Teleporting;
@@ -176,7 +176,7 @@ public class EspiralIA : EnemyLife
 
     private IEnumerator TeleportAfterDelay(Vector3 teleportPosition)
     {
-        yield return new WaitForSeconds(1.8f*MovimientoJugador.bulletTimeScale); // Esperar antes de teletransportarse
+        yield return new WaitForSeconds(1.8f* MovimientoJugador.bulletTimeScale); // Esperar antes de teletransportarse
 
         transform.position = teleportPosition;
         Debug.Log("Teletransportado a: " + teleportPosition);
@@ -192,7 +192,7 @@ public class EspiralIA : EnemyLife
             Vector3 direction = player.position - transform.position;
             direction.y = 0; // Mantener la rotación en el plano horizontal
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f* MovimientoJugador.bulletTimeScale);
         }
     }
 

@@ -19,7 +19,7 @@ public class EnemyVision : MonoBehaviour
 
     private IEnumerator FindPlayerWithDelay()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
