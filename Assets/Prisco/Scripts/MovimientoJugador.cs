@@ -452,21 +452,33 @@ public class MovimientoJugador : MonoBehaviour
 }
 
    public IEnumerator EmpujarJugadorAL3(float duracion)
-    {
-       
-           // Esperar 1 segundo antes de ejecutar el bucle while
+{
+    // Esperar 1 segundo antes de ejecutar el bucle while
     yield return new WaitForSeconds(0.1f);
-    
-     Vector3 direccionEmpuje = transform.forward;
-        float tiempoTranscurrido = 0;
+
+    Vector3 direccionEmpuje = transform.forward;
+    float tiempoTranscurrido = 0;
 
     while (tiempoTranscurrido < duracion)
     {
-        transform.position += direccionEmpuje * fuerzaEmpujeAP3 * Time.deltaTime;
+        Vector3 futurePosition = transform.position + direccionEmpuje * fuerzaEmpujeAP3 * Time.deltaTime;
+
+        // Verificar si hay algo en el suelo en la posición futura
+        if (Physics.Raycast(futurePosition, Vector3.down, out RaycastHit hit, 1.0f))
+        {
+            // Si hay algo en el suelo, mover al jugador a la posición futura
+            transform.position = futurePosition;
+        }
+        else
+        {
+            // Si no hay nada en el suelo, detener el empuje
+            break;
+        }
+
         tiempoTranscurrido += Time.deltaTime;
         yield return null;
     }
-    }
+}
 
 public bool EstaMoviendose()
 {

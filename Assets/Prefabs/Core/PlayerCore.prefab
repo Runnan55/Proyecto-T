@@ -6060,7 +6060,7 @@ CharacterController:
   m_Radius: 0.74
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 7.47
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.58, z: 0}
 --- !u!114 &4254598981043421469
@@ -6205,6 +6205,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxTime: 150
   isInvincible: 0
+  timeBank: 0
+  timeBankText: {fileID: 0}
+  isAlive: 1
   canvas: {fileID: 0}
   timeText: {fileID: 0}
   timeImage: {fileID: 0}
@@ -6216,6 +6219,18 @@ MonoBehaviour:
   playerController: {fileID: 0}
   DamagePlayer: 0
   m_shakeCamera: {fileID: 0}
+  invincibleMaterial: {fileID: 0}
+  damageMaterial: {fileID: 0}
+  originalMaterial: {fileID: 0}
+  skinnedMeshRenderer: {fileID: 0}
+  damage:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  effect: {fileID: 0}
 --- !u!114 &5761408969846323552
 MonoBehaviour:
   m_ObjectHideFlags: 0
