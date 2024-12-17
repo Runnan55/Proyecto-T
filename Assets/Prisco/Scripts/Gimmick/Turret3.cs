@@ -4,52 +4,50 @@ using UnityEngine;
 
 public class Turret3 : MonoBehaviour
 {
-    public Transform pointA;
-    public Transform pointB;
     public GameObject bulletPrefab;
     public Transform cannon;
     public float moveSpeed = 5f;
     public float fireRate = 1f;
     public float bulletSpeed = 10f;
 
+    private Transform player; // Referencia al transform del jugador
     private bool canShoot = true;
-    private bool movingToB = true;
 
     void Start()
     {
+        // Buscar el objeto del jugador por su etiqueta
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
+        else
+        {
+            Debug.LogError("No se encontró un objeto con la etiqueta 'Player'.");
+        }
+
         transform.rotation = Quaternion.Euler(0, -90, 0);
         StartCoroutine(FireRateCooldown());
     }
 
     void Update()
     {
-        MoveBetweenPoints();
-
-        if (canShoot)
+        if (player != null)
         {
-            ShootStraight();
-            StartCoroutine(FireRateCooldown());
+            FollowPlayerOnZ();
+
+            if (canShoot)
+            {
+                ShootStraight();
+                StartCoroutine(FireRateCooldown());
+            }
         }
     }
 
-    private void MoveBetweenPoints()
+    private void FollowPlayerOnZ()
     {
-        if (movingToB)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, pointB.position, moveSpeed * Time.deltaTime * MovimientoJugador.bulletTimeScale);
-            if (Vector3.Distance(transform.position, pointB.position) < 0.1f)
-            {
-                movingToB = false;
-            }
-        }
-        else
-        {
-            transform.position = Vector3.MoveTowards(transform.position, pointA.position, moveSpeed * Time.deltaTime * MovimientoJugador.bulletTimeScale);
-            if (Vector3.Distance(transform.position, pointA.position) < 0.1f)
-            {
-                movingToB = true;
-            }
-        }
+        Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y, player.position.z);
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime * MovimientoJugador.bulletTimeScale);
     }
 
     private void ShootStraight()
