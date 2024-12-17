@@ -2557,6 +2557,8 @@ MonoBehaviour:
   - {fileID: 1368102969}
   moveSpeed: 5
   rotationSpeed: 1.5
+  zoneChangeSpeedMultiplier: 3
+  speedBoostDuration: 5
   closeRange: 3
   midRange: 6
   farRange: 6
@@ -2645,7 +2647,7 @@ Transform:
   m_GameObject: {fileID: 446503826}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 26.4, y: 17.7, z: 25.1}
+  m_LocalPosition: {x: 11.9, y: 4.82, z: 6.2}
   m_LocalScale: {x: 2.0536, y: 2.0536, z: 2.0536}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3766,7 +3768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 30
+  rotationSpeed: 10
   rotateRight: 0
 --- !u!65 &710340151
 BoxCollider:
@@ -4179,7 +4181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 30
+  rotationSpeed: 10
   rotateRight: 1
 --- !u!65 &860909388
 BoxCollider:
@@ -4588,7 +4590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 30
+  rotationSpeed: 10
   rotateRight: 1
 --- !u!65 &960055814
 BoxCollider:
@@ -7089,7 +7091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 30
+  rotationSpeed: 10
   rotateRight: 0
 --- !u!4 &1351966311 stripped
 Transform:
@@ -8294,7 +8296,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7473859980543639511, guid: a3f3d7c84eaebce4788d7d0b74e3f76f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -10.4
+      value: -8.5
       objectReference: {fileID: 0}
     - target: {fileID: 7473859980543639511, guid: a3f3d7c84eaebce4788d7d0b74e3f76f, type: 3}
       propertyPath: m_LocalPosition.z

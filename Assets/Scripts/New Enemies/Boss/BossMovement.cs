@@ -9,7 +9,8 @@ public class BossMovement : BossLIfe
     private Transform player;      // Referencia al jugador
     public float moveSpeed = 5f;   // Velocidad de movimiento del Boss
     public float rotationSpeed = 5f; // Velocidad de rotación
-
+    public float zoneChangeSpeedMultiplier = 2f; // Multiplicador de velocidad al cambiar de zona
+    public float speedBoostDuration = 3f;       // Duración del aumento de velocidad
     private Vector3 currentTarget; // Punto al que se mueve el Boss
 
     
@@ -67,6 +68,9 @@ public class BossMovement : BossLIfe
     private BossJumpAttack jumpAttack; // Referencia al script de salto
     public OrbeAttackControler orbeAttackController;
     public GearStorm gearStorm;
+
+    private bool canMove = true;
+
     protected override void Start()
     {
         base.Start();
@@ -92,12 +96,16 @@ public class BossMovement : BossLIfe
     // Este método es llamado cuando el jugador entra en una zona
     public void OnPlayerEnterZone(int zoneID)
     {
+
+
         if (saltos)
         {
             if (zoneID == zonaActual)
             {
                 if (zoneID >= 0 && zoneID < zonePoints.Length)
                 {
+                    StartCoroutine(TemporarySpeedBoost());
+
                     currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
                     zonaActual = zoneID;
                     saltos = false;
@@ -136,14 +144,12 @@ public class BossMovement : BossLIfe
 
         if (isPlayerInSameZone)
         {
-            // Perseguir al jugador si está en la misma zona
-            currentTarget = player.position;
-
-
+            // Ajusta el target para mantener la altura (posición en Y)
+            currentTarget = new Vector3(player.position.x, transform.position.y, player.position.z);
         }
         else
         {
-            // Mover al objetivo original de la zona
+            // Mueve al objetivo original de la zona
             currentTarget = zonePoints[zonaActual].position;
         }
 
@@ -161,8 +167,13 @@ public class BossMovement : BossLIfe
 
     private void MoveTowardsTarget()
     {
-        // Mueve al Boss hacia el objetivo (sin NavMesh)
-        transform.position = Vector3.MoveTowards(transform.position, currentTarget, moveSpeed * Time.deltaTime* MovimientoJugador.bulletTimeScale);
+
+        if (!canMove) return;
+        // Mantener la posición en el eje Y del jefe
+        Vector3 fixedTarget = new Vector3(currentTarget.x, transform.position.y, currentTarget.z);
+
+        // Mueve al Boss hacia el objetivo ajustado (sin cambios en Y)
+        transform.position = Vector3.MoveTowards(transform.position, fixedTarget, moveSpeed * Time.deltaTime* MovimientoJugador.bulletTimeScale);
     }
 
     void RotateTowardsPlayer()
@@ -298,12 +309,23 @@ public class BossMovement : BossLIfe
     void Barrido()
     {
         Debug.Log("Realizando Spin Attack!");
-        // Animación y daño en área
+        canMove = false; // Detenemos el movimiento
+
+        // Instancia el ataque de barrido
         GameObject barridoAtk = Instantiate(barrido, coreTransform.position, coreTransform.rotation);
         barridoAtk.GetComponent<Barrido>().ExecuteSweep();
 
+        // Reactiva el movimiento después de un tiempo
+        StartCoroutine(ResumeMovementAfterBarrido());
+
     }
 
+
+    private IEnumerator ResumeMovementAfterBarrido()
+    {
+        yield return new WaitForSeconds(1f); // Tiempo que tarda el barrido en completarse
+        canMove = true; // Reactivamos el movimiento
+    }
     void ProyectilUnaDir()
     {
         Debug.Log("Realizando Sweeping Strike!");
@@ -369,6 +391,11 @@ public class BossMovement : BossLIfe
 
     }
 
- 
+    private IEnumerator TemporarySpeedBoost()
+    {
+        moveSpeed *= zoneChangeSpeedMultiplier; // Aumenta la velocidad
+        yield return new WaitForSeconds(speedBoostDuration); // Espera el tiempo del boost
+        moveSpeed /= zoneChangeSpeedMultiplier; // Restaura la velocidad
+    }
 
 }
