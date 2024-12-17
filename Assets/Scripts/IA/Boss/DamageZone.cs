@@ -19,7 +19,7 @@ public class DamageZone : MonoBehaviour
     void Start()
     {
         zoneRenderer = GetComponent<Renderer>();
-        StartCoroutine(FindPlayerAfterDelay(0.5f));
+        StartCoroutine(FindPlayerAfterDelay(0.2f));
         UpdateMaterial();
 
         if (autoToggleMode)
@@ -34,7 +34,7 @@ public class DamageZone : MonoBehaviour
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (isActive && other.CompareTag("Player"))
         {

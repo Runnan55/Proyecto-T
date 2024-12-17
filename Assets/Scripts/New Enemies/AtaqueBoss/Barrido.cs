@@ -28,6 +28,9 @@ public class Barrido : MonoBehaviour
     {
         isSweeping = true; // Marca que el barrido está en curso
 
+        float[] dodgeTimers = { 0.5f, 0.7f, 1f }; // Valores para cada instancia
+        int timerIndex = 0; // Índice para iterar los valores
+
         // Crear los cubos del barrido en las posiciones relativas, orientados con el barrido
         foreach (var position in sweepPositions)
         {
@@ -35,8 +38,18 @@ public class Barrido : MonoBehaviour
             Quaternion worldRotation = transform.rotation * position.localRotation;
 
             GameObject sweep = Instantiate(sweepPrefab, worldPosition, worldRotation);
-            Destroy(sweep, 1f); // Destruir el cubo tras 1 segundo
-            yield return new WaitForSeconds(sweepInterval); // Esperar un intervalo antes de crear el siguiente
+
+            // Asignar el valor dodgeTimer de acuerdo al índice actual
+            if (sweep.TryGetComponent(out CubeAttack cubeAttack))
+            {
+                cubeAttack.dodgeTimer = dodgeTimers[timerIndex];
+            }
+
+            // Aumentar el índice, reiniciar si supera los límites
+            timerIndex = (timerIndex + 1) % dodgeTimers.Length;
+
+            Destroy(sweep, dodgeTimers[timerIndex]+0.3f); // Destruir el cubo tras 1 segundo
+            yield return new WaitForSeconds(0f); // Esperar un intervalo antes de crear el siguiente
         }
 
         // Disparar los proyectiles en las posiciones relativas, orientados con el barrido
