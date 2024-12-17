@@ -114,6 +114,11 @@ public class DebugTest : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
+    public void Level1()
+    {
+        SceneManager.LoadScene("Level1");
+    }
+
     public void OpenBTBoss()
     {
         SceneManager.LoadScene("BTBoss");
@@ -142,11 +147,6 @@ public class DebugTest : MonoBehaviour
     public void OpenDevil()
     {
         SceneManager.LoadScene("Devil");
-    }
-
-     public void OpenGimmick()
-    {
-        SceneManager.LoadScene("Gimmick");
     }
 
     public void RestartActualLevel()

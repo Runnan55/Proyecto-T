@@ -68,18 +68,27 @@ public class Level : MonoBehaviour
         }
     }
 
+    private bool isFirstWave = true;
+
     public void StartNextWave()
     {
         if (currentWave < waves.Count)
         {
             FMODUnity.RuntimeManager.PlayOneShot(waveStart);
             defeatedEnemies = waves[currentWave].enemySpawns.Count;
+
+            if (isFirstWave && modifyTime && playerLife != null)
+            {
+                playerLife.StartTimer(maxTime);
+                isFirstWave = false;
+            }
+
             StartCoroutine(SpawnWave(waves[currentWave]));
             currentWave++;
         }
     }
 
-    private IEnumerator SpawnWave(EnemyWave wave)
+   private IEnumerator SpawnWave(EnemyWave wave)
     {
         Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
 
@@ -99,6 +108,12 @@ public class Level : MonoBehaviour
             float delayGrupo = grupoSpawn.Key;
 
             yield return new WaitForSeconds(delayGrupo - tiempoDesdeUltimoSpawn);
+
+            if (isFirstWave && modifyTime && playerLife != null)
+            {
+                playerLife.StartTimer(maxTime);
+                isFirstWave = false;
+            }
 
             foreach (EnemySpawner enemySpawner in grupoSpawn.Value)
             {

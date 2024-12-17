@@ -119,10 +119,6 @@ public class Life : MonoBehaviour
         {
             timeImage.fillAmount = 1;
         }
-        else
-        {
-            //Debug.Log("timeImage es null.");
-        }
 
         levelManager = FindObjectOfType<LevelManager>();
         playerController = GetComponent<CharacterController>();
@@ -134,6 +130,16 @@ public class Life : MonoBehaviour
         }
 
         StartCoroutine(FindHealthPanelReferences());
+    }
+
+    public void StartTimer(float initialTime)
+    {
+        currentTime = initialTime;
+        UpdateTimeText();
+        UpdateTimeImage();
+        UpdateTimeBankText();
+
+        StartCoroutine(TimerCoroutine());
     }
 
     void Update()
@@ -153,16 +159,6 @@ public class Life : MonoBehaviour
         UpdateTimeText();
         UpdateTimeImage();
         UpdateTimeBankText();
-    }
-
-    public void StartTimer(float initialTime)
-    {
-        currentTime = initialTime;
-        UpdateTimeText();
-        UpdateTimeImage();
-        UpdateTimeBankText();
-
-        StartCoroutine(TimerCoroutine());
     }
 
     public void StopTimer()
