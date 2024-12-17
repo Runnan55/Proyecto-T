@@ -27,11 +27,6 @@ public class Level : MonoBehaviour
     public float teleportDelay = 1f;
     public Teleporter teleporter;
 
-    [Header("Time config")]
-    public bool modifyTime = false;
-    public float maxTime = 600f;
-    private Life playerLife;
-
     [Header("Warning config")]
     public GameObject warning;
     [SerializeField] private FMODUnity.EventReference waveStart;
@@ -51,24 +46,12 @@ public class Level : MonoBehaviour
             {
                 StartCoroutine(entranceDoor.Close());
             }
-          //  Debug.Log(hasPlayerEntered);
+            Debug.Log(hasPlayerEntered);
             StartNextWave();
             hasPlayerEntered = true; 
-         //   Debug.Log(hasPlayerEntered);
-
-            if (modifyTime)
-            {
-                playerLife = other.GetComponent<Life>();
-                if (playerLife != null)
-                {
-                    playerLife.maxTime = maxTime;
-                    playerLife.StartTimer(maxTime);
-                }
-            }
+            Debug.Log(hasPlayerEntered);
         }
     }
-
-    private bool isFirstWave = true;
 
     public void StartNextWave()
     {
@@ -76,13 +59,6 @@ public class Level : MonoBehaviour
         {
             FMODUnity.RuntimeManager.PlayOneShot(waveStart);
             defeatedEnemies = waves[currentWave].enemySpawns.Count;
-
-            if (isFirstWave && modifyTime && playerLife != null)
-            {
-                playerLife.StartTimer(maxTime);
-                isFirstWave = false;
-            }
-
             StartCoroutine(SpawnWave(waves[currentWave]));
             currentWave++;
         }
@@ -102,6 +78,7 @@ public class Level : MonoBehaviour
         }
 
         float tiempoDesdeUltimoSpawn = 0f;
+        bool isFirstEnemySpawned = false;
 
         foreach (var grupoSpawn in spawnsPorTiempo)
         {
@@ -109,17 +86,22 @@ public class Level : MonoBehaviour
 
             yield return new WaitForSeconds(delayGrupo - tiempoDesdeUltimoSpawn);
 
-            if (isFirstWave && modifyTime && playerLife != null)
-            {
-                playerLife.StartTimer(maxTime);
-                isFirstWave = false;
-            }
-
             foreach (EnemySpawner enemySpawner in grupoSpawn.Value)
             {
+                if (!isFirstEnemySpawned)
+                {
+                    // Iniciar el temporizador del jugador
+                    Life playerLife = FindObjectOfType<Life>();
+                    if (playerLife != null)
+                    {
+                        playerLife.StartTimer(playerLife.maxTime);
+                    }
+                    isFirstEnemySpawned = true;
+                }
+
                 GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
                 warningInstance.transform.LookAt(Camera.main.transform);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.25f);
                 Destroy(warningInstance);
 
                 EnemyLife newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
@@ -160,11 +142,6 @@ public class Level : MonoBehaviour
                 {
                     StartCoroutine(TeleportPlayerWithDelay());
                 }
-
-                if (modifyTime && playerLife != null)
-                {
-                    playerLife.StopTimer();
-                }
             }
             else
             {
@@ -184,3 +161,5 @@ public class Level : MonoBehaviour
         }
     }
 }
+
+//hola
