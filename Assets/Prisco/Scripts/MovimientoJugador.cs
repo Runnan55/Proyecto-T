@@ -562,7 +562,7 @@ IEnumerator Dash()
     }
 }
   
-   public void AtaqueJugador()
+public void AtaqueJugador()
 {
     if (Input.GetMouseButtonDown(0))
     {
@@ -575,7 +575,7 @@ IEnumerator Dash()
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit) && hit.collider.CompareTag("FallZone"))
             {
                 Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 
