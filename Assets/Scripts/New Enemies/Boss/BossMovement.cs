@@ -48,6 +48,9 @@ public class BossMovement : BossLIfe
     private float lastTormenta = -10f;
     public float tormentaEngranaje = 6;
 
+    private float lastSalto = -10f;
+    public float saltoCooldown = 30;
+
     private float lastDisparo1 = -10f;
     public float Disparo1 = 12f;
 
@@ -203,26 +206,26 @@ public class BossMovement : BossLIfe
             // Realizar el salto aplastante si el jugador está detrás durante 3 segundos
             if (angle > 120f)
             {
-                behindTime += Time.deltaTime;
-                if (behindTime >= behindThreshold && Time.time > lastExplosionTrasera + explosionTraseraCooldown)
+                if (contador >= 5)
                 {
-                    OnPlayerEnterZone(GetRandomIndexExcluding(zonaActual));                   
-                    
-                    jumpAttack.SaltoAplastante(currentTarget);
-
-                    saltos = true;
-                    StartCoroutine(cooldown());
-                   
-                    
-                    behindTime = 0f; // Reiniciamos el temporizador
-                    lastExplosionTrasera = Time.time;
+                    CoreBurst();
+                    contador = 0;
                 }
+             
             }
-            else
+         
+            if ( Time.time > lastSalto + saltoCooldown)
             {
-                behindTime = 0f; // Reiniciamos si el jugador no está detrás
-            }
+                OnPlayerEnterZone(GetRandomIndexExcluding(zonaActual));
 
+                jumpAttack.SaltoAplastante(currentTarget);
+
+                saltos = true;
+                StartCoroutine(cooldown());
+
+
+                lastSalto = Time.time;
+            }
             // Llamada a la Tormenta de Engranajes
             if (distance > midRange && Time.time > lastTormenta + tormentaEngranaje)
             {

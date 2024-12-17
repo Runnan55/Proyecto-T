@@ -16,10 +16,9 @@ public class DamageZone : MonoBehaviour
     private bool isActive = true;
     private Renderer zoneRenderer;
 
-    void Start()
+    void Awake()
     {
         zoneRenderer = GetComponent<Renderer>();
-        StartCoroutine(FindPlayerAfterDelay(0.2f));
         UpdateMaterial();
 
         if (autoToggleMode)
@@ -28,20 +27,16 @@ public class DamageZone : MonoBehaviour
         }
     }
 
-    private IEnumerator FindPlayerAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
-    }
 
-    private void OnTriggerEnter(Collider other)
+
+    private void OnTriggerStay(Collider other)
     {
         if (isActive && other.CompareTag("Player"))
         {
-            if (playerLife != null)
-            {
-                playerLife.ModifyTime(-damageAmount);
-            }
+            playerLife = other.GetComponent<Life>();
+            playerLife.ModifyTime(-damageAmount);
+                Debug.Log("danoplayer");
+            
         }
     }
 

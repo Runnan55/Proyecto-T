@@ -6,8 +6,8 @@ public class CubeAttack : MonoBehaviour
 {
     public GameObject dodgeChild;
     public GameObject damageChild;
-    public float dodgeTimer=0.25f;
-    public float damageTimer=0.05f;
+    public float dodgeTimer = 0.25f;
+    public float damageTimer = 0.05f;
 
     void Start()
     {

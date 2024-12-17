@@ -2556,9 +2556,9 @@ MonoBehaviour:
   - {fileID: 1124606553}
   - {fileID: 1368102969}
   moveSpeed: 8.53
-  rotationSpeed: 1.25
-  closeRange: 4
-  midRange: 6.5
+  rotationSpeed: 1.5
+  closeRange: 3
+  midRange: 6
   farRange: 6
   phase: 1
   behindThreshold: 3
@@ -2580,8 +2580,9 @@ MonoBehaviour:
   explosionTraseraCooldown: 3
   barridoCooldown: 3
   tormentaEngranaje: 8
-  Disparo1: 2
-  TrampaRobotCooldown: 10
+  saltoCooldown: 30
+  Disparo1: 1
+  TrampaRobotCooldown: 20
   orbeCooldown: 4
   orbeAttackController: {fileID: 446503836}
   gearStorm: {fileID: 446503837}
@@ -2717,7 +2718,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gearMarkerPrefab: {fileID: 6069277922289101775, guid: 4bef24b350fe9d148886ee8cce1dba05, type: 3}
   gearProjectilePrefab: {fileID: 1747390941289924893, guid: 6288dc46de03ae040a7fbad4393fbd7e, type: 3}
-  cantidadEngranajes: 4
+  cantidadEngranajes: 3
   radioTormenta: 15
   tiempoMarcador: 1.5
 --- !u!1 &452812599
@@ -3765,7 +3766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: 30
   rotateRight: 0
 --- !u!65 &710340151
 BoxCollider:
@@ -4178,7 +4179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: 30
   rotateRight: 1
 --- !u!65 &860909388
 BoxCollider:
@@ -4587,7 +4588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: 30
   rotateRight: 1
 --- !u!65 &960055814
 BoxCollider:
@@ -5509,7 +5510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1043231042
 Transform:
   m_ObjectHideFlags: 0
@@ -6151,7 +6152,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -11.9
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6159,7 +6160,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -7.1
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7088,7 +7089,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: 30
   rotateRight: 0
 --- !u!4 &1351966311 stripped
 Transform:

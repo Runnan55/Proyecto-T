@@ -48,7 +48,7 @@ public class Barrido : MonoBehaviour
             // Aumentar el índice, reiniciar si supera los límites
             timerIndex = (timerIndex + 1) % dodgeTimers.Length;
 
-            Destroy(sweep, dodgeTimers[timerIndex]+0.3f); // Destruir el cubo tras 1 segundo
+            Destroy(sweep, 1.3f); // Destruir el cubo tras 1 segundo
             yield return new WaitForSeconds(0f); // Esperar un intervalo antes de crear el siguiente
         }
 

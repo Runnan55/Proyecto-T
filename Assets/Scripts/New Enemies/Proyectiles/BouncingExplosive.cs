@@ -89,6 +89,8 @@ public class BouncingExplosive : MonoBehaviour
         // Instanciar efectos de partículas o sonidos según lo que prefieras.
     }
 
+  
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Walls")) // Rebote contra una pared
