@@ -27,6 +27,11 @@ public class Level : MonoBehaviour
     public float teleportDelay = 1f;
     public Teleporter teleporter;
 
+    [Header("Time config")]
+    public bool modifyTime = false;
+    public float maxTime = 600f;
+    private Life playerLife;
+
     [Header("Warning config")]
     public GameObject warning;
     [SerializeField] private FMODUnity.EventReference waveStart;
@@ -46,10 +51,20 @@ public class Level : MonoBehaviour
             {
                 StartCoroutine(entranceDoor.Close());
             }
-            Debug.Log(hasPlayerEntered);
+            //Debug.Log(hasPlayerEntered);
             StartNextWave();
             hasPlayerEntered = true; 
-            Debug.Log(hasPlayerEntered);
+            //Debug.Log(hasPlayerEntered);
+
+            if (modifyTime)
+            {
+                playerLife = other.GetComponent<Life>();
+                if (playerLife != null)
+                {
+                    playerLife.maxTime = maxTime;
+                    playerLife.StartTimer(maxTime);
+                }
+            }
         }
     }
 
@@ -64,7 +79,7 @@ public class Level : MonoBehaviour
         }
     }
 
-   private IEnumerator SpawnWave(EnemyWave wave)
+    private IEnumerator SpawnWave(EnemyWave wave)
     {
         Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
 
@@ -142,6 +157,11 @@ public class Level : MonoBehaviour
                 {
                     StartCoroutine(TeleportPlayerWithDelay());
                 }
+
+                if (modifyTime && playerLife != null)
+                {
+                    playerLife.StopTimer();
+                }
             }
             else
             {
@@ -161,5 +181,4 @@ public class Level : MonoBehaviour
         }
     }
 }
-
 //hola

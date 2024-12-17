@@ -35,7 +35,7 @@ public class DamageZone : MonoBehaviour
         {
             playerLife = other.GetComponent<Life>();
             playerLife.ModifyTime(-damageAmount);
-                Debug.Log("danoplayer");
+            //Debug.Log("danoplayer");
             
         }
     }

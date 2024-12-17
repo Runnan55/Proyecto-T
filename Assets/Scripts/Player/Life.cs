@@ -205,8 +205,8 @@ public class Life : MonoBehaviour
         UpdateTimeText();
         UpdateTimeImage();
 
-        Debug.Log("muerte");
         isAlive = false;
+        Debug.Log("muerte " +isAlive);
         deathScreen.gameObject.SetActive(true);
     }
 
@@ -227,8 +227,9 @@ public class Life : MonoBehaviour
         else if (currentTime < 0)
         {
             //levelManager.OnLevelFailed();
-            deathScreen.gameObject.SetActive(true);
-            LoseManager.Lose();
+            //deathScreen.gameObject.SetActive(true);
+            //LoseManager.Lose();
+            Death();
             currentTime = 0;
         }
         UpdateTimeImage();
