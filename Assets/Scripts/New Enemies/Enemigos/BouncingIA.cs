@@ -111,7 +111,7 @@ public class BouncingIA : EnemyLife
             Vector3 normal = other.transform.forward;
             Vector3 bounceDirection = Vector3.Reflect(incomingDirection, normal);
 
-            float angleVariation = Random.Range(-30f, 30f);
+            float angleVariation = Random.Range(-15f, 15f);
             Quaternion rotation = Quaternion.AngleAxis(angleVariation, Vector3.up);
 
             // Aplica la variabilidad a la dirección de rebote
