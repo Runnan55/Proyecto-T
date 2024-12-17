@@ -11,6 +11,8 @@ public class BossLIfe : MonoBehaviour
 
     public float frontDamageMultiplier = 0.25f;
     public float normalDamageMultiplier = 1f;
+    
+    public int contador=0;
 
     protected virtual void Start()
     {
@@ -30,6 +32,7 @@ public class BossLIfe : MonoBehaviour
         {
             // Si el jugador está fuera del ángulo de visión, aplicar daño normal
             damage *= normalDamageMultiplier;
+            contador++;
         }
 
         currentHealth -= damage;

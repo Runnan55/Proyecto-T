@@ -168,12 +168,10 @@ public class BossMovement : BossLIfe
         {
             if (angle > 120f)
             {
-                behindTime += Time.deltaTime;
-                if (behindTime >= behindThreshold && Time.time > lastExplosionTrasera + explosionTraseraCooldown)
+                if (contador>=5)
                 {
                     CoreBurst();
-                    behindTime = 0f;
-                    lastExplosionTrasera = Time.time;
+                    contador = 0;
                 }
             }
             else
@@ -213,7 +211,7 @@ public class BossMovement : BossLIfe
                     jumpAttack.SaltoAplastante(currentTarget);
 
                     saltos = true;
-                    StartCoroutine(cultdown());
+                    StartCoroutine(cooldown());
                    
                     
                     behindTime = 0f; // Reiniciamos el temporizador
@@ -246,8 +244,7 @@ public class BossMovement : BossLIfe
         }
     }
 
-    
-    private IEnumerator cultdown()
+    private IEnumerator cooldown()
     {
         yield return new WaitForSeconds(3);  // Esperar 1 segundo.
        
