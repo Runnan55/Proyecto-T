@@ -9,8 +9,7 @@ public class BossMovement : BossLIfe
     private Transform player;      // Referencia al jugador
     public float moveSpeed = 5f;   // Velocidad de movimiento del Boss
     public float rotationSpeed = 5f; // Velocidad de rotación
-    public float zoneChangeSpeedMultiplier = 2f; // Multiplicador de velocidad al cambiar de zona
-    public float speedBoostDuration = 3f;       // Duración del aumento de velocidad
+   
     private Vector3 currentTarget; // Punto al que se mueve el Boss
 
     
@@ -104,7 +103,6 @@ public class BossMovement : BossLIfe
             {
                 if (zoneID >= 0 && zoneID < zonePoints.Length)
                 {
-                    StartCoroutine(TemporarySpeedBoost());
 
                     currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
                     zonaActual = zoneID;
@@ -391,11 +389,6 @@ public class BossMovement : BossLIfe
 
     }
 
-    private IEnumerator TemporarySpeedBoost()
-    {
-        moveSpeed *= zoneChangeSpeedMultiplier; // Aumenta la velocidad
-        yield return new WaitForSeconds(speedBoostDuration); // Espera el tiempo del boost
-        moveSpeed /= zoneChangeSpeedMultiplier; // Restaura la velocidad
-    }
+  
 
 }
