@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -35,28 +37,36 @@ public class RangedIA : EnemyLife
     private MovimientoJugador movimientoJugador;
     [SerializeField] private bool entro = false;
     private float guardarVelocidadTiempo = 0;
+    [Header("Otros Enemigos")]
+    public float minDistanceBetweenEnemies = 5f;  // Distancia mínima entre enemigos
+    private static List<RangedIA> allEnemies = new List<RangedIA>(); // Lista estática de todos los enemigos
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        originalAgentSpeed = agent.speed; // Almacena la velocidad original del agente
+        originalAgentSpeed = agent.speed;
         rb = GetComponent<Rigidbody>();
         currentState = EnemyState.Searching;
 
         StartCoroutine(FindPlayerWithDelay());
 
         UpdateStatusCubeColor();
-    }
 
-    void OnEnable()
-    {
-        // Aquí no necesitamos un evento, solo verificamos el valor de bulletTimeScale
+        // Añadir este enemigo a la lista de enemigos
+        if (!allEnemies.Contains(this))
+        {
+            allEnemies.Add(this);
+        }
     }
 
     void OnDisable()
     {
-        // Limpiar si fuera necesario
+        // Remover este enemigo de la lista cuando se desactive
+        if (allEnemies.Contains(this))
+        {
+            allEnemies.Remove(this);
+        }
     }
-
     private IEnumerator FindPlayerWithDelay()
     {
         yield return new WaitForSeconds(1f);

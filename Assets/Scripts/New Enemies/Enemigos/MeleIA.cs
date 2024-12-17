@@ -42,7 +42,11 @@ public class MeleIA : EnemyLife
     [SerializeField] private bool entro = false;
     private float guardarVelocidadTiempo=0;
 
-   void Awake()
+
+    public float minDistanceBetweenEnemies = 5f;  // Distancia mínima entre enemigos
+    private static List<MeleIA> allEnemies = new List<MeleIA>(); // Lista estática de todos los enemigos
+
+    void Awake()
     {
         
         agent = GetComponent<NavMeshAgent>();
@@ -59,10 +63,22 @@ public class MeleIA : EnemyLife
         }
 
         UpdateStatusCubeColor(); // Cambia el color del cubo al iniciar
+
+        if (!allEnemies.Contains(this))
+        {
+            allEnemies.Add(this);
+        }
     }
 
-   
-   
+
+    void OnDisable()
+    {
+        // Remover este enemigo de la lista cuando se desactive
+        if (allEnemies.Contains(this))
+        {
+            allEnemies.Remove(this);
+        }
+    }
 
     private IEnumerator FindPlayerWithDelay()
     {

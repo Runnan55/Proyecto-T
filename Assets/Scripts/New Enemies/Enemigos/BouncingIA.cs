@@ -148,7 +148,7 @@ public class BouncingIA : EnemyLife
     public override void ReceiveDamage(float damage)
     {
         // Evitar recibir daño durante la carga
-        if (isCharging) return;
+        if (!isCharging) return;
 
         base.ReceiveDamage(damage);
     }

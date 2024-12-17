@@ -625,10 +625,11 @@ MonoBehaviour:
   newMaterial: {fileID: 2100000, guid: 1ea1950e8d06cd14c8705cd9bcceda36, type: 2}
   currentState: 0
   chaseDistance: 200
-  attackDistance: 10
+  attackDistance: 16
   waitTimeBetweenShots: 1
   projectilePrefab: {fileID: 4182066159404826401, guid: e5f268ba2e123c84d9e4a87a60d4e770, type: 3}
   shootingPoint: {fileID: 3870920301961431463}
+  waitTimer: 0
   statusCube: {fileID: 5897662878122391933}
   pushForce: 5
   pushDuration: 0.5
@@ -639,6 +640,8 @@ MonoBehaviour:
       Data3: -1631113333
       Data4: -624859288
     Path: event:/FX/crossbow
+  entro: 0
+  minDistanceBetweenEnemies: 5
 --- !u!54 &7872666360780257890
 Rigidbody:
   m_ObjectHideFlags: 0
