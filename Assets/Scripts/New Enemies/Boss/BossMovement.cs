@@ -131,20 +131,38 @@ public class BossMovement : BossLIfe
 
     void Update()
     {
+        // Comprobar si el jugador está en la misma zona
+        bool isPlayerInSameZone = IsPlayerInZone(zonaActual);
+
+        if (isPlayerInSameZone)
+        {
+            // Perseguir al jugador si está en la misma zona
+            currentTarget = player.position;
+
+
+        }
+        else
+        {
+            // Mover al objetivo original de la zona
+            currentTarget = zonePoints[zonaActual].position;
+        }
+
         MoveTowardsTarget(); // Mueve al Boss hacia el destino actual
         RotateTowardsPlayer(); // Ajusta la rotación del Boss para mirar al jugador
         EvaluateConditions(); // Evalúa condiciones para ataques
+
         if (currentHealth <= maxHealth / 2 && phase == 1)
         {
             phase = 2;
-            Debug.Log("entramos en fase2");
+            Debug.Log("Entramos en fase 2");
         }
     }
+
 
     private void MoveTowardsTarget()
     {
         // Mueve al Boss hacia el objetivo (sin NavMesh)
-        transform.position = Vector3.MoveTowards(transform.position, currentTarget, moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, currentTarget, moveSpeed * Time.deltaTime* MovimientoJugador.bulletTimeScale);
     }
 
     void RotateTowardsPlayer()
@@ -332,5 +350,25 @@ public class BossMovement : BossLIfe
         }
     }
 
+
+    private bool IsPlayerInZone(int zoneID)
+    {
+        if (zoneID < 0 || zoneID >= zonePoints.Length)
+        {
+            return false;
+        }
+
+        Collider zoneCollider = zonePoints[zoneID].GetComponent<Collider>();
+
+        if (zoneCollider != null)
+        {
+            return zoneCollider.bounds.Contains(player.position);
+        }
+
+        return false;
+
+    }
+
+ 
 
 }
