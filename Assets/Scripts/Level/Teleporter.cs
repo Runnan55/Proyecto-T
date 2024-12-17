@@ -10,6 +10,7 @@ public class Teleporter : MonoBehaviour
     public float teleportCooldown = 1.0f;
     private float lastTeleportTime = -Mathf.Infinity;
     public bool hasTransition = true;
+    public bool destroyAfterTeleport = false;
 
     void Start()
     {
@@ -32,7 +33,6 @@ public class Teleporter : MonoBehaviour
         {
             StartCoroutine(TeleportWithTransition(player, targetPoint));
         }
-
         else
         {
             PerformTeleport(player, targetPoint);
@@ -46,13 +46,17 @@ public class Teleporter : MonoBehaviour
         PerformTeleport(player, targetPoint);
         yield return new WaitForSeconds(0.55f);
         DefaultHUD.Instance.DisableTransition();
+
+        if (destroyAfterTeleport)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void PerformTeleport(GameObject player, Transform targetPoint)
     {
         if (targetPoint != null)
         {
-            // Desactiva temporalmente el Rigidbody y CharacterController del jugador si existen
             Rigidbody rb = player.GetComponent<Rigidbody>();
             CharacterController controller = player.GetComponent<CharacterController>();
             if (controller != null) controller.enabled = false;
@@ -60,8 +64,8 @@ public class Teleporter : MonoBehaviour
             if (rb != null)
             {
                 rb.isKinematic = true;
-                rb.velocity = Vector3.zero; // Detén cualquier movimiento
-                rb.angularVelocity = Vector3.zero; // Detén cualquier rotación
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
 
             player.transform.position = targetPoint.position;
@@ -72,7 +76,6 @@ public class Teleporter : MonoBehaviour
 
             Debug.Log("Player teleported to: " + targetPoint.position);
         }
-
         else
         {
             Debug.LogError("TargetPoint is not assigned.");

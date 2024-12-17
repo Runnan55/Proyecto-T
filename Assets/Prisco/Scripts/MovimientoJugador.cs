@@ -277,7 +277,7 @@ public class MovimientoJugador : MonoBehaviour
             enterAttack = false;
         }
 
-        if ((isInDodgeArea && Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.B)) && !bulletTime)
+        if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) /* || Input.GetKeyDown(KeyCode.B)) */ && !bulletTime)
         {
             if (Time.time >= lastBulletTimeUse + bulletTimeCooldown)
             {
