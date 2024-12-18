@@ -36,6 +36,7 @@ public class Level : MonoBehaviour
     public bool modifyTime = false;
     public float maxTime = 600f;
     private Life playerLife;
+    private bool timerStarted = false; // { added }
 
     [Header("Warning config")]
     public GameObject warning;
@@ -61,13 +62,14 @@ public class Level : MonoBehaviour
             hasPlayerEntered = true; 
             //Debug.Log(hasPlayerEntered);
 
-            if (modifyTime)
+            if (modifyTime && !timerStarted) // { modified }
             {
                 playerLife = other.GetComponent<Life>();
                 if (playerLife != null)
                 {
                     playerLife.maxTime = maxTime;
                     playerLife.StartTimer(maxTime);
+                    timerStarted = true; // { added }
                 }
             }
         }
@@ -111,11 +113,11 @@ public class Level : MonoBehaviour
                 if (!isFirstEnemySpawned)
                 {
                     // Iniciar el temporizador del jugador
-                    Life playerLife = FindObjectOfType<Life>();
-                    if (playerLife != null)
-                    {
-                        playerLife.StartTimer(playerLife.maxTime);
-                    }
+                    //Life playerLife = FindObjectOfType<Life>();
+                    //if (playerLife != null)
+                    //{
+                    //    playerLife.StartTimer(playerLife.maxTime);
+                    //}
                     isFirstEnemySpawned = true;
                 }
 
