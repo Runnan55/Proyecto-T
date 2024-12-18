@@ -158,8 +158,7 @@ public class Life : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.B))
         {
-            timeBank += 6;
-            UpdateTimeBankText();
+            AddToTimeBank(6);
         }
 
         if (currentTime <= 0 && timeBank <= 0)
@@ -410,7 +409,7 @@ public class Life : MonoBehaviour
 
     public void plus30Secs()
     {
-        maxTime = maxTime + 30;
+        maxTime += 30;
         UpdateTimeText();
         UpdateTimeImage();
     }
@@ -444,12 +443,7 @@ public class Life : MonoBehaviour
 
         if (currentTime > 0 && currentTime <= 10)
         {
-            timeBank += currentTime;
-        }
-
-        if (timeBank > 10)
-        {
-            timeBank = 10;
+            AddToTimeBank(currentTime);
         }
 
         UpdateTimeText();
@@ -465,6 +459,8 @@ public class Life : MonoBehaviour
 
     public void AddToTimeBank(float time)
     {
+        // Limitar la cantidad agregada por conjunto de oleadas a un máximo de 10 segundos
+        time = Mathf.Min(time, 10);
         timeBank += time;
         UpdateTimeBankText();
     }
