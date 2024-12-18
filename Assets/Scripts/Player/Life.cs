@@ -46,6 +46,8 @@ public class Life : MonoBehaviour
 
     public Effect effect;
 
+    private Coroutine timerCoroutine; // Añadido
+
     IEnumerator FindHealthPanelReferences()
     {
         yield return new WaitForSeconds(0.5f); // Espera breve para permitir la inicialización de la UI
@@ -139,7 +141,11 @@ public class Life : MonoBehaviour
         UpdateTimeImage();
         UpdateTimeBankText();
 
-        StartCoroutine(TimerCoroutine());
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine); // Detener la corrutina existente
+        }
+        timerCoroutine = StartCoroutine(TimerCoroutine()); // Iniciar una nueva corrutina
     }
 
     void Update()
@@ -168,7 +174,11 @@ public class Life : MonoBehaviour
 
     public void StopTimer()
     {
-        StopAllCoroutines();
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
     }
 
     IEnumerator TimerCoroutine()
@@ -211,7 +221,7 @@ public class Life : MonoBehaviour
         UpdateTimeImage();
 
         isAlive = false;
-        Debug.Log("muerte " +isAlive);
+        Debug.Log("muerte " + isAlive);
         deathScreen.gameObject.SetActive(true);
     }
 
