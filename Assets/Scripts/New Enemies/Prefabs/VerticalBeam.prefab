@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3693442825602508099}
   - component: {fileID: 8774194269663682711}
   m_Layer: 0
-  m_Name: Cylinder 2
+  m_Name: VerticalBeam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,6 +99,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 30
+  moveSpeed: 2
+  lifetime: 10
+  moveLeft: 1
+  toggleInterval: 0.7
 --- !u!136 &8774194269663682711
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -148,13 +152,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8114541787368964049}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0.0049887574, y: -0, z: -0, w: 0.99998754}
   m_LocalPosition: {x: -0.011, y: -39, z: 0.019}
-  m_LocalScale: {x: 0.10788693, y: 23.253359, z: 0.10788693}
+  m_LocalScale: {x: 0.10788693, y: 3.141253, z: 0.10788693}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9082207752755729608}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -0.572, y: 0, z: 0}
 --- !u!2083052967 &6828858131083171956
 VisualEffect:
   m_ObjectHideFlags: 0
@@ -186,7 +190,141 @@ VisualEffect:
     m_Matrix4x4f:
       m_Array: []
     m_AnimationCurve:
-      m_Array: []
+      m_Array:
+      - m_Value:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0.00091171265
+            value: 0.0029296875
+            inSlope: 29.014475
+            outSlope: 29.014475
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.035560697
+            value: 1.0082518
+            inSlope: 24.922968
+            outSlope: 24.922968
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.087343454
+            value: 0.9967825
+            inSlope: -14.350674
+            outSlope: -14.350674
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.110255964
+            value: 0.6635021
+            inSlope: -0.9085469
+            outSlope: -0.9085469
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.1977446
+            value: 1.0658911
+            inSlope: 1.1140652
+            outSlope: 1.1140652
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.30003905
+            value: 0.98566395
+            inSlope: -0.31169346
+            outSlope: -0.31169346
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.39995468
+            value: 1.0685781
+            inSlope: 0.11400263
+            outSlope: 0.11400263
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.5007713
+            value: 0.9690669
+            inSlope: 0.45358655
+            outSlope: 0.45358655
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.57515967
+            value: 1.0659374
+            inSlope: 0.07892127
+            outSlope: 0.07892127
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.6531772
+            value: 0.98488986
+            inSlope: 0.23885755
+            outSlope: 0.23885755
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.6997393
+            value: 1.0784382
+            inSlope: 0.3546339
+            outSlope: 0.3546339
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.7908733
+            value: 0.9131245
+            inSlope: 0.05651622
+            outSlope: 0.05651622
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.9199272
+            value: 1
+            inSlope: -6.3849616
+            outSlope: -6.3849616
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 0
+            inSlope: -12.488632
+            outSlope: -12.488632
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        m_Name: CylinderGrowXY
+        m_Overridden: 0
     m_Gradient:
       m_Array: []
     m_NamedObject:

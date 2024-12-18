@@ -9,10 +9,10 @@ public class BossMovement : BossLIfe
     private Transform player;      // Referencia al jugador
     public float moveSpeed = 5f;   // Velocidad de movimiento del Boss
     public float rotationSpeed = 5f; // Velocidad de rotación
-   
+
     private Vector3 currentTarget; // Punto al que se mueve el Boss
 
-    
+
     [Header("Rangos de Distancia")]
     public float closeRange = 5f; // Distancia considerada cuerpo a cuerpo
     public float midRange = 15f; // Distancia considerada rango medio
@@ -20,7 +20,7 @@ public class BossMovement : BossLIfe
 
     [Header("Fases y Daño")]
     public int phase = 1; // Fase del combate
-  
+
 
     [Header("Detección del Jugador")]
     private float behindTime = 0f; // Tiempo que el jugador ha pasado detrás del jefe
@@ -29,6 +29,10 @@ public class BossMovement : BossLIfe
     [Header("Prefabs y Arena")]
     public GameObject gearProjectile; // Prefab del engranaje cortante
     public Transform[] stormGearPositions;
+    public GameObject verticalBeam1;
+    public GameObject verticalBeam2;
+    public Transform[] beam1Transform;
+    public Transform[] Beam2Transform;
     public GameObject gearTrapBot; // Prefab del robot trampa
     public GameObject gearTrapBot2; // Prefab del robot trampa
     public GameObject[] smokeTramps;
@@ -48,6 +52,9 @@ public class BossMovement : BossLIfe
     private float lastTormenta = -10f;
     public float tormentaEngranaje = 6;
 
+    private float lastBeam = -10f;
+    public float BeamTime = 15;
+
     private float lastSalto = -10f;
     public float saltoCooldown = 30;
 
@@ -60,15 +67,14 @@ public class BossMovement : BossLIfe
     public float orbeCooldown = 5f;  // Tiempo entre cada ataque de orbes
     private float lastOrbeAttackTime = -10f;  // Marca el último momento de invocación de orbes
 
-    private int zonaActual=0;
-    private bool saltos=false;
+    private int zonaActual = 0;
+    private bool saltos = false;
 
     [Header("Referencias a Ataques y Otros Componentes")]
     private BossJumpAttack jumpAttack; // Referencia al script de salto
     public OrbeAttackControler orbeAttackController;
     public GearStorm gearStorm;
 
-    private bool canMove = true;
 
     protected override void Start()
     {
@@ -95,20 +101,17 @@ public class BossMovement : BossLIfe
     // Este método es llamado cuando el jugador entra en una zona
     public void OnPlayerEnterZone(int zoneID)
     {
-
-
         if (saltos)
         {
             if (zoneID == zonaActual)
             {
                 if (zoneID >= 0 && zoneID < zonePoints.Length)
                 {
-
                     currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
                     zonaActual = zoneID;
                     saltos = false;
-                    
-                        Debug.Log("trampas desactivas");
+
+                    Debug.Log("trampas desactivas");
                     foreach (var trap in smokeTramps)
                     {
                         if (trap != null)
@@ -132,46 +135,25 @@ public class BossMovement : BossLIfe
                 zonaActual = zoneID;
             }
         }
-       
+
     }
 
     void Update()
     {
-        // Comprobar si el jugador está en la misma zona
-        bool isPlayerInSameZone = IsPlayerInZone(zonaActual);
-
-        if (isPlayerInSameZone)
-        {
-            // Ajusta el target para mantener la altura (posición en Y)
-            currentTarget = new Vector3(player.position.x, transform.position.y, player.position.z);
-        }
-        else
-        {
-            // Mueve al objetivo original de la zona
-            currentTarget = zonePoints[zonaActual].position;
-        }
-
         MoveTowardsTarget(); // Mueve al Boss hacia el destino actual
         RotateTowardsPlayer(); // Ajusta la rotación del Boss para mirar al jugador
         EvaluateConditions(); // Evalúa condiciones para ataques
-
         if (currentHealth <= maxHealth / 2 && phase == 1)
         {
             phase = 2;
-            Debug.Log("Entramos en fase 2");
+            Debug.Log("entramos en fase2");
         }
     }
 
-
     private void MoveTowardsTarget()
     {
-
-        if (!canMove) return;
-        // Mantener la posición en el eje Y del jefe
-        Vector3 fixedTarget = new Vector3(currentTarget.x, transform.position.y, currentTarget.z);
-
-        // Mueve al Boss hacia el objetivo ajustado (sin cambios en Y)
-        transform.position = Vector3.MoveTowards(transform.position, fixedTarget, moveSpeed * Time.deltaTime* MovimientoJugador.bulletTimeScale);
+        // Mueve al Boss hacia el objetivo (sin NavMesh)
+        transform.position = Vector3.MoveTowards(transform.position, currentTarget, moveSpeed * Time.deltaTime);
     }
 
     void RotateTowardsPlayer()
@@ -184,7 +166,7 @@ public class BossMovement : BossLIfe
         Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
 
         // Aplica la rotación de manera suave
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime *MovimientoJugador.bulletTimeScale* rotationSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * MovimientoJugador.bulletTimeScale * rotationSpeed);
     }
 
     void EvaluateConditions()
@@ -198,7 +180,7 @@ public class BossMovement : BossLIfe
         {
             if (angle > 120f)
             {
-                if (contador>=5)
+                if (contador >= 5)
                 {
                     CoreBurst();
                     contador = 0;
@@ -225,6 +207,12 @@ public class BossMovement : BossLIfe
                 TrampaRobots();
                 lastTrampaRobot = Time.time;
             }
+
+            if (phase == 1 && Time.time > lastBeam + BeamTime)
+            {
+                StartCoroutine(ExecuteBeamsInSequence());
+                lastBeam = Time.time;
+            }
         }
 
         // Fase 2
@@ -238,10 +226,10 @@ public class BossMovement : BossLIfe
                     CoreBurst();
                     contador = 0;
                 }
-             
+
             }
-         
-            if ( Time.time > lastSalto + saltoCooldown)
+
+            if (Time.time > lastSalto + saltoCooldown)
             {
                 OnPlayerEnterZone(GetRandomIndexExcluding(zonaActual));
 
@@ -277,7 +265,7 @@ public class BossMovement : BossLIfe
     private IEnumerator cooldown()
     {
         yield return new WaitForSeconds(3);  // Esperar 1 segundo.
-       
+
         Debug.Log("trampas activas");
         foreach (var trap in smokeTramps)
         {
@@ -307,50 +295,99 @@ public class BossMovement : BossLIfe
     void Barrido()
     {
         Debug.Log("Realizando Spin Attack!");
-        canMove = false; // Detenemos el movimiento
-
-        // Instancia el ataque de barrido
+        // Animación y daño en área
         GameObject barridoAtk = Instantiate(barrido, coreTransform.position, coreTransform.rotation);
         barridoAtk.GetComponent<Barrido>().ExecuteSweep();
 
-        // Reactiva el movimiento después de un tiempo
-        StartCoroutine(ResumeMovementAfterBarrido());
-
     }
 
-
-    private IEnumerator ResumeMovementAfterBarrido()
-    {
-        yield return new WaitForSeconds(1f); // Tiempo que tarda el barrido en completarse
-        canMove = true; // Reactivamos el movimiento
-    }
     void ProyectilUnaDir()
     {
         Debug.Log("Realizando Sweeping Strike!");
         // Animación de barrido
-      
-            GameObject proyectil = Instantiate(gearProjectile, coreTransform.position, Quaternion.identity);
 
-            Vector3 direction = coreTransform.forward;
-            proyectil.GetComponent<BouncingProyectil2>().Initialize(direction);
+        GameObject proyectil = Instantiate(gearProjectile, coreTransform.position, Quaternion.identity);
+
+        Vector3 direction = coreTransform.forward;
+        proyectil.GetComponent<BouncingProyectil2>().Initialize(direction);
+
+    }
+
+    void VerticalBeam1()
+    {
+        // Obtén los transforms específicos de la zona actual
+        Transform[] currentZoneBeamTransforms = zonePoints[zonaActual].GetComponent<Zone>().beamTransformsIZQ;
+
+        if (currentZoneBeamTransforms != null && currentZoneBeamTransforms.Length > 0)
+        {
+            // Activar los transforms de la zona actual antes de realizar el ataque
+            foreach (var transform in currentZoneBeamTransforms)
+            {
+                transform.gameObject.SetActive(true);
+            }
+          
+
+            // Instanciar los beams en la zona correspondiente
+            for (int i = 0; i < currentZoneBeamTransforms.Length; i++)
+            {
+                Instantiate(verticalBeam1, currentZoneBeamTransforms[i].position, Quaternion.identity);
+            }
+
+           
+
+         
+        }
+    }
+    void VerticalBeam2()
+    {
+        // Obtén los transforms específicos de la zona actual
         
+        Transform[] currentZoneBeamTransforms2 = zonePoints[zonaActual].GetComponent<Zone>().beamTransformsDCHA;
+
+        if (currentZoneBeamTransforms2 != null  && currentZoneBeamTransforms2.Length > 0)
+        {
+           
+            foreach (var transform in currentZoneBeamTransforms2)
+            {
+                transform.gameObject.SetActive(true);
+            }
+
+          
+            for (int j = 0; j < currentZoneBeamTransforms2.Length; j++)
+            {
+                Instantiate(verticalBeam2, currentZoneBeamTransforms2[j].position, Quaternion.identity);
+            }
+
+        }
+    }
+
+    private IEnumerator ExecuteBeamsInSequence()
+    {
+        // Primero, ejecutamos VerticalBeam1
+        VerticalBeam1();
+        // Esperamos un poco (esto depende del tiempo que quieras que pase entre la ejecución de los beams)
+        yield return new WaitForSeconds(4.5f); // Puedes ajustar el tiempo de espera entre las dos
+
+        // Luego, ejecutamos VerticalBeam2
+        VerticalBeam2();
     }
 
     public void CoreBurst()
     {
-       
-        
-            Debug.Log("Realizando Explosión Propia!");
-            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
-            // Llamar al método TriggerExplosion del objeto recién instanciado
-            explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
-        
+
+        Debug.Log("Realizando Explosión Propia!");
+        GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+
+        // Llamar al método TriggerExplosion del objeto recién instanciado
+        explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
+
     }
 
-   void TrampaRobots()
+    void TrampaRobots()
     {
         Debug.Log("Realizando Trampa de Engranajes!");
+
         Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);
         Instantiate(gearTrapBot2, arenaBounds[1].position, Quaternion.identity);
     }
@@ -370,25 +407,5 @@ public class BossMovement : BossLIfe
         }
     }
 
-
-    private bool IsPlayerInZone(int zoneID)
-    {
-        if (zoneID < 0 || zoneID >= zonePoints.Length)
-        {
-            return false;
-        }
-
-        Collider zoneCollider = zonePoints[zoneID].GetComponent<Collider>();
-
-        if (zoneCollider != null)
-        {
-            return zoneCollider.bounds.Contains(player.position);
-        }
-
-        return false;
-
-    }
-
-  
 
 }

@@ -3,7 +3,8 @@ using UnityEngine;
 public class Zone : MonoBehaviour
 {
     public int zoneID; // Identificador único de la zona
-
+    public Transform[] beamTransformsIZQ;
+    public Transform[] beamTransformsDCHA;
     // Al entrar el jugador en la zona, se le notifica al Boss
     private void OnTriggerEnter(Collider other)
     {

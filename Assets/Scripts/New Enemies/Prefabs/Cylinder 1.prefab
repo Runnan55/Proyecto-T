@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3693442825602508099}
   - component: {fileID: 8774194269663682711}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: Cylinder 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 17.27926, y: 70.47962, z: 7.521099}
-  m_LocalScale: {x: 1.4536511, y: 0.022820354, z: 1.4536511}
+  m_LocalScale: {x: 6.1716857, y: 0.09688711, z: 6.1716857}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d1bfa2acc52992c4f835a0b11abbd257, type: 2}
+  - {fileID: 2100000, guid: 5acab2c6e250fe3438cf55850e601082, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -98,6 +98,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 30
+  moveSpeed: 10
+  lifetime: 4
+  moveLeft: 0
+  toggleInterval: 0.5
 --- !u!136 &8774194269663682711
 CapsuleCollider:
   m_ObjectHideFlags: 0
