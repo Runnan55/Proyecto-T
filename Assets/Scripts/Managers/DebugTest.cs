@@ -149,6 +149,11 @@ public class DebugTest : MonoBehaviour
         SceneManager.LoadScene("Devil");
     }
 
+    public void OpenGimmick()
+    {
+        SceneManager.LoadScene("Gimmick");
+    }
+
     public void RestartActualLevel()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;

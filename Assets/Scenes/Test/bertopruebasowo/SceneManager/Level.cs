@@ -36,7 +36,7 @@ public class Level : MonoBehaviour
     public bool modifyTime = false;
     public float maxTime = 600f;
     private Life playerLife;
-    private bool timerStarted = false; // { added }
+    private bool timerStarted = false; // Añadido
 
     [Header("Warning config")]
     public GameObject warning;
@@ -57,19 +57,17 @@ public class Level : MonoBehaviour
             {
                 StartCoroutine(entranceDoor.Close());
             }
-            //Debug.Log(hasPlayerEntered);
             StartNextWave();
             hasPlayerEntered = true; 
-            //Debug.Log(hasPlayerEntered);
 
-            if (modifyTime && !timerStarted) // { modified }
+            if (modifyTime && !timerStarted) // Modificado
             {
                 playerLife = other.GetComponent<Life>();
                 if (playerLife != null)
                 {
                     playerLife.maxTime = maxTime;
                     playerLife.StartTimer(maxTime);
-                    timerStarted = true; // { added }
+                    timerStarted = true; // Añadido
                 }
             }
         }
@@ -105,19 +103,12 @@ public class Level : MonoBehaviour
         foreach (var grupoSpawn in spawnsPorTiempo)
         {
             float delayGrupo = grupoSpawn.Key;
-
             yield return new WaitForSeconds(delayGrupo - tiempoDesdeUltimoSpawn);
 
             foreach (EnemySpawner enemySpawner in grupoSpawn.Value)
             {
                 if (!isFirstEnemySpawned)
                 {
-                    // Iniciar el temporizador del jugador
-                    //Life playerLife = FindObjectOfType<Life>();
-                    //if (playerLife != null)
-                    //{
-                    //    playerLife.StartTimer(playerLife.maxTime);
-                    //}
                     isFirstEnemySpawned = true;
                 }
 
@@ -172,6 +163,11 @@ public class Level : MonoBehaviour
 
                 if (modifyTime && playerLife != null)
                 {
+                    // Añadido: Guardar tiempo restante en el banco del tiempo
+                    playerLife.AddToTimeBank(playerLife.currentTime);
+                    playerLife.ClearTime();
+                    playerLife.UpdateTimeBankText();
+
                     playerLife.StopTimer();
                 }
             }
@@ -193,4 +189,3 @@ public class Level : MonoBehaviour
         }
     }
 }
-//hola

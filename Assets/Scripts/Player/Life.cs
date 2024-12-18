@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class Life : MonoBehaviour
 {
     public float maxTime = 600;
-    private float currentTime;
+    public float currentTime;
     public bool isInvincible = false;
 
     public float timeBank = 0;
@@ -231,25 +231,59 @@ public class Life : MonoBehaviour
 
         if (isInvincible && amount < 0) return;
 
-        currentTime += amount;
-
-        //StartCoroutine(m_shakeCamera.shake());
-
-        if (currentTime > maxTime)
+        if (amount < 0)
         {
-            currentTime = maxTime;
+            float damage = -amount;
+
+            // Reducir primero currentTime
+            if (currentTime > 0)
+            {
+                if (currentTime >= damage)
+                {
+                    currentTime -= damage;
+                    damage = 0;
+                }
+                else
+                {
+                    damage -= currentTime;
+                    currentTime = 0;
+                }
+                UpdateTimeText();
+            }
+
+            // Luego reducir timeBank
+            if (damage > 0)
+            {
+                if (timeBank >= damage)
+                {
+                    timeBank -= damage;
+                    damage = 0;
+                }
+                else
+                {
+                    damage -= timeBank;
+                    timeBank = 0;
+                }
+                UpdateTimeBankText();
+            }
         }
-        else if (currentTime < 0)
+        else
         {
-            //levelManager.OnLevelFailed();
-            //deathScreen.gameObject.SetActive(true);
-            //LoseManager.Lose();
+            currentTime += amount;
+            if (currentTime > maxTime)
+            {
+                currentTime = maxTime;
+            }
+        }
+
+        if (currentTime <= 0 && timeBank <= 0)
+        {
             Death();
-            currentTime = 0;
         }
+
         UpdateTimeImage();
 
-        if (amount < 0)
+        if (amount < 0 && (-amount) > 0)
         {
             ChangeMaterial(damageMaterial);
             StartCoroutine(InvincibilityFrames());
@@ -310,7 +344,7 @@ public class Life : MonoBehaviour
         }
     }
 
-    private void UpdateTimeBankText()
+    public void UpdateTimeBankText()
     {
         if (timeBankText != null)
         {
@@ -427,5 +461,18 @@ public class Life : MonoBehaviour
     {
         timeBank = 0;
         UpdateTimeBankText();
+    }
+
+    public void AddToTimeBank(float time)
+    {
+        timeBank += time;
+        UpdateTimeBankText();
+    }
+
+    public void ClearTime()
+    {
+        currentTime = 0;
+        UpdateTimeText();
+        UpdateTimeImage();
     }
 }
