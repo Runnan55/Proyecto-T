@@ -52,7 +52,7 @@ public class CrystalGimmick : MonoBehaviour
         }
         else if (touchCount == 20)
         {
-            SceneManager.LoadScene("BTBoss");
+           
 
             if (turretPrefab1 != null) Destroy(turretPrefab1);
             if (turretPrefab2 != null) Destroy(turretPrefab2);
