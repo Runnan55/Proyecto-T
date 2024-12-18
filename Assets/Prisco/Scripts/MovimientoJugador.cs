@@ -21,6 +21,8 @@ public class MovimientoJugador : MonoBehaviour
     public DamageDealer damageDealerL2;     
     public DamageDealer damageDealerL3;     
     public DamageDealer damageDealerP; 
+
+    
       
 
     [Header("Movement Settings")]
@@ -549,7 +551,7 @@ IEnumerator Dash()
 
         //dashObjec.SetActive(true);
 
-        yield return new WaitForSeconds(0.5f); 
+        yield return new WaitForSeconds(0.4f); 
 
         //dashObjec.SetActive(false);
 
@@ -561,7 +563,7 @@ IEnumerator Dash()
         isDashing = false;
     }
 }
-  
+
 public void AtaqueJugador()
 {
     if (Input.GetMouseButtonDown(0))
@@ -569,30 +571,35 @@ public void AtaqueJugador()
         enterAttack = true;
         hasAttacked = true;
 
-        // Verificar si el jugador ya ha rotado
         if (!hasRotated)
         {
+            // Crea un rayo desde la posición del mouse
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
-            {
-                Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            // Realiza el raycast sin límites, chequeando si el objeto tiene la capa asignada
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
+            {                               
+                
+                    // Determina la posición del objetivo
+                    Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 
-                // Calcular la dirección hacia la que el jugador debe mirar
-                Vector3 directionToLook = (targetPosition - transform.position).normalized;
+                    // Calcula la dirección hacia el objetivo
+                    Vector3 directionToLook = (targetPosition - transform.position).normalized;
 
-                // Crear una rotación que mire en la dirección del objetivo
-                Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+                    // Genera la rotación necesaria para mirar hacia el objetivo
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
 
-                // Aplicar la rotación al jugador
-                transform.rotation = targetRotation;
+                    // Aplica la rotación al jugador
+                    transform.rotation = targetRotation;
 
-                hasRotated = true;
+                    hasRotated = true;
+                
             }
         }
     }
 }
+
 
 public void hasRotatedTrue()
 {

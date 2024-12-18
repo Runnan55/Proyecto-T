@@ -19,6 +19,14 @@ public class TorretaSimple : MonoBehaviour
 
     private float timeSinceLastBurst = 0f; // Tiempo desde la última ráfaga 
 
+    [Header("Movement Settings")]
+    public bool moverse = false; // Variable para activar el movimiento
+    public Transform puntoA; // Punto A
+    public Transform puntoB; // Punto B
+    public float velocidadMovimiento = 2f; // Velocidad de movimiento
+
+    private bool moviendoHaciaB = true; // Indica si se está moviendo hacia el punto B
+
     void Update()
     {
         // Ajustar el tiempo acumulado usando la escala de tiempo del bullet time
@@ -28,6 +36,12 @@ public class TorretaSimple : MonoBehaviour
         {
             StartCoroutine(FireBurst());
             timeSinceLastBurst = 0f;
+        }
+
+        // Mover la torreta si la variable moverse está activada
+        if (moverse)
+        {
+            MoverTorreta();
         }
     }
 
@@ -57,10 +71,18 @@ public class TorretaSimple : MonoBehaviour
                     bulletScript.speed = bulletSpeed;
                 }
             }
-            else
-            {
-                Debug.LogWarning("Uno de los firePoints no ha sido asignado en el Inspector.");
-            }
+            
+        }
+    }
+
+    void MoverTorreta()
+    {
+        Transform objetivo = moviendoHaciaB ? puntoB : puntoA;
+        transform.position = Vector3.MoveTowards(transform.position, objetivo.position, velocidadMovimiento * Time.deltaTime);
+
+        if (transform.position == objetivo.position)
+        {
+            moviendoHaciaB = !moviendoHaciaB;
         }
     }
 }
