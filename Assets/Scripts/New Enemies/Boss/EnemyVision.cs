@@ -30,6 +30,10 @@ public class EnemyVision : MonoBehaviour
     }
     public bool PlayerEnRango()
     {
+        if (player == null)
+        {
+            return false;
+        }
         direPlayer = player.position - transform.position;
         distPlayer = direPlayer.magnitude;
         if (distPlayer <= detectDist)

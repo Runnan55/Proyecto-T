@@ -46,16 +46,23 @@ public class DamageZone : MonoBehaviour
     {
         isActive = true;
         UpdateMaterial();
+        if (smokeAttack != null && smokeCD != null)
+        {
         smokeAttack.SetActive(true);
         smokeCD.SetActive(false);
+        }
     }
 
     public void DeactivateDamage()
     {
         isActive = false;
         UpdateMaterial();
+        if (smokeAttack != null && smokeCD != null)
+        {
         smokeCD.SetActive(true);
         smokeAttack.SetActive(false);
+        }
+
     }
 
     private void UpdateMaterial()
