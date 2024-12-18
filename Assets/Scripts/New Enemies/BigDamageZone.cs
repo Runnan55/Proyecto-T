@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BigDamageZone : MonoBehaviour
 {
+    public GameObject smokeAttack;
     public float damageAmount = 10f;
     public Material activeMaterial;
     public Material inactiveMaterial;
@@ -40,12 +41,14 @@ public class BigDamageZone : MonoBehaviour
     {
         isActive = true;
         UpdateMaterial();
+        smokeAttack.SetActive(true);
     }
 
     public void DeactivateDamage()
     {
         isActive = false;
         UpdateMaterial();
+        smokeAttack.SetActive(false);
     }
 
     private void UpdateMaterial()
