@@ -38,7 +38,7 @@ public class BouncingExplosive : MonoBehaviour
             return;
 
         // Mover el proyectil continuamente
-        transform.position += velocity * Time.deltaTime;
+        transform.position += velocity * Time.deltaTime*MovimientoJugador.bulletTimeScale;
     }
 
     private IEnumerator DestructionTimer()

@@ -25,7 +25,7 @@ public class BouncingProyectil2 : MonoBehaviour
     void Update()
     {
         // Mover el objeto continuamente
-        transform.position += velocity * Time.deltaTime;
+        transform.position += velocity * Time.deltaTime*MovimientoJugador.bulletTimeScale;
     }
 
     private void OnTriggerEnter(Collider other)
