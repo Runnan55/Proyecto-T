@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class EnemySpawner
@@ -22,10 +23,14 @@ public class Level : MonoBehaviour
     public Door entranceDoor;
     public Door exitDoor;
 
-    [Header("Teleport config")]
+    [Header("Teleporter config")]
     public bool teleportAfterLastWave = false;
     public float teleportDelay = 1f;
     public Teleporter teleporter;
+
+    [Header("Change scene")]
+    public bool changeSceneAfterLastWave = false;
+    public string sceneToChange = "NombreDeLaEscena";
 
     [Header("Time config")]
     public bool modifyTime = false;
@@ -156,6 +161,11 @@ public class Level : MonoBehaviour
                 if (teleportAfterLastWave && teleporter != null)
                 {
                     StartCoroutine(TeleportPlayerWithDelay());
+                }
+
+                if (changeSceneAfterLastWave)
+                {
+                    SceneManager.LoadScene(sceneToChange);
                 }
 
                 if (modifyTime && playerLife != null)

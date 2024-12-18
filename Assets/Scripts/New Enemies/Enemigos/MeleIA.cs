@@ -281,7 +281,7 @@ public class MeleIA : EnemyLife
         }
         if (movimientoJugador.IsBulletTimeActive() == false)
         {
-            Debug.Log("intento multi");
+            //Debug.Log("intento multi");
 
             if (entro == true)
             {

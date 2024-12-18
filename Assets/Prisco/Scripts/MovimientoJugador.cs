@@ -575,7 +575,7 @@ public void AtaqueJugador()
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit) && hit.collider.CompareTag("FallZone"))
+            if (Physics.Raycast(ray, out hit))
             {
                 Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
 

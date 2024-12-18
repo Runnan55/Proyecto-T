@@ -531,8 +531,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.9456031, y: 0, z: 11.244297}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4966654494815772671}
   - {fileID: 5134893249603001655}
@@ -642,6 +642,7 @@ MonoBehaviour:
   chaseDistance: 200
   attackDistance: 2.5
   attackCooldown: 2
+  attackTimer: 0
   pushForce: 5
   pushDuration: 0.5
   pushCooldown: 0.5
@@ -656,6 +657,8 @@ MonoBehaviour:
       Data3: 822226865
       Data4: 470925985
     Path: event:/FX/enemySwoosh
+  entro: 0
+  minDistanceBetweenEnemies: 5
 --- !u!195 &1150952741307732457
 NavMeshAgent:
   m_ObjectHideFlags: 0

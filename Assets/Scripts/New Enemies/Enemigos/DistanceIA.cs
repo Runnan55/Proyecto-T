@@ -212,7 +212,7 @@ public class RangedIA : EnemyLife
         {
             FMODUnity.RuntimeManager.PlayOneShot(crossbow);
             Instantiate(projectilePrefab, shootingPoint.position, shootingPoint.rotation);
-            Debug.Log("El enemigo ha disparado al jugador!");
+            //Debug.Log("El enemigo ha disparado al jugador!");
             waitTimer = waitTimeBetweenShots / MovimientoJugador.bulletTimeScale;
             currentState = EnemyState.Waiting;
         }
@@ -272,7 +272,7 @@ public class RangedIA : EnemyLife
         }
         if (movimientoJugador.IsBulletTimeActive() == false)
         {
-            Debug.Log("intento multi");
+            //Debug.Log("intento multi");
 
             if (entro == true)
             {

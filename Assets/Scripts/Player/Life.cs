@@ -155,6 +155,11 @@ public class Life : MonoBehaviour
             timeBank += 6;
             UpdateTimeBankText();
         }
+
+        if (currentTime <= 0 && timeBank <= 0)
+        {
+            Death();
+        }
             
         UpdateTimeText();
         UpdateTimeImage();

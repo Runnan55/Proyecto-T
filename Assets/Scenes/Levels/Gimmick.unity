@@ -201,7 +201,7 @@ Transform:
   m_GameObject: {fileID: 3705730}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 7.3, z: 436.6}
+  m_LocalPosition: {x: 0, y: 0, z: 436.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -338,6 +338,8 @@ GameObject:
   - component: {fileID: 25741317}
   - component: {fileID: 25741316}
   - component: {fileID: 25741315}
+  - component: {fileID: 25741318}
+  - component: {fileID: 25741319}
   m_Layer: 0
   m_Name: Engranaje1 (9)
   m_TagString: Untagged
@@ -375,11 +377,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &25741316
 MeshRenderer:
@@ -431,6 +433,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 25741313}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &25741318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25741313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 1
+--- !u!65 &25741319
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25741313}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &32085186
 GameObject:
   m_ObjectHideFlags: 0
@@ -708,7 +745,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 30
+      value: 335.61
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3797,6 +3834,8 @@ GameObject:
   - component: {fileID: 234498668}
   - component: {fileID: 234498667}
   - component: {fileID: 234498666}
+  - component: {fileID: 234498669}
+  - component: {fileID: 234498670}
   m_Layer: 0
   m_Name: Engranaje1
   m_TagString: Untagged
@@ -3834,11 +3873,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &234498667
 MeshRenderer:
@@ -3890,6 +3929,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 234498664}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &234498669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234498664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 1
+--- !u!65 &234498670
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234498664}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &235111425
 GameObject:
   m_ObjectHideFlags: 0
@@ -4567,6 +4641,8 @@ GameObject:
   - component: {fileID: 283019427}
   - component: {fileID: 283019426}
   - component: {fileID: 283019425}
+  - component: {fileID: 283019428}
+  - component: {fileID: 283019429}
   m_Layer: 0
   m_Name: Engranaje1 (2)
   m_TagString: Untagged
@@ -4604,11 +4680,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &283019426
 MeshRenderer:
@@ -4660,6 +4736,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 283019423}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &283019428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283019423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 1
+--- !u!65 &283019429
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283019423}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &290097329
 GameObject:
   m_ObjectHideFlags: 0
@@ -4703,6 +4814,8 @@ GameObject:
   - component: {fileID: 295560217}
   - component: {fileID: 295560216}
   - component: {fileID: 295560215}
+  - component: {fileID: 295560218}
+  - component: {fileID: 295560219}
   m_Layer: 0
   m_Name: Engranaje1 (7)
   m_TagString: Untagged
@@ -4740,11 +4853,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &295560216
 MeshRenderer:
@@ -4796,6 +4909,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295560213}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &295560218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295560213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 0
+--- !u!65 &295560219
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295560213}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &296690680
 GameObject:
   m_ObjectHideFlags: 0
@@ -7164,6 +7312,8 @@ GameObject:
   - component: {fileID: 394731324}
   - component: {fileID: 394731323}
   - component: {fileID: 394731322}
+  - component: {fileID: 394731325}
+  - component: {fileID: 394731326}
   m_Layer: 0
   m_Name: Engranaje1 (5)
   m_TagString: Untagged
@@ -7201,11 +7351,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &394731323
 MeshRenderer:
@@ -7257,6 +7407,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 394731320}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &394731325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394731320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 1
+--- !u!65 &394731326
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394731320}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &398800707
 GameObject:
   m_ObjectHideFlags: 0
@@ -14464,6 +14649,8 @@ GameObject:
   - component: {fileID: 792286531}
   - component: {fileID: 792286530}
   - component: {fileID: 792286529}
+  - component: {fileID: 792286532}
+  - component: {fileID: 792286533}
   m_Layer: 0
   m_Name: Engranaje1 (10)
   m_TagString: Untagged
@@ -14501,11 +14688,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.011534, y: 0.22458497, z: 2.9987178}
+  m_Size: {x: 3.011534, y: 0.6, z: 2.9987178}
   m_Center: {x: -0.0064676725, y: 0.060000006, z: 0.052699458}
 --- !u!23 &792286530
 MeshRenderer:
@@ -14557,6 +14744,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792286527}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &792286532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 792286527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 0
+--- !u!65 &792286533
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 792286527}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &795259125
 GameObject:
   m_ObjectHideFlags: 0
@@ -18271,6 +18493,8 @@ GameObject:
   - component: {fileID: 1057959581}
   - component: {fileID: 1057959580}
   - component: {fileID: 1057959579}
+  - component: {fileID: 1057959582}
+  - component: {fileID: 1057959583}
   m_Layer: 0
   m_Name: Engranaje1 (4)
   m_TagString: Untagged
@@ -18308,11 +18532,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &1057959580
 MeshRenderer:
@@ -18364,6 +18588,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1057959577}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &1057959582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057959577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 1
+--- !u!65 &1057959583
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1057959577}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &1068563539
 GameObject:
   m_ObjectHideFlags: 0
@@ -19789,6 +20048,59 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2137106390}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1160258634
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1160258636}
+  - component: {fileID: 1160258635}
+  m_Layer: 0
+  m_Name: Fall
+  m_TagString: FallZone
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1160258635
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160258634}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1160258636
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160258634}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -21.66, y: -1.37, z: 396.32}
+  m_LocalScale: {x: 1000, y: 0.09879413, z: 1000}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1167043569
 GameObject:
@@ -21962,6 +22274,8 @@ GameObject:
   - component: {fileID: 1283767814}
   - component: {fileID: 1283767813}
   - component: {fileID: 1283767812}
+  - component: {fileID: 1283767815}
+  - component: {fileID: 1283767816}
   m_Layer: 0
   m_Name: Engranaje1 (8)
   m_TagString: Untagged
@@ -21999,11 +22313,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &1283767813
 MeshRenderer:
@@ -22055,6 +22369,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1283767810}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &1283767815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283767810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 1
+--- !u!65 &1283767816
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283767810}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &1300624242
 GameObject:
   m_ObjectHideFlags: 0
@@ -24512,6 +24861,8 @@ GameObject:
   - component: {fileID: 1452469995}
   - component: {fileID: 1452469994}
   - component: {fileID: 1452469993}
+  - component: {fileID: 1452469996}
+  - component: {fileID: 1452469997}
   m_Layer: 0
   m_Name: Engranaje1 (6)
   m_TagString: Untagged
@@ -24549,11 +24900,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &1452469994
 MeshRenderer:
@@ -24605,6 +24956,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1452469991}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &1452469996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452469991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 0
+--- !u!65 &1452469997
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452469991}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &1456866219
 GameObject:
   m_ObjectHideFlags: 0
@@ -29408,6 +29794,8 @@ GameObject:
   - component: {fileID: 1761922475}
   - component: {fileID: 1761922474}
   - component: {fileID: 1761922473}
+  - component: {fileID: 1761922476}
+  - component: {fileID: 1761922477}
   m_Layer: 0
   m_Name: Engranaje1 (3)
   m_TagString: Untagged
@@ -29445,11 +29833,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.011534, y: 0.22458497, z: 2.893418}
+  m_Size: {x: 3.011534, y: 0.6, z: 2.893418}
   m_Center: {x: -0.006467746, y: 0.060000006, z: 0.000051938572}
 --- !u!23 &1761922474
 MeshRenderer:
@@ -29501,6 +29889,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1761922471}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &1761922476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1761922471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 0
+--- !u!65 &1761922477
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1761922471}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &1769353606
 GameObject:
   m_ObjectHideFlags: 0
@@ -31283,6 +31706,8 @@ GameObject:
   - component: {fileID: 1855810529}
   - component: {fileID: 1855810528}
   - component: {fileID: 1855810527}
+  - component: {fileID: 1855810530}
+  - component: {fileID: 1855810531}
   m_Layer: 0
   m_Name: Engranaje1 (1)
   m_TagString: Untagged
@@ -31320,11 +31745,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.26995, y: 0.22458497, z: 3.3526354}
+  m_Size: {x: 3.26995, y: 0.6, z: 3.3526354}
   m_Center: {x: -0.047598265, y: 0.06, z: 0.052451443}
 --- !u!23 &1855810528
 MeshRenderer:
@@ -31376,6 +31801,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1855810525}
   m_Mesh: {fileID: 4370537360113272507, guid: ce187b86ca5c6e348aa9a34adca3a6cf, type: 3}
+--- !u!114 &1855810530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855810525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62376bb12936ef488f31251af606e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  rotateRight: 0
+--- !u!65 &1855810531
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855810525}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.956448, y: 0.22458498, z: 2.956448}
+  m_Center: {x: 0, y: 0.01847931, z: 0}
 --- !u!1 &1858316569
 GameObject:
   m_ObjectHideFlags: 0
@@ -36126,3 +36586,4 @@ SceneRoots:
   - {fileID: 147263984}
   - {fileID: 847543790}
   - {fileID: 3705732}
+  - {fileID: 1160258636}
