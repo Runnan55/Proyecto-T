@@ -96,8 +96,9 @@ public class MovimientoJugador : MonoBehaviour
     [SerializeField] private FMODUnity.EventReference dash;
 
     public static bool isInDodgeArea = false;
+    public static bool godMode = false;
 
-    #region Bertadas
+    #region *Bertadas
     public void speedUp()
     {
         speed = +5f;
@@ -197,7 +198,7 @@ public class MovimientoJugador : MonoBehaviour
     {
         if (other.CompareTag("DodgeArea") && !bulletTime)
         {
-            Debug.Log("Trigger stay " + other.gameObject.name);
+            Debug.Log("Trigger stay " + other.gameObject);
             isInDodgeArea = true;
         }
     }
@@ -240,7 +241,7 @@ public class MovimientoJugador : MonoBehaviour
 
     #endregion BulletTime
 
-    #region priscada
+    #region *Priscada
    void Awake()
     {
         if (instance == null)
@@ -270,6 +271,13 @@ public class MovimientoJugador : MonoBehaviour
 
    void Update()
     {
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            godMode = !godMode;
+            Debug.Log("God Mode: " + (godMode ? "Activated" : "Deactivated"));
+            rangoMaximo = 999;
+        }
+
         if (Input.GetKeyDown(KeyCode.O))
         {
             enterAttack = true;

@@ -32,11 +32,17 @@ public class Level : MonoBehaviour
     public bool changeSceneAfterLastWave = false;
     public string sceneToChange = "NombreDeLaEscena";
 
+    [Header("Rooms")]
+    public bool changeRooms = false;
+    public bool isLastRoom = false;
+    public GameObject actualRoom;
+    public GameObject nextRoom;
+
     [Header("Time config")]
     public bool modifyTime = false;
     public float maxTime = 600f;
     private Life playerLife;
-    private bool timerStarted = false; // Añadido
+    private bool timerStarted = false;
 
     [Header("Warning config")]
     public GameObject warning;
@@ -60,14 +66,14 @@ public class Level : MonoBehaviour
             StartNextWave();
             hasPlayerEntered = true; 
 
-            if (modifyTime && !timerStarted) // Modificado
+            if (modifyTime && !timerStarted)
             {
                 playerLife = other.GetComponent<Life>();
                 if (playerLife != null)
                 {
                     playerLife.maxTime = maxTime;
                     playerLife.StartTimer(maxTime);
-                    timerStarted = true; // Añadido
+                    timerStarted = true;
                 }
             }
         }
@@ -156,14 +162,26 @@ public class Level : MonoBehaviour
                     StartCoroutine(TeleportPlayerWithDelay());
                 }
 
+                if (changeRooms == true)
+                        {
+                            if (!isLastRoom)
+                            {
+                                StartCoroutine(ChangeRoomsWithDelay());
+                            }
+                        }
+
                 if (changeSceneAfterLastWave)
                 {
-                    SceneManager.LoadScene(sceneToChange);
+                    // guardar siguiente escena en prefs
+                    PlayerPrefs.SetString("SceneToLoad", sceneToChange);
+                    PlayerPrefs.Save();
+
+                    // pantalla de carga
+                    SceneManager.LoadScene("LoadingScene");
                 }
 
                 if (modifyTime && playerLife != null)
                 {
-                    // Añadido: Guardar tiempo restante en el banco del tiempo
                     playerLife.AddToTimeBank(playerLife.currentTime);
                     playerLife.ClearTime();
                     playerLife.UpdateTimeBankText();
@@ -171,11 +189,20 @@ public class Level : MonoBehaviour
                     playerLife.StopTimer();
                 }
             }
+
             else
             {
                 StartNextWave();
             }
         }
+    }
+
+    private IEnumerator ChangeRoomsWithDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        actualRoom.SetActive(false);
+        nextRoom.SetActive(true);
+        //Debug.Log("actualroom: " + actualRoom + " nextroom: " + nextRoom);
     }
 
     private IEnumerator TeleportPlayerWithDelay()
