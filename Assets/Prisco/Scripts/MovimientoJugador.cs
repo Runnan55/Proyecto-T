@@ -26,7 +26,7 @@ public class MovimientoJugador : MonoBehaviour
       
 
     [Header("Movement Settings")]
-    private CharacterController controller;     
+    private Rigidbody controller;     
     bool canMove = true; 
     bool isLookingAtTarget = false;           
     Vector3 targetPosition;
@@ -146,14 +146,14 @@ public class MovimientoJugador : MonoBehaviour
 
     private IEnumerator TeleportToLastSafePosition()
     {
-        controller.enabled = false;
+        //controller.enabled = false;
 
         // Teletransportar a la posición más antigua
         transform.position = safePositions.Peek();
 
         yield return null;
 
-        controller.enabled = true;
+        //controller.enabled = true;
     }
     #endregion Fall
 
@@ -256,7 +256,7 @@ public class MovimientoJugador : MonoBehaviour
 
     private void Start()
     {
-        controller = GetComponent<CharacterController>();      
+        controller = GetComponent<Rigidbody>();      
         instance = GetComponent<MovimientoJugador>();
         animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
@@ -269,83 +269,82 @@ public class MovimientoJugador : MonoBehaviour
         StartCoroutine(UpdateSafePosition());
     }
 
-   void Update()
+  void Update()
+{
+    if (Input.GetKeyDown(KeyCode.G))
     {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            godMode = !godMode;
-            Debug.Log("God Mode: " + (godMode ? "Activated" : "Deactivated"));
-            rangoMaximo = 999;
-        }
+        godMode = !godMode;
+        Debug.Log("God Mode: " + (godMode ? "Activated" : "Deactivated"));
+        rangoMaximo = 999;
+    }
 
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            enterAttack = true;
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            enterAttack = false;
-        }
+    if (Input.GetKeyDown(KeyCode.O))
+    {
+        enterAttack = true;
+    }
+    if (Input.GetKeyDown(KeyCode.P))
+    {
+        enterAttack = false;
+    }
 
-        if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) /* || Input.GetKeyDown(KeyCode.B)) */ && !bulletTime)
+    if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
+    {
+        if (Time.time >= lastBulletTimeUse + bulletTimeCooldown)
         {
-            if (Time.time >= lastBulletTimeUse + bulletTimeCooldown)
+            if (afterImageEffect != null)
             {
-                if (afterImageEffect != null)
-                {
-                    StartCoroutine(ActivateBulletTime());
-                    StartCoroutine(Dash());
-                }
-                else
-                {
-                    Debug.LogError("afterImageEffect no está asignado en el Inspector.");
-                }
+                StartCoroutine(ActivateBulletTime());
+                StartCoroutine(Dash());
+            }
+            else
+            {
+                Debug.LogError("afterImageEffect no está asignado en el Inspector.");
             }
         }
-
-        if (canMove)
-        {
-            Movimientojugador();
-        }
-
-        if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
-        {
-            StartCoroutine(Dash());
-        }
-
-        AtaqueJugador();
-        AtaqueLigero();
-        AtaquePesado();
-
-        if (atacando)
-        {
-            ExpandirCollider();
-        }
-
-        AtaqueDistancia();
-        RecargarBalas();
-        UpdateBalaSliders();
-
-        if (bulletTimeCooldownImage != null)
-        {
-            float cooldownProgress = Mathf.Clamp01((Time.time - lastBulletTimeUse) / bulletTimeCooldown);
-            bulletTimeCooldownImage.fillAmount = cooldownProgress;
-
-            bulletTimeCooldownImage.gameObject.SetActive(cooldownProgress < 1);
-        }
-
-        isGrounded = controller.isGrounded;
-
-        if (isGrounded)
-        {
-            //Debug.Log("is grounded");
-        }
     }
-    
-    public void Movimientojugador()   
 
+    if (canMove)
+    {
+        Movimientojugador();
+    }
+
+    if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
+    {
+        StartCoroutine(Dash());
+    }
+
+    AtaqueJugador();
+    AtaqueLigero();
+    AtaquePesado();
+
+    if (atacando)
+    {
+        ExpandirCollider();
+    }
+
+    AtaqueDistancia();
+    RecargarBalas();
+    UpdateBalaSliders();
+
+    if (bulletTimeCooldownImage != null)
+    {
+        float cooldownProgress = Mathf.Clamp01((Time.time - lastBulletTimeUse) / bulletTimeCooldown);
+        bulletTimeCooldownImage.fillAmount = cooldownProgress;
+
+        bulletTimeCooldownImage.gameObject.SetActive(cooldownProgress < 1);
+    }
+
+    isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f);
+
+    if (isGrounded)
+    {
+        //Debug.Log("is grounded");
+    }
+}
+
+public void Movimientojugador()
 {
-    if (canMove && controller.isGrounded)
+    if (canMove && isGrounded)
     {
         // Obtener la entrada del jugador
         float horizontal = Input.GetAxisRaw("Horizontal");
@@ -376,16 +375,15 @@ public class MovimientoJugador : MonoBehaviour
         Vector3 moveDirection = moveInput * speed;
 
         // Aplicar el movimiento si el jugador está en el suelo o atacando
-        if (controller.isGrounded || enterAttack)
+        if (isGrounded || enterAttack)
         {
-            controller.Move(moveDirection * Time.deltaTime);
+            controller.velocity = new Vector3(moveDirection.x, controller.velocity.y, moveDirection.z);
         }
 
         if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
         {
             Quaternion targetRotation = Quaternion.identity;
-         
-             
+
             switch (vertical)
             {
                 case 1: // W key
@@ -443,19 +441,14 @@ public class MovimientoJugador : MonoBehaviour
             // Aplicar la rotación al jugador
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
-    }
-
-    // Aplicar gravedad
-    Vector3 gravityVector = new Vector3(0, speed * -gravity * Time.deltaTime, 0);
-    controller.Move(gravityVector * Time.deltaTime);
+    }   
 }
-
-    public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
+public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 {
     float tiempoTranscurrido = 0;
     while (tiempoTranscurrido < duracion)
     {
-        controller.Move(direccion * (Time.deltaTime / duracion));
+        controller.MovePosition(transform.position + direccion * (Time.deltaTime / duracion));
         tiempoTranscurrido += Time.deltaTime;
         yield return null;
     }
@@ -546,7 +539,7 @@ IEnumerator Dash()
         {
             float fractionOfDashTimePassed = (Time.time - startTime) / dashTime;
             float currentDashSpeed = Mathf.Lerp(DashSpeed, 0, fractionOfDashTimePassed);
-            instance.controller.Move(moveDirection * currentDashSpeed * Time.deltaTime);
+            controller.MovePosition(transform.position + moveDirection * currentDashSpeed * Time.deltaTime);
 
             Vector3 newPosition = transform.position;
             newPosition.y = originalY;
@@ -559,7 +552,7 @@ IEnumerator Dash()
 
         //dashObjec.SetActive(true);
 
-        yield return new WaitForSeconds(0.4f); 
+        yield return new WaitForSeconds(0.4f);
 
         //dashObjec.SetActive(false);
 
