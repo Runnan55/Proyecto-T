@@ -68,12 +68,14 @@ public class MovimientoJugador : MonoBehaviour
     public Renderer cambioColoAlPegar; 
 
     [Header("Dash Settings")]
-    public float DashSpeed = 50.0f;
-    public GameObject dashObjec;    
     public static bool isDashing = false;
-    public float dashTime = 0.2f;   
-    private float lastDashTime = -Mathf.Infinity;
+    private bool canDash = true;
+    private float dashTime;
 
+    public GameObject dashObjec;     
+    public float dashSpeed = 20.0f; // Velocidad del dash
+    public float dashDuration = 0.2f; // Duración del dash en segundos
+    public float dashCooldown = 1.0f; // Tiempo de recarga del dash en segundos
     [Header("Bullet time")]
     public float bulletTimeDuration = 6f;
     public bool bulletTime = false;
@@ -289,7 +291,7 @@ public class MovimientoJugador : MonoBehaviour
 
     if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
     {
-        if (Time.time >= lastBulletTimeUse + bulletTimeCooldown)
+        if (Time.time >= lastBulletTimeUse + bulletTimeCooldown && canDash && !isDashing )
         {
             if (afterImageEffect != null)
             {
@@ -308,7 +310,7 @@ public class MovimientoJugador : MonoBehaviour
         Movimientojugador();
     }
 
-    if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
+    if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && canDash && !isDashing)
     {
         StartCoroutine(Dash());
     }
@@ -344,55 +346,48 @@ public class MovimientoJugador : MonoBehaviour
 
 public void Movimientojugador()
 {
-    if (canMove && isGrounded)
+    if (canMove)
     {
-        // Obtener la entrada del jugador
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        // Crear un vector de movimiento basado en la entrada del jugador
-        Vector3 moveInput = new Vector3(horizontal, 0, vertical);
+        Vector3 moveInput = new Vector3(horizontal, 0.0f, vertical);
 
-        // Verificar si se presionan las teclas de movimiento
         if ((horizontal != 0 || vertical != 0) && !enterAttack)
         {
-            // Si se presionan las teclas de movimiento y el jugador no está atacando, establecer el parámetro "Run" en true
             animator.SetBool("Run", true);
         }
         else
         {
-            // Si no se presionan las teclas de movimiento o el jugador está atacando, establecer el parámetro "Run" en false
             animator.SetBool("Run", false);
         }
 
-        // Normalizar el vector de movimiento para asegurar que la velocidad del jugador sea constante
         if (moveInput.magnitude > 1)
         {
             moveInput.Normalize();
         }
 
-        // Multiplicar el vector de movimiento por la velocidad del jugador para obtener la velocidad final
         Vector3 moveDirection = moveInput * speed;
 
-        // Aplicar el movimiento si el jugador está en el suelo o atacando
-        if (isGrounded || enterAttack)
+        if (canMove || enterAttack)
         {
-            controller.velocity = new Vector3(moveDirection.x, controller.velocity.y, moveDirection.z);
+           Vector3 newPosition = controller.position + moveInput * speed * Time.deltaTime;
+            controller.MovePosition(newPosition);
         }
 
-        if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack) // Evita la rotación cuando el jugador no se está moviendo
+        if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack)
         {
             Quaternion targetRotation = Quaternion.identity;
 
             switch (vertical)
             {
-                case 1: // W key
+                case 1: // W 
                     switch (horizontal)
                     {
-                        case 1: // D key
+                        case 1: // D 
                             targetRotation = Quaternion.Euler(0, 45, 0);
                             break;
-                        case -1: // A key
+                        case -1: // A 
                             targetRotation = Quaternion.Euler(0, -45, 0);
                             break;
                         default:
@@ -400,13 +395,13 @@ public void Movimientojugador()
                             break;
                     }
                     break;
-                case -1: // S key
+                case -1: // S 
                     switch (horizontal)
                     {
-                        case 1: // D key
+                        case 1: // D 
                             targetRotation = Quaternion.Euler(0, 135, 0);
                             break;
-                        case -1: // A key
+                        case -1: // A 
                             targetRotation = Quaternion.Euler(0, -135, 0);
                             break;
                         default:
@@ -417,10 +412,10 @@ public void Movimientojugador()
                 default:
                     switch (horizontal)
                     {
-                        case 1: // D key
+                        case 1: // D 
                             targetRotation = Quaternion.Euler(0, 90, 0);
                             break;
-                        case -1: // A key
+                        case -1: // A 
                             targetRotation = Quaternion.Euler(0, -90, 0);
                             break;
                         default:
@@ -430,18 +425,14 @@ public void Movimientojugador()
                     break;
             }
 
-            // Aplicar la rotación al objeto del jugador
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
-        else if (targetPosition != Vector3.zero) // Si el jugador no se está moviendo y hay una posición de click guardada
+        else if (targetPosition != Vector3.zero)
         {
-            // Calcular la rotación objetivo
             Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
-
-            // Aplicar la rotación al jugador
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
-    }   
+    }
 }
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 {
@@ -456,7 +447,7 @@ public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 
    public IEnumerator EmpujarJugadorAL3(float duracion)
 {
-    // Esperar 1 segundo antes de ejecutar el bucle while
+   
     yield return new WaitForSeconds(0.1f);
 
     Vector3 direccionEmpuje = transform.forward;
@@ -466,15 +457,15 @@ public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
     {
         Vector3 futurePosition = transform.position + direccionEmpuje * fuerzaEmpujeAP3 * Time.deltaTime;
 
-        // Verificar si hay algo en el suelo en la posición futura
+       
         if (Physics.Raycast(futurePosition, Vector3.down, out RaycastHit hit, 1.0f))
         {
-            // Si hay algo en el suelo, mover al jugador a la posición futura
+            
             transform.position = futurePosition;
         }
         else
         {
-            // Si no hay nada en el suelo, detener el empuje
+           
             break;
         }
 
@@ -515,55 +506,25 @@ public Vector3 ObtenerDireccionEmpuje()
 
     return direccionEmpuje.normalized * fuerzaEmpujeAL2;
 }
-IEnumerator Dash()
-{
-    if (!isDashing && Time.time >= lastDashTime + dashTime)
+    IEnumerator Dash()
     {
-        float originalY = transform.position.y;
-
         isDashing = true;
-        animator.SetBool("Dash", true);
-        float startTime = Time.time;
-        FMODUnity.RuntimeManager.PlayOneShot(dash);
+        canDash = false;
+        dashTime = dashDuration;
 
-        // Obtener la dirección de movimiento actual del jugador
-        Vector3 moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        Vector3 dashDirection = transform.forward;
 
-        // Si no hay entrada de movimiento, usar la dirección actual del jugador
-        if (moveDirection == Vector3.zero)
+        while (dashTime > 0)
         {
-            moveDirection = transform.forward;
-        }
-
-        while (Time.time < startTime + dashTime)
-        {
-            float fractionOfDashTimePassed = (Time.time - startTime) / dashTime;
-            float currentDashSpeed = Mathf.Lerp(DashSpeed, 0, fractionOfDashTimePassed);
-            controller.MovePosition(transform.position + moveDirection * currentDashSpeed * Time.deltaTime);
-
-            Vector3 newPosition = transform.position;
-            newPosition.y = originalY;
-            transform.position = newPosition;
-
+            controller.MovePosition(controller.position + dashDirection * dashSpeed * Time.deltaTime);
+            dashTime -= Time.deltaTime;
             yield return null;
         }
 
-        animator.SetBool("Dash", false);
-
-        //dashObjec.SetActive(true);
-
-        yield return new WaitForSeconds(0.4f);
-
-        //dashObjec.SetActive(false);
-
-        Vector3 finalPosition = transform.position;
-        finalPosition.y = originalY;
-        transform.position = finalPosition;
-
-        lastDashTime = Time.time;
         isDashing = false;
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
-}
 
 public void AtaqueJugador()
 {
