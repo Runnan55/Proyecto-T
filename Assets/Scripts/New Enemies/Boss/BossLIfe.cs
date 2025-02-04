@@ -27,6 +27,7 @@ public class BossLIfe : MonoBehaviour
         {
             // Si el jugador está dentro del ángulo de visión, aplicar daño reducido
             damage *= frontDamageMultiplier;
+            contador++;
         }
         else
         {

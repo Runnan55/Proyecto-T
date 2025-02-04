@@ -1,0 +1,251 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BossMovement2 : BossLIfe
+{
+    private Transform player;
+    public float moveSpeed = 5f;
+    public float stopDuration = 2f;
+    public float moveDuration = 4f;
+    public float rotationSpeed = 5f;
+    public float attackRange = 5f; // Rango para detectar si el jugador está cerca
+    public Transform coreTransform;
+
+    private Rigidbody rb;
+    private float actionTimer;
+    private bool isAttacking;
+    private bool inCloseRange;
+
+    public int fase = 1;
+
+    public float cooldown = 1.5f;
+    private float lastCooldown = -10;
+
+    public GameObject explosionPrefab;
+    public GameObject barrido;
+    public GameObject engranaje;
+    public GameObject gearTrapBot; // Prefab del robot trampa
+    public GameObject gearTrapBot2; // Prefab del robot trampa
+    public Transform[] arenaBounds; // L�mites de la arena para rebotar engranajes
+
+    public GearStorm gearStorm;
+    public OrbeAttackControler orbeAttackController;
+
+
+    protected override void Start()
+    {
+        base.Start();
+        rb = GetComponent<Rigidbody>();
+        actionTimer = moveDuration;
+        isAttacking = false;
+        inCloseRange = false;
+        StartCoroutine(FindPlayerWithDelay());
+
+    }
+
+    private IEnumerator FindPlayerWithDelay()
+    {
+        yield return new WaitForSeconds(1f);
+
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (player == null)
+        {
+            Debug.LogError("No se encontr� un objeto con la etiqueta 'Player'");
+        }
+    }
+
+    void Update()
+    {
+        HandleMovement();
+        RotateTowardsPlayer();
+
+        if (currentHealth <= maxHealth / 2 && fase == 1)
+        {
+            fase = 2;
+            Debug.Log("entramos en fase2");
+        }
+    }
+
+    void HandleMovement()
+    {
+        if (player == null) return;
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer <= attackRange)
+        {
+            rb.velocity = Vector3.zero;
+            PerformCloseRangeAttack();
+            inCloseRange = true;
+            return;
+        }
+        else if (inCloseRange)
+        {
+            // Reiniciar el temporizador al salir del rango de ataque cuerpo a cuerpo
+            actionTimer = moveDuration;
+            inCloseRange = false;
+        }
+
+        actionTimer -= Time.deltaTime;
+
+        if (isAttacking)
+        {
+            rb.velocity = Vector3.zero;
+            if (actionTimer <= 0)
+            {
+                isAttacking = false;
+                actionTimer = moveDuration;
+            }
+        }
+        else
+        {
+            Vector3 direction = (player.position - transform.position).normalized;
+            rb.velocity = direction * moveSpeed;
+
+            if (actionTimer <= 0)
+            {
+                isAttacking = true;
+                actionTimer = stopDuration;
+                PerformRangedAttack();
+            }
+        }
+    }
+
+    void RotateTowardsPlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    void PerformRangedAttack()
+    {
+        if (fase == 1)
+        {
+            if (Random.Range(0f, 1f) > 0.5f && Time.time > lastCooldown + cooldown)
+            {
+                Engranaje();
+                lastCooldown = Time.time;
+                Debug.Log("atck");
+
+            }
+            else if (Time.time > lastCooldown + cooldown)
+            {
+                TrampaRobots();
+                lastCooldown = Time.time;
+                Debug.Log("atck");
+
+            }
+        }
+
+        if (fase == 2)
+        {
+            if (Random.Range(0f, 1f) > 0.5f && Time.time > lastCooldown + cooldown)
+            {
+                TormentaDeEngranajes();
+                lastCooldown = Time.time;
+                Debug.Log("atckd");
+
+            }
+            else if (Time.time > lastCooldown + cooldown)
+            {
+                ExplosionEngranajes();
+                lastCooldown = Time.time;
+                Debug.Log("atckd");
+
+            }
+        }
+    }
+
+    void PerformCloseRangeAttack()
+    {
+        Debug.Log("Boss realiza un ataque cuerpo a cuerpo.");
+       if (fase == 1)
+        {
+            if (contador>=4 && Time.time > lastCooldown + cooldown)
+            {
+                ExplosionPropia();
+                lastCooldown = Time.time;
+                Debug.Log("atckd");
+                contador = 0;
+
+            }
+            else if (Time.time > lastCooldown + cooldown)
+            {
+                Barrido();
+                lastCooldown = Time.time;
+                Debug.Log("atckd");
+
+            }
+        }
+
+       if (fase == 2)
+        {
+            if (Random.Range(0f, 1f) > 0.5f && Time.time > lastCooldown + cooldown)
+            {
+                Barrido();
+                lastCooldown = Time.time;
+                Debug.Log("atckd");
+
+            }
+            else if (Time.time > lastCooldown + cooldown)
+            {
+                Salto();
+                lastCooldown = Time.time;
+                Debug.Log("atckd");
+
+            }
+        }
+       
+    }
+
+    public void Barrido()
+    {
+        GameObject barridoAtk = Instantiate(barrido, coreTransform.position, coreTransform.rotation);
+        barridoAtk.GetComponent<Barrido>().ExecuteSweep();
+    }
+    public void ExplosionPropia()
+    {
+        Debug.Log("pumm");
+        GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
+    }
+    public void Engranaje()
+    {
+        GameObject proyectil = Instantiate(engranaje, coreTransform.position, Quaternion.identity);
+
+        Vector3 direction = coreTransform.forward;
+        proyectil.GetComponent<BouncingProyectil2>().Initialize(direction);
+
+    }
+    public void TrampaRobots()
+    {
+
+        Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);
+        Instantiate(gearTrapBot2, arenaBounds[1].position, Quaternion.identity);
+    }
+    public void Salto()
+    {
+
+    }
+    public void TormentaDeEngranajes()
+    {
+        if (gearStorm != null)
+        {
+            gearStorm.IniciarTormenta(transform.position);
+        }
+        else
+        {
+            Debug.LogError("GearStormController no asignado en el Boss.");
+        }
+    }
+    public void ExplosionEngranajes()
+    {
+        orbeAttackController.PerformOrbeAttack();
+    }
+
+
+
+
+}
