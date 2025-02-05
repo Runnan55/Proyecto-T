@@ -22,9 +22,6 @@ public class MovimientoJugador : MonoBehaviour
     public DamageDealer damageDealerL3;     
     public DamageDealer damageDealerP; 
 
-    
-      
-
     [Header("Movement Settings")]
     private Rigidbody controller;     
     bool canMove = true; 
@@ -76,7 +73,14 @@ public class MovimientoJugador : MonoBehaviour
     public float dashSpeed = 20.0f; // Velocidad del dash
     public float dashDuration = 0.2f; // Duración del dash en segundos
     public float dashCooldown = 1.0f; // Tiempo de recarga del dash en segundos
+
     [Header("Bullet time")]
+    Collider[] btColliders;
+    public Collider btTriggerCollider;
+    public Material btColliderOff;
+    public Material btColliderOn;
+    public GameObject BTCollider;
+    //
     public float bulletTimeDuration = 6f;
     public bool bulletTime = false;
     public TestAfterImage afterImageEffect;
@@ -106,7 +110,7 @@ public class MovimientoJugador : MonoBehaviour
         speed = +5f;
     }
 
-        public void speedDown()
+    public void speedDown()
     {
         speed = -5f;
     }
@@ -122,7 +126,7 @@ public class MovimientoJugador : MonoBehaviour
             isInDodgeArea = true;
             Debug.Log("Dodge area entered");
         } */
-
+        
         if (other.CompareTag("FallZone"))
         {
             Debug.Log("Caída detectada, teletransportando a la última posición segura.");
@@ -269,80 +273,127 @@ public class MovimientoJugador : MonoBehaviour
         }
 
         StartCoroutine(UpdateSafePosition());
+        
+        btColliders = Physics.OverlapSphere(transform.position, 10000);
     }
+
 
   void Update()
-{
-    if (Input.GetKeyDown(KeyCode.G))
     {
-        godMode = !godMode;
-        Debug.Log("God Mode: " + (godMode ? "Activated" : "Deactivated"));
-        rangoMaximo = 999;
-    }
-
-    if (Input.GetKeyDown(KeyCode.O))
-    {
-        enterAttack = true;
-    }
-    if (Input.GetKeyDown(KeyCode.P))
-    {
-        enterAttack = false;
-    }
-
-    if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
-    {
-        if (Time.time >= lastBulletTimeUse + bulletTimeCooldown && canDash && !isDashing )
+        if (Input.GetKeyDown(KeyCode.G))
         {
-            if (afterImageEffect != null)
+            godMode = !godMode;
+            Debug.Log("God Mode: " + (godMode ? "Activated" : "Deactivated"));
+            rangoMaximo = 999;
+        }
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            enterAttack = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            enterAttack = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            BTCollider.SetActive(!BTCollider.activeSelf);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            CountBTProjectiles();
+        }
+
+        if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
+        {
+            if (Time.time >= lastBulletTimeUse + bulletTimeCooldown && canDash && !isDashing )
             {
-                StartCoroutine(ActivateBulletTime());
-                StartCoroutine(Dash());
+                if (afterImageEffect != null)
+                {
+                    StartCoroutine(ActivateBulletTime());
+                    StartCoroutine(Dash());
+                }
+                else
+                {
+                    Debug.LogError("afterImageEffect no está asignado en el Inspector.");
+                }
             }
-            else
+        }
+
+        if (canMove)
+        {
+            Movimientojugador();
+        }
+
+        if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && canDash && !isDashing)
+        {
+            StartCoroutine(Dash());
+        }
+
+        AtaqueJugador();
+        AtaqueLigero();
+        AtaquePesado();
+
+        if (atacando)
+        {
+            ExpandirCollider();
+        }
+
+        AtaqueDistancia();
+        RecargarBalas();
+        UpdateBalaSliders();
+
+        if (bulletTimeCooldownImage != null)
+        {
+            float cooldownProgress = Mathf.Clamp01((Time.time - lastBulletTimeUse) / bulletTimeCooldown);
+            bulletTimeCooldownImage.fillAmount = cooldownProgress;
+
+            bulletTimeCooldownImage.gameObject.SetActive(cooldownProgress < 1);
+        }
+
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f);
+
+        if (isGrounded)
+        {
+            //Debug.Log("is grounded");
+        }
+    }
+    
+    public void CountBTProjectiles()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 5f);
+        int count = 0;
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Projectile"))
             {
-                Debug.LogError("afterImageEffect no está asignado en el Inspector.");
+                count++;
             }
+        }
+        Debug.Log("Number of BTProjectiles in range: " + count);
+
+        if (count>0)
+        {
+            BTCollider.GetComponent<Renderer>().material = btColliderOn;
+            isInDodgeArea = true;
+        }
+
+        if (count == 0)
+        {
+            BTCollider.GetComponent<Renderer>().material = btColliderOff;
+            isInDodgeArea = false;
         }
     }
 
-    if (canMove)
+    void OnDrawGizmos()
     {
-        Movimientojugador();
+        Gizmos.color = Color.yellow;
+        
+        Gizmos.DrawWireSphere(transform.position, 5f);
     }
-
-    if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && canDash && !isDashing)
-    {
-        StartCoroutine(Dash());
-    }
-
-    AtaqueJugador();
-    AtaqueLigero();
-    AtaquePesado();
-
-    if (atacando)
-    {
-        ExpandirCollider();
-    }
-
-    AtaqueDistancia();
-    RecargarBalas();
-    UpdateBalaSliders();
-
-    if (bulletTimeCooldownImage != null)
-    {
-        float cooldownProgress = Mathf.Clamp01((Time.time - lastBulletTimeUse) / bulletTimeCooldown);
-        bulletTimeCooldownImage.fillAmount = cooldownProgress;
-
-        bulletTimeCooldownImage.gameObject.SetActive(cooldownProgress < 1);
-    }
-
-    isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f);
-
-    if (isGrounded)
-    {
-        //Debug.Log("is grounded");
-    }
-}
 
 public void Movimientojugador()
 {

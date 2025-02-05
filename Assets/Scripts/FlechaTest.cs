@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Flecha : MonoBehaviour
+public class FlechaTest : MonoBehaviour
 {
     public float speed = 10f;
     public float lifetime = 30f;
     public float damage = 5f;
 
     private Life playerLife;
+    private MovimientoJugador MovimientoJugador;
 
 
     private void Start()
@@ -29,11 +30,14 @@ public class Flecha : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerLife.ModifyTime(-damage);
-            MovimientoJugador.isInDodgeArea = false;
-        //    Debug.Log("buenas tardes " +MovimientoJugador.isInDodgeArea);
-
             Destroy(gameObject);
         }
+
+        if (other.CompareTag("BTCollider"))
+        {
+            MovimientoJugador.CountBTProjectiles();
+        }
+
         else if (other.CompareTag("Walls"))
         {
             Destroy(gameObject);
@@ -42,12 +46,11 @@ public class Flecha : MonoBehaviour
 
     public void OnDisable()
     {
-        MovimientoJugador.isInDodgeArea = false;
+        MovimientoJugador.CountBTProjectiles();
     }
 
     public void OnDestroy()
     {
-        MovimientoJugador.isInDodgeArea = false;
+        MovimientoJugador.CountBTProjectiles();
     }
-  
 }
