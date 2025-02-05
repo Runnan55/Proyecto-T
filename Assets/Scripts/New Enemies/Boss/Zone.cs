@@ -10,7 +10,7 @@ public class Zone : MonoBehaviour
     {
         if (other.CompareTag("Player")) // Asegúrate de que el jugador tiene el tag "Player"
         {
-            BossMovement boss = FindObjectOfType<BossMovement>(); // Busca al Boss en la escena
+            BossMovement2 boss = FindObjectOfType<BossMovement2>(); // Busca al Boss en la escena
             if (boss != null)
             {
                 boss.OnPlayerEnterZone(zoneID); // Informa al Boss sobre la zona

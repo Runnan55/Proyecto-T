@@ -32,6 +32,14 @@ public class BossMovement2 : BossLIfe
     public GearStorm gearStorm;
     public OrbeAttackControler orbeAttackController;
 
+    private Vector3 currentTarget; // Punto al que se mueve el Boss
+
+    private bool saltos = false;
+    public Transform[] zonePoints;
+    private int zonaActual = 0;
+    public GameObject[] smokeTramps;
+    private BossJumpAttack jumpAttack;
+    private bool canMove = true;
 
     protected override void Start()
     {
@@ -41,6 +49,8 @@ public class BossMovement2 : BossLIfe
         isAttacking = false;
         inCloseRange = false;
         StartCoroutine(FindPlayerWithDelay());
+        jumpAttack = GetComponent<BossJumpAttack>();
+        currentTarget = zonePoints[0].position;
 
     }
 
@@ -68,9 +78,82 @@ public class BossMovement2 : BossLIfe
         }
     }
 
+    public void OnPlayerEnterZone(int zoneID)
+    {
+        if (saltos)
+        {
+            if (zoneID == zonaActual)
+            {
+                if (zoneID >= 0 && zoneID < zonePoints.Length)
+                {
+                    currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
+                    zonaActual = zoneID;
+                    saltos = false;
+                    canMove = true;
+
+                    //Debug.Log("trampas desactivas");
+                    foreach (var trap in smokeTramps)
+                    {
+                        if (trap != null)
+                        {
+                            BigDamageZone damageZone = trap.GetComponent<BigDamageZone>();
+                            if (damageZone != null)
+                            {
+                                damageZone.DeactivateDamage();
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        else
+        {
+            if (zoneID >= 0 && zoneID < zonePoints.Length)
+            {
+                currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
+                zonaActual = zoneID;
+            }
+        }
+
+    }
+
+    private IEnumerator cooldown2()
+    {
+        yield return new WaitForSeconds(1);  // Esperar 1 segundo.
+
+        //Debug.Log("trampas activas");
+        foreach (var trap in smokeTramps)
+        {
+            if (trap != null)
+            {
+                BigDamageZone damageZone = trap.GetComponent<BigDamageZone>();
+                if (damageZone != null)
+                {
+                    damageZone.ActivateDamage();
+                }
+            }
+        }
+    }
+    public int GetRandomIndexExcluding(int excludedIndex)
+    {
+        // Obtener un �ndice aleatorio del rango total
+        int randomIndex;
+        do
+        {
+            randomIndex = Random.Range(0, zonePoints.Length);
+        } while (randomIndex == excludedIndex);
+
+        return randomIndex;
+    }
+
     void HandleMovement()
     {
-        if (player == null) return;
+        if (!canMove)
+        {
+            rb.velocity = Vector3.zero;
+            return;
+        }
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (distanceToPlayer <= attackRange)
@@ -193,7 +276,7 @@ public class BossMovement2 : BossLIfe
             {
                 Salto();
                 lastCooldown = Time.time;
-                Debug.Log("atckd");
+                Debug.Log("gdgege");
 
             }
         }
@@ -227,6 +310,14 @@ public class BossMovement2 : BossLIfe
     }
     public void Salto()
     {
+
+        OnPlayerEnterZone(GetRandomIndexExcluding(zonaActual));
+
+        jumpAttack.SaltoAplastante(currentTarget);
+        saltos = true;
+        canMove = false;
+
+        StartCoroutine(cooldown2());
 
     }
     public void TormentaDeEngranajes()

@@ -9081,6 +9081,7 @@ GameObject:
   - component: {fileID: 1507511110}
   - component: {fileID: 1507511111}
   - component: {fileID: 1507511112}
+  - component: {fileID: 1507511113}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -9151,6 +9152,16 @@ MonoBehaviour:
   - {fileID: 691943274}
   gearStorm: {fileID: 1507511111}
   orbeAttackController: {fileID: 1507511112}
+  zonePoints:
+  - {fileID: 1866651535}
+  - {fileID: 1300717780}
+  - {fileID: 1124606553}
+  - {fileID: 1368102969}
+  smokeTramps:
+  - {fileID: 6194472588284099397}
+  - {fileID: 192671920}
+  - {fileID: 1420439090}
+  - {fileID: 2070568367}
 --- !u!136 &1507511106
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9293,6 +9304,22 @@ MonoBehaviour:
   bossTransform: {fileID: 1507511109}
   radius: 5
   orbeCount: 10
+--- !u!114 &1507511113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507511103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d85c2e413d771d345bf41124af832672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpHeight: 10
+  jumpSpeed: 20
+  fallSpeed: 20
+  jumpPreviewDuration: 3
 --- !u!1 &1509935232
 GameObject:
   m_ObjectHideFlags: 0
