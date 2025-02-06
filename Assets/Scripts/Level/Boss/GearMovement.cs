@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class GearMovement : MonoBehaviour
@@ -11,7 +12,7 @@ public class GearMovement : MonoBehaviour
     private bool rotateRight = true;
 
     private Transform playerTransform;
-    private CharacterController playerController;
+    private Rigidbody playerRigidbody;
     private Vector3 lastGearPosition; // Para calcular desplazamiento del engranaje
 
     void Start()
@@ -28,22 +29,21 @@ public class GearMovement : MonoBehaviour
 
         // Si el jugador está sobre el engranaje, moverlo con este
         if (playerTransform != null)
-        {
-            // Calcular la rotación del jugador alrededor del centro del engranaje
-            Vector3 pivot = transform.position; // Centro del engranaje
-            Vector3 offset = playerTransform.position - pivot; // Posición relativa del jugador al engranaje
+{
+        // Calcular la rotación del jugador alrededor del centro del engranaje
+        Vector3 pivot = transform.position; // Centro del engranaje
+        Vector3 offset = playerTransform.position - pivot; // Posición relativa del jugador al engranaje
 
-            float angle = direction * rotationSpeed * Time.fixedDeltaTime;
-            Vector3 newPosition = Quaternion.Euler(0, angle, 0) * offset + pivot;
+        float angle = direction * rotationSpeed * Time.fixedDeltaTime;
+        Vector3 newPosition = Quaternion.Euler(0, angle, 0) * offset + pivot;
 
-            // Calcular el desplazamiento total (rotación + traslación si el engranaje se mueve)
-            Vector3 gearMovement = transform.position - lastGearPosition;
-            Vector3 finalMovement = newPosition - playerTransform.position + gearMovement;
+        // Calcular el desplazamiento total (rotación + traslación si el engranaje se mueve)
+        Vector3 gearMovement = transform.position - lastGearPosition;
+        Vector3 finalMovement = newPosition - playerTransform.position + gearMovement;
 
-            // Mover al jugador con el CharacterController
-            playerController.Move(finalMovement);
-        }
-
+        // Mover al jugador con el Rigidbody
+        playerRigidbody.MovePosition(playerRigidbody.position + finalMovement);
+}
         // Actualizar la última posición del engranaje
         lastGearPosition = transform.position;
     }
@@ -53,7 +53,7 @@ public class GearMovement : MonoBehaviour
         if (other.CompareTag("Player")) // Detectar si es el jugador
         {
             playerTransform = other.transform;
-            playerController = other.GetComponent<CharacterController>(); // Obtener el CharacterController
+            playerRigidbody = other.GetComponent<Rigidbody>(); // Obtener el CharacterController
         }
     }
 
@@ -62,7 +62,7 @@ public class GearMovement : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerTransform = null;
-            playerController = null; // Limpiar la referencia al salir del engranaje
+            playerRigidbody = null; // Limpiar la referencia al salir del engranaje
         }
     }
 
