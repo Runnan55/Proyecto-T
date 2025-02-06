@@ -9114,7 +9114,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!114 &1507511105
 MonoBehaviour:
@@ -9134,34 +9134,34 @@ MonoBehaviour:
   frontDamageMultiplier: 0.25
   normalDamageMultiplier: 1
   contador: 0
-  moveSpeed: 5
-  stopDuration: 2
-  moveDuration: 2
+  moveSpeed: 6.5
   rotationSpeed: 5
-  attackRange: 5
-  coreTransform: {fileID: 244724593}
-  fase: 1
-  cooldown: 3
-  explosionPrefab: {fileID: 6460678077011925828, guid: 2d7bfefc0e7924a44a0ceefdb0147efa, type: 3}
-  barrido: {fileID: 2853194493532589128, guid: 86f4f7d1845de0047b96228f221bf242, type: 3}
-  engranaje: {fileID: 7939266400439410059, guid: e5c72841ec2159641900c275d205857a, type: 3}
-  gearTrapBot: {fileID: 7958450814188389156, guid: 83802e2045efca74e9749736adb2ada6, type: 3}
-  gearTrapBot2: {fileID: 2309030945595582113, guid: 7fbc0edfb93bc1345b1f5510403f05b1, type: 3}
-  arenaBounds:
-  - {fileID: 866828456}
-  - {fileID: 691943274}
-  gearStorm: {fileID: 1507511111}
-  orbeAttackController: {fileID: 1507511112}
   zonePoints:
   - {fileID: 1866651535}
   - {fileID: 1300717780}
   - {fileID: 1124606553}
   - {fileID: 1368102969}
+  stopDuration: 1.5
+  moveDuration: 2
+  attackRange: 5
+  cooldown: 1.5
+  fase: 1
+  gearStorm: {fileID: 1507511111}
+  orbeAttackController: {fileID: 1507511112}
+  explosionPrefab: {fileID: 6460678077011925828, guid: 2d7bfefc0e7924a44a0ceefdb0147efa, type: 3}
+  barrido: {fileID: 2853194493532589128, guid: 86f4f7d1845de0047b96228f221bf242, type: 3}
+  engranaje: {fileID: 7939266400439410059, guid: e5c72841ec2159641900c275d205857a, type: 3}
+  gearTrapBot: {fileID: 7958450814188389156, guid: 83802e2045efca74e9749736adb2ada6, type: 3}
+  gearTrapBot2: {fileID: 2309030945595582113, guid: 7fbc0edfb93bc1345b1f5510403f05b1, type: 3}
   smokeTramps:
   - {fileID: 6194472588284099397}
   - {fileID: 192671920}
   - {fileID: 1420439090}
   - {fileID: 2070568367}
+  coreTransform: {fileID: 244724593}
+  arenaBounds:
+  - {fileID: 866828456}
+  - {fileID: 691943274}
 --- !u!136 &1507511106
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9205,7 +9205,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 8cc00928ee6a82446942b9895f14823d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9244,7 +9244,7 @@ Transform:
   m_GameObject: {fileID: 1507511103}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5, y: 4.9, z: 11.8}
+  m_LocalPosition: {x: -0.26, y: 4.9, z: 0.18}
   m_LocalScale: {x: 3.1779, y: 3.1779, z: 3.1779}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9513,7 +9513,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: a20aac73aba530c43994d2b9a1249382, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

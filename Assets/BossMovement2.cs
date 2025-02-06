@@ -4,42 +4,61 @@ using UnityEngine;
 
 public class BossMovement2 : BossLIfe
 {
+    // === Player & Movement ===
+    [Header("Jugador y Movimiento")]
     private Transform player;
+    private Rigidbody rb;
+    private Vector3 currentTarget; // Punto al que se mueve el Boss
+    private bool canMove = true;
+
+    // === Movement Settings ===
+    [Header("Configuración de Movimiento")]
     public float moveSpeed = 5f;
+    public float rotationSpeed = 5f;
+    public Transform[] zonePoints;
+    private int zonaActual = 0;
+
+    // === Action Timers ===
+    [Header("Temporizadores de Acción")]
+    private float actionTimer;
     public float stopDuration = 2f;
     public float moveDuration = 4f;
-    public float rotationSpeed = 5f;
-    public float attackRange = 5f; // Rango para detectar si el jugador está cerca
-    public Transform coreTransform;
 
-    private Rigidbody rb;
-    private float actionTimer;
+    // === Attack Settings ===
+    [Header("Configuración de Ataque")]
+    public float attackRange = 5f; // Rango para detectar si el jugador está cerca
     private bool isAttacking;
     private bool inCloseRange;
 
-    public int fase = 1;
-
+    // === Cooldown Settings ===
+    [Header("Configuración de Cooldown")]
     public float cooldown = 1.5f;
     private float lastCooldown = -10;
 
+    // === Boss Phase ===
+    [Header("Fase del Jefe")]
+    public int fase = 1;
+
+    // === Abilities & Attacks ===
+    [Header("Habilidades y Ataques")]
+    public GearStorm gearStorm;
+    public OrbeAttackControler orbeAttackController;
+    private BossJumpAttack jumpAttack;
+    private bool saltos = false;
+
+    // === Traps & Explosions ===
+    [Header("Trampas y Explosiones")]
     public GameObject explosionPrefab;
     public GameObject barrido;
     public GameObject engranaje;
     public GameObject gearTrapBot; // Prefab del robot trampa
     public GameObject gearTrapBot2; // Prefab del robot trampa
-    public Transform[] arenaBounds; // L�mites de la arena para rebotar engranajes
-
-    public GearStorm gearStorm;
-    public OrbeAttackControler orbeAttackController;
-
-    private Vector3 currentTarget; // Punto al que se mueve el Boss
-
-    private bool saltos = false;
-    public Transform[] zonePoints;
-    private int zonaActual = 0;
     public GameObject[] smokeTramps;
-    private BossJumpAttack jumpAttack;
-    private bool canMove = true;
+
+    // === Arena & Environment ===
+    [Header("Arena y Entorno")]
+    public Transform coreTransform;
+    public Transform[] arenaBounds; // Límites de la arena para rebotar engranajes
 
     protected override void Start()
     {
@@ -184,7 +203,7 @@ public class BossMovement2 : BossLIfe
         else
         {
             Vector3 direction = (player.position - transform.position).normalized;
-            rb.velocity = direction * moveSpeed;
+            rb.velocity = direction * moveSpeed * MovimientoJugador.bulletTimeScale;
 
             if (actionTimer <= 0)
             {
@@ -199,7 +218,7 @@ public class BossMovement2 : BossLIfe
     {
         Vector3 direction = (player.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed * MovimientoJugador.bulletTimeScale);
     }
 
     void PerformRangedAttack()
@@ -272,11 +291,12 @@ public class BossMovement2 : BossLIfe
                 Debug.Log("atckd");
 
             }
-            else if (Time.time > lastCooldown + cooldown)
+            else if (contador >= 3 && Time.time > lastCooldown + cooldown)
             {
                 Salto();
                 lastCooldown = Time.time;
                 Debug.Log("gdgege");
+                contador = 0;
 
             }
         }
