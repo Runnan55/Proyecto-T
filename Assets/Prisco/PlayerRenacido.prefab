@@ -1288,6 +1288,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 10
   gravity: 100
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 1024
   damageDealerL1: {fileID: 8201706788016652550}
   damageDealerL2: {fileID: 5305056419564104193}
   damageDealerL3: {fileID: 7978776080494700769}
@@ -1312,7 +1315,7 @@ MonoBehaviour:
   animator: {fileID: 7445508455057988435}
   verificarArma: 0
   cambioColoAlPegar: {fileID: 0}
-  dashObjec: {fileID: 2790481805149438217}
+  dashObjec: {fileID: 0}
   dashSpeed: 20
   dashDuration: 0.2
   dashCooldown: 1
@@ -2338,7 +2341,6 @@ GameObject:
   - component: {fileID: 2727712982583784172}
   - component: {fileID: 829545805764332139}
   - component: {fileID: 1590554093646032761}
-  - component: {fileID: 8168693800611936041}
   - component: {fileID: 7547553867826961736}
   m_Layer: 7
   m_Name: Halo
@@ -2412,28 +2414,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8168693800611936041
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8277940664097024546}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &7547553867826961736
 MonoBehaviour:
   m_ObjectHideFlags: 0

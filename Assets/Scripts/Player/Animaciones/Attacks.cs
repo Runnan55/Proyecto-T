@@ -118,7 +118,7 @@ public class Attacks : StateMachineBehaviour
              animator.SetBool("Dash", false);       
                 break;
             case "AttackD": 
-            MovimientoJugador.ataqueD = false;
+            MovimientoJugador.ataqueD = true;
             MovimientoJugador.speed = 0;          
                 break;
             case "Attack3P":         
@@ -230,6 +230,8 @@ public class Attacks : StateMachineBehaviour
             MovimientoJugador.ataqueP = false;    
                 break;
             case "AttackD":
+                MovimientoJugador.enterAttack = false;
+                MovimientoJugador.ataqueD = false;
                 MovimientoJugador.speed = 15;
                 break;
             case "Attack3P":

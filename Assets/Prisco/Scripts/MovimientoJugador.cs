@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Unity.Mathematics;
+using Unity.VisualScripting;
+
 
 public class MovimientoJugador : MonoBehaviour
 {
@@ -16,6 +19,7 @@ public class MovimientoJugador : MonoBehaviour
     public static bool hasAttacked = false;
     public static bool hasRotated = false;
     public static MovimientoJugador instance; 
+    public LayerMask obstacleLayers;
 
     public DamageDealer damageDealerL1;    
     public DamageDealer damageDealerL2;     
@@ -23,7 +27,7 @@ public class MovimientoJugador : MonoBehaviour
     public DamageDealer damageDealerP; 
 
     [Header("Movement Settings")]
-    private Rigidbody controller;     
+    private Rigidbody rb;     
     bool canMove = true; 
     bool isLookingAtTarget = false;           
     Vector3 targetPosition;
@@ -262,7 +266,7 @@ public class MovimientoJugador : MonoBehaviour
 
     private void Start()
     {
-        controller = GetComponent<Rigidbody>();      
+        rb = GetComponent<Rigidbody>();      
         instance = GetComponent<MovimientoJugador>();
         animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
@@ -323,10 +327,7 @@ public class MovimientoJugador : MonoBehaviour
             }
         }
 
-        if (canMove)
-        {
-            Movimientojugador();
-        }
+       
 
         if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && canDash && !isDashing)
         {
@@ -361,6 +362,11 @@ public class MovimientoJugador : MonoBehaviour
             //Debug.Log("is grounded");
         }
     }
+
+    private void FixedUpdate()
+{
+    Movimientojugador();
+}
     
     public void CountBTProjectiles()
     {
@@ -395,128 +401,141 @@ public class MovimientoJugador : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 5f);
     }
 
-public void Movimientojugador()
+  
+
+   public void Movimientojugador()
 {
-    if (canMove)
+    float hor = Input.GetAxisRaw("Horizontal");
+    float ver = Input.GetAxisRaw("Vertical");
+    Vector3 velocity = Vector3.zero;
+
+    if (hor != 0 || ver != 0)
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        Vector3 moveInput = new Vector3(horizontal, 0.0f, vertical);
-
-        if ((horizontal != 0 || vertical != 0) && !enterAttack)
+        animator.SetBool("Run", true);
+        
+        Vector3 direction = new Vector3(hor, 0, ver).normalized;
+        
+        if (!enterAttack)
         {
-            animator.SetBool("Run", true);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 0.2f);
+        }
+        
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 1f, obstacleLayers))
+        {
+            velocity = Vector3.zero;
         }
         else
         {
-            animator.SetBool("Run", false);
-        }
-
-        if (moveInput.magnitude > 1)
-        {
-            moveInput.Normalize();
-        }
-
-        Vector3 moveDirection = moveInput * speed;
-
-        if (canMove || enterAttack)
-        {
-           Vector3 newPosition = controller.position + moveInput * speed * Time.deltaTime;
-            controller.MovePosition(newPosition);
-        }
-
-        if (moveDirection != Vector3.zero && !isLookingAtTarget && !enterAttack)
-        {
-            Quaternion targetRotation = Quaternion.identity;
-
-            switch (vertical)
-            {
-                case 1: // W 
-                    switch (horizontal)
-                    {
-                        case 1: // D 
-                            targetRotation = Quaternion.Euler(0, 45, 0);
-                            break;
-                        case -1: // A 
-                            targetRotation = Quaternion.Euler(0, -45, 0);
-                            break;
-                        default:
-                            targetRotation = Quaternion.Euler(0, 0, 0);
-                            break;
-                    }
-                    break;
-                case -1: // S 
-                    switch (horizontal)
-                    {
-                        case 1: // D 
-                            targetRotation = Quaternion.Euler(0, 135, 0);
-                            break;
-                        case -1: // A 
-                            targetRotation = Quaternion.Euler(0, -135, 0);
-                            break;
-                        default:
-                            targetRotation = Quaternion.Euler(0, 180, 0);
-                            break;
-                    }
-                    break;
-                default:
-                    switch (horizontal)
-                    {
-                        case 1: // D 
-                            targetRotation = Quaternion.Euler(0, 90, 0);
-                            break;
-                        case -1: // A 
-                            targetRotation = Quaternion.Euler(0, -90, 0);
-                            break;
-                        default:
-                            targetRotation = transform.rotation;
-                            break;
-                    }
-                    break;
-            }
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
-        }
-        else if (targetPosition != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            velocity = direction * speed * Time.fixedDeltaTime;
         }
     }
+    else
+    {
+        animator.SetBool("Run", false);
+    }
+
+    rb.MovePosition(rb.position + velocity);
 }
+
+
+IEnumerator Dash()
+{
+    isDashing = true;
+    canDash = false;
+    dashTime = dashDuration;
+
+    Vector3 dashDirection = transform.forward;
+
+   
+    rb.useGravity = false;
+
+    while (dashTime > 0)
+    {
+        
+        float dashFrameDistance = dashSpeed * Time.fixedDeltaTime;
+
+       
+        if (Physics.Raycast(rb.position, dashDirection, out RaycastHit hit, dashFrameDistance, obstacleLayers))
+        {
+           
+            break;
+        }
+
+        
+        rb.MovePosition(rb.position + dashDirection * dashSpeed * Time.fixedDeltaTime);
+
+        dashTime -= Time.fixedDeltaTime;
+        yield return new WaitForFixedUpdate();
+    }
+
+   
+    isDashing = false;
+    rb.useGravity = true;
+    
+    yield return new WaitForSeconds(dashCooldown);
+    canDash = true;
+}
+
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 {
-    float tiempoTranscurrido = 0;
+    float tiempoTranscurrido = 0f;
+   
     while (tiempoTranscurrido < duracion)
     {
-        controller.MovePosition(transform.position + direccion * (Time.deltaTime / duracion));
+        
+        float movimientoFrame = Time.deltaTime / duracion;
+
+       
+        Vector3 posicionActual = rb.position;
+
+        Vector3 posicionFutura = posicionActual + direccion * movimientoFrame;
+
+        float distanciaAMover = (direccion * movimientoFrame).magnitude;
+
+      
+        if (Physics.Raycast(posicionActual, direccion, out RaycastHit hit, distanciaAMover + 0.1f))
+        {
+            
+            break;
+        }
+
+        
+        rb.MovePosition(posicionFutura);
+
         tiempoTranscurrido += Time.deltaTime;
         yield return null;
     }
 }
 
-   public IEnumerator EmpujarJugadorAL3(float duracion)
+
+public IEnumerator EmpujarJugadorAL3(float duracion)
 {
-   
+    
     yield return new WaitForSeconds(0.1f);
 
     Vector3 direccionEmpuje = transform.forward;
-    float tiempoTranscurrido = 0;
+    float tiempoTranscurrido = 0f;
 
     while (tiempoTranscurrido < duracion)
     {
-        Vector3 futurePosition = transform.position + direccionEmpuje * fuerzaEmpujeAP3 * Time.deltaTime;
+        
+        float desplazamientoFrame = fuerzaEmpujeAP3 * Time.deltaTime;
 
        
-        if (Physics.Raycast(futurePosition, Vector3.down, out RaycastHit hit, 1.0f))
-        {
-            
+        if (Physics.Raycast(transform.position, direccionEmpuje, out RaycastHit hitForward, desplazamientoFrame + 0.1f))
+        {          
+            break;
+        }
+
+       
+        Vector3 futurePosition = transform.position + direccionEmpuje * desplazamientoFrame;
+        if (Physics.Raycast(futurePosition, Vector3.down, out RaycastHit hitDown, 1.0f))
+        {            
             transform.position = futurePosition;
         }
         else
-        {
-           
+        {           
             break;
         }
 
@@ -524,6 +543,7 @@ public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
         yield return null;
     }
 }
+
 
 public bool EstaMoviendose()
 {
@@ -557,26 +577,7 @@ public Vector3 ObtenerDireccionEmpuje()
 
     return direccionEmpuje.normalized * fuerzaEmpujeAL2;
 }
-    IEnumerator Dash()
-    {
-        isDashing = true;
-        canDash = false;
-        dashTime = dashDuration;
-
-        Vector3 dashDirection = transform.forward;
-
-        while (dashTime > 0)
-        {
-            controller.MovePosition(controller.position + dashDirection * dashSpeed * Time.deltaTime);
-            dashTime -= Time.deltaTime;
-            yield return null;
-        }
-
-        isDashing = false;
-        yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
-    }
-
+  
 public void AtaqueJugador()
 {
     if (Input.GetMouseButtonDown(0))
@@ -586,24 +587,20 @@ public void AtaqueJugador()
 
         if (!hasRotated)
         {
-            // Crea un rayo desde la posición del mouse
+           
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            // Realiza el raycast sin límites, chequeando si el objeto tiene la capa asignada
+            
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
-            {                               
-                
-                    // Determina la posición del objetivo
+            {                           
+                                    
                     Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-
-                    // Calcula la dirección hacia el objetivo
+                    
                     Vector3 directionToLook = (targetPosition - transform.position).normalized;
-
-                    // Genera la rotación necesaria para mirar hacia el objetivo
+                   
                     Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
-
-                    // Aplica la rotación al jugador
+                  
                     transform.rotation = targetRotation;
 
                     hasRotated = true;
@@ -707,58 +704,65 @@ private void ExpandirCollider()
     }
 }
 
-   public void AtaqueDistancia()
+public void AtaqueDistancia()
 {
     if (Input.GetButtonDown("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
     {
+        // Reproduce el sonido del disparo
         FMODUnity.RuntimeManager.PlayOneShot(shot);
+
+        // Activa las banderas de ataque
         enterAttack = true;
         ataqueD = true;
+        
+        // Reinicia (o inicia) la corrutina que orienta al jugador hacia el mouse
         if (mirarCoroutine != null)
         {
             StopCoroutine(mirarCoroutine);
         }
         mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
+        
+        // Actualiza el tiempo del último disparo (si es que manejas este valor)
+        tiempoUltimoDisparo = Time.time;
+        
+        // Resta una bala o realiza otras lógicas necesarias
+        balasActuales--;
     }
-  
 }
 
+// Corrutina que orienta al jugador hacia donde apunta el mouse durante 1 segundo
 private IEnumerator MirarAlMousePorUnSegundo()
 {
-    float startTime = Time.time;
-    Vector3 lastMousePosition = Vector3.zero;
-
-    while (Time.time < startTime + 0.5f)
+    float duration = 0.5f; // Duración del ataque (o de la "mirada")
+    float elapsed = 0f;
+    
+    while (elapsed < duration)
     {
-        if (Input.GetButtonUp("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
-        {
-            //EjecutarAtaqueDistancia();
-            
-            yield break;
-        }
-
+        // Crea un rayo desde la posición del mouse en la cámara
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
+        
+        // Se realiza el raycast filtrando la capa "Ataque" (ajusta el nombre de la capa si es necesario)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
         {
-            lastMousePosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-
-            // Calcular la dirección hacia la que el jugador debe mirar
-            Vector3 directionToLook = (lastMousePosition - transform.position).normalized;
-
-            // Crear una rotación que mire en la dirección del objetivo
+            // Calcula la posición objetivo (manteniendo la altura del jugador)
+            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            
+            // Calcula la dirección hacia el objetivo y la rotación correspondiente
+            Vector3 directionToLook = (targetPosition - transform.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
-
-            // Aplicar la rotación al jugador
+            
+            // Asigna la rotación al jugador
             transform.rotation = targetRotation;
         }
-
+        
+        elapsed += Time.deltaTime;
         yield return null;
-    }
 
-    // Ejecutar el ataque a distancia después de 1 segundo
-    //EjecutarAtaqueDistancia();
+    }
+    
+        enterAttack = false;
+        ataqueD = false;
 }
 
 private void EjecutarAtaqueDistancia()
