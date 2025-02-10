@@ -10,14 +10,13 @@ public class FlechaTest : MonoBehaviour
     public float damage = 5f;
 
     private Life playerLife;
-    private MovimientoJugador MovimientoJugador;
-
+    private MovimientoJugador movimientoJugador;
 
     private void Start()
     {
         Destroy(gameObject, lifetime);
         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
-
+        movimientoJugador = GameObject.FindGameObjectWithTag("Player").GetComponent<MovimientoJugador>(); // referencia MovimientoJugador
     }
 
     private void Update()
@@ -35,9 +34,8 @@ public class FlechaTest : MonoBehaviour
 
         if (other.CompareTag("BTCollider"))
         {
-            MovimientoJugador.CountBTProjectiles();
+            movimientoJugador.CountBTProjectiles();
         }
-
         else if (other.CompareTag("Walls"))
         {
             Destroy(gameObject);
@@ -46,11 +44,11 @@ public class FlechaTest : MonoBehaviour
 
     public void OnDisable()
     {
-        MovimientoJugador.CountBTProjectiles();
+        movimientoJugador.CountBTProjectiles();
     }
 
     public void OnDestroy()
     {
-        MovimientoJugador.CountBTProjectiles();
+        movimientoJugador.CountBTProjectiles();
     }
 }
