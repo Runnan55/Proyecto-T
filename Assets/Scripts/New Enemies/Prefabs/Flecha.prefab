@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 386297521332108353}
   - component: {fileID: 9195202438361791363}
   - component: {fileID: 2763613694402501565}
-  - component: {fileID: 7466981826326799164}
   - component: {fileID: 6907179700855247023}
+  - component: {fileID: -1606500834387950803}
   m_Layer: 0
   m_Name: Flecha
   m_TagString: Projectile
@@ -87,21 +87,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7466981826326799164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4182066159404826401}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71dd5a0e30dcf0a45bf9aeaa297bc81d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 20
-  lifetime: 30
-  damage: 10
 --- !u!135 &6907179700855247023
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -123,6 +108,21 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.75
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-1606500834387950803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4182066159404826401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e4d9cf50acce844d8a3aafd5cc4c0c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 20
+  lifetime: 30
+  damage: 10
 --- !u!1 &6817460108702680721
 GameObject:
   m_ObjectHideFlags: 0
