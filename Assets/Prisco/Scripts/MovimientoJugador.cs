@@ -10,6 +10,8 @@ using Unity.VisualScripting;
 public class MovimientoJugador : MonoBehaviour
 {
     // Variables del player
+    [SerializeField] private Life life;
+    
     [Header("Player Settings")]
     [SerializeField] public static float speed = 15.0f;
     public static float fuerzaEmpujeAL2 = 3.0f;  
@@ -95,7 +97,7 @@ public class MovimientoJugador : MonoBehaviour
     public Image bulletTimeCooldownImage;
 
     [Header("Fall")]     
-    private Queue<Vector3> safePositions = new Queue<Vector3>();
+    //private Queue<Vector3> safePositions = new Queue<Vector3>();
     private bool isGrounded;
 
     [Header("Sounds")]     
@@ -133,12 +135,12 @@ public class MovimientoJugador : MonoBehaviour
         
         if (other.CompareTag("FallZone"))
         {
-            Debug.Log("Caída detectada, teletransportando a la última posición segura.");
-            StartCoroutine(TeleportToLastSafePosition());
+            //Debug.Log("Caída detectada, teletransportando a la última posición segura.");
+            //StartCoroutine(TeleportToLastSafePosition());
         }
     }
 
-    private IEnumerator UpdateSafePosition()
+   /*  private IEnumerator UpdateSafePosition()
     {
         while (true)
         {
@@ -164,7 +166,7 @@ public class MovimientoJugador : MonoBehaviour
         yield return null;
 
         //controller.enabled = true;
-    }
+    } */
     #endregion Fall
 
     #region BulletTime
@@ -266,17 +268,18 @@ public class MovimientoJugador : MonoBehaviour
 
     private void Start()
     {
+        life = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
         rb = GetComponent<Rigidbody>();      
         instance = GetComponent<MovimientoJugador>();
         animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
 
-        for (int i = 0; i < 5; i++)
+/*         for (int i = 0; i < 5; i++)
         {
             safePositions.Enqueue(transform.position);
         }
 
-        StartCoroutine(UpdateSafePosition());
+        StartCoroutine(UpdateSafePosition()); */
         
         btColliders = Physics.OverlapSphere(transform.position, 10000);
     }
@@ -306,10 +309,10 @@ public class MovimientoJugador : MonoBehaviour
             BTCollider.SetActive(!BTCollider.activeSelf);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha9))
+/*         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             CountBTProjectiles();
-        }
+        } */
 
         if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
         {
@@ -364,24 +367,30 @@ public class MovimientoJugador : MonoBehaviour
     }
 
     private void FixedUpdate()
-{
-    Movimientojugador();
-}
+    {
+        Movimientojugador();
+    }
     
     public void CountBTProjectiles()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 5f);
+        if (instance == null)
+        {
+            Debug.Log("MovimientoJugador instance is null.");
+            return;
+        }
+
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4f);
         int count = 0;
-        foreach (var hitCollider in hitColliders)
+        foreach (var hitCollider in hitColliders)   
         {
             if (hitCollider.CompareTag("Projectile"))
             {
                 count++;
             }
         }
-        Debug.Log("Number of BTProjectiles in range: " + count);
+        //Debug.Log("proyectiles en rango: " + count);
 
-        if (count>0)
+        if (count > 0)
         {
             BTCollider.GetComponent<Renderer>().material = btColliderOn;
             isInDodgeArea = true;
@@ -398,7 +407,7 @@ public class MovimientoJugador : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         
-        Gizmos.DrawWireSphere(transform.position, 5f);
+        Gizmos.DrawWireSphere(transform.position, 4f);
     }
 
   
@@ -452,7 +461,8 @@ IEnumerator Dash()
 
     while (dashTime > 0)
     {
-        
+        life.enableInvencibility();
+
         float dashFrameDistance = dashSpeed * Time.fixedDeltaTime;
 
        
@@ -474,6 +484,7 @@ IEnumerator Dash()
     rb.useGravity = true;
     
     yield return new WaitForSeconds(dashCooldown);
+    life.disableInvencibility();
     canDash = true;
 }
 

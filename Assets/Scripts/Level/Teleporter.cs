@@ -44,7 +44,7 @@ public class Teleporter : MonoBehaviour
         DefaultHUD.Instance.EnableTransition();
         yield return new WaitForSeconds(0.45f);
         PerformTeleport(player, targetPoint);
-        yield return new WaitForSeconds(0.55f);
+        yield return new WaitForSeconds(0.70f);
         DefaultHUD.Instance.DisableTransition();
 
         if (destroyAfterTeleport)
@@ -57,7 +57,7 @@ public class Teleporter : MonoBehaviour
     {
         if (targetPoint != null)
         {
-            Rigidbody rb = player.GetComponent<Rigidbody>();
+          /*   Rigidbody rb = player.GetComponent<Rigidbody>();
             CharacterController controller = player.GetComponent<CharacterController>();
             if (controller != null) controller.enabled = false;
 
@@ -66,13 +66,13 @@ public class Teleporter : MonoBehaviour
                 rb.isKinematic = true;
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
-            }
+            } */
 
             player.transform.position = targetPoint.position;
 
-            if (controller != null) controller.enabled = true;
+        /*     if (controller != null) controller.enabled = true;
 
-            if (rb != null) rb.isKinematic = false;
+            if (rb != null) rb.isKinematic = false; */
 
             Debug.Log("Player teleported to: " + targetPoint.position);
         }

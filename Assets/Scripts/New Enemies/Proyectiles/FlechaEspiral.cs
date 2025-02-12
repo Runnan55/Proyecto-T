@@ -8,18 +8,18 @@ public class FlechaEspiral: MonoBehaviour
     public float initialRadius = 0.1f; // Radio inicial de la espiral
     public float radiusGrowthRate = 1f; // Tasa de crecimiento del radio
     public float lifetime = 30f; // Tiempo de vida de la flecha
-    public float damage = 5f; // Daño infligido al jugador
+    public float damage = 5f; // Daï¿½o infligido al jugador
 
     private Life playerLife;
-    private float angle = 0f; // Ángulo acumulado para calcular la espiral
+    private float angle = 0f; // ï¿½ngulo acumulado para calcular la espiral
     private Vector3 startPosition; // Punto de inicio de la flecha
 
     private void Start()
     {
-        // Guardar la posición inicial
+        // Guardar la posiciï¿½n inicial
         startPosition = transform.position;
 
-        // Destruir el objeto después de su tiempo de vida
+        // Destruir el objeto despuï¿½s de su tiempo de vida
         Destroy(gameObject, lifetime);
 
         // Referencia a la vida del jugador
@@ -31,15 +31,15 @@ public class FlechaEspiral: MonoBehaviour
         // Calcular el radio actual con un crecimiento lineal
         float currentRadius = initialRadius + radiusGrowthRate * angle;
 
-        // Mantener velocidad constante ajustando el incremento del ángulo
+        // Mantener velocidad constante ajustando el incremento del ï¿½ngulo
         float angularSpeed = speed / currentRadius; // Velocidad angular adaptada al radio actual
         angle += angularSpeed * Time.deltaTime * MovimientoJugador.bulletTimeScale;
 
-        // Calcular la nueva posición en espiral en el plano XZ
+        // Calcular la nueva posiciï¿½n en espiral en el plano XZ
         float xOffset = Mathf.Cos(angle) * currentRadius;
         float zOffset = Mathf.Sin(angle) * currentRadius;
 
-        // Actualizar la posición manteniendo la altura constante (Y fija)
+        // Actualizar la posiciï¿½n manteniendo la altura constante (Y fija)
         transform.position = new Vector3(startPosition.x + xOffset, startPosition.y, startPosition.z + zOffset);
     }
 

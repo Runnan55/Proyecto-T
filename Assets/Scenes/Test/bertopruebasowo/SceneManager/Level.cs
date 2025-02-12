@@ -25,7 +25,7 @@ public class Level : MonoBehaviour
 
     [Header("Teleporter config")]
     public bool teleportAfterLastWave = false;
-    public float teleportDelay = 1f;
+    public float teleportDelay = 0.1f;
     public Teleporter teleporter;
 
     [Header("Change scene")]
@@ -64,7 +64,7 @@ public class Level : MonoBehaviour
                 StartCoroutine(entranceDoor.Close());
             }
             StartNextWave();
-            hasPlayerEntered = true; 
+            hasPlayerEntered = true;
 
             if (modifyTime && !timerStarted)
             {
@@ -92,6 +92,7 @@ public class Level : MonoBehaviour
 
     private IEnumerator SpawnWave(EnemyWave wave)
     {
+        // Agrupamos los spawns por su delay
         Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
 
         foreach (EnemySpawner enemySpawner in wave.enemySpawns)
@@ -118,11 +119,16 @@ public class Level : MonoBehaviour
                     isFirstEnemySpawned = true;
                 }
 
+                // Mostrar advertencia (warning) antes de spawnear al enemigo
                 GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
-                warningInstance.transform.LookAt(Camera.main.transform);
+                if (Camera.main != null)
+                {
+                    warningInstance.transform.LookAt(Camera.main.transform);
+                }
                 yield return new WaitForSeconds(0.25f);
                 Destroy(warningInstance);
 
+                // Instanciar al enemigo
                 EnemyLife newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
                 Vector3 escalaOriginal = newEnemy.transform.localScale;
                 Quaternion rotacionOriginal = newEnemy.transform.rotation;
@@ -139,9 +145,9 @@ public class Level : MonoBehaviour
 
     public void EnemyDefeated(EnemyLife enemy)
     {
-        Debug.Log("Enemy defeated");
+        //Debug.Log("Enemy defeated");
         defeatedEnemies--;
-        Debug.Log("Defeated enemies: " + defeatedEnemies);
+        //Debug.Log("Defeated enemies: " + defeatedEnemies);
 
         if (defeatedEnemies <= 0)
         {
@@ -157,26 +163,19 @@ public class Level : MonoBehaviour
                     StartCoroutine(exitDoor.Open());
                 }
 
-                if (teleportAfterLastWave && teleporter != null)
+                // Si se activa el teletransporte y/o cambio de sala, se llama a la corrutina unificada
+                if (teleportAfterLastWave || changeRooms)
                 {
-                    StartCoroutine(TeleportPlayerWithDelay());
+                    StartCoroutine(HandleRoomTransitionAndTeleport());
                 }
-
-                if (changeRooms == true)
-                        {
-                            if (!isLastRoom)
-                            {
-                                StartCoroutine(ChangeRoomsWithDelay());
-                            }
-                        }
 
                 if (changeSceneAfterLastWave)
                 {
-                    // guardar siguiente escena en prefs
+                    // Guardar la siguiente escena en PlayerPrefs
                     PlayerPrefs.SetString("SceneToLoad", sceneToChange);
                     PlayerPrefs.Save();
 
-                    // pantalla de carga
+                    // Pantalla de carga
                     SceneManager.LoadScene("LoadingScene");
                 }
 
@@ -185,11 +184,9 @@ public class Level : MonoBehaviour
                     playerLife.AddToTimeBank(playerLife.currentTime);
                     playerLife.ClearTime();
                     playerLife.UpdateTimeBankText();
-
                     playerLife.StopTimer();
                 }
             }
-
             else
             {
                 StartNextWave();
@@ -197,12 +194,59 @@ public class Level : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Corrutina unificada para activar la siguiente sala (si se requiere), teletransportar al jugador y desactivar la sala actual.
+    /// El orden es:
+    /// 1. Activar la siguiente sala.
+    /// 2. Teletransportar al jugador.
+    /// 3. Desactivar la sala actual.
+    /// </summary>
+    private IEnumerator HandleRoomTransitionAndTeleport()
+    {
+        // Paso 1: Activar la siguiente sala (si se ha indicado cambiar de sala)
+        if (changeRooms && nextRoom != null)
+        {
+            if (!isLastRoom)
+            {
+                nextRoom.SetActive(true);
+                Debug.Log("Activando la siguiente sala: " + nextRoom.name);
+            }
+        }
+
+        // Paso 2: Teletransportar al jugador (si se ha indicado)
+        if (teleportAfterLastWave && teleporter != null && teleporter.exitPoint != null)
+        {
+            yield return new WaitForSeconds(teleportDelay);
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                teleporter.Teleport(player, teleporter.exitPoint);
+                Debug.Log("Jugador teletransportado al exitPoint.");
+            }
+        }
+
+        // Paso 3: Desactivar la sala actual (si se ha indicado cambiar de sala)
+        if (changeRooms && actualRoom != null)
+        {
+            // Si se realizó teletransporte, esperar un poco antes de desactivar la sala actual
+            if (teleportAfterLastWave)
+            {
+                yield return new WaitForSeconds(1.5f);
+            }
+            actualRoom.SetActive(false);
+            Debug.Log("Desactivando la sala actual: " + actualRoom.name);
+        }
+    }
+
+    // Las siguientes corrutinas antiguas se pueden eliminar, ya que se han integrado en HandleRoomTransitionAndTeleport.
+    /*
     private IEnumerator ChangeRoomsWithDelay()
     {
-        yield return new WaitForSeconds(1f);
-        actualRoom.SetActive(false);
         nextRoom.SetActive(true);
-        //Debug.Log("actualroom: " + actualRoom + " nextroom: " + nextRoom);
+        Debug.Log("activando nextroom: " + nextRoom);
+        yield return new WaitForSeconds(1.5f);
+        actualRoom.SetActive(false);
+        Debug.Log("desactivando actualroom: " + actualRoom);
     }
 
     private IEnumerator TeleportPlayerWithDelay()
@@ -215,4 +259,5 @@ public class Level : MonoBehaviour
             Debug.Log("Player teleported to exit portal.");
         }
     }
+    */
 }

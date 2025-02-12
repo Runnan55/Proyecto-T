@@ -6,14 +6,14 @@ public class EspiralIA : EnemyLife
     public enum EnemyState { Waiting, Shooting, Teleporting, Stunned }
     public EnemyState currentState;
 
-    [Header("Configuración de Ataque")]
-    public int projectilesToShoot = 6; // Número fijo de proyectiles
+    [Header("Configuraciï¿½n de Ataque")]
+    public int projectilesToShoot = 6; // Nï¿½mero fijo de proyectiles
     public GameObject projectilePrefab;
     public Transform shootingPoint;
     public float shootingInterval = 0.2f;
-    public float attackCooldownTime = 1.5f; // Tiempo que el enemigo no podrá atacar después de recibir daño
+    public float attackCooldownTime = 1.5f; // Tiempo que el enemigo no podrï¿½ atacar despuï¿½s de recibir daï¿½o
 
-    [Header("Configuración de Teletransporte")]
+    [Header("Configuraciï¿½n de Teletransporte")]
     public float teleportRadius = 10f;
     public float heightOffset = 1f;
     public GameObject teleportMarkerPrefab;
@@ -44,7 +44,7 @@ public class EspiralIA : EnemyLife
     {
         yield return new WaitForSeconds(1f);
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (player == null) Debug.LogError("No se encontró un objeto con la etiqueta 'Player'");
+        if (player == null) Debug.LogError("No se encontrï¿½ un objeto con la etiqueta 'Player'");
     }
 
     private void Update()
@@ -68,7 +68,7 @@ public class EspiralIA : EnemyLife
                 TeleportAroundPlayer();
                 break;
             case EnemyState.Stunned:
-                // No hacer nada mientras está aturdido.
+                // No hacer nada mientras estï¿½ aturdido.
                 break;
         }
 
@@ -119,11 +119,11 @@ public class EspiralIA : EnemyLife
 
         if (projectilePrefab == null)
         {
-            Debug.LogError("ProjectilePrefab no está asignado o ha sido destruido.");
+            Debug.LogError("ProjectilePrefab no estï¿½ asignado o ha sido destruido.");
             yield break; // Salir si no hay prefab
         }
 
-        // Disparar el número fijo de proyectiles
+        // Disparar el nï¿½mero fijo de proyectiles
         for (int i = 0; i < projectilesToShoot; i++)
         {
             if (shootingPoint != null)
@@ -132,7 +132,7 @@ public class EspiralIA : EnemyLife
             }
             else
             {
-                Debug.LogError("ShootingPoint no está asignado.");
+                Debug.LogError("ShootingPoint no estï¿½ asignado.");
             }
 
             yield return new WaitForSeconds(shootingInterval* MovimientoJugador.bulletTimeScale);
@@ -151,7 +151,7 @@ public class EspiralIA : EnemyLife
         if (teleportMarkerPrefab != null)
         {
             GameObject marker = Instantiate(teleportMarkerPrefab, teleportPosition, Quaternion.identity);
-            Destroy(marker, 1f); // Eliminar el marcador después de un segundo
+            Destroy(marker, 1f); // Eliminar el marcador despuï¿½s de un segundo
         }
 
         StartCoroutine(TeleportAfterDelay(teleportPosition));
@@ -179,7 +179,7 @@ public class EspiralIA : EnemyLife
         yield return new WaitForSeconds(1.8f* MovimientoJugador.bulletTimeScale); // Esperar antes de teletransportarse
 
         transform.position = teleportPosition;
-        Debug.Log("Teletransportado a: " + teleportPosition);
+        //Debug.Log("Teletransportado a: " + teleportPosition);
 
         currentState = EnemyState.Waiting;
         isTeleporting = false;
@@ -190,7 +190,7 @@ public class EspiralIA : EnemyLife
         if (player != null)
         {
             Vector3 direction = player.position - transform.position;
-            direction.y = 0; // Mantener la rotación en el plano horizontal
+            direction.y = 0; // Mantener la rotaciï¿½n en el plano horizontal
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f* MovimientoJugador.bulletTimeScale);
         }
@@ -215,7 +215,7 @@ public class EspiralIA : EnemyLife
         }
         else
         {
-            Debug.LogError("El cubo de estado no está asignado en el inspector.");
+            Debug.LogError("El cubo de estado no estï¿½ asignado en el inspector.");
         }
     }
 }

@@ -152,8 +152,19 @@ public class Life : MonoBehaviour
     {
         if (!isAlive && Input.GetKeyDown(KeyCode.F))
         {
+            
+        if (deathScreen != null)
+        {
+            Debug.Log("Desactivando DeathScreen");
             deathScreen.gameObject.SetActive(false);
+        }
+        
+        else
+        {
+            Debug.LogError("deathScreen no está asignado.");
+        }
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            Debug.Log("f");
         }
 
         if (Input.GetKeyDown(KeyCode.B))
@@ -161,7 +172,7 @@ public class Life : MonoBehaviour
             AddToTimeBank(6);
         }
 
-        if (currentTime <= 0 && timeBank <= 0)
+        if (currentTime <= 0 && timeBank <= 0 && isAlive)
         {
             Death();
         }
@@ -220,7 +231,7 @@ public class Life : MonoBehaviour
         UpdateTimeImage();
 
         isAlive = false;
-        Debug.Log("muerte " + isAlive);
+        Debug.Log("MORISIOn, is alive? " + isAlive);
         deathScreen.gameObject.SetActive(true);
     }
 

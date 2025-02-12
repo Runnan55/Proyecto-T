@@ -123,7 +123,7 @@ public class EnemyLife : MonoBehaviour
         // Desasocia la barra de salud del objeto padre
         if (healthBar != null)
         {
-            Debug.Log("ola");
+            //Debug.Log("ola");
             healthBar.transform.SetParent(null);
         }
 
