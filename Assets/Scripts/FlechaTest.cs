@@ -42,6 +42,14 @@ public class FlechaTest : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("BTCollider"))
+        {
+            movimientoJugador.CountBTProjectiles();
+        }
+    }
+
     public void OnDisable()
     {
         movimientoJugador.CountBTProjectiles();
