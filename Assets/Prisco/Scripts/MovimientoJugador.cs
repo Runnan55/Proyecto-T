@@ -9,6 +9,9 @@ using Unity.VisualScripting;
 
 public class MovimientoJugador : MonoBehaviour
 {
+        //pruebas enemigos
+        public float pushForce = 10f;
+
     // Variables del player
     [SerializeField] private Life life;
     
@@ -467,8 +470,7 @@ IEnumerator Dash()
 
        
         if (Physics.Raycast(rb.position, dashDirection, out RaycastHit hit, dashFrameDistance, obstacleLayers))
-        {
-           
+        {           
             break;
         }
 
@@ -491,6 +493,7 @@ IEnumerator Dash()
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 {
     float tiempoTranscurrido = 0f;
+
    
     while (tiempoTranscurrido < duracion)
     {

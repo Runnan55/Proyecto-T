@@ -1557,5 +1557,10 @@ retry:
                     break;
             }
         }
+
+        public static void PlayOneShot(object enemySwoosh)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

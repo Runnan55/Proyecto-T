@@ -27,7 +27,7 @@ public class Life : MonoBehaviour
     public float invincibilityTime = 1;
     public GameObject shield;
 
-    public CharacterController playerController;  
+    public Rigidbody playerController;  
 
     PlayerMovement playerMovement;
 
@@ -123,7 +123,7 @@ public class Life : MonoBehaviour
         }
 
         levelManager = FindObjectOfType<LevelManager>();
-        playerController = GetComponent<CharacterController>();
+        playerController = GetComponent<Rigidbody>();
         LoseManager = FindObjectOfType<LoseManager>();
 
         if (playerController == null)
@@ -330,7 +330,7 @@ public class Life : MonoBehaviour
             // Aplicar la función de suavizado
             t = 1 - (1 - t) * (1 - t);
 
-            playerController.Move(direction * speed * Time.deltaTime * t);
+            playerController.MovePosition(direction * speed * Time.deltaTime * t);
             elapsed += Time.deltaTime;
             yield return null;
         }

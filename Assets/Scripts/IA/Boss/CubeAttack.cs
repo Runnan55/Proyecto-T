@@ -9,8 +9,10 @@ public class CubeAttack : MonoBehaviour
     public float dodgeTimer = 0.25f;
     public float damageTimer = 0.05f;
 
+   
+
     void Start()
-    {
+    {        
         StartCoroutine(ActivateChildren());
     }
 
@@ -26,7 +28,7 @@ public class CubeAttack : MonoBehaviour
             dodgeChild.SetActive(true);
         }
 
-        yield return new WaitForSeconds(dodgeTimer);
+        yield return new WaitForSeconds(dodgeTimer / MovimientoJugador.bulletTimeScale);
 
         if (dodgeChild != null)
         {
@@ -39,8 +41,8 @@ public class CubeAttack : MonoBehaviour
             damageChild.SetActive(true);
         }
 
-        yield return new WaitForSeconds(damageTimer);
-
+        yield return new WaitForSeconds(damageTimer / MovimientoJugador.bulletTimeScale);
+ 
         if (damageChild != null)
         {
             damageChild.SetActive(false);

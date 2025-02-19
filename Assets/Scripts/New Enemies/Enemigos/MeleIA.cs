@@ -99,7 +99,6 @@ public class MeleIA : EnemyLife
 
         actualizarTiempo();
 
-
         LookAtPlayer();
 
         switch (currentState)
@@ -134,6 +133,8 @@ public class MeleIA : EnemyLife
     public override void ReceiveDamage(float damage)
     {
         base.ReceiveDamage(damage); // Llama al método base para reducir la vida y gestionar el cambio de material
+
+        Debug.Log("Recibiendo daño: " + damage);
 
         // Verifica si puede aplicar el empuje
         if (Time.time > lastPushTime + pushCooldown)

@@ -48,6 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dodgeChild: {fileID: 4927680983123154956}
   damageChild: {fileID: 5884835707112716946}
+  dodgeTimer: 0.15
+  damageTimer: 0.5
 --- !u!1 &4927680983123154956
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +252,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3108ecd4192b75446a1afcd17c969895, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  smokeAttack: {fileID: 0}
+  smokeCD: {fileID: 0}
   damageAmount: 10
+  activeMaterial: {fileID: 0}
+  preActiveMaterial: {fileID: 0}
+  inactiveMaterial: {fileID: 0}
+  autoToggleMode: 0
+  activeDuration: 5
+  inactiveDuration: 5
 --- !u!65 &7498038466599316563
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -270,5 +280,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1, y: 3.63, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
