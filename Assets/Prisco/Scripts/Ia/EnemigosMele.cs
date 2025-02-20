@@ -1,13 +1,11 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.XR;
 
-public class Meleprueba : EnemyLife
+public class EnemigosMele : EnemyLife
 {
-    [Header("Audio")]
+  [Header("Audio")]
     [SerializeField] private FMODUnity.EventReference enemySwoosh;
 
     [Header("Attack Settings")]
@@ -15,9 +13,9 @@ public class Meleprueba : EnemyLife
     public GameObject attackEffectPrefab;
     public float attackDistance = 2f;
     public float movimientoAtaque = 5f;
-    public float attackMoveSpeed = 5f; 
-    public float moveTime = 2f; 
-    private static List<Meleprueba> allEnemies = new List<Meleprueba>(); // Lista estática de todos los enemigos
+    public float attackMoveSpeed = 5f; // Velocidad de movimiento durante el ataque  
+    public float moveTime = 2f; // Tiempo en segundos
+    private static List<EnemigosMele> allEnemies = new List<EnemigosMele>(); // Lista estática de todos los enemigos
 
   
     public enum State { Chasing, Attacking, Gethit }
@@ -35,36 +33,34 @@ public class Meleprueba : EnemyLife
     private bool isAttacking = false;
 
      [Header("Empuje al Recibir Daño")]
-    public float pushForce = 10f;
-    public float pushDuration = 0.5f;
-    private bool isBeingPushed = false; 
-    public float pushCooldown = 0.5f; 
-    private float lastPushTime = -1f;
+    public float pushForce = 10f; // Fuerza del empuje
+    public float pushDuration = 0.5f; // Duración del empuje
+    private bool isBeingPushed = false; // Estado para controlar si está en empuje
+    public float pushCooldown = 0.5f; // Cooldown para evitar empujes continuos
+    private float lastPushTime = -1f; // Último tiempo de empuje
 
-    private Rigidbody rb; 
-
-    private Collider colliderEnemy;
+    private Rigidbody rb; // Rigidbody del enemigo
 
     private float originalAgentSpeed;
 
-    private void Awake()
+
+     private void Awake()
     {
-        rb = GetComponent<Rigidbody>(); 
-        colliderEnemy = GetComponent<Collider>(); 
+        rb = GetComponent<Rigidbody>(); // Intenta obtener el Rigidbody
 
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         enemyRenderer = GetComponent<Renderer>(); 
         currentState = State.Chasing;
         previousState = currentState; 
-        originalAgentSpeed = agent.speed; // Almacena la velocidad para editarla mejor
+        originalAgentSpeed = agent.speed; // Almacena la velocidad original del agente
+
          if (!allEnemies.Contains(this))
         {
             allEnemies.Add(this);
         }
     }
 
-    
     void OnDisable()
     {
         // Remover este enemigo de la lista cuando se desactive
@@ -74,48 +70,34 @@ public class Meleprueba : EnemyLife
         }
     }
 
-    void Start()
-    {
-     
-    }
-
-    void Update()
-    {
-       
-        if (currentState != previousState)
-        {
-            Debug.Log("Entering " + currentState + " state");
-            previousState = currentState;
-        }
-
+     void Update()
+    {       
+        
         switch (currentState)
         {         
             case State.Chasing:
-                HandleChase();
+                Chase();
                 break;
+                
             case State.Attacking:
-                HandleAttack();
+                Attack();
                 break; 
+                /*
                 case State.Gethit:
-                HandleStateHited();
+                StateHited();
                 break; 
+                */
                              
         }
 
         agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale;
     }
 
-    private void HandleStateHited()
-    {
-       //por si hay que poner algo en este estado
-    }
-#region Recivir Daño
     public override void ReceiveDamage(float damage)
     {
-        base.ReceiveDamage(damage);   
-        colliderEnemy.isTrigger = false;    
+        base.ReceiveDamage(damage); // Llama al método base para reducir la vida y gestionar el cambio de material       
 
-          
+          // Verifica si puede aplicar el empuje
         if (Time.time > lastPushTime + pushCooldown)
         {
             lastPushTime = Time.time;
@@ -127,12 +109,11 @@ public class Meleprueba : EnemyLife
     }
     private IEnumerator PushBack()
     {
-        
-        if (rb == null) yield break; 
+        if (rb == null) yield break; // Salir si no hay Rigidbody
 
         isBeingPushed = true;
-        agent.enabled = false; 
-        rb.isKinematic = false;
+        agent.enabled = false; // Desactiva el NavMeshAgent
+        rb.isKinematic = false; // Cambia el Rigidbody a modo no-kinemático para aplicar la física
        enemyRenderer.material.color = Color.red; 
 
         // Aplica una fuerza de empuje en la dirección opuesta a la posición del jugador
@@ -160,44 +141,36 @@ public class Meleprueba : EnemyLife
         float elapsedTime = 0f;
         while (elapsedTime < pushDuration)
         {
-            float frameDistance = rb.velocity.magnitude * Time.fixedDeltaTime;          
+            float frameDistance = rb.velocity.magnitude * Time.fixedDeltaTime;
+
+            if (Physics.Raycast(rb.position, pushDirection, out RaycastHit hit, frameDistance, LayerMask.GetMask("obstacleLayers")))
+            {
+                rb.velocity = Vector3.zero; // Detener el empuje
+                break;
+            }
 
             elapsedTime += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
 
         // Restaurar el estado del Rigidbody y NavMeshAgent
-        rb.isKinematic = true; 
-        agent.enabled = true; 
+        rb.isKinematic = true; // Cambia de nuevo a kinemático
+        agent.enabled = true; // Reactiva el NavMeshAgent
         isBeingPushed = false;
         currentState = State.Chasing;
     }  
 
- #endregion
+ 
 
-#region Perseguir y Atacar
-    private void HandleChase()
+    private void Chase()
     {       
         if (!agent.enabled)
         {
-            agent.enabled = true; 
+            agent.enabled = true; // Asegúrate de que el NavMeshAgent esté habilitado
         }
 
-        agent.isStopped = false; 
-
-        // Calcular una posición alrededor del jugador
-        Vector3 offset = Vector3.zero;
-        foreach (Meleprueba enemy in allEnemies)
-        {
-            if (enemy != this && enemy.currentState == State.Attacking)
-            {
-                offset += (transform.position - enemy.transform.position).normalized;
-            }
-        }
-
-        Vector3 targetPosition = player.position + offset.normalized * attackDistance;
-        agent.SetDestination(targetPosition);
-
+        agent.isStopped = false; // Asegúrate de que el agente no esté detenido
+        agent.SetDestination(player.position);
         enemyRenderer.material.color = Color.white; 
 
         if (Vector3.Distance(transform.position, player.position) < attackDistance)
@@ -207,10 +180,8 @@ public class Meleprueba : EnemyLife
        
         
     }
-#endregion
 
-#region Ejecutar Ataque
-    private void HandleAttack()
+    private void Attack()
     {
         if (!isAttacking)
         {
@@ -273,10 +244,8 @@ public class Meleprueba : EnemyLife
         
         while (elapsedTime  < 1f )
         {
-            colliderEnemy.isTrigger = true;
             if (currentState != State.Attacking)
             {
-                colliderEnemy.isTrigger = false;
                 Destroy(effect); // Destruye el efecto si el estado ha cambiado
                 isAttacking = false;
                 yield break; // Salir de la corrutina si el estado ha cambiado
@@ -298,10 +267,10 @@ public class Meleprueba : EnemyLife
 
         agent.isStopped = false;
         isAttacking = false;
-        colliderEnemy.isTrigger = false;
 
         currentState = State.Chasing; 
     }
+
 
     IEnumerator MovimientoAtaque(Vector3 destination, float duration)
     {
@@ -316,26 +285,14 @@ public class Meleprueba : EnemyLife
             }
 
             Vector3 newPosition = Vector3.Lerp(start, destination, elapsed / duration);
-            newPosition.y = start.y;
-
-            // Check for walls using raycasting
-            Vector3 direction = newPosition - transform.position;
-            float distance = direction.magnitude;
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, distance, LayerMask.GetMask("obstacleLayers")))
-            {
-                // If a wall is hit, stop the movement
-                transform.position = hit.point;
-                yield break;
-            }
-
+            newPosition.y = start.y; 
             transform.position = newPosition;
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        destination.y = start.y;
-        transform.position = destination;
+        destination.y = start.y; 
+        transform.position = destination; 
     }
-#endregion
 
 }
