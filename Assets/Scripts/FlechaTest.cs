@@ -12,11 +12,20 @@ public class FlechaTest : MonoBehaviour
     private Life playerLife;
     private MovimientoJugador movimientoJugador;
 
-    private void Start()
+    private IEnumerator Start()
     {
         Destroy(gameObject, lifetime);
-        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>(); // referencia vida player
-        movimientoJugador = GameObject.FindGameObjectWithTag("Player").GetComponent<MovimientoJugador>(); // referencia MovimientoJugador
+        yield return new WaitForSeconds(1f);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerLife = player.GetComponent<Life>();
+            movimientoJugador = player.GetComponent<MovimientoJugador>();
+        }
+        else
+        {
+            Debug.LogError("Player object not found!");
+        }
     }
 
     private void Update()
@@ -52,11 +61,17 @@ public class FlechaTest : MonoBehaviour
 
     public void OnDisable()
     {
-        movimientoJugador.CountBTProjectiles();
+        if (movimientoJugador != null)
+        {
+            movimientoJugador.CountBTProjectiles();
+        }
     }
 
     public void OnDestroy()
     {
-        movimientoJugador.CountBTProjectiles();
+        if (movimientoJugador != null)
+        {
+            movimientoJugador.CountBTProjectiles();
+        }
     }
 }

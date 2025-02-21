@@ -19,7 +19,7 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public Image characterImage;
     public Dialogue dialogue;
-    public GameObject dialogueSubPanel; // Referencia al subpanel de diálogo
+    public GameObject dialogueSubPanel;
 
     public List<DialogueCharInfo> characters;
 
