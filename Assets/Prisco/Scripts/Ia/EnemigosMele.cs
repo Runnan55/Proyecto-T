@@ -171,7 +171,7 @@ public class EnemigosMele : EnemyLife
 
         agent.isStopped = false; // Asegúrate de que el agente no esté detenido
         agent.SetDestination(player.position);
-        enemyRenderer.material.color = Color.white; 
+        enemyRenderer.material.color = Color.green; 
 
         if (Vector3.Distance(transform.position, player.position) < attackDistance)
         {
@@ -196,9 +196,9 @@ public class EnemigosMele : EnemyLife
         agent.isStopped = true; 
         float elapsedTime = 0f;
         Color initialColor = enemyRenderer.material.color;
-        Color targetColor = Color.blue;
+        Color targetColor = initialColor * 0.2f; // Darken the initial color
 
-        while (elapsedTime  < 0.5f)
+        while (elapsedTime < 0.5f)
         {
             if (currentState != State.Attacking)
             {
@@ -242,7 +242,7 @@ public class EnemigosMele : EnemyLife
         GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);        
         effect.transform.parent = transform; 
         
-        while (elapsedTime  < 1f )
+        while (elapsedTime < 1f)
         {
             if (currentState != State.Attacking)
             {
@@ -255,7 +255,7 @@ public class EnemigosMele : EnemyLife
             yield return null;
         }
 
-       effect.SetActive(false); // Desactiva el efecto
+        effect.SetActive(false); // Desactiva el efecto
 
         // Recuperacion
         Vector3 RestartdirectionToPlayer = (player.position - transform.position).normalized;
@@ -263,7 +263,7 @@ public class EnemigosMele : EnemyLife
         Quaternion RestartlookRotation = Quaternion.LookRotation(RestartdirectionToPlayer);   
         transform.rotation = Quaternion.Slerp(transform.rotation, RestartlookRotation, Time.deltaTime * 15);     
 
-        enemyRenderer.material.color = Color.white; 
+        enemyRenderer.material.color = initialColor; 
 
         agent.isStopped = false;
         isAttacking = false;

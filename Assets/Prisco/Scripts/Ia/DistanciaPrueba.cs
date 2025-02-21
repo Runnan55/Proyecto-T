@@ -217,11 +217,12 @@ public class DistanciaPrueba : EnemyLife
 
         waitTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
         float lerpFactor = 1 - (waitTimer / preShootDelay); 
-        enemyRenderer.material.color = Color.Lerp(Color.white, Color.blue, lerpFactor); 
+        Color darkenedMagenta = Color.magenta * (1 - lerpFactor * 0.7f); // Darken the magenta color by reducing its brightness
+        enemyRenderer.material.color = darkenedMagenta; 
 
         if (waitTimer <= 0)
         {
-            enemyRenderer.material.color = Color.white; 
+            enemyRenderer.material.color = Color.magenta; 
             FMODUnity.RuntimeManager.PlayOneShot(crossbow);
             Instantiate(projectilePrefab, shootingPoint.position, shootingPoint.rotation);
         
