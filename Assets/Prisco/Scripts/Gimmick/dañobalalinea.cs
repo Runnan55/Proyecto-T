@@ -8,17 +8,9 @@ public class dañobalalinea : MonoBehaviour
      public float damage = 5f;
 
     private Life playerLife;
-    void Start()
+    void Awake()
     {        
-        StartCoroutine(AssignPlayerLife());
-    }
-     private IEnumerator AssignPlayerLife()
-    {
-        // Esperar 0.5 segundos
-        yield return new WaitForSeconds(0.5f);
-
-        // Asignar la referencia a playerLife
-        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
+         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
     }
 
     // Update is called once per frame
