@@ -139,7 +139,7 @@ public class BossMovement2 : BossLIfe
 
     private IEnumerator cooldown2()
     {
-        yield return new WaitForSeconds(1);  // Esperar 1 segundo.
+        yield return new WaitForSeconds(3);  // Esperar 1 segundo.
 
         //Debug.Log("trampas activas");
         foreach (var trap in smokeTramps)
