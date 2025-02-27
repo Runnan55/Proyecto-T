@@ -191,19 +191,19 @@ public class EnemigosMele : EnemyLife
 
     private IEnumerator PerformAttack()
     {
-        // Anticipacion Ataque
+        
         isAttacking = true;
         agent.isStopped = true; 
         float elapsedTime = 0f;
         Color initialColor = enemyRenderer.material.color;
-        Color targetColor = initialColor * 0.2f; // Darken the initial color
+        Color targetColor = initialColor * 0.2f; 
 
         while (elapsedTime < 0.5f)
         {
             if (currentState != State.Attacking)
             {
                 isAttacking = false;
-                yield break; // Salir de la corrutina si el estado ha cambiado
+                yield break; 
             }
 
             lastPlayerPosition = player.position;
@@ -234,9 +234,8 @@ public class EnemigosMele : EnemyLife
 
         agent.isStopped = true; 
 
-        elapsedTime = 0f;
+        elapsedTime = 0f;        
         
-        // Activar el efecto una vez
         FMODUnity.RuntimeManager.PlayOneShot(enemySwoosh);
 
         GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);        
@@ -246,16 +245,16 @@ public class EnemigosMele : EnemyLife
         {
             if (currentState != State.Attacking)
             {
-                Destroy(effect); // Destruye el efecto si el estado ha cambiado
+                Destroy(effect); 
                 isAttacking = false;
-                yield break; // Salir de la corrutina si el estado ha cambiado
+                yield break; 
             }
 
             elapsedTime += Time.deltaTime * MovimientoJugador.bulletTimeScale;
             yield return null;
         }
 
-        effect.SetActive(false); // Desactiva el efecto
+        effect.SetActive(false); 
 
         // Recuperacion
         Vector3 RestartdirectionToPlayer = (player.position - transform.position).normalized;
@@ -281,7 +280,7 @@ public class EnemigosMele : EnemyLife
         {
             if (currentState != State.Attacking)
             {
-                yield break; // Salir de la corrutina si el estado ha cambiado
+                yield break; 
             }
 
             Vector3 newPosition = Vector3.Lerp(start, destination, elapsed / duration);

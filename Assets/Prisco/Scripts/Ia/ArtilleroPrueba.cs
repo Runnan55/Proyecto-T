@@ -5,35 +5,41 @@ using UnityEngine.AI;
 
 public class ArtilleroPrueba : EnemyLife
 {
-    public enum State { positioning, attacking, gethit }
+    public enum State { positioning, attacking, gethit, reposition }
     public State currentState;
     private static List<ArtilleroPrueba> allEnemies = new List<ArtilleroPrueba>();
-    private State previousState; // Variable to store the previous state
+    private State previousState; 
 
     private bool isPositioning = false;
+    private bool isRepositioning = false; 
 
-    public float agentSpeed = 3.5f; // Velocidad del agente
-    public GameObject mortarProjectilePrefab; // Prefab del proyectil de mortero
-    public Transform mortarLaunchPoint; // Punto de lanzamiento del proyectil
-    private Vector3 targetPosition; // Almacenar la posición objetivo para los Gizmos
+    public float agentSpeed = 3.5f; 
+    public GameObject mortarProjectilePrefab; 
+    public Transform mortarLaunchPoint; 
+    private Vector3 targetPosition; 
 
-    public GameObject impactAreaPrefab; // Prefab del área de impacto    
+    public GameObject impactAreaPrefab;    
     private Rigidbody rb;
     private NavMeshAgent agent;
     private Renderer enemyRenderer;
-      public float pushForce = 10f; // Fuerza del empuje
-    public float pushDuration = 0.5f; // Duración del empuje
-    private bool isBeingPushed = false; // Estado para controlar si está en empuje
-    public float pushCooldown = 0.5f; // Cooldown para evitar empujes continuos
-    private float lastPushTime = -1f; // Último tiempo de empuje
+    public float pushForce = 10f; 
+    public float pushDuration = 0.5f; 
+    private bool isBeingPushed = false; 
+    public float pushCooldown = 0.5f; 
+    private float lastPushTime = -1f; 
     private Transform player; 
+    private bool isPreShooting = false;
+    private float waitTimer;
+    public float preShootDelay = 0.5f; // Tiempo de espera antes de disparar
+    public float waitTimeBetweenShots = 2f; // Tiempo de espera entre disparos
+    public float repositionDelay = 1f; // Tiempo de espera antes de reposicionar
+    private float repositionTimer;
+    Color color;
 
-      
-    
-
-         private void Awake()
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody>(); // Intenta obtener el Rigidbody
+       
+        rb = GetComponent<Rigidbody>(); 
 
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -50,7 +56,7 @@ public class ArtilleroPrueba : EnemyLife
 
         void OnDisable()
     {
-        // Remover este enemigo de la lista cuando se desactive
+        
         if (allEnemies.Contains(this))
         {
             allEnemies.Remove(this);
@@ -61,7 +67,7 @@ public class ArtilleroPrueba : EnemyLife
     {
         if (currentState == State.gethit)
         {
-            return; // No ejecutar otros estados si está en el estado gethit
+            return; 
         }
 
         switch (currentState)
@@ -72,6 +78,12 @@ public class ArtilleroPrueba : EnemyLife
             case State.attacking:
                 Attacking();
                 break;
+            case State.reposition:
+                if (!isRepositioning)
+                {
+                    StartCoroutine(Reposition());
+                }
+                break;
         }
 
         agent.speed = agentSpeed * MovimientoJugador.bulletTimeScale;
@@ -80,9 +92,9 @@ public class ArtilleroPrueba : EnemyLife
        #region Damage Handling
         public override void ReceiveDamage(float damage)
     {
-        base.ReceiveDamage(damage); // Llama al método base para reducir la vida y gestionar el cambio de material       
+        base.ReceiveDamage(damage); 
 
-          // Verifica si puede aplicar el empuje
+        
         if (Time.time > lastPushTime + pushCooldown)
         {
             lastPushTime = Time.time;
@@ -94,14 +106,14 @@ public class ArtilleroPrueba : EnemyLife
     }
     private IEnumerator PushBack()
     {
-        if (rb == null) yield break; // Salir si no hay Rigidbody
+        if (rb == null) yield break; 
 
         isBeingPushed = true;
-        agent.enabled = false; // Desactiva el NavMeshAgent
-        rb.isKinematic = false; // Cambia el Rigidbody a modo no-kinemático para aplicar la física
+        agent.enabled = false; 
+        rb.isKinematic = false; 
        enemyRenderer.material.color = Color.red; 
 
-        // Aplica una fuerza de empuje en la dirección opuesta a la posición del jugador
+        
         Vector3 pushDirection = (transform.position - player.position).normalized;
 
         if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
@@ -130,7 +142,7 @@ public class ArtilleroPrueba : EnemyLife
 
             if (Physics.Raycast(rb.position, pushDirection, out RaycastHit hit, frameDistance, LayerMask.GetMask("obstacleLayers")))
             {
-                rb.velocity = Vector3.zero; // Detener el empuje
+                rb.velocity = Vector3.zero; // Detiene el movimiento si choca con un obstáculo
                 break;
             }
 
@@ -138,109 +150,120 @@ public class ArtilleroPrueba : EnemyLife
             yield return new WaitForFixedUpdate();
         }
 
-        // Restaurar el estado del Rigidbody y NavMeshAgent
-        rb.isKinematic = true; // Cambia de nuevo a kinemático
-        agent.enabled = true; // Reactiva el NavMeshAgent
+       
+        rb.isKinematic = true;
+        agent.enabled = true; 
         isBeingPushed = false;
         currentState = State.positioning;
-        isPositioning = false; // Asegurarse de que se reinicie el posicionamiento
+        isPositioning = false; 
     }  
     #endregion
 
     public void Positioning()
     {
-          if (!agent.enabled)
+        agent.isStopped = false;
+        if (!agent.enabled)
         {
-            agent.enabled = true; // Asegúrate de que el NavMeshAgent esté habilitado
+            agent.enabled = true; 
         }
-        
+
         if (!isPositioning)
         {
             isPositioning = true;
-            StartCoroutine(MoveToRandomPosition());
+            StartCoroutine(MoveAwayFromPlayer());
         }
     }
 
-    private IEnumerator MoveToRandomPosition()
+    private IEnumerator MoveAwayFromPlayer()
     {
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
         Transform player = GameObject.FindGameObjectWithTag("Player").transform;
-        float DistanciaAlejarse = 10f; // Distancia segura del jugador
+        float distanciaAlejarse = 10f; 
 
-        for (int i = 0; i < 3; i++)
+        Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
+        Vector3 targetPosition = transform.position + directionAwayFromPlayer * distanciaAlejarse;
+
+        if (agent != null && agent.isOnNavMesh)
         {
-            if (currentState == State.gethit)
+            agent.SetDestination(targetPosition);
+            while (agent.pathPending || (agent != null && agent.isOnNavMesh && agent.remainingDistance > agent.stoppingDistance))
             {
-                yield break; // Salir del bucle si el estado cambia a gethit
-            }
-
-            Vector3 randomDirection = Random.insideUnitSphere;
-            randomDirection.y = 0;
-
-            Vector3 targetPosition = transform.position + randomDirection.normalized * 5f;
-
-            // Si el jugador está cerca, alejarse de él
-            if (Vector3.Distance(transform.position, player.position) < DistanciaAlejarse)
-            {
-                Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
-                targetPosition = transform.position + directionAwayFromPlayer * 5f;
-            }
-
-            if (agent != null && agent.isOnNavMesh)
-            {
-                float elapsedTime = 0f;
-                float lerpDuration = 0.3f;
-                Vector3 startPosition = transform.position;
-
-                while (elapsedTime < lerpDuration)
+                if (currentState == State.gethit)
                 {
-                    if (agent != null && agent.isOnNavMesh)
-                    {
-                        agent.SetDestination(Vector3.Lerp(startPosition, targetPosition, elapsedTime / lerpDuration));
-                    }
-                    elapsedTime += Time.deltaTime;
-                    yield return null;
+                    yield break; 
                 }
-
-                if (agent != null && agent.isOnNavMesh)
-                {
-                    agent.SetDestination(targetPosition);
-                    while (agent.pathPending || (agent != null && agent.isOnNavMesh && agent.remainingDistance > agent.stoppingDistance))
-                    {
-                        if (currentState == State.gethit)
-                        {
-                            yield break; // Salir del bucle si el estado cambia a gethit
-                        }
-                        yield return null;
-                    }
-                }
+                yield return null;
             }
         }
-        currentState = State.attacking; // Asegúrate de que el estado se cambie a attacking
+
+        currentState = State.attacking; 
         isPositioning = false;
     }
 
     public void Attacking()
     {
-        LaunchMortarProjectile();
-        currentState = State.positioning; 
-    }
-
-    private void LaunchMortarProjectile()
-    {
+        agent.isStopped = true;
         if (mortarProjectilePrefab == null || mortarLaunchPoint == null) return;
 
         Transform player = GameObject.FindGameObjectWithTag("Player").transform;
-        targetPosition = player.position; 
+        targetPosition = player.position;
 
-        GameObject projectile = Instantiate(mortarProjectilePrefab, mortarLaunchPoint.position, mortarLaunchPoint.rotation);
-        ProyectilMortero proyectilMortero = projectile.GetComponent<ProyectilMortero>();
-        if (proyectilMortero != null)
+        if (!isPreShooting)
         {
-            proyectilMortero.impactAreaPrefab = impactAreaPrefab;
-            proyectilMortero.Launch(targetPosition, 1f);
+            isPreShooting = true;
+            waitTimer = preShootDelay;
+            color = enemyRenderer.material.color; 
+        }
+
+        waitTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
+        float lerpFactor = 1 - (waitTimer / preShootDelay);
+        Color darkerColor = color * 0.5f; 
+        enemyRenderer.material.color = Color.Lerp(color, darkerColor, lerpFactor);
+
+        if (waitTimer <= 0)
+        {
+            enemyRenderer.material.color = color; 
+            GameObject projectile = Instantiate(mortarProjectilePrefab, mortarLaunchPoint.position, mortarLaunchPoint.rotation);
+            ProyectilMortero proyectilMortero = projectile.GetComponent<ProyectilMortero>();
+            if (proyectilMortero != null)
+            {
+                proyectilMortero.impactAreaPrefab = impactAreaPrefab;
+                proyectilMortero.Launch(targetPosition, 1f);
+            }
+
+            waitTimer = waitTimeBetweenShots / MovimientoJugador.bulletTimeScale;
+            isPreShooting = false;
+
+           
+            currentState = State.reposition;
+            repositionTimer = repositionDelay; 
         }
     }
+
+    private IEnumerator Reposition()
+    {
+        isRepositioning = true; 
+        float elapsedTime = 0f;
+        float waitTime = 1f;
+
+        while (elapsedTime < waitTime)
+        {
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            if (distanceToPlayer <= 15f)
+            {
+                currentState = State.positioning;
+                isRepositioning = false; 
+                yield break;
+            }
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        currentState = State.attacking;
+        isRepositioning = false; 
+    }
+
+ 
    
     public void GetHit()
     {

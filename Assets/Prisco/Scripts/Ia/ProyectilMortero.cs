@@ -8,7 +8,7 @@ public class ProyectilMortero : MonoBehaviour
     private GameObject impactAreaInstance;
 
     public GameObject impactAreaPrefab; 
-    public GameObject secondaryProjectilePrefab; // Prefab del proyectil secundario
+    public GameObject secondaryProjectilePrefab; 
 
     private Life playerLife;
     private MovimientoJugador movimientoJugador;
@@ -20,11 +20,11 @@ public class ProyectilMortero : MonoBehaviour
         transform.Translate(Vector3.forward * speed * MovimientoJugador.bulletTimeScale * Time.deltaTime);
     }
 
-        void Awake()
+    void Awake()
     {        
-       playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
+        playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
+        movimientoJugador = GameObject.FindGameObjectWithTag("Player").GetComponent<MovimientoJugador>();
     }
-
 
     public void Launch(Vector3 target, float duration)
     {
@@ -49,7 +49,7 @@ public class ProyectilMortero : MonoBehaviour
         {
             float t = elapsedTime / duration;
             Vector3 currentPosition = Vector3.Lerp(startPosition, targetPosition, t);
-            currentPosition.y += Mathf.Sin(t * Mathf.PI) * 7f; // curvatura del proyectil
+            currentPosition.y += Mathf.Sin(t * Mathf.PI) * 7f; 
             transform.position = currentPosition;
             elapsedTime += Time.deltaTime;
             yield return null;
@@ -58,7 +58,7 @@ public class ProyectilMortero : MonoBehaviour
         transform.position = targetPosition;
         isProjectileInAir = false; 
 
-        // Verificar si el jugador está dentro del área de impacto
+       
         if (impactAreaInstance != null)
         {
             Collider[] colliders = Physics.OverlapSphere(targetPosition, impactAreaInstance.transform.localScale.x / 2);
@@ -79,13 +79,13 @@ public class ProyectilMortero : MonoBehaviour
                 }
             }
 
-            Destroy(impactAreaInstance); // Destruir el área de impacto después de aplicar el daño
+            Destroy(impactAreaInstance); 
         }
 
-        // Instanciar proyectiles secundarios en las direcciones cardinales
+        
         InstantiateSecondaryProjectiles(targetPosition);
 
-        Destroy(gameObject); // Destruir el proyectil después de hacer daño
+        Destroy(gameObject); 
     }
 
     private void InstantiateSecondaryProjectiles(Vector3 position)
@@ -124,7 +124,33 @@ public class ProyectilMortero : MonoBehaviour
                 Debug.LogError("playerLife is not initialized.");
             }
         }
+        else if (other.CompareTag("BTCollider"))
+        {
+            movimientoJugador.CountBTProjectiles();
+        }
     }
 
-    
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("BTCollider"))
+        {
+            movimientoJugador.CountBTProjectiles();
+        }
+    }
+
+    public void OnDisable()
+    {
+        if (movimientoJugador != null)
+        {
+            movimientoJugador.CountBTProjectiles();
+        }
+    }
+
+    public void OnDestroy()
+    {
+        if (movimientoJugador != null)
+        {
+            movimientoJugador.CountBTProjectiles();
+        }
+    }
 }
