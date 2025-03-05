@@ -16,6 +16,8 @@ public class EnemigosMele : EnemyLife
     public float attackMoveSpeed = 5f; // Velocidad de movimiento durante el ataque  
     public float moveTime = 2f; // Tiempo en segundos
     private static List<EnemigosMele> allEnemies = new List<EnemigosMele>(); // Lista estática de todos los enemigos
+    private static List<EnemigosMele> currentAttackers = new List<EnemigosMele>(); // Lista de enemigos que están atacando actualmente
+    private const int maxAttackers = 2; // Máximo número de enemigos que pueden atacar al mismo tiempo
 
   
     public enum State { Chasing, Attacking, Gethit }
@@ -82,11 +84,10 @@ public class EnemigosMele : EnemyLife
             case State.Attacking:
                 Attack();
                 break; 
-                /*
-                case State.Gethit:
-                StateHited();
+                
+            case State.Gethit:
+                // ...existing code...
                 break; 
-                */
                              
         }
 
@@ -119,18 +120,19 @@ public class EnemigosMele : EnemyLife
         // Aplica una fuerza de empuje en la dirección opuesta a la posición del jugador
         Vector3 pushDirection = (transform.position - player.position).normalized;
 
-        if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+            if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
         {
+            pushForce = 10f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
         {
-            pushForce = 15f;
+            pushForce = 12.5f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3"))
         {
-            pushForce = 20f;
+            pushForce = 15;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else
@@ -170,15 +172,29 @@ public class EnemigosMele : EnemyLife
         }
 
         agent.isStopped = false; // Asegúrate de que el agente no esté detenido
-        agent.SetDestination(player.position);
-        enemyRenderer.material.color = Color.green; 
 
-        if (Vector3.Distance(transform.position, player.position) < attackDistance)
+        if (currentAttackers.Count < maxAttackers || currentAttackers.Contains(this))
         {
-            currentState = State.Attacking;
+            agent.SetDestination(player.position);
+            enemyRenderer.material.color = Color.green;
+
+            if (Vector3.Distance(transform.position, player.position) < attackDistance)
+            {
+                currentState = State.Attacking;
+                if (!currentAttackers.Contains(this))
+                {
+                    currentAttackers.Add(this);
+                }
+            }
         }
-       
-        
+        else
+        {
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            Vector3 targetPosition = player.position + directionToPlayer * attackDistance;
+
+            agent.SetDestination(targetPosition);
+            enemyRenderer.material.color = Color.yellow; // Color para indicar que está rodeando
+        }
     }
 
     private void Attack()
@@ -247,6 +263,7 @@ public class EnemigosMele : EnemyLife
             {
                 Destroy(effect); 
                 isAttacking = false;
+                currentAttackers.Remove(this); // Liberar al atacante actual
                 yield break; 
             }
 
@@ -267,6 +284,7 @@ public class EnemigosMele : EnemyLife
         agent.isStopped = false;
         isAttacking = false;
 
+        currentAttackers.Remove(this); // Liberar al atacante actual
         currentState = State.Chasing; 
     }
 

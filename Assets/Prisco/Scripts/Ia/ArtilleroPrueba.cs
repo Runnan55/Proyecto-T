@@ -22,7 +22,7 @@ public class ArtilleroPrueba : EnemyLife
     private Rigidbody rb;
     private NavMeshAgent agent;
     private Renderer enemyRenderer;
-    public float pushForce = 10f; 
+    public float pushForce = 5f; 
     public float pushDuration = 0.5f; 
     private bool isBeingPushed = false; 
     public float pushCooldown = 0.5f; 
@@ -118,16 +118,17 @@ public class ArtilleroPrueba : EnemyLife
 
         if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
         {
+            pushForce = 10f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
         {
-            pushForce = 15f;
+            pushForce = 12.5f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3"))
         {
-            pushForce = 20f;
+            pushForce = 15;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else

@@ -7,7 +7,7 @@ public class Transition2Script : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
      override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       PlayerMovement.hasRotated = false;
+       PlayerMovement.hasRotated = true;
        PlayerMovement.cambioarma = false;
     }
 
@@ -37,7 +37,7 @@ public class Transition2Script : StateMachineBehaviour
     {
         MovimientoJugador.ataqueL = false;       
         MovimientoJugador.ataqueD = false; 
-        PlayerMovement.hasRotated = false;
+       
 
         
     }

@@ -7,7 +7,7 @@ public class Transition1Script : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
      override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       PlayerMovement.hasRotated = false;
+       PlayerMovement.hasRotated = false;       
 
         PlayerMovement.cambioarma = false;
     }
@@ -42,12 +42,12 @@ public class Transition1Script : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-       MovimientoJugador.ataqueL = false; 
-       MovimientoJugador.ataqueP = false; 
-       MovimientoJugador.ataqueD = false; 
+        MovimientoJugador.ataqueL = false; 
+        MovimientoJugador.ataqueP = false; 
+        MovimientoJugador.ataqueD = false; 
 
-         PlayerMovement.hasRotated = false;
-
+      
+    
        
        
     }

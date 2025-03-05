@@ -269,18 +269,19 @@ public class DistanciaPrueba : EnemyLife
         // Aplica una fuerza de empuje en la dirección opuesta a la posición del jugador
         Vector3 pushDirection = (transform.position - player.position).normalized;
 
-        if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+           if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
         {
+            pushForce = 10f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
         {
-            pushForce = 15f;
+            pushForce = 12.5f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3"))
         {
-            pushForce = 20f;
+            pushForce = 15;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else

@@ -18,13 +18,14 @@ public class MovimientoJugador : MonoBehaviour
     [Header("Player Settings")]
     [SerializeField] public static float speed = 15.0f;
     public static float fuerzaEmpujeAL2 = 3.0f;  
-    public static float fuerzaEmpujeAP3 = 100.0f;  
+    public static float fuerzaEmpujeAP3 = 50.0f;  
     public  float rotationSpeed = 10.0f;
     public float gravity = 20.0f;
     public static bool hasAttacked = false;
     public static bool hasRotated = false;
     public static MovimientoJugador instance; 
     public LayerMask obstacleLayers;
+    private Vector3 direccionRaycast;
 
     public DamageDealer damageDealerL1;    
     public DamageDealer damageDealerL2;     
@@ -32,11 +33,8 @@ public class MovimientoJugador : MonoBehaviour
     public DamageDealer damageDealerP; 
 
     [Header("Movement Settings")]
-    private Rigidbody rb;     
-    bool canMove = true; 
-    bool isLookingAtTarget = false;           
-    Vector3 targetPosition;
-
+    private Rigidbody rb;  
+ 
     [Header("Attack Settings")]     
     public static bool ataqueL = false; 
     public static bool ataqueP = false; 
@@ -65,9 +63,7 @@ public class MovimientoJugador : MonoBehaviour
 
     [Header("Animation Settings")]
     public Animator animator;    
-    public static bool enterAttack = false;
-    public bool verificarArma = false;
-    public static bool cambioarma = false;       
+    public static bool enterAttack = false;    
 
     [Header("Visual Settings")]
     private Color originalColor; 
@@ -76,9 +72,7 @@ public class MovimientoJugador : MonoBehaviour
     [Header("Dash Settings")]
     public static bool isDashing = false;
     private bool canDash = true;
-    private float dashTime;
-
-    public GameObject dashObjec;     
+    private float dashTime;    
     public float dashSpeed = 20.0f; // Velocidad del dash
     public float dashDuration = 0.2f; // Duración del dash en segundos
     public float dashCooldown = 1.0f; // Tiempo de recarga del dash en segundos
@@ -212,8 +206,7 @@ public class MovimientoJugador : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("DodgeArea") && !bulletTime)
-        {
-            Debug.Log("Trigger stay " + other.gameObject);
+        {            
             isInDodgeArea = true;
         }
     }
@@ -427,7 +420,8 @@ public class MovimientoJugador : MonoBehaviour
         
         Vector3 direction = new Vector3(hor, 0, ver).normalized;
         
-        if (!enterAttack)
+        // Evitar rotación durante el ataque 
+        if (!enterAttack && !ataqueL && !ataqueP && !ataqueD)
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 0.2f);
         }
@@ -453,13 +447,17 @@ public class MovimientoJugador : MonoBehaviour
 
 IEnumerator Dash()
 {
+    animator.Play("Dash");
     isDashing = true;
     canDash = false;
     dashTime = dashDuration;
 
-    Vector3 dashDirection = transform.forward;
+    Vector3 dashDirection = ObtenerDireccionDash();
+    if (dashDirection == Vector3.zero)
+    {
+        dashDirection = transform.forward.normalized;
+    }
 
-   
     rb.useGravity = false;
 
     while (dashTime > 0)
@@ -468,32 +466,52 @@ IEnumerator Dash()
 
         float dashFrameDistance = dashSpeed * Time.fixedDeltaTime;
 
-       
         if (Physics.Raycast(rb.position, dashDirection, out RaycastHit hit, dashFrameDistance, obstacleLayers))
-        {           
+        {
             break;
         }
 
-        
         rb.MovePosition(rb.position + dashDirection * dashSpeed * Time.fixedDeltaTime);
 
         dashTime -= Time.fixedDeltaTime;
         yield return new WaitForFixedUpdate();
     }
 
-   
     isDashing = false;
     rb.useGravity = true;
-    
+
     yield return new WaitForSeconds(dashCooldown);
     life.disableInvencibility();
     canDash = true;
 }
 
+private Vector3 ObtenerDireccionDash()
+{
+    float horizontal = Input.GetAxisRaw("Horizontal");
+    float vertical = Input.GetAxisRaw("Vertical");
+
+    Vector3 direccionDash = Vector3.zero;
+
+    
+    if (Mathf.Abs(horizontal) > 0 && Mathf.Abs(vertical) == 0)
+    {
+        direccionDash = new Vector3(horizontal, 0, 0).normalized;
+    }
+    else if (Mathf.Abs(vertical) > 0 && Mathf.Abs(horizontal) == 0)
+    {
+        direccionDash = new Vector3(0, 0, vertical).normalized;
+    }
+    else if (Mathf.Abs(horizontal) > 0 && Mathf.Abs(vertical) > 0)
+    {
+        direccionDash = new Vector3(horizontal, 0, vertical).normalized;
+    }
+
+    return direccionDash;
+}
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 {
+    
     float tiempoTranscurrido = 0f;
-
    
     while (tiempoTranscurrido < duracion)
     {
@@ -509,8 +527,7 @@ public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 
       
         if (Physics.Raycast(posicionActual, direccion, out RaycastHit hit, distanciaAMover + 0.1f))
-        {
-            
+        {            
             break;
         }
 
@@ -525,36 +542,32 @@ public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 
 public IEnumerator EmpujarJugadorAL3(float duracion)
 {
-    
     yield return new WaitForSeconds(0.1f);
 
-    Vector3 direccionEmpuje = transform.forward;
     float tiempoTranscurrido = 0f;
 
     while (tiempoTranscurrido < duracion)
     {
-        
         float desplazamientoFrame = fuerzaEmpujeAP3 * Time.deltaTime;
 
-       
-        if (Physics.Raycast(transform.position, direccionEmpuje, out RaycastHit hitForward, desplazamientoFrame + 0.1f))
-        {          
+        if (Physics.Raycast(transform.position, direccionRaycast, out RaycastHit hitForward, desplazamientoFrame + 0.1f))
+        {
             break;
         }
 
-       
-        Vector3 futurePosition = transform.position + direccionEmpuje * desplazamientoFrame;
+        Vector3 futurePosition = transform.position + direccionRaycast * desplazamientoFrame;
         if (Physics.Raycast(futurePosition, Vector3.down, out RaycastHit hitDown, 1.0f))
-        {            
+        {
             transform.position = futurePosition;
         }
         else
-        {           
+        {
             break;
         }
 
         tiempoTranscurrido += Time.deltaTime;
         yield return null;
+        
     }
 }
 
@@ -597,28 +610,22 @@ public void AtaqueJugador()
     if (Input.GetMouseButtonDown(0))
     {
         enterAttack = true;
-        hasAttacked = true;
 
         if (!hasRotated)
         {
-           
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
-            {                           
-                                    
-                    Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-                    
-                    Vector3 directionToLook = (targetPosition - transform.position).normalized;
-                   
-                    Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
-                  
-                    transform.rotation = targetRotation;
+            {
+                Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+                Vector3 directionToLook = (targetPosition - transform.position).normalized;
+                Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+                transform.rotation = targetRotation;
+              
+                direccionRaycast = directionToLook;
 
-                    hasRotated = true;
-                
+                hasRotated = true;
             }
         }
     }
@@ -636,41 +643,13 @@ public void hasRotatedFalse()
 public void AtaqueLigero()
 {
     if (Input.GetButtonDown("Fire1") && !ataqueL)
-    {      
-    
+    {     
       ataqueL = true;
-       
+
     }
 }
 
-public IEnumerator MirarAlMouseAL3()
-{
-    float startTime = Time.time;
-    Vector3 lastMousePosition = Vector3.zero;
 
-    while (Time.time < startTime + 0.15f)
-    {      
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            lastMousePosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-
-            // Calcular la dirección hacia la que el jugador debe mirar
-            Vector3 directionToLook = (lastMousePosition - transform.position).normalized;
-
-            // Crear una rotación que mire en la dirección del objetivo
-            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
-
-            // Aplicar la rotación al jugador
-            transform.rotation = targetRotation;
-        }
-
-        yield return null;
-    }
-   
-}
 
 private bool ataqueEjecutado = false;
 
@@ -679,7 +658,7 @@ public void AtaquePesado()
     if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado)
     {
         enterAttack = true;
-        hasAttacked = true;
+      
         ataqueP = true;
         ataqueEjecutado = true;
         tiempoUltimoAtaque = Time.time; // Actualizar el tiempo del último ataque
@@ -845,6 +824,11 @@ public void OnAttackEndl1()
        public void OnAttackEndP()
     {
         damageDealerP.ResetDamage();
+    }
+
+    public bool CanDash()
+    {
+        return canDash;
     }
     #endregion priscada
 }

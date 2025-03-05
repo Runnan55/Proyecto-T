@@ -4,7 +4,7 @@ using UnityEngine.VFX;
 
 public class Attacks : StateMachineBehaviour
 {
-    public bool hasAttacked = false;
+   
     public string attackNumber;
      private Collider ataqueL1Collider;   
      private Collider ataqueL2Collider; 
@@ -21,6 +21,13 @@ public class Attacks : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        // Cancelar el dash si se inicia una nueva animación
+        if (MovimientoJugador.isDashing)
+        {
+            MovimientoJugador.isDashing = false;
+           
+        }
+
         MovimientoJugador playerMovement = MovimientoJugador.instance;
         GameObject ataqueL1 = GameObject.Find("AtaqueL1");
         GameObject ataqueL2 = GameObject.Find("AtaqueL2");
@@ -53,6 +60,7 @@ public class Attacks : StateMachineBehaviour
                 animator.GetComponent<MonoBehaviour>().StartCoroutine(ReduceSpeedTemporarily());
                 break;                
             case "Attack2":  
+            MovimientoJugador.enterAttack = true; 
                 MovimientoJugador.ataqueL = false;
                 MovimientoJugador.speed = 0; 
 
@@ -84,6 +92,8 @@ public class Attacks : StateMachineBehaviour
                 
                 break;
                 case "Attack3":
+                 MovimientoJugador.enterAttack = true; 
+                 MovimientoJugador.ataqueL = false;
                 MovimientoJugador.speed = 0; 
                 if (ataqueL1 != null)
                 {
@@ -129,7 +139,7 @@ public class Attacks : StateMachineBehaviour
     private IEnumerator ReduceSpeedTemporarily()
     {
         float originalSpeed = MovimientoJugador.speed;
-        MovimientoJugador.speed *= 0.8f; // Reduce speed ay 70%
+        MovimientoJugador.speed *= 0.8f;
         yield return new WaitForSeconds(1);
         
     }
@@ -137,12 +147,14 @@ public class Attacks : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-/*
-         if (Input.GetKeyDown(KeyCode.Space))
+        if (MovimientoJugador.isDashing)
         {
-            MovimientoJugador.instance.animator.Play("Dash");
+            animator.Play("Dash");
+        }        
+        else if (MovimientoJugador.isDashing) 
+        {
+            animator.Play("Dash"); 
         }
-*/
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -183,7 +195,7 @@ public class Attacks : StateMachineBehaviour
                 break;              
             case "Attack2":
             MovimientoJugador.speed = 15; 
-            MovimientoJugador.hasRotated = false;
+            
 
               if (ataqueL1 != null)
                 {
@@ -204,7 +216,7 @@ public class Attacks : StateMachineBehaviour
                 break;
             case "Attack3":
             MovimientoJugador.speed = 15; 
-            MovimientoJugador.hasRotated = false;
+            
 
               if (ataqueL1 != null)
                 {
