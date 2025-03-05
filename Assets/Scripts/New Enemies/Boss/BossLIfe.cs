@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BossLIfe : MonoBehaviour
 {
@@ -13,10 +14,20 @@ public class BossLIfe : MonoBehaviour
     public float normalDamageMultiplier = 1f;
     
     public int contador=0;
+  
+    public int contador2 = 0;
+
+
+    public Slider healthBar;
 
     protected virtual void Start()
     {
         currentHealth = maxHealth;
+        if (healthBar != null)
+        {
+            healthBar.maxValue = maxHealth;  // Establece el valor máximo
+            healthBar.value = currentHealth;  // Establece el valor inicial
+        }
     }
 
 
@@ -28,16 +39,24 @@ public class BossLIfe : MonoBehaviour
             // Si el jugador está dentro del ángulo de visión, aplicar daño reducido
             damage *= frontDamageMultiplier;
             contador++;
+            contador2++;
+
         }
         else
         {
             // Si el jugador está fuera del ángulo de visión, aplicar daño normal
             damage *= normalDamageMultiplier;
             contador++;
+            contador2++;
+
         }
 
         currentHealth -= damage;
         Debug.Log($"Daño recibido: {damage}. Vida restante: {currentHealth}");
+        if (healthBar != null)
+        {
+            healthBar.value = currentHealth;  // Actualiza el valor del Slider
+        }
 
         if (currentHealth <= 0)
         {

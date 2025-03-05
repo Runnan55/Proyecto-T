@@ -188,7 +188,7 @@ public class BossMovement : BossLIfe
         {
             if (angle > 120f)
             {
-                if (contador >= 5)
+                if (contador >= 3)
                 {
                     CoreBurst();
                     contador = 0;

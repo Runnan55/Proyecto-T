@@ -11,6 +11,13 @@ public class BossMovement2 : BossLIfe
     private Vector3 currentTarget; // Punto al que se mueve el Boss
     private bool canMove = true;
 
+
+
+    [Header("Material del Jefe")]
+    public Renderer bossRenderer;
+    public Color fase1Color = Color.red;
+    public Color fase2Color = Color.blue;
+
     // === Movement Settings ===
     [Header("Configuración de Movimiento")]
     public float moveSpeed = 5f;
@@ -21,7 +28,7 @@ public class BossMovement2 : BossLIfe
     // === Action Timers ===
     [Header("Temporizadores de Acción")]
     private float actionTimer;
-    public float stopDuration = 2f;
+    public float stopDuration = 1.5f;
     public float moveDuration = 4f;
 
     // === Attack Settings ===
@@ -59,6 +66,7 @@ public class BossMovement2 : BossLIfe
     [Header("Arena y Entorno")]
     public Transform coreTransform;
     public Transform[] arenaBounds; // Límites de la arena para rebotar engranajes
+    private bool trampasCanceladas = false; 
 
     protected override void Start()
     {
@@ -70,6 +78,11 @@ public class BossMovement2 : BossLIfe
         StartCoroutine(FindPlayerWithDelay());
         jumpAttack = GetComponent<BossJumpAttack>();
         currentTarget = zonePoints[0].position;
+
+        if (bossRenderer != null)
+        {
+            bossRenderer.material.color = fase1Color;
+        }
 
     }
 
@@ -89,11 +102,17 @@ public class BossMovement2 : BossLIfe
     {
         HandleMovement();
         RotateTowardsPlayer();
-
+        
         if (currentHealth <= maxHealth / 2 && fase == 1)
         {
             fase = 2;
+            ExplosionPropia();
             Debug.Log("entramos en fase2");
+
+              if (bossRenderer != null)
+        {
+            bossRenderer.material.color = fase2Color;
+        }
         }
     }
 
@@ -103,26 +122,23 @@ public class BossMovement2 : BossLIfe
         {
             if (zoneID == zonaActual)
             {
-                if (zoneID >= 0 && zoneID < zonePoints.Length)
-                {
-                    currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
-                    zonaActual = zoneID;
-                    saltos = false;
-                    canMove = true;
+                currentTarget = zonePoints[zoneID].position;
+                zonaActual = zoneID;
+                saltos = false;
+                canMove = true;
 
-                    //Debug.Log("trampas desactivas");
-                    foreach (var trap in smokeTramps)
+                trampasCanceladas = true; // Si el jugador entra en la zona, cancelamos trampas
+
+                foreach (var trap in smokeTramps)
+                {
+                    if (trap != null)
                     {
-                        if (trap != null)
+                        BigDamageZone damageZone = trap.GetComponent<BigDamageZone>();
+                        if (damageZone != null)
                         {
-                            BigDamageZone damageZone = trap.GetComponent<BigDamageZone>();
-                            if (damageZone != null)
-                            {
-                                damageZone.DeactivateDamage();
-                            }
+                            damageZone.DeactivateDamage();
                         }
                     }
-
                 }
             }
         }
@@ -130,11 +146,10 @@ public class BossMovement2 : BossLIfe
         {
             if (zoneID >= 0 && zoneID < zonePoints.Length)
             {
-                currentTarget = zonePoints[zoneID].position; // Actualiza el destino del Boss
+                currentTarget = zonePoints[zoneID].position;
                 zonaActual = zoneID;
             }
         }
-
     }
 
     private IEnumerator cooldown2()
@@ -265,7 +280,7 @@ public class BossMovement2 : BossLIfe
         Debug.Log("Boss realiza un ataque cuerpo a cuerpo.");
        if (fase == 1)
         {
-            if (contador>=4 && Time.time > lastCooldown + cooldown)
+            if (contador>=3 && Time.time > lastCooldown + cooldown)
             {
                 ExplosionPropia();
                 lastCooldown = Time.time;
@@ -291,13 +306,20 @@ public class BossMovement2 : BossLIfe
                 Debug.Log("atckd");
 
             }
-            else if (contador >= 3 && Time.time > lastCooldown + cooldown)
+            else if (contador >= 8 && Time.time > lastCooldown + cooldown)
             {
                 Salto();
                 lastCooldown = Time.time;
                 Debug.Log("gdgege");
                 contador = 0;
 
+            }
+            if ( contador2 >= 6 && Time.time > lastCooldown + cooldown)
+            {
+                ExplosionPropia();
+                lastCooldown = Time.time;
+                Debug.Log("atckd");
+                contador2 = 0;
             }
         }
        
@@ -330,16 +352,68 @@ public class BossMovement2 : BossLIfe
     }
     public void Salto()
     {
+        int nuevaZona = GetRandomIndexExcluding(zonaActual);
+        int zonaAnterior = zonaActual; // Guardamos la zona actual antes de cambiarla
+        trampasCanceladas = false; // Reiniciamos la variable cuando el jefe salta
 
-        OnPlayerEnterZone(GetRandomIndexExcluding(zonaActual));
-
+        OnPlayerEnterZone(nuevaZona);
         jumpAttack.SaltoAplastante(currentTarget);
         saltos = true;
         canMove = false;
 
-        StartCoroutine(cooldown2());
-
+        // Activar trampas en tiempos programados, pero solo si no se han cancelado
+        StartCoroutine(ActivarTrampaAnterior(zonaAnterior));
+        StartCoroutine(ActivarOtrasTrampas(zonaAnterior, nuevaZona));
+        StartCoroutine(ActivarTrampaAterrizaje(nuevaZona));
     }
+
+    private IEnumerator ActivarTrampaAnterior(int zonaID)
+    {
+        yield return new WaitForSeconds(1);
+
+        if (!trampasCanceladas && zonaID >= 0 && zonaID < smokeTramps.Length && smokeTramps[zonaID] != null)
+        {
+            BigDamageZone damageZone = smokeTramps[zonaID].GetComponent<BigDamageZone>();
+            if (damageZone != null)
+            {
+                damageZone.ActivateDamage();
+            }
+        }
+    }
+
+    private IEnumerator ActivarOtrasTrampas(int zonaExcluida, int zonaAterrizaje)
+    {
+        yield return new WaitForSeconds(3);
+
+        if (trampasCanceladas) yield break; // Si las trampas fueron canceladas, detenemos la ejecución
+
+        for (int i = 0; i < smokeTramps.Length; i++)
+        {
+            if (i != zonaExcluida && i != zonaAterrizaje && smokeTramps[i] != null)
+            {
+                BigDamageZone damageZone = smokeTramps[i].GetComponent<BigDamageZone>();
+                if (damageZone != null)
+                {
+                    damageZone.ActivateDamage();
+                }
+            }
+        }
+    }
+
+    private IEnumerator ActivarTrampaAterrizaje(int zonaID)
+    {
+        yield return new WaitForSeconds(5);
+
+        if (!trampasCanceladas && zonaID >= 0 && zonaID < smokeTramps.Length && smokeTramps[zonaID] != null)
+        {
+            BigDamageZone damageZone = smokeTramps[zonaID].GetComponent<BigDamageZone>();
+            if (damageZone != null)
+            {
+                damageZone.ActivateDamage();
+            }
+        }
+    }
+
     public void TormentaDeEngranajes()
     {
         if (gearStorm != null)
