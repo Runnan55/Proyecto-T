@@ -62,7 +62,7 @@ public class FlechaTest : MonoBehaviour
         
         else if (other.CompareTag("Walls"))
         {
-            Debug.Log("Collision with Walls detected");
+            //Debug.Log("Collision with Walls detected");
             Destroy(gameObject);
         }
     }
