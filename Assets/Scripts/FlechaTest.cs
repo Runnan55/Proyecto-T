@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -9,13 +10,12 @@ public class FlechaTest : MonoBehaviour
     public float lifetime = 30f;
     public float damage = 5f;
 
-    private Life playerLife;
-    private MovimientoJugador movimientoJugador;
+    [SerializeField] private Life playerLife;
+    [SerializeField] private MovimientoJugador movimientoJugador;
 
-    private IEnumerator Start()
+    private void Start()
     {
         Destroy(gameObject, lifetime);
-        yield return new WaitForSeconds(1f);
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -37,16 +37,32 @@ public class FlechaTest : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerLife.ModifyTime(-damage);
+            if (playerLife != null)
+            {
+                playerLife.ModifyTime(-damage);
+            }
+            else
+            {
+                Debug.LogError("playerLife is null!");
+            }
             Destroy(gameObject);
         }
 
-        if (other.CompareTag("BTCollider"))
+        else if (other.CompareTag("BTCollider"))
         {
-            movimientoJugador.CountBTProjectiles();
+            if (movimientoJugador != null)
+            {
+                movimientoJugador.CountBTProjectiles();
+            }
+            else
+            {
+                Debug.LogError("movimientoJugador is null!");
+            }
         }
+        
         else if (other.CompareTag("Walls"))
         {
+            Debug.Log("Collision with Walls detected");
             Destroy(gameObject);
         }
     }
