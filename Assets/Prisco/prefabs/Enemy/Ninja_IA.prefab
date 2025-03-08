@@ -210,10 +210,10 @@ GameObject:
   - component: {fileID: 4279159769162246343}
   - component: {fileID: 8945854473452445127}
   - component: {fileID: 4088438959952659090}
-  - component: {fileID: 6470327828826902778}
+  - component: {fileID: -4850221503909234155}
   - component: {fileID: 584893623891685087}
   m_Layer: 0
-  m_Name: DistanceIA
+  m_Name: Ninja_IA
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -236,6 +236,7 @@ Transform:
   - {fileID: 8902947604243049759}
   - {fileID: 7548327162013547589}
   - {fileID: 335786549162474770}
+  - {fileID: 8808411559539394486}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5178077836907921813
@@ -266,7 +267,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 89f3d618e752558418d90f4f999b08d8, type: 2}
+  - {fileID: -8745349979396697067, guid: 4b47f4f8772f62d46acd1d448afaaa61, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -333,7 +334,7 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6470327828826902778
+--- !u!114 &-4850221503909234155
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -342,7 +343,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6244530694984106205}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2a3016b3ca4f2e43b77699004d12cdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 856077676430e2d49b88fa9cff49d11c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _hp: 100
@@ -358,25 +359,10 @@ MonoBehaviour:
   healthBar: {fileID: 1998390799049271627}
   level: {fileID: 0}
   newMaterial: {fileID: 2100000, guid: 1ea1950e8d06cd14c8705cd9bcceda36, type: 2}
-  currentState: 0
-  distanciaDetecion: 20
-  ReposicionDetecion: 20
+  attackRange: 20
   projectilePrefab: {fileID: 7974148649551593582, guid: 1092822ee64273542a97f9d4c73c50f8, type: 3}
-  shootingPoint: {fileID: 7548327162013547589}
-  waitTimer: 0
-  crossbow:
-    Guid:
-      Data1: 1960394171
-      Data2: 1108264493
-      Data3: -1631113333
-      Data4: -624859288
-    Path: event:/FX/crossbow
-  waitTimeBetweenShots: 1
-  repositionDelay: 2
+  shootingPoint: {fileID: 8808411559539394486}
   preShootDelay: 1
-  pushForce: 10
-  pushDuration: 0.5
-  pushCooldown: 0.5
 --- !u!54 &584893623891685087
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -524,6 +510,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &7129848032103480099
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8808411559539394486}
+  m_Layer: 0
+  m_Name: SpawnBala
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8808411559539394486
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7129848032103480099}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6767173068907809627}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7869662801286625414
 GameObject:
   m_ObjectHideFlags: 0
