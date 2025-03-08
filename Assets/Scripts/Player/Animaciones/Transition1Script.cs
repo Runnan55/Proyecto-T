@@ -15,19 +15,22 @@ public class Transition1Script : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        if (MovimientoJugador.isDashing)
+        {
+            return; // No ejecutar ataques durante el dash
+        }
 
         if (MovimientoJugador.ataqueL)
         {                         
              MovimientoJugador.instance.animator.Play("Attack2");
         }
 
-            if (MovimientoJugador.ataqueP)
+        if (MovimientoJugador.ataqueP)
         {                         
              MovimientoJugador.instance.animator.Play("Attack1P");
         }
 
-          if (MovimientoJugador.ataqueD)
+        if (MovimientoJugador.ataqueD)
         {                         
              MovimientoJugador.instance.animator.Play("AttackD");
         }

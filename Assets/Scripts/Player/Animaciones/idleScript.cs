@@ -16,7 +16,11 @@ public class idleScript : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+        if (MovimientoJugador.isDashing)
+        {
+            return; // No ejecutar ataques durante el dash
+        }
+
         if (MovimientoJugador.ataqueL)
         {           
              MovimientoJugador.instance.animator.Play("Attack1");

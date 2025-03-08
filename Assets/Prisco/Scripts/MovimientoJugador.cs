@@ -9,8 +9,8 @@ using Unity.VisualScripting;
 
 public class MovimientoJugador : MonoBehaviour
 {
-        //pruebas enemigos
-        public float pushForce = 10f;
+    //pruebas enemigos
+    public float pushForce = 10f;
 
     // Variables del player
     [SerializeField] private Life life;
@@ -47,6 +47,7 @@ public class MovimientoJugador : MonoBehaviour
     private Coroutine mirarCoroutine; 
     public float tiempoEsperaAtaque = 3.0f; 
     private float tiempoUltimoAtaque;   
+    public static bool canAttack = true;
 
     [Header("Distance Settings")]  
     public GameObject prefab;
@@ -76,6 +77,7 @@ public class MovimientoJugador : MonoBehaviour
     public float dashSpeed = 20.0f; // Velocidad del dash
     public float dashDuration = 0.2f; // Duración del dash en segundos
     public float dashCooldown = 1.0f; // Tiempo de recarga del dash en segundos
+    public float postDashAttackDelay = 0.5f; // Tiempo de espera después del dash antes de poder atacar
 
     [Header("Bullet time")]
     Collider[] btColliders;
@@ -305,7 +307,7 @@ public class MovimientoJugador : MonoBehaviour
             BTCollider.SetActive(!BTCollider.activeSelf);
         }
 
-/*         if (Input.GetKeyDown(KeyCode.Alpha9))
+/*      if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             CountBTProjectiles();
         } */
@@ -419,6 +421,7 @@ public class MovimientoJugador : MonoBehaviour
         animator.SetBool("Run", true);
         
         Vector3 direction = new Vector3(hor, 0, ver).normalized;
+        ultimaDireccion = direction; // Actualizar la última dirección
         
         // Evitar rotación durante el ataque 
         if (!enterAttack && !ataqueL && !ataqueP && !ataqueD)
@@ -444,6 +447,10 @@ public class MovimientoJugador : MonoBehaviour
     rb.MovePosition(rb.position + velocity);
 }
 
+public Vector3 ObtenerUltimaDireccion()
+{
+    return ultimaDireccion;
+}
 
 IEnumerator Dash()
 {
@@ -451,6 +458,11 @@ IEnumerator Dash()
     isDashing = true;
     canDash = false;
     dashTime = dashDuration;
+
+    // Deshabilitar ataques y otras animaciones durante el dash
+    enterAttack = false;
+    animator.SetBool("Run", false);
+    animator.SetBool("Attack", false);
 
     Vector3 dashDirection = ObtenerDireccionDash();
     if (dashDirection == Vector3.zero)
@@ -483,31 +495,11 @@ IEnumerator Dash()
     yield return new WaitForSeconds(dashCooldown);
     life.disableInvencibility();
     canDash = true;
+
+    // Esperar antes de permitir ataques nuevamente
+    yield return new WaitForSeconds(postDashAttackDelay);
 }
 
-private Vector3 ObtenerDireccionDash()
-{
-    float horizontal = Input.GetAxisRaw("Horizontal");
-    float vertical = Input.GetAxisRaw("Vertical");
-
-    Vector3 direccionDash = Vector3.zero;
-
-    
-    if (Mathf.Abs(horizontal) > 0 && Mathf.Abs(vertical) == 0)
-    {
-        direccionDash = new Vector3(horizontal, 0, 0).normalized;
-    }
-    else if (Mathf.Abs(vertical) > 0 && Mathf.Abs(horizontal) == 0)
-    {
-        direccionDash = new Vector3(0, 0, vertical).normalized;
-    }
-    else if (Mathf.Abs(horizontal) > 0 && Mathf.Abs(vertical) > 0)
-    {
-        direccionDash = new Vector3(horizontal, 0, vertical).normalized;
-    }
-
-    return direccionDash;
-}
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
 {
     
@@ -537,6 +529,29 @@ public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
         tiempoTranscurrido += Time.deltaTime;
         yield return null;
     }
+}
+private Vector3 ObtenerDireccionDash()
+{
+    float horizontal = Input.GetAxisRaw("Horizontal");
+    float vertical = Input.GetAxisRaw("Vertical");
+
+    Vector3 direccionDash = Vector3.zero;
+
+    
+    if (Mathf.Abs(horizontal) > 0 && Mathf.Abs(vertical) == 0)
+    {
+        direccionDash = new Vector3(horizontal, 0, 0).normalized;
+    }
+    else if (Mathf.Abs(vertical) > 0 && Mathf.Abs(horizontal) == 0)
+    {
+        direccionDash = new Vector3(0, 0, vertical).normalized;
+    }
+    else if (Mathf.Abs(horizontal) > 0 && Mathf.Abs(vertical) > 0)
+    {
+        direccionDash = new Vector3(horizontal, 0, vertical).normalized;
+    }
+
+    return direccionDash;
 }
 
 
@@ -607,7 +622,7 @@ public Vector3 ObtenerDireccionEmpuje()
   
 public void AtaqueJugador()
 {
-    if (Input.GetMouseButtonDown(0))
+    if (Input.GetMouseButtonDown(0) && canAttack)
     {
         enterAttack = true;
 
@@ -642,20 +657,20 @@ public void hasRotatedFalse()
 }
 public void AtaqueLigero()
 {
-    if (Input.GetButtonDown("Fire1") && !ataqueL)
+    if (Input.GetButtonDown("Fire1") && !ataqueL && canAttack)
     {     
-      ataqueL = true;
-
+        ataqueL = true;
     }
 }
 
 
 
 private bool ataqueEjecutado = false;
+    private Vector3 ultimaDireccion;
 
-public void AtaquePesado()
+    public void AtaquePesado()
 {
-    if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado)
+    if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado && canAttack)
     {
         enterAttack = true;
       

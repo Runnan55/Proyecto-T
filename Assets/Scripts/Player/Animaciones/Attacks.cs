@@ -25,7 +25,7 @@ public class Attacks : StateMachineBehaviour
         if (MovimientoJugador.isDashing)
         {
             MovimientoJugador.isDashing = false;
-           
+            return; // No ejecutar ataques durante el dash
         }
 
         MovimientoJugador playerMovement = MovimientoJugador.instance;
@@ -49,18 +49,18 @@ public class Attacks : StateMachineBehaviour
                     }
                     FMODUnity.RuntimeManager.PlayOneShot(attack1);
                 }    
-              if (Cubo1 != null)
-    {
-        MeshRenderer cubo1Renderer = Cubo1.GetComponent<MeshRenderer>();
-        if (cubo1Renderer != null)
-        {
-            cubo1Renderer.enabled = true; 
-        }
-    }
-                animator.GetComponent<MonoBehaviour>().StartCoroutine(ReduceSpeedTemporarily());
+                if (Cubo1 != null)
+                {
+                    MeshRenderer cubo1Renderer = Cubo1.GetComponent<MeshRenderer>();
+                    if (cubo1Renderer != null)
+                    {
+                        cubo1Renderer.enabled = true; 
+                    }
+                }
+                animator.GetComponent<MonoBehaviour>().StartCoroutine(ReducirVelocidadConLerp(animator, stateInfo.length));
                 break;                
             case "Attack2":  
-            MovimientoJugador.enterAttack = true; 
+                MovimientoJugador.enterAttack = true; 
                 MovimientoJugador.ataqueL = false;
                 MovimientoJugador.speed = 0; 
 
@@ -116,6 +116,7 @@ public class Attacks : StateMachineBehaviour
                     } 
                     
                     animator.GetComponent<MonoBehaviour>().StartCoroutine(playerMovement.EmpujarJugadorAL3(0.1f)); // Empuje durante 0.1 segundos
+                    animator.GetComponent<MonoBehaviour>().StartCoroutine(DelayAfterThirdAttack());
                 break;
             case "AttackP": 
             MovimientoJugador.speed = 0; 
@@ -134,14 +135,30 @@ public class Attacks : StateMachineBehaviour
             case "Attack3P":         
                 break;
         }
+    } 
+
+    private IEnumerator ReducirVelocidadConLerp(Animator animator, float duracion)
+    {
+        float velocidadInicial = MovimientoJugador.speed;
+        float tiempoTranscurrido = 0f;
+
+        while (tiempoTranscurrido < duracion)
+        {
+            MovimientoJugador.speed = Mathf.Lerp(velocidadInicial, 0, tiempoTranscurrido / duracion);
+            tiempoTranscurrido += Time.deltaTime;
+            yield return null;
+        }
+
+        MovimientoJugador.speed = 0;
+        yield return new WaitForSeconds(0.1f); // Asegurarse de que la velocidad se mantenga en 0 por un breve momento
+        MovimientoJugador.speed = velocidadInicial; // Restablecer la velocidad al valor inicial
     }
 
-    private IEnumerator ReduceSpeedTemporarily()
+    private IEnumerator DelayAfterThirdAttack()
     {
-        float originalSpeed = MovimientoJugador.speed;
-        MovimientoJugador.speed *= 0.8f;
-        yield return new WaitForSeconds(1);
-        
+        MovimientoJugador.canAttack = false;
+        yield return new WaitForSeconds(1); 
+        MovimientoJugador.canAttack = true;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -168,14 +185,14 @@ public class Attacks : StateMachineBehaviour
         GameObject Cubo1 = GameObject.Find("Cubo1");
         GameObject Cubo2 = GameObject.Find("Cubo2");
         GameObject Cubo3 = GameObject.Find("Cubo3");
-   
+
+        MovimientoJugador.speed = 15; // Restablecer la velocidad al valor original
+
         switch (attackNumber)
         {
             case "Attack1":
-             MovimientoJugador.speed = 15; 
-             MovimientoJugador.hasRotated = false;
-
-               if (ataqueL1 != null)
+                MovimientoJugador.hasRotated = false;
+                if (ataqueL1 != null)
                 {
                     ataqueL1Collider = ataqueL1.GetComponent<Collider>();
                     if (ataqueL1Collider != null)
@@ -184,14 +201,13 @@ public class Attacks : StateMachineBehaviour
                     }
                 }   
                 if (Cubo1 != null)
-    {
-        MeshRenderer cubo1Renderer = Cubo1.GetComponent<MeshRenderer>();
-        if (cubo1Renderer != null)
-        {
-            cubo1Renderer.enabled = false; // Activar el MeshRenderer
-        }
-    }
-
+                {
+                    MeshRenderer cubo1Renderer = Cubo1.GetComponent<MeshRenderer>();
+                    if (cubo1Renderer != null)
+                    {
+                        cubo1Renderer.enabled = false; // Desactivar el MeshRenderer
+                    }
+                }
                 break;              
             case "Attack2":
             MovimientoJugador.speed = 15; 
