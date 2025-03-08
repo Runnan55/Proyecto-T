@@ -13,21 +13,31 @@ public class NinjaPruebas : EnemyLife
     private Transform player;    
     private Renderer enemyRenderer; 
     private Rigidbody rb;    
+
+    [Header("State Management")]
     private State currentState;
     private State previousState;    
+
+    [Header("Attack Settings")]
     public float attackRange = 20f;
     public GameObject projectilePrefab;
     public Transform shootingPoint;
     public float preShootDelay = 1f;
     private float waitTimer;
     private bool isPreShooting = false;
-    public float blinkDistance = 10f;
     private int shotsFired = 0;
     public int shotsBeforeBlink = 2;
     public float shootSpeedMultiplier = 2f; // Multiplicador de velocidad de disparo
+
+    [Header("Blink Settings")]
+    public float blinkDistance = 10f;
+
+    [Header("Push Settings")]
     public float pushForce = 10f; // Fuerza del empuje
     public float pushDuration = 0.5f; // Duración del empuje
     private bool isBeingPushed = false; // Estado para controlar si está en empuje     
+
+    [Header("Movement Settings")]
     private float originalAgentSpeed;
 
     private void Awake()
@@ -39,8 +49,6 @@ public class NinjaPruebas : EnemyLife
         currentState = State.Chasing;
         previousState = currentState; 
         originalAgentSpeed = agent.speed;    
-
-        
     }
 
     public void Update()
@@ -59,10 +67,8 @@ public class NinjaPruebas : EnemyLife
             case State.GetHit:
                 GetHit();
                 break;
-          
         }
 
-      
         agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale;
     }
 
@@ -148,7 +154,7 @@ public class NinjaPruebas : EnemyLife
         Instantiate(projectilePrefab, shootingPoint.position, Quaternion.LookRotation(direction));
     }
 
-     private void LookAtPlayer()
+    private void LookAtPlayer()
     {
         Vector3 direction = (player.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
@@ -160,13 +166,12 @@ public class NinjaPruebas : EnemyLife
         currentState = State.Blink; 
     }
 
-     #region Damage Handling 
+    #region Damage Handling 
 
-      public override void ReceiveDamage(float damage)
+    public override void ReceiveDamage(float damage)
     {
         base.ReceiveDamage(damage);       
 
-        
         if (MovimientoJugador.bulletTimeScale < 1)
         {
             StartCoroutine(PushBack());
@@ -188,10 +193,9 @@ public class NinjaPruebas : EnemyLife
         rb.isKinematic = false; 
         enemyRenderer.material.color = Color.red; 
 
-       
         Vector3 pushDirection = (transform.position - player.position).normalized;
 
-           if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
         {
             pushForce = 10f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
@@ -226,7 +230,6 @@ public class NinjaPruebas : EnemyLife
             yield return new WaitForFixedUpdate();
         }
 
-        
         rb.isKinematic = true; 
         if (agent != null)
         {
