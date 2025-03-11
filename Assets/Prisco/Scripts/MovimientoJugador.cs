@@ -77,7 +77,7 @@ public class MovimientoJugador : MonoBehaviour
     public float dashSpeed = 20.0f; // Velocidad del dash
     public float dashDuration = 0.2f; // Duración del dash en segundos
     public float dashCooldown = 1.0f; // Tiempo de recarga del dash en segundos
-    public float postDashAttackDelay = 0.5f; // Tiempo de espera después del dash antes de poder atacar
+    public float postDashAttackDelay = 1f; // Tiempo de espera después del dash antes de poder atacar
 
     [Header("Bullet time")]
     Collider[] btColliders;
@@ -362,11 +362,13 @@ public class MovimientoJugador : MonoBehaviour
         {
             //Debug.Log("is grounded");
         }
+
+         Movimientojugador();
     }
 
     private void FixedUpdate()
     {
-        Movimientojugador();
+       
     }
     
     public void CountBTProjectiles()
@@ -412,6 +414,8 @@ public class MovimientoJugador : MonoBehaviour
 
    public void Movimientojugador()
 {
+    if (!canMove) return; // Si no puede moverse, salir del método
+
     float hor = Input.GetAxisRaw("Horizontal");
     float ver = Input.GetAxisRaw("Vertical");
     Vector3 velocity = Vector3.zero;
@@ -436,7 +440,7 @@ public class MovimientoJugador : MonoBehaviour
         }
         else
         {
-            velocity = direction * speed * Time.fixedDeltaTime;
+            velocity = direction * speed * Time.deltaTime;
         }
     }
     else
@@ -497,7 +501,9 @@ IEnumerator Dash()
     canDash = true;
 
     // Esperar antes de permitir ataques nuevamente
+    canAttack = false; // Deshabilitar ataques
     yield return new WaitForSeconds(postDashAttackDelay);
+    canAttack = true; // Habilitar ataques nuevamente
 }
 
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
@@ -530,6 +536,7 @@ public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
         yield return null;
     }
 }
+
 private Vector3 ObtenerDireccionDash()
 {
     float horizontal = Input.GetAxisRaw("Horizontal");
@@ -619,6 +626,34 @@ public Vector3 ObtenerDireccionEmpuje()
 
     return direccionEmpuje.normalized * fuerzaEmpujeAL2;
 }
+
+public Vector3 ObtenerDireccionMovimiento()
+{
+    float horizontal = Input.GetAxis("Horizontal");
+    float vertical = Input.GetAxis("Vertical");
+
+    Vector3 direccionEmpuje = Vector3.zero;
+
+    if (vertical > 0) // W key
+    {
+        direccionEmpuje += Vector3.forward;
+    }
+    else if (vertical < 0) // S key
+    {
+        direccionEmpuje += Vector3.back;
+    }
+
+    if (horizontal > 0) // D key
+    {
+        direccionEmpuje += Vector3.right;
+    }
+    else if (horizontal < 0) // A key
+    {
+        direccionEmpuje += Vector3.left;
+    }
+
+    return direccionEmpuje.normalized;
+}
   
 public void AtaqueJugador()
 {
@@ -647,25 +682,25 @@ public void AtaqueJugador()
 }
 
 
-public void hasRotatedTrue()
-{
-    hasRotated = true;
-}
-public void hasRotatedFalse()
-{
-    hasRotated = false;
-}
-public void AtaqueLigero()
-{
-    if (Input.GetButtonDown("Fire1") && !ataqueL && canAttack)
-    {     
-        ataqueL = true;
+    public void hasRotatedTrue()
+    {
+        hasRotated = true;
     }
-}
+    public void hasRotatedFalse()
+    {
+        hasRotated = false;
+    }
+    public void AtaqueLigero()
+    {
+        if (Input.GetButtonDown("Fire1") && !ataqueL && canAttack)
+        {     
+            ataqueL = true;
+        }
+    }
 
 
 
-private bool ataqueEjecutado = false;
+    private bool ataqueEjecutado = false;
     private Vector3 ultimaDireccion;
 
     public void AtaquePesado()
@@ -773,16 +808,7 @@ private IEnumerator MirarAlMousePorUnSegundo()
         ataqueD = false;
 }
 
-private void EjecutarAtaqueDistancia()
-{
-    
-    tiempoUltimoDisparo = Time.time;
-    balasActuales--;
 
-    GameObject boomerangObj = Instantiate(prefab, spawnPosition.position, spawnPosition.rotation);
-    Boomerang boomerang = boomerangObj.GetComponent<Boomerang>();
-    boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
-}
     private void RecargarBalas()
     {
         if (balasActuales < maxBalas)
@@ -846,6 +872,8 @@ public void OnAttackEndl1()
         return canDash;
     }
     #endregion priscada
+
+    public bool canMove = true; // Nueva variable para controlar el movimiento del jugador
 }
 
 
