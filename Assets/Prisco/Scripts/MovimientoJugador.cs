@@ -77,8 +77,7 @@ public class MovimientoJugador : MonoBehaviour
     public float dashSpeed = 20.0f; // Velocidad del dash
     public float dashDuration = 0.2f; // Duración del dash en segundos
     public float dashCooldown = 1.0f; // Tiempo de recarga del dash en segundos
-    public float postDashAttackDelay = 1f; // Tiempo de espera después del dash antes de poder atacar
-
+    
     [Header("Bullet time")]
     Collider[] btColliders;
     public Collider btTriggerCollider;
@@ -458,6 +457,7 @@ public Vector3 ObtenerUltimaDireccion()
 
 IEnumerator Dash()
 {
+     canAttack = false; // Deshabilitar ataques
     animator.Play("Dash");
     isDashing = true;
     canDash = false;
@@ -466,7 +466,7 @@ IEnumerator Dash()
     // Deshabilitar ataques y otras animaciones durante el dash
     enterAttack = false;
     animator.SetBool("Run", false);
-    animator.SetBool("Attack", false);
+    
 
     Vector3 dashDirection = ObtenerDireccionDash();
     if (dashDirection == Vector3.zero)
@@ -499,11 +499,9 @@ IEnumerator Dash()
     yield return new WaitForSeconds(dashCooldown);
     life.disableInvencibility();
     canDash = true;
-
-    // Esperar antes de permitir ataques nuevamente
-    canAttack = false; // Deshabilitar ataques
-    yield return new WaitForSeconds(postDashAttackDelay);
     canAttack = true; // Habilitar ataques nuevamente
+  
+   
 }
 
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
@@ -768,10 +766,20 @@ public void AtaqueDistancia()
         // Actualiza el tiempo del último disparo (si es que manejas este valor)
         tiempoUltimoDisparo = Time.time;
         
-        // Resta una bala o realiza otras lógicas necesarias
-        balasActuales--;
+    
     }
 }
+
+ private void EjecutarAtaqueDistancia()
+    {
+        
+        tiempoUltimoDisparo = Time.time;
+        balasActuales--;
+
+        GameObject boomerangObj = Instantiate(prefab, spawnPosition.position, spawnPosition.rotation);
+        Boomerang boomerang = boomerangObj.GetComponent<Boomerang>();
+        boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
+    }
 
 // Corrutina que orienta al jugador hacia donde apunta el mouse durante 1 segundo
 private IEnumerator MirarAlMousePorUnSegundo()
@@ -807,6 +815,8 @@ private IEnumerator MirarAlMousePorUnSegundo()
         enterAttack = false;
         ataqueD = false;
 }
+
+
 
 
     private void RecargarBalas()
