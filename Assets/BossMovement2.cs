@@ -364,7 +364,6 @@ public class BossMovement2 : BossLIfe
         // Activar trampas en tiempos programados, pero solo si no se han cancelado
         StartCoroutine(ActivarTrampaAnterior(zonaAnterior));
         StartCoroutine(ActivarOtrasTrampas(zonaAnterior, nuevaZona));
-        StartCoroutine(ActivarTrampaAterrizaje(nuevaZona));
     }
 
     private IEnumerator ActivarTrampaAnterior(int zonaID)
@@ -400,19 +399,6 @@ public class BossMovement2 : BossLIfe
         }
     }
 
-    private IEnumerator ActivarTrampaAterrizaje(int zonaID)
-    {
-        yield return new WaitForSeconds(5);
-
-        if (!trampasCanceladas && zonaID >= 0 && zonaID < smokeTramps.Length && smokeTramps[zonaID] != null)
-        {
-            BigDamageZone damageZone = smokeTramps[zonaID].GetComponent<BigDamageZone>();
-            if (damageZone != null)
-            {
-                damageZone.ActivateDamage();
-            }
-        }
-    }
 
     public void TormentaDeEngranajes()
     {
