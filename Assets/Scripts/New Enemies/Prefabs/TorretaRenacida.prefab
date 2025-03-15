@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5853866388133657045}
   - component: {fileID: 3443644201921514069}
   m_Layer: 0
-  m_Name: TorretaFIja
+  m_Name: TorretaRenacida
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,13 +125,14 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7974148649551593582, guid: 1092822ee64273542a97f9d4c73c50f8, type: 3}
   bulletSpeed: 10
   fireInterval: 1
-  firePoints: []
-  bulletsPerBurst: 3
-  burstInterval: 2
+  firePoints:
+  - {fileID: 4232940786428233495}
   moverse: 0
   puntoA: {fileID: 0}
   puntoB: {fileID: 0}
-  velocidadMovimiento: 2
+  velocidadMovimiento: 10
+  apuntarAlJugador: 0
+  velocidadRotacion: 2
 --- !u!1 &3871671869011191550
 GameObject:
   m_ObjectHideFlags: 0

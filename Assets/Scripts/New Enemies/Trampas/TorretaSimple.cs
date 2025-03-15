@@ -29,13 +29,22 @@ public class TorretaSimple : MonoBehaviour
     public float velocidadRotacion = 2f; // Velocidad de rotación
     private Transform jugador; // Referencia al jugador
 
+    [Header("Activation Settings")]
+    public float activationDelay = 2f; // Tiempo de delay antes de activar la torreta
+    private bool isActivated = false; // Indica si la torreta está activada
+
     void Start()
     {
-        BuscarJugador();
+        StartCoroutine(ActivateAfterDelay());
     }
 
     void Update()
     {
+        if (!isActivated)
+        {
+            return; // No hacer nada si la torreta no está activada
+        }
+
         // Ajustar el tiempo acumulado usando la escala de tiempo del bullet time
         timeSinceLastShot += Time.deltaTime * MovimientoJugador.bulletTimeScale;
 
@@ -80,6 +89,11 @@ public class TorretaSimple : MonoBehaviour
 
     void MoverTorreta()
     {
+        if (puntoA == null || puntoB == null)
+        {
+            return;
+        }
+
         Transform objetivo = moviendoHaciaB ? puntoB : puntoA;
         transform.position = Vector3.MoveTowards(transform.position, objetivo.position, velocidadMovimiento * Time.deltaTime);
 
@@ -111,5 +125,12 @@ public class TorretaSimple : MonoBehaviour
         direccion.y = 0; // Ignorar la diferencia en el eje Y
         Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, velocidadRotacion * Time.deltaTime);
+    }
+
+    IEnumerator ActivateAfterDelay()
+    {
+        yield return new WaitForSeconds(activationDelay);
+        isActivated = true;
+        BuscarJugador();
     }
 }
