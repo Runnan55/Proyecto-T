@@ -14,10 +14,7 @@ public class TorretaSimple : MonoBehaviour
 
     public List<Transform> firePoints; // Lista de Transforms desde los cuales se disparan las balas
 
-    public int bulletsPerBurst = 3; // Cantidad de balas por ráfaga
-    public float burstInterval = 2f; // Intervalo entre ráfagas
-
-    private float timeSinceLastBurst = 0f; // Tiempo desde la última ráfaga 
+    private float timeSinceLastShot = 0f; // Tiempo desde el último disparo
 
     [Header("Movement Settings")]
     public bool moverse = false; // Variable para activar el movimiento
@@ -27,15 +24,25 @@ public class TorretaSimple : MonoBehaviour
 
     private bool moviendoHaciaB = true; // Indica si se está moviendo hacia el punto B
 
+    [Header("Aiming Settings")]
+    public bool apuntarAlJugador = false; // Variable para activar el apuntado al jugador
+    public float velocidadRotacion = 2f; // Velocidad de rotación
+    private Transform jugador; // Referencia al jugador
+
+    void Start()
+    {
+        BuscarJugador();
+    }
+
     void Update()
     {
         // Ajustar el tiempo acumulado usando la escala de tiempo del bullet time
-        timeSinceLastBurst += Time.deltaTime * MovimientoJugador.bulletTimeScale;
+        timeSinceLastShot += Time.deltaTime * MovimientoJugador.bulletTimeScale;
 
-        if (timeSinceLastBurst >= burstInterval)
+        if (timeSinceLastShot >= fireInterval)
         {
-            StartCoroutine(FireBurst());
-            timeSinceLastBurst = 0f;
+            FireBullet();
+            timeSinceLastShot = 0f;
         }
 
         // Mover la torreta si la variable moverse está activada
@@ -43,14 +50,11 @@ public class TorretaSimple : MonoBehaviour
         {
             MoverTorreta();
         }
-    }
 
-    IEnumerator FireBurst()
-    {
-        for (int i = 0; i < bulletsPerBurst; i++)
+        // Apuntar al jugador si la variable apuntarAlJugador está activada
+        if (apuntarAlJugador && jugador != null)
         {
-            FireBullet();
-            yield return new WaitForSeconds(fireInterval * MovimientoJugador.bulletTimeScale);
+            ApuntarAlJugador();
         }
     }
 
@@ -71,7 +75,6 @@ public class TorretaSimple : MonoBehaviour
                     bulletScript.speed = bulletSpeed;
                 }
             }
-            
         }
     }
 
@@ -80,9 +83,33 @@ public class TorretaSimple : MonoBehaviour
         Transform objetivo = moviendoHaciaB ? puntoB : puntoA;
         transform.position = Vector3.MoveTowards(transform.position, objetivo.position, velocidadMovimiento * Time.deltaTime);
 
-        if (transform.position == objetivo.position)
+        // Verificar si la torreta ha llegado al objetivo
+        if (Vector3.Distance(transform.position, objetivo.position) < 0.1f)
         {
             moviendoHaciaB = !moviendoHaciaB;
         }
+    }
+
+    public void BuscarJugador()
+    {
+        StartCoroutine(BuscarJugadorCoroutine());
+    }
+
+    IEnumerator BuscarJugadorCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        GameObject jugadorObj = GameObject.FindWithTag("Player");
+        if (jugadorObj != null)
+        {
+            jugador = jugadorObj.transform;
+        }
+    }
+
+    void ApuntarAlJugador()
+    {
+        Vector3 direccion = jugador.position - transform.position;
+        direccion.y = 0; // Ignorar la diferencia en el eje Y
+        Quaternion rotacionObjetivo = Quaternion.LookRotation(direccion);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotacionObjetivo, velocidadRotacion * Time.deltaTime);
     }
 }
