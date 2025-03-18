@@ -12,6 +12,9 @@ public class TorretaSimple : MonoBehaviour
     [Range(0.1f, 3f)]
     public float fireInterval = 1f; // Intervalo de disparo en segundos
 
+    [Range(1, 10)]
+    public int bulletsPerBurst = 1; // Número de balas por ráfaga
+
     public List<Transform> firePoints; // Lista de Transforms desde los cuales se disparan las balas
 
     private float timeSinceLastShot = 0f; // Tiempo desde el último disparo
@@ -50,7 +53,7 @@ public class TorretaSimple : MonoBehaviour
 
         if (timeSinceLastShot >= fireInterval)
         {
-            FireBullet();
+            StartCoroutine(FireBurst());
             timeSinceLastShot = 0f;
         }
 
@@ -64,6 +67,15 @@ public class TorretaSimple : MonoBehaviour
         if (apuntarAlJugador && jugador != null)
         {
             ApuntarAlJugador();
+        }
+    }
+
+    IEnumerator FireBurst()
+    {
+        for (int i = 0; i < bulletsPerBurst; i++)
+        {
+            FireBullet();
+            yield return new WaitForSeconds(0.1f); // Pequeño retraso entre balas en la ráfaga
         }
     }
 

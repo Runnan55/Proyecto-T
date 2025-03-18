@@ -18,6 +18,11 @@ public class CrystalGimmick : MonoBehaviour
     private Renderer objectRenderer;
     private Collider objectCollider;
 
+    public int touchMax = 20;
+    public int touchCount1 = 1;
+    public int touchCount2 = 6;
+    public int touchCount3 = 11;
+
     void Start()
     {
         Invoke("FindPlayer", 1f);
@@ -32,35 +37,33 @@ public class CrystalGimmick : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider other)
-{
-    if (other.gameObject == player)
     {
-        touchCount++;
-        StartCoroutine(ChangePosition());
+        if (other.gameObject == player)
+        {
+            touchCount++;
+            StartCoroutine(ChangePosition());
 
-        if (touchCount == 1)
-        {
-            turretPrefab1 = Instantiate(turretPrefab1, turretSpawnPosition1.position, Quaternion.identity);
-        }
-        else if (touchCount == 6)
-        {
-            turretPrefab2 = Instantiate(turretPrefab2, turretSpawnPosition2.position, Quaternion.identity);
-        }
-        else if (touchCount == 11)
-        {
-            turretPrefab3 = Instantiate(turretPrefab3, turretSpawnPosition3.position, Quaternion.identity);
-        }
-        else if (touchCount == 20)
-        {
-           
-
-            if (turretPrefab1 != null) Destroy(turretPrefab1);
-            if (turretPrefab2 != null) Destroy(turretPrefab2);
-            if (turretPrefab3 != null) Destroy(turretPrefab3);
-            Destroy(gameObject);
+            if ((touchCount == touchCount1) &&  (turretPrefab1 != null))
+            {
+                turretPrefab1 = Instantiate(turretPrefab1, turretSpawnPosition1.position, Quaternion.identity);
+            }
+            else if ((touchCount == touchCount2) && (turretPrefab2 != null))
+            {
+                turretPrefab2 = Instantiate(turretPrefab2, turretSpawnPosition2.position, Quaternion.identity);
+            }
+            else if ((touchCount == touchCount3) && (turretPrefab3 != null))
+            {
+                turretPrefab3 = Instantiate(turretPrefab3, turretSpawnPosition3.position, Quaternion.identity);
+            }
+            else if (touchCount == touchMax)
+            {
+                if (turretPrefab1 != null) Destroy(turretPrefab1);
+                if (turretPrefab2 != null) Destroy(turretPrefab2);
+                if (turretPrefab3 != null) Destroy(turretPrefab3);
+                Destroy(gameObject);
+            }
         }
     }
-}
 
     private IEnumerator ChangePosition()
     {
