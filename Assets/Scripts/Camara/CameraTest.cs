@@ -7,6 +7,10 @@ using TMPro;
 
 public class CameraTest : MonoBehaviour
 {
+    public float startFov = 25;
+    public float startRotationX = 50;
+    public float startDistance = 83;
+
     public CinemachineVirtualCamera virtualCamera;
     public Slider fovSlider;
     public Slider rotationXSlider;
@@ -114,12 +118,12 @@ public class CameraTest : MonoBehaviour
     {
         if (virtualCamera != null)
         {
-            virtualCamera.m_Lens.FieldOfView = 5;
-            virtualCamera.transform.eulerAngles = new Vector3(50, 0, 0);
+            virtualCamera.m_Lens.FieldOfView = startFov;
+            virtualCamera.transform.eulerAngles = new Vector3(startRotationX, 0, 0);
 
             if (framingTransposer != null)
             {
-                framingTransposer.m_CameraDistance = 450;
+                framingTransposer.m_CameraDistance = startDistance;
             }
 
             fovSlider.value = virtualCamera.m_Lens.FieldOfView;
