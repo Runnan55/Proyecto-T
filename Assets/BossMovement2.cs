@@ -56,7 +56,9 @@ public class BossMovement2 : BossLIfe
     // === Traps & Explosions ===
     [Header("Trampas y Explosiones")]
     public GameObject explosionPrefab;
+    public GameObject explosionPrefab2;
     public GameObject barrido;
+    public GameObject barrido2;
     public GameObject engranaje;
     public GameObject gearTrapBot; // Prefab del robot trampa
     public GameObject gearTrapBot2; // Prefab del robot trampa
@@ -98,8 +100,9 @@ public class BossMovement2 : BossLIfe
         }
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         HandleMovement();
         RotateTowardsPlayer();
         
@@ -301,7 +304,7 @@ public class BossMovement2 : BossLIfe
         {
             if (Random.Range(0f, 1f) > 0.5f && Time.time > lastCooldown + cooldown)
             {
-                Barrido();
+                Barrido2();
                 lastCooldown = Time.time;
                 Debug.Log("atckd");
 
@@ -316,7 +319,7 @@ public class BossMovement2 : BossLIfe
             }
             if ( contador2 >= 6 && Time.time > lastCooldown + cooldown)
             {
-                ExplosionPropia();
+                ExplosionPropia2();
                 lastCooldown = Time.time;
                 Debug.Log("atckd");
                 contador2 = 0;
@@ -330,10 +333,21 @@ public class BossMovement2 : BossLIfe
         GameObject barridoAtk = Instantiate(barrido, coreTransform.position, coreTransform.rotation);
         barridoAtk.GetComponent<Barrido>().ExecuteSweep();
     }
+    public void Barrido2()
+    {
+        GameObject barridoAtk = Instantiate(barrido2, coreTransform.position, coreTransform.rotation);
+        barridoAtk.GetComponent<Barrido>().ExecuteSweep();
+    }
     public void ExplosionPropia()
     {
         Debug.Log("pumm");
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
+    }
+    public void ExplosionPropia2()
+    {
+        Debug.Log("pumm");
+        GameObject explosion = Instantiate(explosionPrefab2, transform.position, Quaternion.identity);
         explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
     }
     public void Engranaje()
