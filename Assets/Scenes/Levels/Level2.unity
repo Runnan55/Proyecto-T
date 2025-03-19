@@ -1608,7 +1608,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 200
+      value: 202.8
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1616,7 +1616,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 288
+      value: 285.8
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1804,7 +1804,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 8105823016056745178, guid: bd4ac6c25fa7bc04398f031bbfc452c3, type: 3}
   spawnRate: 2
-  moveSpeed: 10
+  moveSpeed: 0
 --- !u!65 &210477497
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2242,6 +2242,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09fcfffde6a1f80419e938174ce2593d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startFov: 25
+  startRotationX: 40
+  startDistance: 83
   virtualCamera: {fileID: 272595197}
   fovSlider: {fileID: 1329049515}
   rotationXSlider: {fileID: 974455135}
@@ -9207,7 +9210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 8105823016056745178, guid: bd4ac6c25fa7bc04398f031bbfc452c3, type: 3}
   spawnRate: 2
-  moveSpeed: 10
+  moveSpeed: 0
 --- !u!65 &1076555455
 BoxCollider:
   m_ObjectHideFlags: 0

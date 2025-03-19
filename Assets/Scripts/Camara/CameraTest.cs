@@ -8,7 +8,7 @@ using TMPro;
 public class CameraTest : MonoBehaviour
 {
     public float startFov = 25;
-    public float startRotationX = 50;
+    public float startRotationX = 40;
     public float startDistance = 83;
 
     public CinemachineVirtualCamera virtualCamera;
