@@ -4,13 +4,31 @@ using UnityEngine;
 
 public class dañobalalinea : MonoBehaviour
 {
-    
-     public float damage = 5f;
+    public float damage = 5f;
 
-    private Life playerLife;
-    void Awake()
-    {        
-         playerLife = GameObject.FindGameObjectWithTag("Player").GetComponent<Life>();
+      [SerializeField] private MovimientoJugador movimientoJugador;
+      [SerializeField] private Life playerLife;
+
+    
+
+    void Start()
+    {
+        StartCoroutine(FindPlayerWithDelay());
+    }
+
+    private IEnumerator FindPlayerWithDelay()
+    {
+        yield return new WaitForSeconds(1f); // Ajusta el delay según sea necesario
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerLife = player.GetComponent<Life>();
+            movimientoJugador = player.GetComponent<MovimientoJugador>();
+        }
+        else
+        {
+            
+        }
     }
 
     // Update is called once per frame
@@ -30,11 +48,8 @@ public class dañobalalinea : MonoBehaviour
             }
             else
             {
-                Debug.LogError("playerLife is not initialized.");
+               
             }
-
-            
         }
-       
     }
 }
