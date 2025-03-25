@@ -39,6 +39,7 @@ public class MovimientoJugador : MonoBehaviour
     public static bool ataqueL = false; 
     public static bool ataqueP = false; 
     public static bool ataqueD = false;  
+    public static bool ataqueD2 = false;
     public Collider ataqueCollider;
     public MeshRenderer ataqueMesh;
     public float rangoMaximo = 10.0f;
@@ -48,6 +49,7 @@ public class MovimientoJugador : MonoBehaviour
     public float tiempoEsperaAtaque = 3.0f; 
     private float tiempoUltimoAtaque;   
     public static bool canAttack = true;
+    public bool canChargeShot = true; // Nueva variable para controlar el disparo cargado
 
     [Header("Distance Settings")]  
     public GameObject prefab;
@@ -500,7 +502,6 @@ IEnumerator Dash()
     life.disableInvencibility();
     canDash = true;
     canAttack = true; // Habilitar ataques nuevamente
-  
    
 }
 
@@ -749,24 +750,78 @@ public void AtaqueDistancia()
 {
     if (Input.GetButtonDown("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
     {
-        // Reproduce el sonido del disparo
-        FMODUnity.RuntimeManager.PlayOneShot(shot);
-
-        // Activa las banderas de ataque
-        enterAttack = true;
-        ataqueD = true;
-        
-        // Reinicia (o inicia) la corrutina que orienta al jugador hacia el mouse
-        if (mirarCoroutine != null)
+        if (!canChargeShot)
         {
-            StopCoroutine(mirarCoroutine);
+            EjecutarDisparoNormal(); // Disparo normal si el disparo cargado está desactivado
         }
-        mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
-        
-        // Actualiza el tiempo del último disparo (si es que manejas este valor)
-        tiempoUltimoDisparo = Time.time;
-        
-    
+        else
+        {
+            StartCoroutine(DisparoNormalOCargado()); // Lógica actual si el disparo cargado está activado
+        }
+    }
+}
+
+private void EjecutarDisparoNormal()
+{
+    FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo normal
+    Debug.Log("Disparo normal ejecutado");
+    enterAttack = true;
+    ataqueD = true;
+
+    if (mirarCoroutine != null)
+    {
+        StopCoroutine(mirarCoroutine);
+    }
+    mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
+
+    tiempoUltimoDisparo = Time.time;
+}
+
+private IEnumerator DisparoNormalOCargado()
+{
+    float tiempoCarga = 0f;
+    bool disparoCargado = false;
+    ataqueD2 = true;
+
+    canMove = false; // Deshabilitar movimiento del jugador
+
+    while (Input.GetButton("Fire2"))
+    {
+        tiempoCarga += Time.deltaTime;
+
+        // Mirar hacia donde apunta el ratón
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
+        {
+            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            Vector3 directionToLook = (targetPosition - transform.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+            transform.rotation = targetRotation;
+        }
+
+        if (tiempoCarga >= 1f && canChargeShot) // Verificar si el disparo cargado está habilitado
+        {
+            mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
+            disparoCargado = true;
+            break;
+        }
+
+        yield return null;
+    }
+
+    canMove = true; // Habilitar movimiento del jugador nuevamente
+
+    if (disparoCargado)
+    {
+        FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo cargado
+        Debug.Log("Disparo cargado ejecutado");
+        animator.Play("AttackD 0");
+        // Lógica para disparo cargado
+    }
+    else
+    {
+        EjecutarDisparoNormal(); // Ejecutar disparo normal si no se carga
     }
 }
 

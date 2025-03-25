@@ -42,6 +42,7 @@ public class Distance : StateMachineBehaviour
        MovimientoJugador.ataqueL = false;    
        MovimientoJugador.ataqueP = false;
        MovimientoJugador.ataqueD = false; 
+       MovimientoJugador.ataqueD2 = false; 
 
        MovimientoJugador.speed = 15;  
         

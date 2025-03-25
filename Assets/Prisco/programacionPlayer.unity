@@ -894,6 +894,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  movimientoJugador: {fileID: 0}
+  playerLife: {fileID: 0}
 --- !u!1001 &675746750
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1206,6 +1208,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  movimientoJugador: {fileID: 0}
+  playerLife: {fileID: 0}
 --- !u!1 &1060654784
 GameObject:
   m_ObjectHideFlags: 0
@@ -1533,6 +1537,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  movimientoJugador: {fileID: 0}
+  playerLife: {fileID: 0}
 --- !u!1 &1091869233
 GameObject:
   m_ObjectHideFlags: 0
@@ -1597,13 +1603,15 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8541820252770156085, guid: 0e9b6b964dd0a1f4c9a859777227ffa6, type: 3}
   bulletSpeed: 20
   fireInterval: 0.5
-  firePoints: []
   bulletsPerBurst: 3
-  burstInterval: 3
+  firePoints: []
   moverse: 0
   puntoA: {fileID: 0}
   puntoB: {fileID: 0}
   velocidadMovimiento: 2
+  apuntarAlJugador: 0
+  velocidadRotacion: 2
+  activationDelay: 2
 --- !u!4 &1106035620
 Transform:
   m_ObjectHideFlags: 0
@@ -1652,13 +1660,15 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8541820252770156085, guid: 0e9b6b964dd0a1f4c9a859777227ffa6, type: 3}
   bulletSpeed: 20
   fireInterval: 0.5
-  firePoints: []
   bulletsPerBurst: 3
-  burstInterval: 7
+  firePoints: []
   moverse: 0
   puntoA: {fileID: 0}
   puntoB: {fileID: 0}
   velocidadMovimiento: 2
+  apuntarAlJugador: 0
+  velocidadRotacion: 2
+  activationDelay: 2
 --- !u!4 &1133122222
 Transform:
   m_ObjectHideFlags: 0
@@ -1998,6 +2008,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  movimientoJugador: {fileID: 0}
+  playerLife: {fileID: 0}
 --- !u!1 &1241522164 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2890014409257358716, guid: 1708d0ea72b12a243b0bf36ac5b4baad, type: 3}
@@ -2091,6 +2103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  movimientoJugador: {fileID: 0}
+  playerLife: {fileID: 0}
 --- !u!1001 &1495911185
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3041,6 +3055,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  movimientoJugador: {fileID: 0}
+  playerLife: {fileID: 0}
 --- !u!1001 &1306679672473582021
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3370,7 +3386,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8431527252385674206, guid: 361a554120b7ebd409c57fe7d61adacb, type: 3}
+      propertyPath: canChargeShot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8431527252385674206, guid: 361a554120b7ebd409c57fe7d61adacb, type: 3}
       propertyPath: postDashAttackDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8431527252385674206, guid: 361a554120b7ebd409c57fe7d61adacb, type: 3}
+      propertyPath: desbloquearDisparoCargado
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8495414738482100248, guid: 361a554120b7ebd409c57fe7d61adacb, type: 3}

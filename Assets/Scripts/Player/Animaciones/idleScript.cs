@@ -35,6 +35,12 @@ public class idleScript : StateMachineBehaviour
         {                         
              MovimientoJugador.instance.animator.Play("Transition3P 0 0");
         }
+
+          if (MovimientoJugador.ataqueD2)
+        {                         
+             MovimientoJugador.instance.animator.Play("3p");
+        }
+   
         
        
     }
