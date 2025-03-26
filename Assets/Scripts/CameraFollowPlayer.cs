@@ -17,16 +17,23 @@ public class CameraFollowPlayer : MonoBehaviour
     {
         yield return new WaitForSeconds(delayTime);
 
-        GameObject player = GameObject.FindWithTag("Player");
-        
-        if (player != null)
+        if (virtualCamera.Follow == null) // Verifica si el seguimiento está desactivado
         {
-            virtualCamera.Follow = player.transform;
-        }
+            GameObject player = GameObject.FindWithTag("Player");
 
+            if (player != null)
+            {
+                virtualCamera.Follow = player.transform;
+                Debug.Log("Camera follow asignado al jugador.");
+            }
+            else
+            {
+                Debug.LogWarning("Camera follow: Player no encontrado");
+            }
+        }
         else
         {
-            Debug.LogWarning("Camera follow: Player no encontrado");
+            Debug.Log("Camera follow ya está configurado. No se reasigna.");
         }
     }
 }
