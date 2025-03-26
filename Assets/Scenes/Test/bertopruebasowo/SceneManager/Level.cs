@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Cinemachine;
 
 [System.Serializable]
 public class EnemySpawner
@@ -56,36 +55,8 @@ public class Level : MonoBehaviour
     private int defeatedEnemies = 0;
     private bool hasPlayerEntered = false;
 
-    [Header("Camera config")]
-    public CinemachineVirtualCamera virtualCamera;
-    public float targetFov = 25;
-    public float targetRotationX = 40;
-    public float targetDistance = 83;
-    public bool disableCameraFollowOnStart = false;
-    public Vector3 newPosition = new Vector3(0, 10, -10);
-
-    private CinemachineFramingTransposer framingTransposer;
-
-    private void Start()
-    {
-        if (virtualCamera != null)
-        {
-            framingTransposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (disableCameraFollowOnStart)
-        {
-            disableCameraFollow();
-        }
-
-        if (!disableCameraFollowOnStart)
-        {
-            enableCameraFollow();
-        }
-        
         if (other.CompareTag("Player") && !hasPlayerEntered)
         {
             if (entranceDoor != null)
@@ -105,25 +76,6 @@ public class Level : MonoBehaviour
                     timerStarted = true;
                 }
             }
-
-            AdjustCamera();
-        }
-    }
-
-    private void AdjustCamera()
-    {
-        if (virtualCamera != null)
-        {
-            virtualCamera.m_Lens.FieldOfView = targetFov;
-
-            Vector3 rotation = virtualCamera.transform.eulerAngles;
-            rotation.x = targetRotationX;
-            virtualCamera.transform.eulerAngles = rotation;
-
-            if (framingTransposer != null)
-            {
-                framingTransposer.m_CameraDistance = targetDistance;
-            }
         }
     }
 
@@ -140,6 +92,7 @@ public class Level : MonoBehaviour
 
     private IEnumerator SpawnWave(EnemyWave wave)
     {
+        // Agrupamos los spawns por su delay
         Dictionary<float, List<EnemySpawner>> spawnsPorTiempo = new Dictionary<float, List<EnemySpawner>>();
 
         foreach (EnemySpawner enemySpawner in wave.enemySpawns)
@@ -166,6 +119,7 @@ public class Level : MonoBehaviour
                     isFirstEnemySpawned = true;
                 }
 
+                // Mostrar advertencia (warning) antes de spawnear al enemigo
                 GameObject warningInstance = Instantiate(warning, enemySpawner.spawnPoint.position, Quaternion.identity);
                 if (Camera.main != null)
                 {
@@ -174,6 +128,7 @@ public class Level : MonoBehaviour
                 yield return new WaitForSeconds(0.25f);
                 Destroy(warningInstance);
 
+                // Instanciar al enemigo
                 EnemyLife newEnemy = Instantiate(enemySpawner.enemy, enemySpawner.spawnPoint.position, Quaternion.identity);
                 Vector3 escalaOriginal = newEnemy.transform.localScale;
                 Quaternion rotacionOriginal = newEnemy.transform.rotation;
@@ -190,7 +145,9 @@ public class Level : MonoBehaviour
 
     public void EnemyDefeated(EnemyLife enemy)
     {
+        //Debug.Log("Enemy defeated");
         defeatedEnemies--;
+        //Debug.Log("Defeated enemies: " + defeatedEnemies);
 
         if (defeatedEnemies <= 0)
         {
@@ -206,6 +163,7 @@ public class Level : MonoBehaviour
                     StartCoroutine(exitDoor.Open());
                 }
 
+                // Si se activa el teletransporte y/o cambio de sala, se llama a la corrutina unificada
                 if (teleportAfterLastWave || changeRooms)
                 {
                     StartCoroutine(HandleRoomTransitionAndTeleport());
@@ -213,8 +171,11 @@ public class Level : MonoBehaviour
 
                 if (changeSceneAfterLastWave)
                 {
+                    // Guardar la siguiente escena en PlayerPrefs
                     PlayerPrefs.SetString("SceneToLoad", sceneToChange);
                     PlayerPrefs.Save();
+
+                    // Pantalla de carga
                     SceneManager.LoadScene("LoadingScene");
                 }
 
@@ -233,8 +194,16 @@ public class Level : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Corrutina unificada para activar la siguiente sala (si se requiere), teletransportar al jugador y desactivar la sala actual.
+    /// El orden es:
+    /// 1. Activar la siguiente sala.
+    /// 2. Teletransportar al jugador.
+    /// 3. Desactivar la sala actual.
+    /// </summary>
     private IEnumerator HandleRoomTransitionAndTeleport()
     {
+        // Paso 1: Activar la siguiente sala (si se ha indicado cambiar de sala)
         if (changeRooms && nextRoom != null)
         {
             if (!isLastRoom)
@@ -244,6 +213,7 @@ public class Level : MonoBehaviour
             }
         }
 
+        // Paso 2: Teletransportar al jugador (si se ha indicado)
         if (teleportAfterLastWave && teleporter != null && teleporter.exitPoint != null)
         {
             yield return new WaitForSeconds(teleportDelay);
@@ -255,8 +225,10 @@ public class Level : MonoBehaviour
             }
         }
 
+        // Paso 3: Desactivar la sala actual (si se ha indicado cambiar de sala)
         if (changeRooms && actualRoom != null)
         {
+            // Si se realizó teletransporte, esperar un poco antes de desactivar la sala actual
             if (teleportAfterLastWave)
             {
                 yield return new WaitForSeconds(1.5f);
@@ -266,61 +238,26 @@ public class Level : MonoBehaviour
         }
     }
 
-    void enableCameraFollow()
+    // Las siguientes corrutinas antiguas se pueden eliminar, ya que se han integrado en HandleRoomTransitionAndTeleport.
+    /*
+    private IEnumerator ChangeRoomsWithDelay()
     {
-        Debug.Log("Camera follow habilitado.");
-        if (virtualCamera != null)
-        {
-            // Busca el script CameraFollowPlayer en la MainCamera
-            CameraFollowPlayer cameraFollowPlayer = Camera.main?.GetComponent<CameraFollowPlayer>();
-            if (cameraFollowPlayer != null)
-            {
-                cameraFollowPlayer.enabled = false;
-                Debug.Log("CameraFollowPlayer desactivado para habilitar el seguimiento manual.");
-            }
-
-            // Asigna el jugador como objetivo de la cámara
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                virtualCamera.Follow = player.transform;
-                Debug.Log("Camera follow habilitado y asignado al jugador.");
-            }
-            else
-            {
-                Debug.LogWarning("Player object not found. Camera follow no habilitado.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("virtualCamera no está asignada.");
-        }
+        nextRoom.SetActive(true);
+        Debug.Log("activando nextroom: " + nextRoom);
+        yield return new WaitForSeconds(1.5f);
+        actualRoom.SetActive(false);
+        Debug.Log("desactivando actualroom: " + actualRoom);
     }
 
-    void disableCameraFollow()
+    private IEnumerator TeleportPlayerWithDelay()
     {
-        Debug.Log("Camera follow deshabilitado.");
-        if (virtualCamera != null)
+        yield return new WaitForSeconds(teleportDelay);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null && teleporter.exitPoint != null)
         {
-            // Desactiva el seguimiento de la cámara
-            virtualCamera.Follow = null;
-
-            // Cambia la posición de la cámara a una posición específica
-            virtualCamera.transform.position = newPosition;
-
-            // Busca el script CameraFollowPlayer en la MainCamera
-            CameraFollowPlayer cameraFollowPlayer = Camera.main?.GetComponent<CameraFollowPlayer>();
-            if (cameraFollowPlayer != null)
-            {
-                cameraFollowPlayer.enabled = false;
-                Debug.Log("CameraFollowPlayer desactivado para evitar conflictos.");
-            }
-
-            Debug.Log("Camera follow desactivado y posición de la cámara ajustada.");
-        }
-        else
-        {
-            Debug.LogWarning("virtualCamera no está asignada.");
+            teleporter.Teleport(player, teleporter.exitPoint);
+            Debug.Log("Player teleported to exit portal.");
         }
     }
+    */
 }

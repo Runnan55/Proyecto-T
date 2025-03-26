@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1902,7 +1902,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 237
+      value: 201.37
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1910,7 +1910,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 237
+      value: 211.62
       objectReference: {fileID: 0}
     - target: {fileID: 742522920499424951, guid: 9e506b08d64f8fa4ebaffdac11735445, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2974,12 +2974,6 @@ MonoBehaviour:
     - enemy: {fileID: 6470327828826902778, guid: 5c1154f31a28e5a4e8d5c14a0cf92d1a, type: 3}
       spawnPoint: {fileID: 478331771}
       spawnDelay: 1
-  virtualCamera: {fileID: 272595197}
-  targetFov: 25
-  targetRotationX: 40
-  targetDistance: 83
-  disableCameraFollowOnStart: 0
-  newPosition: {x: 0, y: 10, z: -10}
 --- !u!1 &283860564
 GameObject:
   m_ObjectHideFlags: 0
@@ -6207,8 +6201,6 @@ GameObject:
   - component: {fileID: 674549825}
   - component: {fileID: 674549824}
   - component: {fileID: 674549823}
-  - component: {fileID: 674549827}
-  - component: {fileID: 674549826}
   m_Layer: 0
   m_Name: Cylinder (3)
   m_TagString: Untagged
@@ -6306,67 +6298,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 674549821}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &674549826
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 674549821}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0000002, y: 4, z: 1.0000004}
-  m_Center: {x: 0.00000005960465, y: 0, z: -0.00000008940698}
---- !u!114 &674549827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 674549821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bea3ccf30bb42c48b4b0bf8422587c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entranceDoor: {fileID: 0}
-  exitDoor: {fileID: 0}
-  teleportAfterLastWave: 0
-  teleportDelay: 0.1
-  teleporter: {fileID: 0}
-  changeSceneAfterLastWave: 0
-  sceneToChange: NombreDeLaEscena
-  changeRooms: 0
-  isLastRoom: 0
-  actualRoom: {fileID: 0}
-  nextRoom: {fileID: 0}
-  modifyTime: 0
-  maxTime: 600
-  warning: {fileID: 0}
-  waveStart:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  waves: []
-  virtualCamera: {fileID: 272595197}
-  targetFov: 57
-  targetRotationX: 70
-  targetDistance: 60
-  disableCameraFollowOnStart: 1
-  newPosition: {x: 200, y: 56, z: 400}
 --- !u!1 &677958583
 GameObject:
   m_ObjectHideFlags: 0
@@ -6700,12 +6631,6 @@ MonoBehaviour:
     - enemy: {fileID: 6470327828826902778, guid: 5c1154f31a28e5a4e8d5c14a0cf92d1a, type: 3}
       spawnPoint: {fileID: 1051602203}
       spawnDelay: 3
-  virtualCamera: {fileID: 272595197}
-  targetFov: 25
-  targetRotationX: 40
-  targetDistance: 80
-  disableCameraFollowOnStart: 0
-  newPosition: {x: 0, y: 10, z: -10}
 --- !u!1 &695633176 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2511182247165347567, guid: 3802ca8d9f5396c4ab038a7ccd3efdbd, type: 3}
@@ -12184,12 +12109,6 @@ MonoBehaviour:
     - enemy: {fileID: 6470327828826902778, guid: 5c1154f31a28e5a4e8d5c14a0cf92d1a, type: 3}
       spawnPoint: {fileID: 178570546}
       spawnDelay: 3
-  virtualCamera: {fileID: 272595197}
-  targetFov: 25
-  targetRotationX: 40
-  targetDistance: 83
-  disableCameraFollowOnStart: 0
-  newPosition: {x: 0, y: 10, z: -10}
 --- !u!1001 &1189547904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15157,12 +15076,6 @@ MonoBehaviour:
     - enemy: {fileID: 7438179824193479034, guid: e1dca894908d041489f6f15c39f70d5b, type: 3}
       spawnPoint: {fileID: 232579338}
       spawnDelay: 1
-  virtualCamera: {fileID: 272595197}
-  targetFov: 25
-  targetRotationX: 40
-  targetDistance: 80
-  disableCameraFollowOnStart: 0
-  newPosition: {x: 0, y: 10, z: -10}
 --- !u!1 &1393675359
 GameObject:
   m_ObjectHideFlags: 0
@@ -16596,12 +16509,6 @@ MonoBehaviour:
     - enemy: {fileID: 7438179824193479034, guid: e1dca894908d041489f6f15c39f70d5b, type: 3}
       spawnPoint: {fileID: 1232545423}
       spawnDelay: 1
-  virtualCamera: {fileID: 272595197}
-  targetFov: 25
-  targetRotationX: 40
-  targetDistance: 83
-  disableCameraFollowOnStart: 0
-  newPosition: {x: 0, y: 10, z: -10}
 --- !u!1 &1520201641
 GameObject:
   m_ObjectHideFlags: 0
@@ -20556,8 +20463,6 @@ GameObject:
   - component: {fileID: 1895414734}
   - component: {fileID: 1895414733}
   - component: {fileID: 1895414732}
-  - component: {fileID: 1895414735}
-  - component: {fileID: 1895414736}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
@@ -20652,67 +20557,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1895414730}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1895414735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1895414730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bea3ccf30bb42c48b4b0bf8422587c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entranceDoor: {fileID: 0}
-  exitDoor: {fileID: 0}
-  teleportAfterLastWave: 0
-  teleportDelay: 0.1
-  teleporter: {fileID: 0}
-  changeSceneAfterLastWave: 0
-  sceneToChange: NombreDeLaEscena
-  changeRooms: 0
-  isLastRoom: 0
-  actualRoom: {fileID: 0}
-  nextRoom: {fileID: 0}
-  modifyTime: 0
-  maxTime: 600
-  warning: {fileID: 0}
-  waveStart:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  waves: []
-  virtualCamera: {fileID: 272595197}
-  targetFov: 35
-  targetRotationX: 70
-  targetDistance: 60
-  disableCameraFollowOnStart: 0
-  newPosition: {x: 0, y: 10, z: -10}
---- !u!65 &1895414736
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1895414730}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0000002, y: 3.400446, z: 1.0000004}
-  m_Center: {x: 0.000000054495676, y: 0.70022297, z: -0.00000010899135}
 --- !u!1001 &1901519436
 PrefabInstance:
   m_ObjectHideFlags: 0
