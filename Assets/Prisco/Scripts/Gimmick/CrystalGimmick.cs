@@ -86,4 +86,17 @@ public class CrystalGimmick : MonoBehaviour
         objectRenderer.enabled = true;
         objectCollider.enabled = true;
     }
+
+    void Update()
+    {
+        if (touchCount >= touchMax)
+        {
+            PriscoGuapo();
+        }
+    }
+
+    void PriscoGuapo()
+    {
+        //esta pal prisco🖕
+    }
 }
