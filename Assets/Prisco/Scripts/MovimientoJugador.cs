@@ -286,18 +286,6 @@ public class MovimientoJugador : MonoBehaviour
 
   void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            canChargeShot = !canChargeShot;
-            Debug.Log("canChargeShot " +canChargeShot);
-        }
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            canChargeShot = !canChargeShot;
-            Debug.Log("canChargeShot " +canChargeShot);
-        }
-
         if (Input.GetKeyDown(KeyCode.G))
         {
             godMode = !godMode;
