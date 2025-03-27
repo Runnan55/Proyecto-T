@@ -52,7 +52,8 @@ public class MovimientoJugador : MonoBehaviour
     public bool canChargeShot = true; // Nueva variable para controlar el disparo cargado
 
     [Header("Distance Settings")]  
-    public GameObject prefab;
+    public GameObject prefabDisparoNormal;
+    public GameObject prefabDisparoCargado;
     public Transform spawnPosition;
     public int maxBalas = 3;
     public int balasActuales = 3;
@@ -781,7 +782,7 @@ private IEnumerator DisparoNormalOCargado()
 {
     float tiempoCarga = 0f;
     bool disparoCargado = false;
-    ataqueD2 = true;
+    
 
     canMove = false; // Deshabilitar movimiento del jugador
 
@@ -817,6 +818,7 @@ private IEnumerator DisparoNormalOCargado()
         FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo cargado
         Debug.Log("Disparo cargado ejecutado");
         animator.Play("AttackD 0");
+        ataqueD2 = true;
         // Lógica para disparo cargado
     }
     else
@@ -824,6 +826,16 @@ private IEnumerator DisparoNormalOCargado()
         EjecutarDisparoNormal(); // Ejecutar disparo normal si no se carga
     }
 }
+private void EjecutarAtaqueDistanciaCargado()
+    {
+        
+        tiempoUltimoDisparo = Time.time;
+        balasActuales--;
+
+        GameObject boomerangObj = Instantiate(prefabDisparoCargado, spawnPosition.position, spawnPosition.rotation);
+        DisparoCargado boomerang = boomerangObj.GetComponent<DisparoCargado>();
+        boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
+    }
 
  private void EjecutarAtaqueDistancia()
     {
@@ -831,7 +843,7 @@ private IEnumerator DisparoNormalOCargado()
         tiempoUltimoDisparo = Time.time;
         balasActuales--;
 
-        GameObject boomerangObj = Instantiate(prefab, spawnPosition.position, spawnPosition.rotation);
+        GameObject boomerangObj = Instantiate(prefabDisparoNormal, spawnPosition.position, spawnPosition.rotation);
         Boomerang boomerang = boomerangObj.GetComponent<Boomerang>();
         boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
     }

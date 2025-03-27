@@ -8,6 +8,8 @@ public class EnemyLife : MonoBehaviour
 {
     [Header("Vida del Enemigo")]
     public float _hp = 100f;
+
+     public bool antiRevivir = false;
     
     private float maxHp;
 
@@ -31,16 +33,7 @@ public class EnemyLife : MonoBehaviour
                 healthBar.gameObject.SetActive(_hp < maxHp);
                 healthBar.value = _hp / maxHp;
             }
-
-            if (health <= 0)
-            {
-                if (level != null)
-                {
-                    //level.EnemyDefeated(this);
-                }
-                StartCoroutine(DestroyHealthBar());
-                Destroy(gameObject, 0.2f); // Destruye el objeto después de 0.2 segundos
-            }
+          
         }
     }
 
@@ -83,20 +76,30 @@ public class EnemyLife : MonoBehaviour
         {
             StartCoroutine(ChangeMaterialTemporarily());
         }
+        CalcularDamage();
 
+        if(health <= 0 && !isDefeated)
+        {
+            StartCoroutine(DestroyHealthBar());
+        }
+        
+        FMODUnity.RuntimeManager.PlayOneShot(hit);
+        ShowFloatingText(damage);
+    }
+
+    public virtual void CalcularDamage()
+    {
+        
         if (health <= 0 && !isDefeated)
         {
             isDefeated = true; // Marca al enemigo como derrotado
             if (level != null)
             {
                 level.EnemyDefeated(this);
-            }
-            StartCoroutine(DestroyHealthBar());
+            }       
+              
             Destroy(gameObject, 0.2f); // Destruye el objeto después de 0.2 segundos
         }
-        
-        FMODUnity.RuntimeManager.PlayOneShot(hit);
-        ShowFloatingText(damage);
     }
 
     void ShowFloatingText(float amount)

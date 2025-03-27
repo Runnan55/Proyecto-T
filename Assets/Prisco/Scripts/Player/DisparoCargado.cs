@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Boomerang : MonoBehaviour
+public class DisparoCargado : MonoBehaviour
 {
-    public float velocidad = 10f; 
+ public float velocidad = 10f; 
     public float magnetRange = 5f;
     public float magnetSpeed = 5f;
     public float serpentineFrequency = 2f; 

@@ -264,6 +264,7 @@ public class Attacks : StateMachineBehaviour
             case "AttackD":
                 MovimientoJugador.enterAttack = false;
                 MovimientoJugador.ataqueD = false;
+                MovimientoJugador.ataqueD2 = false;
                 MovimientoJugador.speed = 15;
                 break;
             case "Attack3P":
