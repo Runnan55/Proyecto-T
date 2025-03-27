@@ -11,7 +11,7 @@ public class dOMMY : EnemyLife
     public Mesh revivirMesh; // Mesh to use while reviving
     private Mesh originalMesh;
     private MeshFilter meshFilter;
-    public float areaRadius = 5f; // Radius of the area effect
+ 
     public GameObject areaEffectPrefab; // Prefab for the area effect visual
     #endregion
 
@@ -44,13 +44,6 @@ public class dOMMY : EnemyLife
                 Destroy(gameObject, 0.2f);
             }
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        // Draw the area effect in the Scene view
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, areaRadius);
     }
     #endregion
 
@@ -87,12 +80,10 @@ public class dOMMY : EnemyLife
 
     private void ApplyAreaEffect()
     {
-        // Instantiate the area effect visual in the Game view
+        // Instantiate the area effect prefab without applying any effect
         if (areaEffectPrefab != null)
         {
-            GameObject effect = Instantiate(areaEffectPrefab, transform.position, Quaternion.identity);
-            effect.transform.localScale = Vector3.one * areaRadius * 2; // Adjust scale to match areaRadius
-            Destroy(effect, 0.3f); // Destroy the effect after 0.3 seconds
+            Instantiate(areaEffectPrefab, transform.position, Quaternion.identity);
         }
     }
     #endregion
