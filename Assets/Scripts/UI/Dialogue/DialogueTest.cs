@@ -8,11 +8,14 @@ public class DialogueTest : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            DialogueManager.Instance.CreateDialogue("Jordan", "Hola perros. creepypasta de skibidi toilet, era un día como cualquier otro solo que una swifty no me discrimino por mi color de piel pero no le tome importancia");
-            DialogueManager.Instance.CreateDialogue("Jordan", "¿Qué tal?");
-            DialogueManager.Instance.CreateDialogue("Dúo dinámico", "Bien, ¿y tú?");
-            DialogueManager.Instance.CreateDialogue("Jordan", "Vale tío.");
-            DialogueManager.Instance.CreateDialogue("Dúo dinámico", "Alejandro García Álvarez, un nombre que evoca horror. Responsable de crímenes de lesa humanidad en Sudán, su legado es una mancha imborrable. Torturas, desapariciones y ejecuciones marcaron su paso, sembrando terror y dolor en miles.");
+            DialogueManager.Instance.CreateDialogue("Kael", "Donde diablos estoy, no veo nada y aparte solo noto calor y mucha pobredumbre");
+            DialogueManager.Instance.CreateDialogue("Kael", "Espera, ya se, estoy en la sala de maáquinas, estoy cerca entonces");
+            DialogueManager.Instance.CreateDialogue("Lord Watt", "Vaya, vaya, si es el magnifico y sin poderes guardian del tiempo");
+            DialogueManager.Instance.CreateDialogue("Kael", "Watt, devuelveme la parte del reloj, si no lo haces creareis un pliegue temporal y destruiremos la realidad tal y como la conocemos");
+            DialogueManager.Instance.CreateDialogue("Lord Watt", "Ah viejo amigo, eso no va a ser posible. Gracias a tu maravilloso reloj, hemos aumentado la produccion del mundo un 500%, ¿piensas que te lo vamos a devolver asi tal que asi?");
+            DialogueManager.Instance.CreateDialogue("Lord Watt", "Si quieres recuperar tu relojito, adentrate hasta la sala de calderas, te estoy esperando impaciente...");
+
+            Destroy(gameObject, 1f);
         }
     }
 }
