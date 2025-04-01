@@ -2,26 +2,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using UnityEngine.AI;
+
 
 public class dOMMY : EnemyLife
 {
     #region Variables
     public float tiempoRevivir = 3f;
-    public Mesh revivirMesh; // Mesh to use while reviving
+    public Mesh revivirMesh; 
     private Mesh originalMesh;
-    private MeshFilter meshFilter;
- 
-    public GameObject areaEffectPrefab; // Prefab for the area effect visual
+    private MeshFilter meshFilter; 
+    public GameObject areaEffectPrefab;
     #endregion
 
     #region Unity Methods
     void Start()
     {
-        meshFilter = GetComponentInChildren<MeshFilter>(); // Get the MeshFilter component
+        meshFilter = GetComponentInChildren<MeshFilter>(); 
         if (meshFilter != null)
         {
-            originalMesh = meshFilter.mesh; // Store the original mesh
+            originalMesh = meshFilter.mesh; 
         }
     }
 
@@ -29,8 +29,7 @@ public class dOMMY : EnemyLife
     {
         if (other.GetComponent<DisparoCargado>() != null)
         {
-            antiRevivir = true; // Set antiRevivir immediately
-
+            antiRevivir = true; 
             if (health <= 0)
             {
                 StopAllCoroutines();
@@ -54,20 +53,20 @@ public class dOMMY : EnemyLife
         {
             if (antiRevivir)
             {
-                ApplyAreaEffect(); // Apply area effect if antiRevivir is true
+                ApplyAreaEffect();
 
                 if (level != null)
                 {
                     level.EnemyDefeated(this);
                 }
 
-                Destroy(gameObject, 0.2f); // Destroy the enemy
+                Destroy(gameObject, 0.2f); 
             }
             else
             {
-                if (!antiRevivir) // Double-check antiRevivir before reviving
+                if (!antiRevivir)
                 {
-                    StartCoroutine(DelayedRevivir()); // Use a delayed coroutine
+                    StartCoroutine(DelayedRevivir()); 
                 }
             }
         }
@@ -80,7 +79,7 @@ public class dOMMY : EnemyLife
 
     private void ApplyAreaEffect()
     {
-        // Instantiate the area effect prefab without applying any effect
+        
         if (areaEffectPrefab != null)
         {
             Instantiate(areaEffectPrefab, transform.position, Quaternion.identity);
@@ -91,20 +90,20 @@ public class dOMMY : EnemyLife
     #region Reviving Mechanic
     private IEnumerator DelayedRevivir()
     {
-        yield return null; // Wait for the next frame to ensure antiRevivir is set
-        StartCoroutine(Revivir()); // Start the Revivir coroutine
+        yield return null; 
+        StartCoroutine(Revivir()); 
     }
 
     IEnumerator Revivir()
     {
-        if (antiRevivir) yield break; // Prevent execution if antiRevivir is true
+        if (antiRevivir) yield break; 
 
         Debug.Log("reviviendo");
         if (revivirMesh != null && meshFilter != null)
         {
-            meshFilter.mesh = revivirMesh; // Change to the reviving mesh
+            meshFilter.mesh = revivirMesh; 
             yield return new WaitForSeconds(tiempoRevivir);
-            meshFilter.mesh = originalMesh; // Restore the original mesh
+            meshFilter.mesh = originalMesh; 
         }
         else
         {

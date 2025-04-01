@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9195202438361791363}
   - component: {fileID: 2763613694402501565}
   - component: {fileID: 6907179700855247023}
-  - component: {fileID: -1606500834387950803}
+  - component: {fileID: 7079809391564762785}
   m_Layer: 0
   m_Name: Flecha
   m_TagString: Projectile
@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4182066159404826401}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.74091, z: 0, w: 0.6716044}
+  m_LocalRotation: {x: 0, y: 0.7409101, z: 0, w: 0.6716043}
   m_LocalPosition: {x: 0, y: 1.49, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -36,7 +36,7 @@ Transform:
   - {fileID: 6581182425769830492}
   - {fileID: 3286498568035516037}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 95.618, z: 0}
 --- !u!33 &9195202438361791363
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -106,9 +106,9 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.75
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-1606500834387950803
+--- !u!114 &7079809391564762785
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,12 +117,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 4182066159404826401}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e4d9cf50acce844d8a3aafd5cc4c0c3, type: 3}
+  m_Script: {fileID: 11500000, guid: 412df27d50570b046b8ed8aba45043a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
-  lifetime: 30
-  damage: 10
+  speed: 10
+  lifetime: 5
+  damage: 5
+  spiralSpeed: 5
+  initialSpiralRadius: 1
+  maxSpiralRadius: 5
+  spiralDuration: 5
+  playerLife: {fileID: 0}
+  movimientoJugador: {fileID: 0}
 --- !u!1 &6817460108702680721
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6581182425769830492
 Transform:
   m_ObjectHideFlags: 0
@@ -170,9 +176,9 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}

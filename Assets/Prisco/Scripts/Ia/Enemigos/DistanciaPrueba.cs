@@ -27,16 +27,16 @@ public class DistanciaPrueba : EnemyLife
     public float waitTimeBetweenShots = 2f;
     public float repositionDelay = 1f; 
     private float repositionTimer; 
-    public float preShootDelay = 1f; // Tiempo de espera antes de disparar
-    private bool isPreShooting = false; // Indica si está en el estado de pre-disparo
+    public float preShootDelay = 1f; 
+    private bool isPreShooting = false; 
 
-    public float pushForce = 10f; // Fuerza del empuje
-    public float pushDuration = 0.5f; // Duración del empuje
-    private bool isBeingPushed = false; // Estado para controlar si está en empuje
-    public float pushCooldown = 0.5f; // Cooldown para evitar empujes continuos
-    private float lastPushTime = -1f; // Último tiempo de empuje
+    public float pushForce = 10f; 
+    public float pushDuration = 0.5f; 
+    private bool isBeingPushed = false; 
+    public float pushCooldown = 0.5f; 
+    private float lastPushTime = -1f;
 
-     private static List<DistanciaPrueba> allEnemies = new List<DistanciaPrueba>(); // Lista estática de todos los enemigos
+     private static List<DistanciaPrueba> allEnemies = new List<DistanciaPrueba>(); 
 
     #region Unity Methods
     private void Awake()
@@ -47,7 +47,7 @@ public class DistanciaPrueba : EnemyLife
         enemyRenderer = GetComponent<Renderer>();
         currentState = State.Chasing;
         previousState = currentState; 
-        originalAgentSpeed = agent.speed; // Almacena la velocidad original para editarla mejor 
+        originalAgentSpeed = agent.speed; 
 
            if (!allEnemies.Contains(this))
         {
@@ -57,7 +57,7 @@ public class DistanciaPrueba : EnemyLife
 
         void OnDisable()
     {
-        // Remover este enemigo de la lista cuando se desactive
+        
         if (allEnemies.Contains(this))
         {
             allEnemies.Remove(this);
@@ -72,7 +72,7 @@ public class DistanciaPrueba : EnemyLife
             previousState = currentState;
             if (currentState == State.Shooting)
             {
-                waitTimer = preShootDelay; // Reiniciar el temporizador al entrar en el estado Shooting
+                waitTimer = preShootDelay; 
             }
         }
 
@@ -100,7 +100,7 @@ public class DistanciaPrueba : EnemyLife
 
         LookAtPlayer();
         agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale;
-        agent.isStopped = (currentState == State.Shooting || currentState == State.IsOnRange); // Detener el agente en los estados de disparo y en rango
+        agent.isStopped = (currentState == State.Shooting || currentState == State.IsOnRange); 
     }
     #endregion
 
