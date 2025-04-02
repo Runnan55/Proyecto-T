@@ -30,10 +30,10 @@ public class EnemyLife : MonoBehaviour
 
             if (healthBar != null)
             {
-                healthBar.gameObject.SetActive(_hp < maxHp);
+                healthBar.gameObject.SetActive(_hp < maxHp); // Asegúrate de activar la barra de vida
                 healthBar.value = _hp / maxHp;
+                Debug.Log($"Barra de vida actualizada: {_hp}/{maxHp}"); // Mensaje de depuración
             }
-          
         }
     }
 
@@ -45,11 +45,13 @@ public class EnemyLife : MonoBehaviour
     private Material originalMaterial; // Para restaurar el material original
     private MeshRenderer enemyMeshRenderer; // MeshRenderer del enemigo
 
+    void Awake()
+    {
+        maxHp = _hp; // Inicializa maxHp antes de que se use
+    }
+
     void Start()
     {
-        maxHp = _hp;
-
-        // Intenta obtener el MeshRenderer desde el propio objeto, sus hijos o algún objeto padre
         enemyMeshRenderer = GetComponentInChildren<MeshRenderer>();
 
         if (enemyMeshRenderer != null)
@@ -59,7 +61,6 @@ public class EnemyLife : MonoBehaviour
 
         if (healthBar != null)
         {
-            //healthBarAnimator.Play("EnemyBarDeath");
             healthBar.gameObject.SetActive(false);
         }
     }
@@ -68,9 +69,8 @@ public class EnemyLife : MonoBehaviour
     {
         if (isDefeated) return; // Si el enemigo ya está derrotado, no hacer nada
 
+        
         health -= damage;
-
-      //  Debug.Log("Recibiendo daño: " + damage);
 
         if (newMaterial != null && enemyMeshRenderer != null)
         {
@@ -78,11 +78,11 @@ public class EnemyLife : MonoBehaviour
         }
         CalcularDamage();
 
-        if(health <= 0 && !isDefeated)
+        if (health <= 0 && !isDefeated)
         {
             StartCoroutine(DestroyHealthBar());
         }
-        
+
         FMODUnity.RuntimeManager.PlayOneShot(hit);
         ShowFloatingText(damage);
     }

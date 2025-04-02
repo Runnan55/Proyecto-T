@@ -330,13 +330,14 @@ GameObject:
   - component: {fileID: 3066724501132517064}
   - component: {fileID: 3337869043176253856}
   - component: {fileID: 2286376672625682373}
+  - component: {fileID: 803769247000396399}
   m_Layer: 0
   m_Name: Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7914312083139323763
 Transform:
   m_ObjectHideFlags: 0
@@ -388,7 +389,8 @@ MonoBehaviour:
   projectilePrefab: {fileID: 4933288384896763861, guid: 0e8c595997072584abb795bd853fe165, type: 3}
   shootingPoint: {fileID: 2239936425745152197}
   projectileSpeed: 10
-  spawnAreaRadius: 5
+  spawnAreaRadius: 2
+  shootingCooldown: 5
 --- !u!65 &3337869043176253856
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -404,7 +406,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -420,12 +422,39 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_Extents: {x: 1.5, y: 1.5, z: 1.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!54 &803769247000396399
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5970665979963638416}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 36
+  m_CollisionDetection: 0
 --- !u!1 &6459338839837516038
 GameObject:
   m_ObjectHideFlags: 0

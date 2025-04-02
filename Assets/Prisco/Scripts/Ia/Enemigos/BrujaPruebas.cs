@@ -21,6 +21,7 @@ public class BrujaPruebas : EnemyLife
     private float spawnInterval = 0.5f; // Intervalo entre cada enemigo generado
     public Transform[] spawnPoints; // Array de puntos de generación
     private int currentSpawnIndex = 0; // Índice del punto de generación actual
+    private List<GameObject> spawnedEnemies = new List<GameObject>(); // Lista para rastrear las invocaciones
     public enum State { Chasing, Reposition, Shooting, IsOnRange, GetHit, Spawning }
     public State currentState;
     private State previousState;
@@ -224,7 +225,8 @@ public class BrujaPruebas : EnemyLife
         if (spawnTimer >= spawnInterval && enemiesSpawned < 3)
         {
             Transform spawnPoint = spawnPoints[currentSpawnIndex];
-            Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+            GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+            spawnedEnemies.Add(spawnedEnemy); // Agregar la invocación a la lista
 
             currentSpawnIndex = (currentSpawnIndex + 1) % spawnPoints.Length; // Ciclar entre los puntos
             enemiesSpawned++;
@@ -257,8 +259,17 @@ public class BrujaPruebas : EnemyLife
 
     public override void CalcularDamage()
     {
+        if (Time.time > lastPushTime + pushCooldown)
+        {
+            lastPushTime = Time.time;
+            StartCoroutine(PushBack());
+          
+        }
+          currentState = State.Chasing;
         if (health <= 0)
         {
+            RemoveAllSpawnedEnemies(); // Eliminar todas las invocaciones al morir
+
             if (antiRevivir)
             {
                 ApplyAreaEffect();
@@ -282,15 +293,14 @@ public class BrujaPruebas : EnemyLife
 
     public void TakeDamage(int damage)
     {
-        if (isReviving) return;
+        if (isReviving) return;  health -= damage;
 
-        health -= damage;
+        // Interrumpir cualquier ejecución actual
+        StopAllCoroutines();
+        currentState = State.Chasing;
 
-        if (Time.time > lastPushTime + pushCooldown)
-        {
-            lastPushTime = Time.time;
-            StartCoroutine(PushBack());
-        }
+        // Aplicar empuje sin restricciones de cooldown
+        StartCoroutine(PushBack());
     }
 
     private void ApplyAreaEffect()
@@ -299,6 +309,18 @@ public class BrujaPruebas : EnemyLife
         {
             Instantiate(areaEffectPrefab, transform.position, Quaternion.identity);
         }
+    }
+
+    private void RemoveAllSpawnedEnemies()
+    {
+        foreach (GameObject enemy in spawnedEnemies)
+        {
+            if (enemy != null)
+            {
+                Destroy(enemy); // Eliminar cada invocación
+            }
+        }
+        spawnedEnemies.Clear(); // Limpiar la lista
     }
 
     #endregion
@@ -373,7 +395,7 @@ public class BrujaPruebas : EnemyLife
         }
         else if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3"))
         {
-            pushForce = 15;
+            pushForce = 15f;
             rb.AddForce(pushDirection * pushForce, ForceMode.Impulse);
         }
         else
