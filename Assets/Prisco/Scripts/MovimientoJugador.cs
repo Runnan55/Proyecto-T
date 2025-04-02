@@ -282,7 +282,6 @@ public class MovimientoJugador : MonoBehaviour
         StartCoroutine(UpdateSafePosition()); */
         
         btColliders = Physics.OverlapSphere(transform.position, 10000);
-        DialogueManager.Instance.CreateDialogue("Kael", "Siento que me estoy acercando, aqui hace mas calor que de costumbre");
     }
 
 
