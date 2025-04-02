@@ -89,7 +89,14 @@ public class SlimePrueba_IA : EnemyLife
         if (gameObject.name.Contains("SlimeV2"))
         {
             esSlimeV2 = true;
+            waveCountable = true;
         }
+
+        if (gameObject.name.Contains("SlimeCopia"))
+        {
+            tieneCorazon = true; // Asignar el corazón a la copia
+        }
+        
     }
 
     void Update()

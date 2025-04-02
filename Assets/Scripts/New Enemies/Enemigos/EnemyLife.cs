@@ -20,6 +20,8 @@ public class EnemyLife : MonoBehaviour
 
     [SerializeField] private FMODUnity.EventReference hit;
 
+    [SerializeField] public bool waveCountable = true;
+
 
     public float health
     {
@@ -89,11 +91,10 @@ public class EnemyLife : MonoBehaviour
 
     public virtual void CalcularDamage()
     {
-        
         if (health <= 0 && !isDefeated)
         {
             isDefeated = true; // Marca al enemigo como derrotado
-            if (level != null)
+            if (level != null && waveCountable)
             {
                 level.EnemyDefeated(this);
             }       
