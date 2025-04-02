@@ -22,6 +22,8 @@ public class ProyectilBruja : MonoBehaviour
     [SerializeField] private Life playerLife;
     [SerializeField] private MovimientoJugador movimientoJugador;
 
+    [Range(0f, 1f)] public float impactAreaTransparency = 0.3f; // Transparencia ajustable desde el inspector
+
     void Start()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -55,13 +57,25 @@ public class ProyectilBruja : MonoBehaviour
     {
         if (!hasExploded && playerTransform != null)
         {
+            // Verificar si el jugador está en el área de esquiva
+            float timeScale = MovimientoJugador.isInDodgeArea ? MovimientoJugador.bulletTimeScale : 1f;
+
             // Mover el proyectil hacia la posición inicial de los pies del jugador
-            transform.position = Vector3.MoveTowards(transform.position, initialTargetPosition, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(
+                transform.position, 
+                initialTargetPosition, 
+                speed * timeScale * Time.deltaTime
+            );
 
             // Actualizar la posición del área de impacto para que siga a la bala
             if (impactAreaInstance != null)
             {
                 impactAreaInstance.transform.position = transform.position; // Centro en la posición de la bala
+                impactAreaInstance.transform.localScale = new Vector3(
+                    explosionRadius * 2 * timeScale, 
+                    explosionRadius * 2 * timeScale, 
+                    explosionRadius * 2 * timeScale
+                ); // Escalar según el timeScale
             }
 
             // Verificar si el proyectil ha llegado a la posición objetivo
@@ -93,13 +107,13 @@ public class ProyectilBruja : MonoBehaviour
             while (elapsedTime < colorChangeDuration)
             {
                 float t = elapsedTime / colorChangeDuration;
-                Color color = Color.Lerp(new Color(1, 1, 1, 0.3f), new Color(1, 0, 0, 0.3f), t); // Cambiar de blanco transparente a rojo transparente
+                Color color = Color.Lerp(new Color(1, 1, 1, impactAreaTransparency), new Color(1, 0, 0, impactAreaTransparency), t); // Usar transparencia ajustable
                 impactAreaRenderer.material.color = color;
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
-            impactAreaRenderer.material.color = new Color(1, 0, 0, 0.3f); // Asegurarse de que sea rojo transparente al final
+            impactAreaRenderer.material.color = new Color(1, 0, 0, impactAreaTransparency); // Asegurarse de que sea rojo transparente al final
         }
     }
 
@@ -150,6 +164,18 @@ public class ProyectilBruja : MonoBehaviour
             {
                 Debug.LogError("movimientoJugador is null!");
             }
+        }
+        else if (other.CompareTag("DodgeArea"))
+        {
+            MovimientoJugador.isInDodgeArea = true; // Activar el estado de área de esquiva
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("DodgeArea"))
+        {
+            MovimientoJugador.isInDodgeArea = false; // Desactivar el estado de área de esquiva
         }
     }
 

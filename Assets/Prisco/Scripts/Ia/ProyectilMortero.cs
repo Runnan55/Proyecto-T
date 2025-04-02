@@ -17,7 +17,14 @@ public class ProyectilMortero : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(Vector3.forward * speed * MovimientoJugador.bulletTimeScale * Time.deltaTime);
+        if (MovimientoJugador.isInDodgeArea)
+        {
+            transform.Translate(Vector3.forward * speed * MovimientoJugador.bulletTimeScale * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        }
     }
 
     void Awake()
@@ -47,7 +54,7 @@ public class ProyectilMortero : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            float t = elapsedTime / duration;
+            float t = elapsedTime / (MovimientoJugador.isInDodgeArea ? duration / MovimientoJugador.bulletTimeScale : duration);
             Vector3 currentPosition = Vector3.Lerp(startPosition, targetPosition, t);
             currentPosition.y += Mathf.Sin(t * Mathf.PI) * 7f; 
             transform.position = currentPosition;

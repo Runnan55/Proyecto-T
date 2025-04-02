@@ -18,7 +18,9 @@ public class BrujaPruebas : EnemyLife
     public GameObject enemyPrefab;   
     private int enemiesSpawned = 0;
     private float spawnTimer = 0f;
-    private float spawnInterval = 1f; // Tiempo entre cada enemigo generado
+    private float spawnInterval = 0.5f; // Intervalo entre cada enemigo generado
+    public Transform[] spawnPoints; // Array de puntos de generación
+    private int currentSpawnIndex = 0; // Índice del punto de generación actual
     public enum State { Chasing, Reposition, Shooting, IsOnRange, GetHit, Spawning }
     public State currentState;
     private State previousState;
@@ -30,6 +32,7 @@ public class BrujaPruebas : EnemyLife
     public float ReposicionDetecion = 10f;
     private float repositionTimer;
     public float repositionDelay = 1f;
+    private Vector3 repositionTarget; // Variable para almacenar el punto de reposicionamiento
 
     [Header("Shooting")]
     public GameObject projectilePrefab;
@@ -148,20 +151,22 @@ public class BrujaPruebas : EnemyLife
 
     private void HandleReposition()
     {
-        Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
-        Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, UnityEngine.Random.Range(-1f, 1f)).normalized;
-        Vector3 targetPosition = transform.position + (directionAwayFromPlayer + randomOffset) * alejarDistancia;
+        if (repositionTimer == repositionDelay) // Generar el punto solo una vez
+        {
+            Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
+            repositionTarget = transform.position + directionAwayFromPlayer * 10f; // Punto en dirección contraria al jugador
+        }
 
         if (agent != null && agent.isOnNavMesh)
         {
-            agent.SetDestination(targetPosition);
+            agent.SetDestination(repositionTarget);
         }
 
         repositionTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
         if (repositionTimer <= 0)
         {
             currentState = State.Spawning;
-            repositionTimer = repositionDelay;
+            repositionTimer = repositionDelay; // Reiniciar el temporizador
         }
     }
 
@@ -206,15 +211,22 @@ public class BrujaPruebas : EnemyLife
             rb.isKinematic = true; // Evitar movimientos físicos
         }
 
-        // Generar enemigos poco a poco
+        // Validar que los puntos de generación estén configurados
+        if (spawnPoints == null || spawnPoints.Length < 3)
+        {
+            Debug.LogError("Los puntos de generación no están configurados correctamente.");
+            currentState = State.Chasing; // Cambiar al estado Chasing si hay un problema
+            return;
+        }
+
+        // Generar enemigos en los puntos específicos
         spawnTimer += Time.deltaTime * MovimientoJugador.bulletTimeScale;
         if (spawnTimer >= spawnInterval && enemiesSpawned < 3)
         {
-            Vector3 forwardOffset = transform.forward * (2f + enemiesSpawned * 2f); // Separar cada enemigo por 2 unidades
-            Vector3 spawnPosition = transform.position + forwardOffset;
-            spawnPosition.y = transform.position.y; // Mantener la misma altura
+            Transform spawnPoint = spawnPoints[currentSpawnIndex];
+            Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
 
-            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+            currentSpawnIndex = (currentSpawnIndex + 1) % spawnPoints.Length; // Ciclar entre los puntos
             enemiesSpawned++;
             spawnTimer = 0f; // Reiniciar el temporizador
         }
@@ -234,6 +246,7 @@ public class BrujaPruebas : EnemyLife
             }
 
             enemiesSpawned = 0; // Reiniciar el contador de enemigos generados
+            currentSpawnIndex = 0; // Reiniciar el índice de generación
             currentState = State.Chasing; // Volver al estado Chasing después de invocar
         }
     }
