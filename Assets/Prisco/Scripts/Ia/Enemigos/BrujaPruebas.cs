@@ -94,13 +94,7 @@ public class BrujaPruebas : EnemyLife
             {
                 waitTimer = preShootDelay;
             }
-        }
-
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        if (distanceToPlayer > distanciaDetecion && currentState != State.Shooting)
-        {
-            currentState = State.Chasing;
-        }
+        }    
 
         switch (currentState)
         {
@@ -210,15 +204,7 @@ public class BrujaPruebas : EnemyLife
         if (rb != null)
         {
             rb.isKinematic = true; // Evitar movimientos físicos
-        }
-
-        // Validar que los puntos de generación estén configurados
-        if (spawnPoints == null || spawnPoints.Length < 3)
-        {
-            Debug.LogError("Los puntos de generación no están configurados correctamente.");
-            currentState = State.Chasing; // Cambiar al estado Chasing si hay un problema
-            return;
-        }
+        }      
 
         // Generar enemigos en los puntos específicos
         spawnTimer += Time.deltaTime * MovimientoJugador.bulletTimeScale;
@@ -330,7 +316,23 @@ public class BrujaPruebas : EnemyLife
     private IEnumerator DelayedRevivir()
     {
         yield return null;
-        StartCoroutine(Revivir());
+        if (revivir == true)
+        {
+            StartCoroutine(Revivir());
+        }
+        else
+        {
+            antiRevivir = true;
+            ApplyAreaEffect();
+
+            if (level != null)
+            {
+                level.EnemyDefeated(this);
+            }
+
+            Destroy(gameObject, 0.2f);
+        }
+        
     }
 
     IEnumerator Revivir()
@@ -360,7 +362,7 @@ public class BrujaPruebas : EnemyLife
         if (rb != null) rb.isKinematic = false;
         if (collider != null) collider.enabled = true;
 
-        health = 100;
+        health = maxHp;
         antiRevivir = false;
         isReviving = false;
     }

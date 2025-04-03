@@ -20,6 +20,10 @@ public class SpawnerEnemigos_Ia : EnemyLife
 
     [Header("Shooting Settings")]
     public float shootingCooldown = 2f; // Tiempo ajustable entre ráfagas de disparos
+
+    [Header("Reviving")]
+    private bool isReviving = false;
+
     #endregion
 
     #region Unity Methods
@@ -37,10 +41,7 @@ public class SpawnerEnemigos_Ia : EnemyLife
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) // Disparar con la tecla Espacio (puedes cambiar esto)
-        {
-            ShootProjectile();
-        }
+       
     }
 
     void OnTriggerEnter(Collider other)
@@ -105,10 +106,27 @@ public class SpawnerEnemigos_Ia : EnemyLife
     #endregion
 
     #region Reviving Mechanic
+
     private IEnumerator DelayedRevivir()
     {
         yield return null;
-        StartCoroutine(Revivir());
+        if (revivir == true)
+        {
+            StartCoroutine(Revivir());
+        }
+        else
+        {
+            antiRevivir = true;
+            ApplyAreaEffect();
+
+            if (level != null)
+            {
+                level.EnemyDefeated(this);
+            }
+
+            Destroy(gameObject, 0.2f);
+        }
+        
     }
 
     IEnumerator Revivir()
@@ -116,6 +134,11 @@ public class SpawnerEnemigos_Ia : EnemyLife
         if (antiRevivir) yield break;
 
         Debug.Log("reviviendo");
+        isReviving = true;
+
+        Collider collider = GetComponent<Collider>();
+        if (collider != null) collider.enabled = false;
+
         if (revivirMesh != null && meshFilter != null)
         {
             meshFilter.mesh = revivirMesh;
@@ -126,10 +149,17 @@ public class SpawnerEnemigos_Ia : EnemyLife
         {
             yield return new WaitForSeconds(tiempoRevivir);
         }
+       
+        if (collider != null) collider.enabled = true;
 
-        _hp = 100;
+        health = maxHp;
         antiRevivir = false;
+        isReviving = false;
+
+        // Reanudar la generación de proyectiles después de revivir
+        StartCoroutine(AutoShootProjectiles());
     }
+
     #endregion
 
     #region Shooting Logic
@@ -158,6 +188,13 @@ public class SpawnerEnemigos_Ia : EnemyLife
     {
         while (true)
         {
+            // Detener la generación de proyectiles si está reviviendo
+            if (isReviving)
+            {
+                yield return null;
+                continue;
+            }
+
             int projectilesToShoot = Random.Range(1, 4); // Número aleatorio entre 1 y 3
 
             for (int i = 0; i < projectilesToShoot; i++)

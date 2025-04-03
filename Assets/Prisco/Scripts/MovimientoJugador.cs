@@ -782,9 +782,9 @@ private IEnumerator DisparoNormalOCargado()
 {
     float tiempoCarga = 0f;
     bool disparoCargado = false;
-    
 
     canMove = false; // Deshabilitar movimiento del jugador
+    
 
     while (Input.GetButton("Fire2"))
     {
@@ -801,8 +801,14 @@ private IEnumerator DisparoNormalOCargado()
             transform.rotation = targetRotation;
         }
 
-        if (tiempoCarga >= 1f && canChargeShot) // Verificar si el disparo cargado está habilitado
+        if (tiempoCarga <= 1f && canChargeShot) 
         {
+             animator.Play("3P");
+        }     
+
+        if (tiempoCarga >= 1f && canChargeShot) 
+        {
+            
             mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
             disparoCargado = true;
             break;
@@ -812,12 +818,13 @@ private IEnumerator DisparoNormalOCargado()
     }
 
     canMove = true; // Habilitar movimiento del jugador nuevamente
+    
 
     if (disparoCargado)
     {
         FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo cargado
         Debug.Log("Disparo cargado ejecutado");
-        animator.Play("AttackD 0");
+       
         ataqueD2 = true;
         // Lógica para disparo cargado
     }
@@ -826,6 +833,7 @@ private IEnumerator DisparoNormalOCargado()
         EjecutarDisparoNormal(); // Ejecutar disparo normal si no se carga
     }
 }
+
 private void EjecutarAtaqueDistanciaCargado()
     {
         

@@ -337,7 +337,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7914312083139323763
 Transform:
   m_ObjectHideFlags: 0
@@ -370,6 +370,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hp: 100
   antiRevivir: 0
+  maxHp: 100
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
   healthBarAnimator: {fileID: 0}
   hit:
@@ -379,6 +380,8 @@ MonoBehaviour:
       Data3: -1961193079
       Data4: 1367288947
     Path: event:/FX/hit
+  waveCountable: 1
+  revivir: 0
   healthBar: {fileID: 7813660634365586450}
   level: {fileID: 0}
   newMaterial: {fileID: 2100000, guid: 1ea1950e8d06cd14c8705cd9bcceda36, type: 2}
