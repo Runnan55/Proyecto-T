@@ -1302,7 +1302,9 @@ MonoBehaviour:
   rangoMaximo: 20
   velocidadExpansion: 100
   tiempoEsperaAtaque: 0.4
-  prefab: {fileID: 869544359345168942, guid: 4e42d2531c0782f48b6258f5b3a43abd, type: 3}
+  canChargeShot: 1
+  prefabDisparoNormal: {fileID: 869544359345168942, guid: 2b2513daffa6b194e8166af50b64fd32, type: 3}
+  prefabDisparoCargado: {fileID: 869544359345168942, guid: 4e42d2531c0782f48b6258f5b3a43abd, type: 3}
   spawnPosition: {fileID: 8395996024345522474}
   maxBalas: 3
   balasActuales: 3
@@ -1319,7 +1321,6 @@ MonoBehaviour:
   dashSpeed: 20
   dashDuration: 0.2
   dashCooldown: 0.5
-  postDashAttackDelay: 1
   btTriggerCollider: {fileID: 8527045668458276205}
   btColliderOff: {fileID: 2100000, guid: a1e97cbf2538241b691aae8243b5fb10, type: 2}
   btColliderOn: {fileID: 2100000, guid: bbb235fff4f48426b863b36058ab66d2, type: 2}
@@ -1365,6 +1366,7 @@ MonoBehaviour:
       Data3: -1266741086
       Data4: -1119923729
     Path: event:/dash
+  canMove: 1
 --- !u!114 &1176030203751019751
 MonoBehaviour:
   m_ObjectHideFlags: 0
