@@ -17,7 +17,7 @@ public class DamageDealer : MonoBehaviour
 
         EnemyLife enemy = other.GetComponent<EnemyLife>();
         BossLIfe bossLife = other.GetComponent<BossLIfe>();
-
+        BossSpawner bossSpawner = other.GetComponent<BossSpawner>();
         if (enemy != null)
         {
             enemy.ReceiveDamage(damageAmount);
@@ -28,6 +28,11 @@ public class DamageDealer : MonoBehaviour
         if (bossLife != null)
         {
             bossLife.TakeDamage(damageAmount);
+            damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
+        }
+        if (bossSpawner != null)
+        {
+            bossSpawner.TakeDamage(damageAmount);
             damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
         }
     }
