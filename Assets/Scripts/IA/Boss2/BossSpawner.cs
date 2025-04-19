@@ -8,8 +8,14 @@ public class BossSpawner : MonoBehaviour
     private float currentHealth;
     private bool isDestroyed = false;
 
+    public GameObject enemyPrefab;  // Enemigo que va a invocar
+    public float spawnInterval = 1f;
+
     public delegate void OnDestroyedHandler(BossSpawner obj);
     public event OnDestroyedHandler OnDestroyed;
+
+    private Coroutine spawnCoroutine;
+    public Transform spawnPoint;
 
     void Start()
     {
@@ -27,6 +33,7 @@ public class BossSpawner : MonoBehaviour
             currentHealth = 0;
             isDestroyed = true;
             Debug.Log($"{gameObject.name} ha sido destruido");
+            StopSpawning(); // Detenemos la invocación
             OnDestroyed?.Invoke(this);
             gameObject.SetActive(false); // ocultamos el objeto en vez de destruirlo
         }
@@ -42,5 +49,36 @@ public class BossSpawner : MonoBehaviour
         currentHealth = maxHealth;
         isDestroyed = false;
         gameObject.SetActive(true);
+        StartSpawning();
+    }
+    private void StartSpawning()
+    {
+        if (spawnCoroutine != null)
+            StopCoroutine(spawnCoroutine);
+
+        spawnCoroutine = StartCoroutine(SpawnLoop());
+    }
+
+    private void StopSpawning()
+    {
+        if (spawnCoroutine != null)
+            StopCoroutine(spawnCoroutine);
+    }
+
+    private IEnumerator SpawnLoop()
+    {
+        while (!isDestroyed)
+        {
+            SpawnEnemy();
+            yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+
+    private void SpawnEnemy()
+    {
+        if (enemyPrefab != null)
+        {
+            Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+        }
     }
 }
