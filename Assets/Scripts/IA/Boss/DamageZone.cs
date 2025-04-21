@@ -29,8 +29,6 @@ public class DamageZone : MonoBehaviour
         }
     }
 
-
-
     private void OnTriggerStay(Collider other)
     {
         if (isActive && other.CompareTag("Player"))
@@ -38,7 +36,6 @@ public class DamageZone : MonoBehaviour
             playerLife = other.GetComponent<Life>();
             playerLife.ModifyTime(-damageAmount);
             //Debug.Log("danoplayer");
-            
         }
     }
 
@@ -48,8 +45,8 @@ public class DamageZone : MonoBehaviour
         UpdateMaterial();
         if (smokeAttack != null && smokeCD != null)
         {
-        smokeAttack.SetActive(true);
-        smokeCD.SetActive(false);
+            smokeAttack.SetActive(true);
+            smokeCD.SetActive(false);
         }
     }
 
@@ -59,10 +56,9 @@ public class DamageZone : MonoBehaviour
         UpdateMaterial();
         if (smokeAttack != null && smokeCD != null)
         {
-        smokeCD.SetActive(true);
-        smokeAttack.SetActive(false);
+            smokeCD.SetActive(true);
+            smokeAttack.SetActive(false);
         }
-
     }
 
     private void UpdateMaterial()

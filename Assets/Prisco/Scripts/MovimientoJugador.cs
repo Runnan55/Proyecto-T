@@ -286,7 +286,7 @@ public class MovimientoJugador : MonoBehaviour
 
 
   void Update()
-    {
+    {        
         if (Input.GetKeyDown(KeyCode.G))
         {
             godMode = !godMode;
