@@ -4,21 +4,42 @@ using UnityEngine;
 
 public class Boss2Health : MonoBehaviour
 {
+    [Header("Spawners y enemigos")]
     public BossSpawner[] bossSpawner;
     public GameObject meleeEnemyPrefab;
 
-    private int currentPhase = 1;
+    [Header("Ataques de Fase 2")]
+    public PalmadaAttack palmadaAttack;
+    public PunoTaladro punoTaladro;
+    public BarridoAttack barridoAttack;
+
+    [Header("Puntos de ataque")]
+    public Transform palmPointA;
+    public Transform palmPointB;
+    public Transform punchPointA;
+    public Transform punchPointB;
+    public Transform sweepStart;
+    public Transform sweepEnd;
+
+    [Header("Orbes ralentizadores")]
+    public GameObject orbPrefab;
+    public Transform orbSpawnPoint;
+    public float orbInterval = 8f;
+    private float nextOrbTime = 0f;
+
+    [Header("Brazos del boss")]
+    public BossArmProtector leftArm;
+    public BossArmProtector rightArm;
+
+    public int currentPhase = 1;
     private int totalHealth = 100;
     private int currentHealth;
 
     private float checkInterval = 1f;
     private float nextCheckTime = 0f;
 
-
-    [SerializeField] private BossArmController leftArm;
-    [SerializeField] private BossArmController rightArm;
-    private float palmCooldown = 4f;
-    private float nextPalmTime;
+    private float attackInterval = 6f;
+    private float nextAttackTime = 0f;
 
     void Start()
     {
@@ -28,21 +49,29 @@ public class Boss2Health : MonoBehaviour
 
     void Update()
     {
+        // Comportamientos generales (IA)
         if (Time.time >= nextCheckTime)
         {
             nextCheckTime = Time.time + checkInterval;
             EvaluateCombatBehavior();
         }
 
-        if (currentPhase == 2 && Time.time >= nextPalmTime)
+        // Ataques de Fase 2
+        if (currentPhase == 2 && Time.time >= nextAttackTime)
         {
-            nextPalmTime = Time.time + palmCooldown;
+            ExecuteRandomAttack();
+            nextAttackTime = Time.time + attackInterval;
+        }
 
-            // Alternar entre los dos brazos (o usar ambos a la vez)
-            if (Random.value > 0.5f)
-                leftArm.TriggerPalmSmash();
-            else
-                rightArm.TriggerPalmSmash();
+        if ((currentPhase == 1 || currentPhase == 2) && Time.time >= nextOrbTime)
+        {
+            nextOrbTime = Time.time + orbInterval;
+            LaunchSlowOrb();
+        }
+
+        if (Input.GetKeyDown(KeyCode.L) && currentPhase == 2)
+        {
+            TriggerArmProtection();
         }
     }
 
@@ -85,6 +114,7 @@ public class Boss2Health : MonoBehaviour
         currentPhase = 2;
         currentHealth = totalHealth / 2;
         StartCoroutine(RespawnSpawnersWithDelay(1f));
+        nextAttackTime = Time.time + 2f;
     }
 
     private IEnumerator RespawnSpawnersWithDelay(float delay)
@@ -101,11 +131,13 @@ public class Boss2Health : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log(" ¡El boss ha muerto definitivamente!");
+        Debug.Log("¡El boss ha muerto definitivamente!");
         Destroy(gameObject);
     }
 
-    // === SISTEMA DE DECISIONES ===
+    // ===================
+    // COMPORTAMIENTO IA
+    // ===================
     private void EvaluateCombatBehavior()
     {
         if (IsPlayerFar())
@@ -120,7 +152,7 @@ public class Boss2Health : MonoBehaviour
 
         if (PlayerUsedChargedAttackOnCore())
         {
-            IncreaseSpawnRate(); // Simulado
+            IncreaseSpawnRate(); // aún simulado
         }
 
         if (currentPhase == 2 && AllObjectsDestroyed())
@@ -136,11 +168,12 @@ public class Boss2Health : MonoBehaviour
         }
     }
 
-    // Simulaciones de lógica
-
     private bool IsPlayerFar()
     {
-        return Vector3.Distance(transform.position, GameObject.FindWithTag("Player").transform.position) > 30f;
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player == null) return false;
+
+        return Vector3.Distance(transform.position, player.transform.position) > 15f;
     }
 
     private bool IsInBulletTime()
@@ -150,7 +183,7 @@ public class Boss2Health : MonoBehaviour
 
     private bool PlayerUsedChargedAttackOnCore()
     {
-        return false; // Aquí lo conectas con tu sistema real
+        return false; // conectar con tu sistema real
     }
 
     private void TryRespawnMissingSpawners()
@@ -168,8 +201,7 @@ public class Boss2Health : MonoBehaviour
 
     private void SpawnMeleeBarricade()
     {
-        Debug.Log("Invocando barricada de enemigos melee por tiempo bala");
-
+        Debug.Log("Invocando enemigos melee por tiempo bala");
         foreach (var spawner in bossSpawner)
         {
             Instantiate(meleeEnemyPrefab, spawner.transform.position, Quaternion.identity);
@@ -178,27 +210,85 @@ public class Boss2Health : MonoBehaviour
 
     private void IncreaseSpawnRate()
     {
-        Debug.Log("Aumentando velocidad de invocaciones (simulado)");
-        // Conecta con tu sistema de invocaciones aquí
+        Debug.Log("Aumentando velocidad de spawneo (simulado)");
+        // Aquí conectarías con la lógica de tus spawners
     }
 
     private bool BossHasArms()
     {
-        return false; // Conecta con tu sistema de brazos
+        return false; // conectar con tus brazos reales
     }
 
     private void ProtectSelfWithArms()
     {
         Debug.Log("El boss se protege con los brazos");
-        // Lógica de mover brazos a defender spawners
+        // Animaciones / lógica de protección real
     }
 
     private void SummonMeleeWave()
     {
-        Debug.Log("Invocando ola de enemigos melee (sin brazos ni spawners)");
+        Debug.Log("Ola de enemigos por no tener brazos ni spawners");
         foreach (var spawner in bossSpawner)
         {
             Instantiate(meleeEnemyPrefab, spawner.transform.position, Quaternion.identity);
         }
+    }
+
+    // ===================
+    // ATAQUES FASE 2
+    // ===================
+    private void ExecuteRandomAttack()
+    {
+        int random = Random.Range(0, 3);
+
+        if (random == 0)
+        {
+            palmadaAttack.ExecutePalmada(palmPointA, palmPointB);
+        }
+        else if (random == 1)
+        {
+            punoTaladro.ExecutePunetazo(punchPointA, punchPointB);
+        }
+        else
+        {
+            barridoAttack.ExecuteBarrido(sweepStart, sweepEnd);
+        }
+
+        Debug.Log(" Ataque lanzado: " + random);
+    }
+
+    private void LaunchSlowOrb()
+    {
+        if (orbPrefab != null && orbSpawnPoint != null)
+        {
+            Instantiate(orbPrefab, orbSpawnPoint.position, Quaternion.identity);
+            Debug.Log("Orbe ralentizador lanzado desde el jefe");
+        }
+    }
+
+    public void TriggerArmProtection()
+    {
+        List<IProtectable> protectableTargets = new List<IProtectable>();
+
+        foreach (var spawner in bossSpawner)
+        {
+            if (!spawner.IsDestroyed())
+            {
+                protectableTargets.Add(spawner);
+            }
+        }
+
+        // Si no hay spawners activos, el jefe se vuelve el único objetivo protegible
+        if (protectableTargets.Count == 0)
+        {
+            protectableTargets.Add(this as IProtectable); // el propio jefe
+            protectableTargets.Add(this as IProtectable); // para que ambos brazos lo protejan
+        }
+
+        if (protectableTargets.Count > 0)
+            leftArm.Protect(protectableTargets[0]);
+
+        if (protectableTargets.Count > 1)
+            rightArm.Protect(protectableTargets[1]);
     }
 }

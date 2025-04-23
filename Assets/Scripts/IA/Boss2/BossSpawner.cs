@@ -2,20 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossSpawner : MonoBehaviour
+public class BossSpawner : MonoBehaviour, IProtectable
 {
     public float maxHealth = 33;
     private float currentHealth;
     private bool isDestroyed = false;
+    private bool isProtected = false;
 
-    public GameObject enemyPrefab;  // Enemigo que va a invocar
-    public float spawnInterval = 1f;
+    public GameObject enemyPrefab;
+    public float spawnInterval = 5f;
 
-    public delegate void OnDestroyedHandler(BossSpawner obj);
+    public delegate void OnDestroyedHandler(BossSpawner spawner);
     public event OnDestroyedHandler OnDestroyed;
 
     private Coroutine spawnCoroutine;
-    public Transform spawnPoint;
 
     void Start()
     {
@@ -24,18 +24,16 @@ public class BossSpawner : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (isDestroyed) return;
+        if (isDestroyed || isProtected) return;
 
         currentHealth -= damage;
-
         if (currentHealth <= 0)
         {
             currentHealth = 0;
             isDestroyed = true;
-            Debug.Log($"{gameObject.name} ha sido destruido");
-            StopSpawning(); // Detenemos la invocación
+            StopSpawning();
             OnDestroyed?.Invoke(this);
-            gameObject.SetActive(false); // ocultamos el objeto en vez de destruirlo
+            gameObject.SetActive(false);
         }
     }
 
@@ -48,9 +46,11 @@ public class BossSpawner : MonoBehaviour
     {
         currentHealth = maxHealth;
         isDestroyed = false;
+        isProtected = false;
         gameObject.SetActive(true);
         StartSpawning();
     }
+
     private void StartSpawning()
     {
         if (spawnCoroutine != null)
@@ -69,16 +69,23 @@ public class BossSpawner : MonoBehaviour
     {
         while (!isDestroyed)
         {
-            SpawnEnemy();
+
+
+            if (enemyPrefab != null)
+            {
+                Instantiate(enemyPrefab, transform.position + Vector3.up, Quaternion.identity);
+            }
             yield return new WaitForSeconds(spawnInterval);
         }
     }
 
-    private void SpawnEnemy()
+    public void SetProtected(bool state)
     {
-        if (enemyPrefab != null)
-        {
-            Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
-        }
+        isProtected = state;
+    }
+
+    public Transform GetTransform()
+    {
+        return transform;
     }
 }

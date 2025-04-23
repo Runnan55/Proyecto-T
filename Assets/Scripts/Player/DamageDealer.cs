@@ -18,6 +18,10 @@ public class DamageDealer : MonoBehaviour
         EnemyLife enemy = other.GetComponent<EnemyLife>();
         BossLIfe bossLife = other.GetComponent<BossLIfe>();
         BossSpawner bossSpawner = other.GetComponent<BossSpawner>();
+
+        BossArmProtector bossArmProtector = other.GetComponent<BossArmProtector>();
+
+        Debug.Log("Entrando en contacto con: " + other.name);
         if (enemy != null)
         {
             enemy.ReceiveDamage(damageAmount);
@@ -30,11 +34,21 @@ public class DamageDealer : MonoBehaviour
             bossLife.TakeDamage(damageAmount);
             damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
         }
+
+        if (bossArmProtector != null)
+        {
+
+            bossArmProtector.TakeDamage(damageAmount);
+            damagedObjects.Add(other.gameObject);
+        }
         if (bossSpawner != null)
         {
             bossSpawner.TakeDamage(damageAmount);
             damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
         }
+      
+
+       
     }
 
     public void ResetDamage()
