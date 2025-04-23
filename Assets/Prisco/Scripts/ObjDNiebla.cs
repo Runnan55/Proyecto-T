@@ -30,6 +30,8 @@ public class ObjDNiebla : MonoBehaviour
     private Coroutine ajustarRadioCoroutine;
     private float tiempoSinAtaque = 0f;
 
+    public float priscadaGalaxial = 4f; // Tiempo sin ataque para reducir el radio en modo expansivo
+
     private void Start()
     {
         sphereCollider = areaDeNiebla as SphereCollider;
@@ -49,7 +51,7 @@ public class ObjDNiebla : MonoBehaviour
         {
             tiempoSinAtaque += Time.deltaTime;
 
-            if (tiempoSinAtaque >= 2f && reducirRadioCoroutine == null)
+            if (tiempoSinAtaque >= priscadaGalaxial && reducirRadioCoroutine == null)
             {
                 reducirRadioCoroutine = StartCoroutine(ReducirRadioFluida());
             }

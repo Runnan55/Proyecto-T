@@ -13,6 +13,13 @@ public class ManagerNiebla : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StartCoroutine(FindPlayerWithDelay(0.5f)); // Llama a la corrutina con un retraso de 0.5 segundos
+    }
+
+    private IEnumerator FindPlayerWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay); // Espera el tiempo especificado
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
