@@ -9,7 +9,7 @@ public class BossSpawner : MonoBehaviour, IProtectable
     private bool isDestroyed = false;
     private bool isProtected = false;
 
-    public GameObject enemyPrefab;
+    public List<GameObject> enemyPrefabs = new List<GameObject>();
     public float spawnInterval = 5f;
 
     public delegate void OnDestroyedHandler(BossSpawner spawner);
@@ -69,13 +69,16 @@ public class BossSpawner : MonoBehaviour, IProtectable
     {
         while (!isDestroyed)
         {
-
-
-            if (enemyPrefab != null)
+            // Solo se invoca un enemigo cada vez
+            if (enemyPrefabs != null && enemyPrefabs.Count > 0)
             {
-                Instantiate(enemyPrefab, transform.position + Vector3.up, Quaternion.identity);
+                int index = Random.Range(0, enemyPrefabs.Count);
+                GameObject prefab = enemyPrefabs[index];
+                Instantiate(prefab, transform.position + Vector3.up, Quaternion.identity);
             }
-            yield return new WaitForSeconds(spawnInterval);
+
+            // Espera 5 segundos antes de spawnear el siguiente enemigo
+            yield return new WaitForSeconds(spawnInterval); // spawnInterval = 5f
         }
     }
 

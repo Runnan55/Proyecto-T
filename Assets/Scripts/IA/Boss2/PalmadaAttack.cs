@@ -34,7 +34,7 @@ public class PalmadaAttack : MonoBehaviour
         onda.transform.position = position;
         onda.transform.localScale = Vector3.one * 0.1f;
         onda.GetComponent<Renderer>().material.color = new Color(1, 0.5f, 0, 0.5f);
-        Destroy(onda, 1f);
+        Destroy(onda, 3f);
 
         onda.AddComponent<ShockwaveScaler>();
 
