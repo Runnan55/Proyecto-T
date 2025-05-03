@@ -1,180 +1,143 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FischlWorks_FogWar; // Importar el espacio de nombres donde se encuentra csFogWar
 
 public class ObjDNiebla : MonoBehaviour
 {
-    [Header("Área de niebla (Trigger)")]
-    public Collider areaDeNiebla;
+    [Header("Referencia a FogWar")]
+    public csFogWar fogWar; // Referencia al sistema de niebla
 
-    [Header("Referencia a ManagerNiebla")]
-    public ManagerNiebla managerNiebla;
+    [Header("Configuración de rango de visión")]
+    public int sightRange = 5; // Rango de visión configurable
+    public int maxSightRange = 10; // Rango máximo en modo expansivo
+    public int incrementoPorGolpe = 1; // Incremento del rango por golpe
 
-    [Header("Modo normal")]  
-    public float radioInicialNormal = 1f;
-    public float radioMaximoNormal = 6f;   
-    
     [Header("Modo expansivo")]
-    public bool usarModoExpansivo; 
-    public float radioInicialExpansivo = 1f;     
-    public float maxRadio = 6f;    
-    public float incrementoPorGolpe = 1f;
+    public bool usarModoExpansivo = false; // Indica si el objeto está en modo expansivo
 
-    [Header("Velocidad ambos modos")]
-    public float velocidadAjusteRadio = 2f;   
+    [Header("Reducción de rango")]
+    public int rangoInicial = 5; // Rango inicial de visión
+    public float tiempoSinGolpe = 2f; // Tiempo editable antes de reducir el rango
+    private float tiempoDesdeUltimoGolpe = 0f; // Temporizador para rastrear el tiempo sin golpes
 
-    private bool areaActiva = false;
-    private SphereCollider sphereCollider;
-    private Coroutine reducirRadioCoroutine;
-    private Coroutine aumentarRadioCoroutine;
-    private Coroutine ajustarRadioCoroutine;
-    private float tiempoSinAtaque = 0f;
-
-    public float priscadaGalaxial = 4f; // Tiempo sin ataque para reducir el radio en modo expansivo
+    public int fogRevealerIndex = -1; // Índice del FogRevealer en la lista de fogRevealers
+    private bool isActive = false; // Indica si el objeto ya está activado
+    private bool rangoIncrementado = false; // Bandera para evitar incrementos duplicados
 
     private void Start()
     {
-        sphereCollider = areaDeNiebla as SphereCollider;
-
-        if (sphereCollider != null)
+        // Buscar automáticamente el objeto FogWar en la escena si no está asignado
+        if (fogWar == null)
         {
-            sphereCollider.enabled = false;
-            sphereCollider.radius = usarModoExpansivo ? radioInicialExpansivo : radioInicialNormal; // Usar el radio inicial según el modo
+            fogWar = FindObjectOfType<csFogWar>();
+            if (fogWar == null)
+            {
+                Debug.LogError("No se encontró un objeto con el script csFogWar en la escena.");
+            }
         }
-
-        FindObjectOfType<FogOfWarManager>().nieblaSources.Add(this);
     }
 
     private void Update()
     {
-        if (usarModoExpansivo && areaActiva)
+        // Si el rango actual es mayor que 0, reducir gradualmente
+        if (usarModoExpansivo && sightRange > 0)
         {
-            tiempoSinAtaque += Time.deltaTime;
+            tiempoDesdeUltimoGolpe += Time.deltaTime;
 
-            if (tiempoSinAtaque >= priscadaGalaxial && reducirRadioCoroutine == null)
+            if (tiempoDesdeUltimoGolpe >= tiempoSinGolpe)
             {
-                reducirRadioCoroutine = StartCoroutine(ReducirRadioFluida());
+                sightRange = Mathf.Max(sightRange - 1, 0); // Reducir el rango gradualmente
+                tiempoDesdeUltimoGolpe = 0f; // Reiniciar el temporizador
+
+                // Actualizar o eliminar el FogRevealer si ya está registrado
+                if (sightRange == 0)
+                {
+                    EliminarFogRevealer();
+                }
+                else
+                {
+                    ActualizarFogRevealer();
+                }
             }
+        }
+
+        // Asegurarse de que los cambios manuales en sightRange se reflejen en el FogRevealer
+        if (fogRevealerIndex != -1 && fogWar._FogRevealers[fogRevealerIndex]._SightRange != sightRange)
+        {
+            ActualizarFogRevealer();
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        GameObject objeto = other.gameObject;
-
-        if (EsAtaqueDelJugador(objeto))
+        if (EsAtaqueDelJugador(other.gameObject) && fogWar != null)
         {
-            tiempoSinAtaque = 0f; // Reinicia el tiempo sin ataque
-
-            if (!areaActiva)
+            // Si no está en la lista, volver a agregarlo
+            if (fogRevealerIndex == -1)
             {
-                areaActiva = true;
-
-                if (sphereCollider != null)
-                {
-                    sphereCollider.enabled = true;
-                    sphereCollider.radius = usarModoExpansivo ? radioInicialExpansivo : radioInicialNormal; // Usar el radio inicial según el modo
-                }
-
-                if (!usarModoExpansivo && aumentarRadioCoroutine == null)
-                {
-                    aumentarRadioCoroutine = StartCoroutine(AumentarRadioSuavemente(radioMaximoNormal)); // Usar radio máximo del modo normal
-                }
+                ActivarFogRevealer();
             }
 
-            if (usarModoExpansivo)
+            // Incrementar el rango de visión si está en modo expansivo
+            if (usarModoExpansivo && !rangoIncrementado)
             {
-                float nuevoRadio = Mathf.Min(sphereCollider.radius + incrementoPorGolpe, maxRadio); // Usar maxRadio para modo expansivo
-                if (ajustarRadioCoroutine != null)
-                    StopCoroutine(ajustarRadioCoroutine);
-                ajustarRadioCoroutine = StartCoroutine(AjustarRadioSuavemente(nuevoRadio));
-
-                if (reducirRadioCoroutine != null)
-                {
-                    StopCoroutine(reducirRadioCoroutine);
-                    reducirRadioCoroutine = null;
-                }
+                IncrementarRango();
+                rangoIncrementado = true; // Marcar como incrementado
             }
-        }
 
-        if (areaActiva && other.CompareTag("Player"))
-        {
-            managerNiebla.isActive = true;
+            tiempoDesdeUltimoGolpe = 0f; // Reiniciar el temporizador al recibir un golpe
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void ActivarFogRevealer()
     {
-        if (areaActiva && other.CompareTag("Player"))
+        if (fogWar != null)
         {
-            managerNiebla.isActive = false;
-
-            if (usarModoExpansivo && sphereCollider != null)
+            // Registrar este objeto como un FogRevealer si no está registrado
+            if (fogRevealerIndex == -1)
             {
-                if (ajustarRadioCoroutine != null)
-                    StopCoroutine(ajustarRadioCoroutine);
-                ajustarRadioCoroutine = StartCoroutine(AjustarRadioSuavemente(radioInicialExpansivo)); // Reducir suavemente al radio inicial del modo expansivo
+                fogRevealerIndex = fogWar.AddFogRevealer(new csFogWar.FogRevealer(transform, sightRange, false));
             }
-
-            if (reducirRadioCoroutine != null)
-            {
-                StopCoroutine(reducirRadioCoroutine);
-                reducirRadioCoroutine = null;
-            }
+            isActive = true; // Marcar el objeto como activado
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void EliminarFogRevealer()
     {
-        if (areaActiva && other.CompareTag("Player"))
+        if (fogRevealerIndex != -1 && fogWar != null)
         {
-            managerNiebla.isActive = true; // Asegura que la niebla esté activa mientras el jugador esté dentro
+            fogWar.RemoveFogRevealer(fogRevealerIndex);
+            fogRevealerIndex = -1; // Marcar como eliminado
+            isActive = false; // Marcar el objeto como desactivado
         }
     }
 
-    private IEnumerator ReducirRadioFluida()
+    private void IncrementarRango()
     {
-        while (usarModoExpansivo && sphereCollider != null && sphereCollider.radius > radioInicialExpansivo) // Usar valor público
-        {
-            sphereCollider.radius = Mathf.MoveTowards(sphereCollider.radius, radioInicialExpansivo, Time.deltaTime * velocidadAjusteRadio); // Usar valores públicos
-            yield return null;
+        // Incrementar el rango de visión hasta el máximo permitido
+        sightRange = Mathf.Min(sightRange + incrementoPorGolpe, maxSightRange);
 
-            if (tiempoSinAtaque == 0f) // Si el jugador ataca, se detiene la reducción
-            {
-                reducirRadioCoroutine = null;
-                yield break;
-            }
-        }
+        // Actualizar el rango en el FogRevealer si ya está registrado
+        ActualizarFogRevealer();
 
-        reducirRadioCoroutine = null;
+        // Reiniciar la bandera después de un breve retraso
+        StartCoroutine(ResetRangoIncrementado());
     }
 
-    private IEnumerator AumentarRadioSuavemente(float objetivo)
+    private void ActualizarFogRevealer()
     {
-        while (sphereCollider != null && sphereCollider.radius < objetivo)
+        if (fogRevealerIndex != -1)
         {
-            sphereCollider.radius = Mathf.MoveTowards(sphereCollider.radius, objetivo, Time.deltaTime * velocidadAjusteRadio); // Usar valor público
-            yield return null;
+            fogWar._FogRevealers[fogRevealerIndex] = new csFogWar.FogRevealer(transform, sightRange, false);
+            fogWar.ForceUpdateFog(); // Forzar la actualización de la niebla
         }
-
-        aumentarRadioCoroutine = null;
     }
 
-    private IEnumerator AjustarRadioSuavemente(float objetivo)
+    private IEnumerator ResetRangoIncrementado()
     {
-        while (sphereCollider != null && !Mathf.Approximately(sphereCollider.radius, objetivo))
-        {
-            sphereCollider.radius = Mathf.MoveTowards(sphereCollider.radius, objetivo, Time.deltaTime * velocidadAjusteRadio); // Usar valor público
-            yield return null;
-        }
-
-        if (Mathf.Approximately(sphereCollider.radius, (usarModoExpansivo ? radioInicialExpansivo : radioInicialNormal)) && objetivo == (usarModoExpansivo ? radioInicialExpansivo : radioInicialNormal)) // Usar radio inicial según el modo
-        {
-            sphereCollider.enabled = false;
-            areaActiva = false;
-        }
-
-        ajustarRadioCoroutine = null;
+        yield return new WaitForSeconds(0.1f); // Ajusta el tiempo según sea necesario
+        rangoIncrementado = false;
     }
 
     private bool EsAtaqueDelJugador(GameObject objeto)
@@ -184,24 +147,5 @@ public class ObjDNiebla : MonoBehaviour
                objeto.name == "AtaqueL3" ||
                objeto.name == "CollidersAtaqueP" ||
                objeto.CompareTag("Boomerang");
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (areaDeNiebla is SphereCollider gizmoSphere)
-        {
-            Gizmos.color = new Color(0f, 1f, 0f, 0.2f);
-            float scaledRadius = gizmoSphere.radius * Mathf.Max(
-                gizmoSphere.transform.lossyScale.x,
-                gizmoSphere.transform.lossyScale.y,
-                gizmoSphere.transform.lossyScale.z
-            );
-            Gizmos.DrawSphere(gizmoSphere.transform.position + gizmoSphere.center, scaledRadius);
-        }
-    }
-
-    public bool AreaActiva()
-    {
-        return areaActiva;
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq; // Para usar LINQ
 using UnityEngine;
 
 public class ManagerNiebla : MonoBehaviour
@@ -9,11 +10,15 @@ public class ManagerNiebla : MonoBehaviour
 
     private Life playerLife;
     private float damageTimer = 0f;
+    private ObjDNiebla[] objDNieblaArray; // Array para almacenar referencias a los objetos ObjDNiebla
 
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(FindPlayerWithDelay(0.5f)); // Llama a la corrutina con un retraso de 0.5 segundos
+
+        // Buscar todos los objetos ObjDNiebla en la escena
+        objDNieblaArray = FindObjectsOfType<ObjDNiebla>();
     }
 
     private IEnumerator FindPlayerWithDelay(float delay)
@@ -67,6 +72,20 @@ public class ManagerNiebla : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Verificar si el jugador está dentro del rango de visión de algún ObjDNiebla
+        isActive = objDNieblaArray.Any(obj =>
+        {
+            if (obj.fogRevealerIndex != -1 && obj.fogWar != null)
+            {
+                Vector3 playerPosition = playerLife != null ? playerLife.transform.position : Vector3.zero;
+                Vector3 objPosition = obj.transform.position;
+                float distance = Vector3.Distance(playerPosition, objPosition);
+                return distance <= obj.sightRange * obj.fogWar._UnitScale;
+            }
+            return false;
+        });
+
+        // Si no está activo, aplicar daño al jugador
         if (!isActive && playerLife != null)
         {
             damageTimer += Time.deltaTime;

@@ -42,10 +42,12 @@ public class FogOfWarManager : MonoBehaviour
 
         foreach (var obj in nieblaSources)
         {
+            /*
             if (obj != null && obj.AreaActiva())
             {
                 ApplyNieblaInfluence(obj);
             }
+            */
         }
 
         UpdateMeshColors();
@@ -64,7 +66,7 @@ public class FogOfWarManager : MonoBehaviour
 
     void ApplyNieblaInfluence(ObjDNiebla obj)
     {
-        if (!(obj.areaDeNiebla is SphereCollider sphere)) return;
+        /*if (!(obj.areaDeNiebla is SphereCollider sphere)) return;
 
         float scaledRadius = sphere.radius * Mathf.Max(
             sphere.transform.lossyScale.x,
@@ -102,7 +104,7 @@ public class FogOfWarManager : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
     }
 
     void UpdateMeshColors()
