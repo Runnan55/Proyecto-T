@@ -21,7 +21,7 @@ public class DamageDealer : MonoBehaviour
 
         BossArmProtector bossArmProtector = other.GetComponent<BossArmProtector>();
 
-        Debug.Log("Entrando en contacto con: " + other.name);
+        //Debug.Log("Entrando en contacto con: " + other.name);
         if (enemy != null)
         {
             enemy.ReceiveDamage(damageAmount);
