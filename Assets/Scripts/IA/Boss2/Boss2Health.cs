@@ -41,6 +41,9 @@ public class Boss2Health : MonoBehaviour
     private float attackInterval = 6f;
     private float nextAttackTime = 0f;
 
+    private float respawnInterval = 20f;  // Intervalo para regenerar los spawners después de ser destruidos
+    private float nextRespawnTime = 0f;
+
     void Start()
     {
         currentHealth = totalHealth;
@@ -53,7 +56,6 @@ public class Boss2Health : MonoBehaviour
         if (Time.time >= nextCheckTime)
         {
             nextCheckTime = Time.time + checkInterval;
-            EvaluateCombatBehavior();
         }
 
         // Ataques de Fase 2
@@ -73,6 +75,9 @@ public class Boss2Health : MonoBehaviour
         {
             TriggerArmProtection();
         }
+
+        // Reaparecer los spawners por tiempo en ambas fases
+        RegenerateSpawners();
     }
 
     void SubscribeToObjects()
@@ -113,20 +118,8 @@ public class Boss2Health : MonoBehaviour
         Debug.Log("Fase 2 activada");
         currentPhase = 2;
         currentHealth = totalHealth / 2;
-        StartCoroutine(RespawnSpawnersWithDelay(1f));
-        nextAttackTime = Time.time + 2f;
-    }
-
-    private IEnumerator RespawnSpawnersWithDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        foreach (var spawner in bossSpawner)
-        {
-            spawner.ResetObject();
-        }
-
-        Debug.Log("Spawners reaparecidos en Fase 2");
+        nextRespawnTime = Time.time + respawnInterval; // Establecemos el tiempo de regeneración de los spawners
+        RegenerateAllSpawners(); // Regeneramos todos los spawners inmediatamente al entrar en fase 2
     }
 
     private void Die()
@@ -135,108 +128,29 @@ public class Boss2Health : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // ===================
-    // COMPORTAMIENTO IA
-    // ===================
-    private void EvaluateCombatBehavior()
+    private void RegenerateSpawners()
     {
-        if (IsPlayerFar())
+        foreach (var spawner in bossSpawner)
         {
-            TryRespawnMissingSpawners();
-        }
-
-        if (IsInBulletTime())
-        {
-            SpawnMeleeBarricade();
-        }
-
-        if (PlayerUsedChargedAttackOnCore())
-        {
-            IncreaseSpawnRate(); // aún simulado
-        }
-
-        if (currentPhase == 2 && AllObjectsDestroyed())
-        {
-            if (BossHasArms())
+            // En ambas fases, si un spawner está destruido y ha pasado el tiempo de regeneración, lo regeneramos
+            if (spawner.IsDestroyed() && Time.time >= nextRespawnTime)
             {
-                ProtectSelfWithArms();
-            }
-            else
-            {
-                SummonMeleeWave();
+                spawner.ResetObject(); // Regeneramos el spawner individualmente
+                nextRespawnTime = Time.time + respawnInterval; // Actualizamos el tiempo de regeneración
+                Debug.Log("Spawner regenerado.");
             }
         }
     }
 
-    private bool IsPlayerFar()
+    private void RegenerateAllSpawners()
     {
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player == null) return false;
-
-        return Vector3.Distance(transform.position, player.transform.position) > 15f;
-    }
-
-    private bool IsInBulletTime()
-    {
-        return Time.timeScale < 0.8f;
-    }
-
-    private bool PlayerUsedChargedAttackOnCore()
-    {
-        return false; // conectar con tu sistema real
-    }
-
-    private void TryRespawnMissingSpawners()
-    {
+        // Solo se llama cuando el Boss entra en fase 2
         foreach (var spawner in bossSpawner)
         {
-            if (spawner.IsDestroyed())
-            {
-                Debug.Log("Reapareciendo spawner por distancia del jugador");
-                spawner.ResetObject();
-                return;
-            }
+            spawner.ResetObject();  // Regeneramos todos los spawners inmediatamente
         }
     }
 
-    private void SpawnMeleeBarricade()
-    {
-        Debug.Log("Invocando enemigos melee por tiempo bala");
-        foreach (var spawner in bossSpawner)
-        {
-            Instantiate(meleeEnemyPrefab, spawner.transform.position, Quaternion.identity);
-        }
-    }
-
-    private void IncreaseSpawnRate()
-    {
-        Debug.Log("Aumentando velocidad de spawneo (simulado)");
-        // Aquí conectarías con la lógica de tus spawners
-    }
-
-    private bool BossHasArms()
-    {
-        return false; // conectar con tus brazos reales
-    }
-
-    private void ProtectSelfWithArms()
-    {
-        Debug.Log("El boss se protege con los brazos");
-        // Animaciones / lógica de protección real
-    }
-
-    private void SummonMeleeWave()
-    {
-        Debug.Log("Ola de enemigos por no tener brazos ni spawners");
-        foreach (var spawner in bossSpawner)
-        {
-            Instantiate(meleeEnemyPrefab, spawner.transform.position, Quaternion.identity);
-        }
-    }
-
-    // ===================
-    // ATAQUES FASE 2
-    // ===================
     private void ExecuteRandomAttack()
     {
         int random = Random.Range(0, 3);
