@@ -16,6 +16,8 @@ public class EnemySpawner
 public class EnemyWave
 {
     public List<EnemySpawner> enemySpawns;
+    public GridManager gridManager;
+    public int gridLayoutIndex = 0;
 }
 
 public class Level : MonoBehaviour
@@ -133,7 +135,14 @@ public class Level : MonoBehaviour
         {
             FMODUnity.RuntimeManager.PlayOneShot(waveStart);
             defeatedEnemies = waves[currentWave].enemySpawns.Count;
-            StartCoroutine(SpawnWave(waves[currentWave]));
+
+            var wave = waves[currentWave];
+            if (wave.gridManager != null)
+            {
+                wave.gridManager.ActivateWave(wave.gridLayoutIndex);
+            }
+
+            StartCoroutine(SpawnWave(wave));
             currentWave++;
         }
     }
