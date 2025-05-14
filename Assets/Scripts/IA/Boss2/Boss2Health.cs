@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;  // Para actualizar la barra de vida
 
 public class Boss2Health : MonoBehaviour
 {
@@ -31,9 +32,13 @@ public class Boss2Health : MonoBehaviour
     public BossArmProtector leftArm;
     public BossArmProtector rightArm;
 
+    [Header("Barra de vida")]
+    public Image healthBar;
+
     public int currentPhase = 1;
-    private int totalHealth = 100;
-    private int currentHealth;
+    private float totalHealth = 100f;
+    private float currentHealth;
+    private float healthPerSpawner; // Porcentaje de vida por cada spawner
 
     private float checkInterval = 1f;
     private float nextCheckTime = 0f;
@@ -46,12 +51,17 @@ public class Boss2Health : MonoBehaviour
 
     void Start()
     {
-        currentHealth = totalHealth;
+        // Calculamos el porcentaje de vida por cada spawner en la fase 1 (50% del total de vida)
+        healthPerSpawner = totalHealth / 2 / bossSpawner.Length; // Distribuir el 50% de la vida entre los spawners
+        currentHealth = totalHealth / 2; // Iniciar con el 50% de la vida en fase 1
         SubscribeToObjects();
     }
 
     void Update()
     {
+        // Actualizamos la barra de vida
+        healthBar.fillAmount = currentHealth / totalHealth;
+
         // Comportamientos generales (IA)
         if (Time.time >= nextCheckTime)
         {
@@ -90,16 +100,21 @@ public class Boss2Health : MonoBehaviour
 
     private void HandleObjectDestroyed(BossSpawner destroyedObj)
     {
-        if (AllObjectsDestroyed())
+        // Cuando un spawner se destruye, restamos su porcentaje de vida al boss
+        if (currentPhase == 1)
         {
-            if (currentPhase == 1)
-            {
-                StartPhaseTwo();
-            }
-            else
-            {
-                Die();
-            }
+            // Reducir la vida del boss cuando un spawner de la fase 1 es destruido
+            currentHealth -= healthPerSpawner;
+        }
+        else if (currentPhase == 2)
+        {
+            // Si el boss está en la fase 2, la vida se reduce aún más dependiendo de los spawners destruidos
+            currentHealth -= healthPerSpawner;
+        }
+
+        if (currentHealth <= 0)
+        {
+            Die();
         }
     }
 
@@ -118,8 +133,12 @@ public class Boss2Health : MonoBehaviour
         Debug.Log("Fase 2 activada");
         currentPhase = 2;
         currentHealth = totalHealth / 2;
-        nextRespawnTime = Time.time + respawnInterval; // Establecemos el tiempo de regeneración de los spawners
-        RegenerateAllSpawners(); // Regeneramos todos los spawners inmediatamente al entrar en fase 2
+
+        // Establecemos el tiempo de regeneración de los spawners
+        nextRespawnTime = Time.time + respawnInterval;
+
+        // Llamamos a la corutina para regenerar los spawners después de un retardo de 1 segundo
+        StartCoroutine(RegenerateSpawnersWithDelay(1f));  // 1 segundo de retardo
     }
 
     private void Die()
@@ -142,13 +161,25 @@ public class Boss2Health : MonoBehaviour
         }
     }
 
+    // Corutina para añadir un retardo antes de regenerar los spawners
+    private IEnumerator RegenerateSpawnersWithDelay(float delay)
+    {
+        // Espera el tiempo especificado (1 segundo en este caso)
+        yield return new WaitForSeconds(delay);
+
+        // Ahora regeneramos todos los spawners
+        RegenerateAllSpawners();
+    }
+
+    // Regeneración de todos los spawners
     private void RegenerateAllSpawners()
     {
-        // Solo se llama cuando el Boss entra en fase 2
         foreach (var spawner in bossSpawner)
         {
-            spawner.ResetObject();  // Regeneramos todos los spawners inmediatamente
+            spawner.ResetObject();  // Regeneramos cada spawner
         }
+
+        Debug.Log("Spawners regenerados en fase 2");
     }
 
     private void ExecuteRandomAttack()

@@ -27,7 +27,7 @@ public class BarridoAttack : MonoBehaviour
         {
             GameObject barrido = GameObject.CreatePrimitive(PrimitiveType.Cube);
             barrido.transform.position = from + Vector3.up;
-            barrido.transform.localScale = new Vector3(2, 1, 5);
+            barrido.transform.localScale = new Vector3(2, 1, 15);
             barrido.GetComponent<Renderer>().material.color = Color.red;
 
             float elapsed = 0f;
