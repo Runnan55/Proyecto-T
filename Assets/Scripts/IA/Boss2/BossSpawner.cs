@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BossSpawner : MonoBehaviour, IProtectable
 {
-     public float maxHealth = 33;  // Salud máxima del spawner
+    public float maxHealth = 33;  // Salud máxima del spawner
     private float currentHealth;
     private bool isDestroyed = false;
     private bool isProtected = false;
@@ -40,7 +40,7 @@ public class BossSpawner : MonoBehaviour, IProtectable
     // Método Update, ya no controla la regeneración
     void Update()
     {
-        // Ahora solo controlamos si el spawner está destruido y si su evento de regeneración es gestionado por el Boss
+        // Aquí no hay control de regeneración, eso lo maneja Boss2Health.cs
     }
 
     public bool IsDestroyed()

@@ -32,13 +32,9 @@ public class Boss2Health : MonoBehaviour
     public BossArmProtector leftArm;
     public BossArmProtector rightArm;
 
-    [Header("Barra de vida")]
-    public Image healthBar;
-
     public int currentPhase = 1;
-    private float totalHealth = 100f;
-    private float currentHealth;
-    private float healthPerSpawner; // Porcentaje de vida por cada spawner
+    private int totalHealth = 100;
+    private int currentHealth;
 
     private float checkInterval = 1f;
     private float nextCheckTime = 0f;
@@ -49,18 +45,18 @@ public class Boss2Health : MonoBehaviour
     private float respawnInterval = 20f;  // Intervalo para regenerar los spawners después de ser destruidos
     private float nextRespawnTime = 0f;
 
+    public Image healthBar;
+
+
     void Start()
     {
-        // Calculamos el porcentaje de vida por cada spawner en la fase 1 (50% del total de vida)
-        healthPerSpawner = totalHealth / 2 / bossSpawner.Length; // Distribuir el 50% de la vida entre los spawners
-        currentHealth = totalHealth / 2; // Iniciar con el 50% de la vida en fase 1
+        currentHealth = totalHealth;
         SubscribeToObjects();
+
     }
 
     void Update()
     {
-        // Actualizamos la barra de vida
-        healthBar.fillAmount = currentHealth / totalHealth;
 
         // Comportamientos generales (IA)
         if (Time.time >= nextCheckTime)
@@ -100,21 +96,16 @@ public class Boss2Health : MonoBehaviour
 
     private void HandleObjectDestroyed(BossSpawner destroyedObj)
     {
-        // Cuando un spawner se destruye, restamos su porcentaje de vida al boss
-        if (currentPhase == 1)
+        if (AllObjectsDestroyed())
         {
-            // Reducir la vida del boss cuando un spawner de la fase 1 es destruido
-            currentHealth -= healthPerSpawner;
-        }
-        else if (currentPhase == 2)
-        {
-            // Si el boss está en la fase 2, la vida se reduce aún más dependiendo de los spawners destruidos
-            currentHealth -= healthPerSpawner;
-        }
-
-        if (currentHealth <= 0)
-        {
-            Die();
+            if (currentPhase == 1)
+            {
+                StartPhaseTwo();
+            }
+            else
+            {
+                Die();
+            }
         }
     }
 
@@ -141,26 +132,6 @@ public class Boss2Health : MonoBehaviour
         StartCoroutine(RegenerateSpawnersWithDelay(1f));  // 1 segundo de retardo
     }
 
-    private void Die()
-    {
-        Debug.Log("¡El boss ha muerto definitivamente!");
-        Destroy(gameObject);
-    }
-
-    private void RegenerateSpawners()
-    {
-        foreach (var spawner in bossSpawner)
-        {
-            // En ambas fases, si un spawner está destruido y ha pasado el tiempo de regeneración, lo regeneramos
-            if (spawner.IsDestroyed() && Time.time >= nextRespawnTime)
-            {
-                spawner.ResetObject(); // Regeneramos el spawner individualmente
-                nextRespawnTime = Time.time + respawnInterval; // Actualizamos el tiempo de regeneración
-                Debug.Log("Spawner regenerado.");
-            }
-        }
-    }
-
     // Corutina para añadir un retardo antes de regenerar los spawners
     private IEnumerator RegenerateSpawnersWithDelay(float delay)
     {
@@ -181,6 +152,27 @@ public class Boss2Health : MonoBehaviour
 
         Debug.Log("Spawners regenerados en fase 2");
     }
+
+    private void Die()
+    {
+        Debug.Log("¡El boss ha muerto definitivamente!");
+        Destroy(gameObject);
+    }
+
+    private void RegenerateSpawners()
+    {
+        foreach (var spawner in bossSpawner)
+        {
+            // En ambas fases, si un spawner está destruido y ha pasado el tiempo de regeneración, lo regeneramos
+            if (spawner.IsDestroyed() && Time.time >= nextRespawnTime)
+            {
+                spawner.ResetObject(); // Regeneramos el spawner individualmente
+                nextRespawnTime = Time.time + respawnInterval; // Actualizamos el tiempo de regeneración
+                Debug.Log("Spawner regenerado.");
+            }
+        }
+    }
+
 
     private void ExecuteRandomAttack()
     {
