@@ -91,7 +91,10 @@ public class BossSpawner : MonoBehaviour, IProtectable
             yield return new WaitForSeconds(spawnInterval);  // Tiempo entre cada spawn
         }
     }
-
+    public float GetCurrentHealth()
+    {
+        return currentHealth;
+    }
     // Método para proteger el spawner (según la interfaz IProtectable)
     public void SetProtected(bool state)
     {

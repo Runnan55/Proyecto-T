@@ -45,16 +45,47 @@ public class Boss2Health : MonoBehaviour
     private float respawnInterval = 20f;  // Intervalo para regenerar los spawners después de ser destruidos
     private float nextRespawnTime = 0f;
 
-    public Image healthBar;
-
+    [Header("Barra vida")]
+    public Slider healthBar;            // Barra principal (verde)
+    public Slider previewHealthBar;     // Barra amarilla (preview)
+    public float previewSpeed = 1f;
+    private float bossMaxHealth;
+    private float bossCurrentHealth;
 
     void Start()
     {
+        
         currentHealth = totalHealth;
         SubscribeToObjects();
-
+        CalculateBossHealth();  // Inicializa la barra
     }
+    private void CalculateBossHealth()
+    {
+        bossMaxHealth = 0f;
+        bossCurrentHealth = 0f;
 
+        foreach (var spawner in bossSpawner)
+        {
+            bossMaxHealth += spawner.maxHealth;
+            bossCurrentHealth += spawner.GetCurrentHealth();
+        }
+
+        if (healthBar != null)
+        {
+            healthBar.maxValue = bossMaxHealth;
+            healthBar.value = bossCurrentHealth;
+        }
+
+        if (previewHealthBar != null)
+        {
+            previewHealthBar.maxValue = bossMaxHealth;
+            previewHealthBar.value = bossCurrentHealth;
+        }
+    }
+    public float GetCurrentHealth()
+    {
+        return currentHealth;
+    }
     void Update()
     {
 
@@ -84,6 +115,24 @@ public class Boss2Health : MonoBehaviour
 
         // Reaparecer los spawners por tiempo en ambas fases
         RegenerateSpawners();
+        UpdateBossHealthBar();
+
+    }
+    private void UpdateBossHealthBar()
+    {
+        bossCurrentHealth = 0f;
+        foreach (var spawner in bossSpawner)
+        {
+            bossCurrentHealth += spawner.GetCurrentHealth();
+        }
+
+        if (healthBar != null)
+            healthBar.value = bossCurrentHealth;
+
+        if (previewHealthBar != null && previewHealthBar.value > bossCurrentHealth)
+        {
+            previewHealthBar.value = Mathf.Lerp(previewHealthBar.value, bossCurrentHealth, previewSpeed * Time.deltaTime);
+        }
     }
 
     void SubscribeToObjects()
@@ -94,6 +143,22 @@ public class Boss2Health : MonoBehaviour
         }
     }
 
+    private void ScheduleSpawnerRegen(BossSpawner spawner)
+    {
+        StartCoroutine(RegenerateSpawnerIfNotAllDestroyed(spawner, 10f));
+    }
+
+    private IEnumerator RegenerateSpawnerIfNotAllDestroyed(BossSpawner spawner, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Si no se han destruido todos los spawners, se regenera este
+        if (!AllObjectsDestroyed())
+        {
+            spawner.ResetObject();
+            Debug.Log("Spawner regenerado automáticamente tras 10 segundos.");
+        }
+    }
     private void HandleObjectDestroyed(BossSpawner destroyedObj)
     {
         if (AllObjectsDestroyed())
@@ -106,6 +171,11 @@ public class Boss2Health : MonoBehaviour
             {
                 Die();
             }
+        }
+        else
+        {
+            // Si no están todos destruidos, programa la regeneración del que ha caído
+            ScheduleSpawnerRegen(destroyedObj);
         }
     }
 
