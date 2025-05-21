@@ -117,10 +117,10 @@ GameObject:
   - component: {fileID: 7272404903523385576}
   - component: {fileID: 3060511140005355085}
   - component: {fileID: 8405445800455900969}
-  - component: {fileID: 7540300533142656239}
   - component: {fileID: 6977978499822606920}
   - component: {fileID: 2748831297889661506}
   - component: {fileID: 2334620406881304588}
+  - component: {fileID: 3173603515909171097}
   m_Layer: 0
   m_Name: SlimeV1
   m_TagString: Enemy
@@ -211,27 +211,6 @@ NavMeshAgent:
   m_BaseOffset: 0.22
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!135 &7540300533142656239
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 689192241280051199}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.49999997
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6977978499822606920
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -258,7 +237,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!114 &2748831297889661506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,6 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hp: 50
   antiRevivir: 0
+  maxHp: 100
   floatingTextPrefab: {fileID: 2378481116672621575, guid: 13d1d58de004e8048982d801b87de90b, type: 3}
   healthBarAnimator: {fileID: 0}
   hit:
@@ -282,6 +262,8 @@ MonoBehaviour:
       Data3: -1961193079
       Data4: 1367288947
     Path: event:/FX/hit
+  waveCountable: 1
+  revivir: 0
   healthBar: {fileID: 1270368542062826948}
   level: {fileID: 0}
   newMaterial: {fileID: 2100000, guid: 1ea1950e8d06cd14c8705cd9bcceda36, type: 2}
@@ -298,6 +280,9 @@ MonoBehaviour:
   alturaSalto: 1
   duracionSalto: 0.5
   distanciaSalto: 3
+  tieneCorazon: 0
+  grupoID: 0
+  esSlimeV2: 0
 --- !u!33 &2334620406881304588
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -306,6 +291,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 689192241280051199}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &3173603515909171097
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689192241280051199}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2893710011575074230
 GameObject:
   m_ObjectHideFlags: 0
