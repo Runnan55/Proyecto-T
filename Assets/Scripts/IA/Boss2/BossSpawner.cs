@@ -13,34 +13,53 @@ public class BossSpawner : MonoBehaviour, IProtectable
 
     public delegate void OnDestroyedHandler(BossSpawner spawner);
     public event OnDestroyedHandler OnDestroyed;
-
+    public Material defaultMaterial;
+    public Material protectedMaterial;
+    private Renderer rend;
     private Coroutine spawnCoroutine;
+
+    private float destroyedTime;
+    private bool pendingRegen;
 
     void Start()
     {
+        rend = GetComponent<Renderer>();
         ResetObject();  // Restablece el estado del spawner
     }
 
     // Método para recibir daño
     public void TakeDamage(float damage)
     {
-        if (isDestroyed || isProtected) return;  // No recibe daño si está destruido o protegido
+        Debug.Log($"{name} recibió intento de daño. Protegido: {isProtected}");
 
+        if (isDestroyed || isProtected)
+        {
+            Debug.Log($"{name} no recibe daño por protección o destrucción.");
+            return;
+        }
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            isDestroyed = true;  // El spawner ha sido destruido
-            StopSpawning();  // Detiene la spawn de enemigos
-            gameObject.SetActive(false);  // Desactiva el spawner
-            OnDestroyed?.Invoke(this);  // Notifica que el spawner ha sido destruido
+            isDestroyed = true;
+            destroyedTime = Time.time;
+            pendingRegen = true;
+
+            StopSpawning();
+            gameObject.SetActive(false);
+            OnDestroyed?.Invoke(this);
         }
     }
 
     // Método Update, ya no controla la regeneración
     void Update()
     {
-        // Aquí no hay control de regeneración, eso lo maneja Boss2Health.cs
+        if (pendingRegen && Time.time >= destroyedTime + 10f)
+        {
+            ResetObject();
+            pendingRegen = false;
+            Debug.Log($"{name} regenerado automáticamente tras 10s exactos desde su destrucción.");
+        }
     }
 
     public bool IsDestroyed()
@@ -98,7 +117,11 @@ public class BossSpawner : MonoBehaviour, IProtectable
     // Método para proteger el spawner (según la interfaz IProtectable)
     public void SetProtected(bool state)
     {
-        isProtected = state;  // Marca el spawner como protegido o no
+        isProtected = state;
+        if (rend != null)
+            rend.material = isProtected ? protectedMaterial : defaultMaterial;
+
+        Debug.Log($"{name}  Protección activa: {state}");
     }
 
     // Método para obtener la posición del spawner (según la interfaz IProtectable)

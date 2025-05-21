@@ -21,12 +21,25 @@ public class BarridoAttack : MonoBehaviour
         StartCoroutine(DoBarrido(startPoint.position, endPoint.position));
     }
 
-    private IEnumerator DoBarrido(Vector3 from, Vector3 to)
+    private IEnumerator DoBarrido(Vector3 originalStart, Vector3 originalEnd)
     {
+        // Calculamos el vector del barrido original
+        Vector3 direction = (originalEnd - originalStart).normalized;
+        float distance = Vector3.Distance(originalStart, originalEnd);
+
+        // Proyectamos la posición del jugador en esa línea
+        Vector3 toPlayer = player.position - originalStart;
+        float projection = Vector3.Dot(toPlayer, direction);
+        projection = Mathf.Clamp(projection, 0f, distance); // aseguramos que no salga de la línea
+
+        // Nuevo punto de inicio: retrocedemos para que pase por el jugador
+        Vector3 adjustedStart = originalStart + direction * (projection - distance / 2f);
+        Vector3 adjustedEnd = adjustedStart + direction * distance;
+
         for (int i = 0; i < totalSwipes; i++)
         {
             GameObject barrido = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            barrido.transform.position = from + Vector3.up;
+            barrido.transform.position = adjustedStart + Vector3.up;
             barrido.transform.localScale = new Vector3(2, 1, 15);
             barrido.GetComponent<Renderer>().material.color = Color.red;
 
@@ -34,7 +47,7 @@ public class BarridoAttack : MonoBehaviour
 
             while (elapsed < sweepDuration)
             {
-                barrido.transform.position = Vector3.Lerp(from, to, elapsed / sweepDuration) + Vector3.up;
+                barrido.transform.position = Vector3.Lerp(adjustedStart, adjustedEnd, elapsed / sweepDuration) + Vector3.up;
                 elapsed += Time.deltaTime;
                 yield return null;
             }
@@ -42,9 +55,10 @@ public class BarridoAttack : MonoBehaviour
             Destroy(barrido);
             yield return new WaitForSeconds(delayBetweenSwipes);
 
-            var temp = from;
-            from = to;
-            to = temp;
+            // Invertimos la dirección para el siguiente swipe
+            var temp = adjustedStart;
+            adjustedStart = adjustedEnd;
+            adjustedEnd = temp;
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BossArmProtector : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float moveSpeed = 30f;
     public float maxHealth = 50f;
     private float currentHealth;
 
@@ -24,17 +24,21 @@ public class BossArmProtector : MonoBehaviour
     {
         Vector3 destination = isProtecting ? targetPosition : originalPosition;
         transform.position = Vector3.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
+
+        if (isProtecting && currentTarget != null && Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            currentTarget.SetProtected(true);
+        }
     }
 
     public void Protect(IProtectable target)
     {
         currentTarget = target;
-        target.SetProtected(true);
         targetPosition = target.GetTransform().position;
         isProtecting = true;
     }
 
-    public void StopProtecting()
+    public void StopProtection()
     {
         if (currentTarget != null)
         {
@@ -52,7 +56,7 @@ public class BossArmProtector : MonoBehaviour
         currentHealth -= amount;
         if (currentHealth <= 0)
         {
-            StopProtecting();
+            StopProtection();
             Debug.Log(name + " brazo destruido");
             Destroy(gameObject);
         }

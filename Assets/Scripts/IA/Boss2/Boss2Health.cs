@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;  // Para actualizar la barra de vida
@@ -42,7 +42,7 @@ public class Boss2Health : MonoBehaviour
     private float attackInterval = 6f;
     private float nextAttackTime = 0f;
 
-    private float respawnInterval = 20f;  // Intervalo para regenerar los spawners después de ser destruidos
+    private float respawnInterval = 20f;  // Intervalo para regenerar los spawners despuÃ©s de ser destruidos
     private float nextRespawnTime = 0f;
 
     [Header("Barra vida")]
@@ -51,6 +51,11 @@ public class Boss2Health : MonoBehaviour
     public float previewSpeed = 1f;
     private float bossMaxHealth;
     private float bossCurrentHealth;
+
+    private bool protectionActive = false;
+    private float protectionCooldownTime = 0f;
+    public float protectionDuration = 10f;
+    public float protectionDelay = 10f;
 
     void Start()
     {
@@ -82,10 +87,7 @@ public class Boss2Health : MonoBehaviour
             previewHealthBar.value = bossCurrentHealth;
         }
     }
-    public float GetCurrentHealth()
-    {
-        return currentHealth;
-    }
+   
     void Update()
     {
 
@@ -108,9 +110,12 @@ public class Boss2Health : MonoBehaviour
             LaunchSlowOrb();
         }
 
-        if (Input.GetKeyDown(KeyCode.L) && currentPhase == 2)
+        if (currentPhase == 2 && bossCurrentHealth <= bossMaxHealth * 0.5f)
         {
-            TriggerArmProtection();
+            if (!protectionActive && Time.time >= protectionCooldownTime)
+            {
+                StartCoroutine(ActivateTemporaryProtection());
+            }
         }
 
         // Reaparecer los spawners por tiempo en ambas fases
@@ -134,6 +139,23 @@ public class Boss2Health : MonoBehaviour
             previewHealthBar.value = Mathf.Lerp(previewHealthBar.value, bossCurrentHealth, previewSpeed * Time.deltaTime);
         }
     }
+    private IEnumerator ActivateTemporaryProtection()
+    {
+        protectionActive = true;
+        protectionCooldownTime = Time.time + protectionDuration + protectionDelay;
+
+        TriggerArmProtection();  // Activa la protecciÃ³n con los brazos
+        Debug.Log("ðŸ”° ProtecciÃ³n activada");
+
+        yield return new WaitForSeconds(protectionDuration);
+
+        // Finaliza la protecciÃ³n (puedes agregar una funciÃ³n para que los brazos regresen)
+        leftArm.StopProtection();
+        rightArm.StopProtection();
+
+        protectionActive = false;
+        Debug.Log("âŒ ProtecciÃ³n desactivada, empieza el cooldown");
+    }
 
     void SubscribeToObjects()
     {
@@ -156,7 +178,7 @@ public class Boss2Health : MonoBehaviour
         if (!AllObjectsDestroyed())
         {
             spawner.ResetObject();
-            Debug.Log("Spawner regenerado automáticamente tras 10 segundos.");
+            Debug.Log("Spawner regenerado automÃ¡ticamente tras 10 segundos.");
         }
     }
     private void HandleObjectDestroyed(BossSpawner destroyedObj)
@@ -174,7 +196,7 @@ public class Boss2Health : MonoBehaviour
         }
         else
         {
-            // Si no están todos destruidos, programa la regeneración del que ha caído
+            // Si no estÃ¡n todos destruidos, programa la regeneraciÃ³n del que ha caÃ­do
             ScheduleSpawnerRegen(destroyedObj);
         }
     }
@@ -195,14 +217,14 @@ public class Boss2Health : MonoBehaviour
         currentPhase = 2;
         currentHealth = totalHealth / 2;
 
-        // Establecemos el tiempo de regeneración de los spawners
+        // Establecemos el tiempo de regeneraciÃ³n de los spawners
         nextRespawnTime = Time.time + respawnInterval;
 
-        // Llamamos a la corutina para regenerar los spawners después de un retardo de 1 segundo
+        // Llamamos a la corutina para regenerar los spawners despuÃ©s de un retardo de 1 segundo
         StartCoroutine(RegenerateSpawnersWithDelay(1f));  // 1 segundo de retardo
     }
 
-    // Corutina para añadir un retardo antes de regenerar los spawners
+    // Corutina para aÃ±adir un retardo antes de regenerar los spawners
     private IEnumerator RegenerateSpawnersWithDelay(float delay)
     {
         // Espera el tiempo especificado (1 segundo en este caso)
@@ -212,7 +234,7 @@ public class Boss2Health : MonoBehaviour
         RegenerateAllSpawners();
     }
 
-    // Regeneración de todos los spawners
+    // RegeneraciÃ³n de todos los spawners
     private void RegenerateAllSpawners()
     {
         foreach (var spawner in bossSpawner)
@@ -225,7 +247,7 @@ public class Boss2Health : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("¡El boss ha muerto definitivamente!");
+        Debug.Log("Â¡El boss ha muerto definitivamente!");
         Destroy(gameObject);
     }
 
@@ -233,11 +255,11 @@ public class Boss2Health : MonoBehaviour
     {
         foreach (var spawner in bossSpawner)
         {
-            // En ambas fases, si un spawner está destruido y ha pasado el tiempo de regeneración, lo regeneramos
+            // En ambas fases, si un spawner estÃ¡ destruido y ha pasado el tiempo de regeneraciÃ³n, lo regeneramos
             if (spawner.IsDestroyed() && Time.time >= nextRespawnTime)
             {
                 spawner.ResetObject(); // Regeneramos el spawner individualmente
-                nextRespawnTime = Time.time + respawnInterval; // Actualizamos el tiempo de regeneración
+                nextRespawnTime = Time.time + respawnInterval; // Actualizamos el tiempo de regeneraciÃ³n
                 Debug.Log("Spawner regenerado.");
             }
         }
@@ -250,7 +272,7 @@ public class Boss2Health : MonoBehaviour
 
         if (random == 0)
         {
-            palmadaAttack.ExecutePalmada(palmPointA, palmPointB);
+            palmadaAttack.ExecuteDoblePalmadaSobreJugador();
         }
         else if (random == 1)
         {
@@ -285,7 +307,7 @@ public class Boss2Health : MonoBehaviour
             }
         }
 
-        // Si no hay spawners activos, el jefe se vuelve el único objetivo protegible
+        // Si no hay spawners activos, el jefe se vuelve el Ãºnico objetivo protegible
         if (protectableTargets.Count == 0)
         {
             protectableTargets.Add(this as IProtectable); // el propio jefe

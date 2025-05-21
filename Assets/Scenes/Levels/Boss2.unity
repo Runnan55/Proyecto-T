@@ -331,6 +331,8 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 689192241280051199, guid: e1dca894908d041489f6f15c39f70d5b, type: 3}
   - {fileID: 6244530694984106205, guid: 5c1154f31a28e5a4e8d5c14a0cf92d1a, type: 3}
+  defaultMaterial: {fileID: 2100000, guid: 816c8216658255447aaeae49fb2fbc36, type: 2}
+  protectedMaterial: {fileID: 7485172763326355963, guid: 40919520fc415c84db87f3cb12cf03b8, type: 3}
 --- !u!135 &169751407
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -663,6 +665,8 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 689192241280051199, guid: e1dca894908d041489f6f15c39f70d5b, type: 3}
   - {fileID: 6244530694984106205, guid: 5c1154f31a28e5a4e8d5c14a0cf92d1a, type: 3}
+  defaultMaterial: {fileID: 2100000, guid: 816c8216658255447aaeae49fb2fbc36, type: 2}
+  protectedMaterial: {fileID: 7485172763326355963, guid: 40919520fc415c84db87f3cb12cf03b8, type: 3}
 --- !u!135 &607333683
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -917,6 +921,8 @@ MonoBehaviour:
   healthBar: {fileID: 238617273}
   previewHealthBar: {fileID: 28526137}
   previewSpeed: 1
+  protectionDuration: 10
+  protectionDelay: 10
 --- !u!114 &766683101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -944,7 +950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51ffbadf212e4364fbd9a1210c05a313, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayBeforeImpact: 3
+  delayBeforeImpact: 1
   shockwaveRadius: 10
   damage: 50
 --- !u!114 &766683103
@@ -1078,6 +1084,8 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 689192241280051199, guid: e1dca894908d041489f6f15c39f70d5b, type: 3}
   - {fileID: 6244530694984106205, guid: 5c1154f31a28e5a4e8d5c14a0cf92d1a, type: 3}
+  defaultMaterial: {fileID: 2100000, guid: 816c8216658255447aaeae49fb2fbc36, type: 2}
+  protectedMaterial: {fileID: 7485172763326355963, guid: 40919520fc415c84db87f3cb12cf03b8, type: 3}
 --- !u!135 &920953104
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1329,7 +1337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c945ee0593537443bb1e65370986479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 25
   maxHealth: 50
 --- !u!1 &1190072574
 GameObject:
@@ -1449,7 +1457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c945ee0593537443bb1e65370986479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 25
   maxHealth: 50
 --- !u!1001 &1317110729
 PrefabInstance:
