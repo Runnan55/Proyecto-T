@@ -25,7 +25,17 @@ public class TileController : MonoBehaviour
         
         currentTween = LeanTween.moveY(gameObject, targetY, animationDuration)
             .setEase(raise ? raiseEase : lowerEase)
+            .setOnStart(() => {
+            if (raise)
+            {
+                gameObject.layer = LayerMask.NameToLayer("obstacleLayers");
+            }
+            })
             .setOnComplete(() => {
+            if (!raise)
+            {
+                gameObject.layer = LayerMask.NameToLayer("VisibleThroughFog");
+            }
             });
     }
 }
