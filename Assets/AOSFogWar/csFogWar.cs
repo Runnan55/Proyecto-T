@@ -501,7 +501,46 @@ namespace FischlWorks_FogWar
 
             fogPlaneTextureLerpTarget.SetPixels(shadowcaster.fogField.GetColors(fogPlaneAlpha));
 
+            // Aplica un desenfoque doble para suavizar aún más los bordes de la niebla
+            ApplyBoxBlur(fogPlaneTextureLerpTarget, 2); // primer pasada con radio 2
+            ApplyBoxBlur(fogPlaneTextureLerpTarget, 2); // segunda pasada con radio 2
+
             fogPlaneTextureLerpTarget.Apply();
+        }
+
+
+
+        // Método auxiliar para aplicar un box blur a la textura
+        private void ApplyBoxBlur(Texture2D texture, int radius)
+        {
+            int w = texture.width;
+            int h = texture.height;
+            Color[] original = texture.GetPixels();
+            Color[] blurred = new Color[original.Length];
+
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    Color sum = Color.black;
+                    int count = 0;
+                    for (int dx = -radius; dx <= radius; dx++)
+                    {
+                        for (int dy = -radius; dy <= radius; dy++)
+                        {
+                            int nx = x + dx;
+                            int ny = y + dy;
+                            if (nx >= 0 && nx < w && ny >= 0 && ny < h)
+                            {
+                                sum += original[nx + ny * w];
+                                count++;
+                            }
+                        }
+                    }
+                    blurred[x + y * w] = sum / count;
+                }
+            }
+            texture.SetPixels(blurred);
         }
 
 
