@@ -13,6 +13,7 @@ public class Piston : MonoBehaviour
 
     private Vector3 initialPosition;
     private bool isMovingForward = true;
+    [SerializeField] private Vector3 moveDirection = Vector3.forward;
 
     void Start()
     {
@@ -27,8 +28,7 @@ public class Piston : MonoBehaviour
             if (isMovingForward)
             {
                 damageZone.ActivateDamage();
-                yield return MoveToPosition(initialPosition + transform.forward * moveDistance, moveDurationForward);
-                damageZone.DeactivateDamage();
+                yield return MoveToPosition(initialPosition + moveDirection.normalized * moveDistance, moveDurationForward);
                 yield return new WaitForSeconds(waitDurationForwardToBackward);
                 isMovingForward = false;
             }

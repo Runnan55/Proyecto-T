@@ -68,7 +68,10 @@ public class BossMovement2 : BossLIfe
     [Header("Arena y Entorno")]
     public Transform coreTransform;
     public Transform[] arenaBounds; // Límites de la arena para rebotar engranajes
-    private bool trampasCanceladas = false; 
+    private bool trampasCanceladas = false;
+
+    private Animator animator;
+    
 
     protected override void Start()
     {
@@ -80,6 +83,7 @@ public class BossMovement2 : BossLIfe
         StartCoroutine(FindPlayerWithDelay());
         jumpAttack = GetComponent<BossJumpAttack>();
         currentTarget = zonePoints[0].position;
+        animator = GetComponent<Animator>();
 
         if (bossRenderer != null)
         {
@@ -188,6 +192,7 @@ public class BossMovement2 : BossLIfe
     {
         if (!canMove)
         {
+            animator.SetBool("IsMoving", false);
             rb.velocity = Vector3.zero;
             return;
         }
@@ -211,6 +216,7 @@ public class BossMovement2 : BossLIfe
 
         if (isAttacking)
         {
+            animator.SetBool("IsMoving", false);
             rb.velocity = Vector3.zero;
             if (actionTimer <= 0)
             {
@@ -220,6 +226,7 @@ public class BossMovement2 : BossLIfe
         }
         else
         {
+            animator.SetBool("IsMoving", true);
             Vector3 direction = (player.position - transform.position).normalized;
             rb.velocity = direction * moveSpeed * MovimientoJugador.bulletTimeScale;
 
@@ -330,28 +337,35 @@ public class BossMovement2 : BossLIfe
 
     public void Barrido()
     {
+        animator.SetTrigger("Attack_Barrido");
+
         GameObject barridoAtk = Instantiate(barrido, coreTransform.position, coreTransform.rotation);
         barridoAtk.GetComponent<Barrido>().ExecuteSweep();
     }
     public void Barrido2()
     {
+        animator.SetTrigger("Attack_Barrido");
+
         GameObject barridoAtk = Instantiate(barrido2, coreTransform.position, coreTransform.rotation);
         barridoAtk.GetComponent<Barrido>().ExecuteSweep();
     }
     public void ExplosionPropia()
     {
+        animator.SetTrigger("Attack_Explosion");
         Debug.Log("pumm");
         GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
     }
     public void ExplosionPropia2()
     {
+        animator.SetTrigger("Attack_Explosion");
         Debug.Log("pumm");
         GameObject explosion = Instantiate(explosionPrefab2, transform.position, Quaternion.identity);
         explosion.GetComponent<ExplosionBoss>().TriggerExplosion();
     }
     public void Engranaje()
     {
+        animator.SetTrigger("Attack_Disparo");
         GameObject proyectil = Instantiate(engranaje, coreTransform.position, Quaternion.identity);
 
         Vector3 direction = coreTransform.forward;
@@ -360,12 +374,14 @@ public class BossMovement2 : BossLIfe
     }
     public void TrampaRobots()
     {
+        animator.SetTrigger("Attack_MiniBots");
 
         Instantiate(gearTrapBot, arenaBounds[0].position, Quaternion.identity);
         Instantiate(gearTrapBot2, arenaBounds[1].position, Quaternion.identity);
     }
     public void Salto()
     {
+        animator.SetTrigger("Attack_Salto");
         int nuevaZona = GetRandomIndexExcluding(zonaActual);
         int zonaAnterior = zonaActual; // Guardamos la zona actual antes de cambiarla
         trampasCanceladas = false; // Reiniciamos la variable cuando el jefe salta
@@ -416,6 +432,9 @@ public class BossMovement2 : BossLIfe
 
     public void TormentaDeEngranajes()
     {
+        animator.SetTrigger("Attack_Tuerca");
+
+        
         if (gearStorm != null)
         {
             gearStorm.IniciarTormenta(transform.position);
@@ -427,6 +446,8 @@ public class BossMovement2 : BossLIfe
     }
     public void ExplosionEngranajes()
     {
+        animator.SetTrigger("Attack_DisparoAmplio");
+
         orbeAttackController.PerformOrbeAttack();
     }
 

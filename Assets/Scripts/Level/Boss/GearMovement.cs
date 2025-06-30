@@ -20,13 +20,12 @@ public class GearMovement : MonoBehaviour
         // Registrar la posición inicial del engranaje
         lastGearPosition = transform.position;
     }
-
+    [SerializeField] private Vector3 rotationAxis = Vector3.forward;
     void FixedUpdate()
     {
         // Rotar el engranaje
         float direction = rotateRight ? 1f : -1f;
-        transform.Rotate(0, direction * rotationSpeed * Time.fixedDeltaTime, 0);
-
+        transform.Rotate(rotationAxis * direction * rotationSpeed * Time.fixedDeltaTime);
         // Si el jugador está sobre el engranaje, moverlo con este
         if (playerTransform != null)
 {
