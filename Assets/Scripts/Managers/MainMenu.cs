@@ -13,20 +13,34 @@ public class MainMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+/*         if (Input.GetKeyDown(KeyCode.Escape))
         {
             exitGame();
-        }
+        } */
+    }
+
+    [Header("Opciones UI")]
+    public GameObject mainMenuPanel;
+    public GameObject optionsPanel;
+
+    public void OptionsButton()
+    {
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        if (optionsPanel != null) optionsPanel.SetActive(true);
+    }
+
+    public void BackFromOptionsButton()
+    {
+        if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
     }
 
     public void exitGame()
     {
         #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-
         #else
             Application.Quit();
-
         #endif
     }
 
