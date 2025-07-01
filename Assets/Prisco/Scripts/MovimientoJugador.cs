@@ -111,6 +111,9 @@ public class MovimientoJugador : MonoBehaviour
     public static bool isInDodgeArea = false;
     public static bool godMode = false;
 
+    [Header("Progreso")]
+    public int nivelActual = 1;
+
     #region *Bertadas
     public void speedUp()
     {
