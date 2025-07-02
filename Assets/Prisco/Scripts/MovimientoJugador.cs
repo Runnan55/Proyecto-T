@@ -46,6 +46,7 @@ public class MovimientoJugador : MonoBehaviour
     public float velocidadExpansion = 2.0f;
     private bool atacando = false; 
     private Coroutine mirarCoroutine; 
+    private Coroutine disparoCoroutine; // Nueva variable para manejar la corrutina del disparo cargado 
     public float tiempoEsperaAtaque = 3.0f; 
     private float tiempoUltimoAtaque;   
     public static bool canAttack = true;
@@ -436,6 +437,7 @@ public class MovimientoJugador : MonoBehaviour
         if (!enterAttack && !ataqueL && !ataqueP && !ataqueD)
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 0.2f);
+            hasRotated = false; // Solo resetear cuando realmente rotamos con movimiento
         }
         
         RaycastHit hit;
@@ -451,6 +453,7 @@ public class MovimientoJugador : MonoBehaviour
     else
     {
         animator.SetBool("Run", false);
+        // NO resetear hasRotated cuando está parado - esto permitirá mantener la dirección de ataque
     }
 
     rb.MovePosition(rb.position + velocity);
@@ -657,29 +660,84 @@ public Vector3 ObtenerDireccionMovimiento()
 
     return direccionEmpuje.normalized;
 }
+
+    // Función helper para cancelar todos los ataques en curso (excepto ataque pesado)
+    private void CancelarAtaquesEnCurso()
+    {
+        // NO cancelar ataque pesado - debe completarse
+        
+        // Cancelar ataque a distancia si está en curso
+        if (ataqueD || ataqueD2)
+        {
+            if (mirarCoroutine != null)
+            {
+                StopCoroutine(mirarCoroutine);
+                mirarCoroutine = null;
+            }
+            if (disparoCoroutine != null)
+            {
+                StopCoroutine(disparoCoroutine);
+                disparoCoroutine = null;
+            }
+            ataqueD = false;
+            ataqueD2 = false;
+            canMove = true; // Asegurar que el jugador pueda moverse
+        }
+        
+        // Resetear todos los DamageDealer de ataques ligeros
+        if (damageDealerL1 != null) damageDealerL1.ResetDamage();
+        if (damageDealerL2 != null) damageDealerL2.ResetDamage();
+        if (damageDealerL3 != null) damageDealerL3.ResetDamage();
+        
+        // Asegurar que el movimiento esté habilitado (en caso de que se haya deshabilitado por disparo cargado)
+        canMove = true;
+    }
+  
+    // Función específica para cancelar solo el ataque pesado cuando se inicia otro ataque pesado
+    private void CancelarAtaquePesado()
+    {
+        if (atacando) 
+        {
+            atacando = false;
+            ataqueCollider.enabled = false;
+            ataqueMesh.enabled = false;
+            ataqueP = false;
+            if (damageDealerP != null)
+            {
+                damageDealerP.ResetDamage();
+            }
+        }
+    }
   
 public void AtaqueJugador()
 {
     if (Input.GetMouseButtonDown(0) && canAttack)
     {
+        // No permitir ataques ligeros durante ejecución Y recuperación del ataque pesado
+        if (atacando || ataqueP)
+        {
+            return;
+        }
+        
+        // Cancelar solo ataques a distancia
+        CancelarAtaquesEnCurso();
+        
         enterAttack = true;
 
-        if (!hasRotated)
+        // Permitir rotación en cada clic de mouse
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            Vector3 directionToLook = (targetPosition - transform.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+            transform.rotation = targetRotation;
+          
+            direccionRaycast = directionToLook;
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
-            {
-                Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-                Vector3 directionToLook = (targetPosition - transform.position).normalized;
-                Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
-                transform.rotation = targetRotation;
-              
-                direccionRaycast = directionToLook;
-
-                hasRotated = true;
-            }
+            hasRotated = true;
         }
     }
 }
@@ -697,11 +755,16 @@ public void AtaqueJugador()
     {
         if (Input.GetButtonDown("Fire1") && !ataqueL && canAttack)
         {     
+            // No permitir ataques ligeros durante ejecución Y recuperación del ataque pesado
+            if (atacando || ataqueP)
+            {
+                return;
+            }
+            
             ataqueL = true;
+            // NO resetear hasRotated aquí para permitir cancelación de ataques
         }
     }
-
-
 
     private bool ataqueEjecutado = false;
     private Vector3 ultimaDireccion;
@@ -710,7 +773,25 @@ public void AtaqueJugador()
 {
     if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado && canAttack)
     {
+        // Solo cancelar ataque pesado anterior si había uno en curso
+        CancelarAtaquePesado();
+        
+        // Cancelar ataques a distancia
+        CancelarAtaquesEnCurso();
+
         enterAttack = true;
+        // Permitir rotación hacia el mouse al activar ataque pesado
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
+        {
+            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            Vector3 directionToLook = (targetPosition - transform.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+            transform.rotation = targetRotation;
+            direccionRaycast = directionToLook;
+            hasRotated = true;
+        }
       
         ataqueP = true;
         ataqueEjecutado = true;
@@ -732,6 +813,11 @@ public void AtaquePesadoAnim()
     ataqueMesh.enabled = true;
     ataqueCollider.transform.localScale = new Vector3(0, ataqueCollider.transform.localScale.y, 0); // Resetear el tamaño del collider en X y Z, mantener Y
     
+    // Activar el DamageDealer del ataque pesado si existe
+    if (damageDealerP != null)
+    {
+        damageDealerP.ResetDamage(); // Resetear para permitir nuevo daño
+    }
 }
 
 private void ExpandirCollider()
@@ -747,6 +833,11 @@ private void ExpandirCollider()
         ataqueMesh.enabled = false;
         tiempoUltimoAtaque = Time.time; // Actualizar el tiempo del último ataque cuando el collider alcance el rango máximo
         
+        // Resetear el DamageDealer del ataque pesado cuando termina
+        if (damageDealerP != null)
+        {
+            damageDealerP.ResetDamage();
+        }
     }
 }
 
@@ -754,13 +845,37 @@ public void AtaqueDistancia()
 {
     if (Input.GetButtonDown("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
     {
+        // No permitir ataques a distancia durante ejecución Y recuperación del ataque pesado
+        if (atacando || ataqueP)
+        {
+            return;
+        }
+        
+        // Cancelar solo otros ataques a distancia
+        CancelarAtaquesEnCurso();
+        
+        enterAttack = true;
+        
+        // Permitir rotación hacia el mouse al activar ataque a distancia
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
+        {
+            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            Vector3 directionToLook = (targetPosition - transform.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+            transform.rotation = targetRotation;
+            direccionRaycast = directionToLook;
+            hasRotated = true;
+        }
+        
         if (!canChargeShot)
         {
             EjecutarDisparoNormal(); // Disparo normal si el disparo cargado está desactivado
         }
         else
         {
-            StartCoroutine(DisparoNormalOCargado()); // Lógica actual si el disparo cargado está activado
+            disparoCoroutine = StartCoroutine(DisparoNormalOCargado()); // Lógica actual si el disparo cargado está activado
         }
     }
 }
@@ -771,6 +886,7 @@ private void EjecutarDisparoNormal()
     Debug.Log("Disparo normal ejecutado");
     enterAttack = true;
     ataqueD = true;
+    // NO resetear hasRotated aquí para permitir cancelación por otros ataques
 
     if (mirarCoroutine != null)
     {
@@ -788,8 +904,7 @@ private IEnumerator DisparoNormalOCargado()
 
     canMove = false; // Deshabilitar movimiento del jugador
     
-
-    while (Input.GetButton("Fire2"))
+    while (Input.GetButton("Fire2") && (ataqueD || ataqueD2)) // Verificar que el ataque no haya sido cancelado
     {
         tiempoCarga += Time.deltaTime;
 
@@ -811,7 +926,6 @@ private IEnumerator DisparoNormalOCargado()
 
         if (tiempoCarga >= 1f && canChargeShot) 
         {
-            
             mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
             disparoCargado = true;
             break;
@@ -821,9 +935,10 @@ private IEnumerator DisparoNormalOCargado()
     }
 
     canMove = true; // Habilitar movimiento del jugador nuevamente
+    disparoCoroutine = null; // Resetear la referencia a la corrutina
     
-
-    if (disparoCargado)
+    // Solo ejecutar si el ataque no ha sido cancelado
+    if ((ataqueD || ataqueD2) && disparoCargado)
     {
         FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo cargado
         Debug.Log("Disparo cargado ejecutado");
@@ -831,10 +946,11 @@ private IEnumerator DisparoNormalOCargado()
         ataqueD2 = true;
         // Lógica para disparo cargado
     }
-    else
+    else if ((ataqueD || ataqueD2) && !disparoCargado)
     {
         EjecutarDisparoNormal(); // Ejecutar disparo normal si no se carga
     }
+    // Si ataqueD y ataqueD2 son false, significa que fue cancelado por otro ataque
 }
 
 private void EjecutarAtaqueDistanciaCargado()
@@ -892,10 +1008,8 @@ private IEnumerator MirarAlMousePorUnSegundo()
     
         enterAttack = false;
         ataqueD = false;
+        hasRotated = false; // Resetear para permitir nueva rotación
 }
-
-
-
 
     private void RecargarBalas()
     {
@@ -959,9 +1073,13 @@ public void OnAttackEndl1()
     {
         return canDash;
     }
+    
+    // Propiedad pública para verificar si hay un ataque pesado en curso
+    public bool EstaAtacandoPesado()
+    {
+        return atacando;
+    }
     #endregion priscada
 
     public bool canMove = true; // Nueva variable para controlar el movimiento del jugador
 }
-
-

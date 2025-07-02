@@ -13,18 +13,23 @@ public class EspadaAtaque : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("Collider has collided with Enemy");
+            
+            // Primero intentar con la nueva clase EnemyLife
+            EnemyLife enemyLife = other.gameObject.GetComponent<EnemyLife>();
+            if (enemyLife != null)
+            {
+                enemyLife.ReceiveDamage(damage);
+                Debug.Log("Daño aplicado a EnemyLife: " + damage);
+                return;
+            }
+            
+            // Si no tiene EnemyLife, intentar con la clase Enemy antigua
             Enemy enemy = other.gameObject.GetComponent<Enemy>();
             if (enemy != null)
             {
                 enemy.ReceiveDamage(damage);
-                //Debug.Log("hitmarker");
+                Debug.Log("Daño aplicado a Enemy (clase antigua): " + damage);
             }
         }
    }
-
- 
-
-   
-    
-   
 }

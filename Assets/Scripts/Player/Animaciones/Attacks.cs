@@ -38,7 +38,12 @@ public class Attacks : StateMachineBehaviour
            
         switch (attackNumber)
         {
-            case "Attack1":                        
+            case "Attack1":     
+                // Prevenir ejecución durante ejecución Y recuperación del ataque pesado
+                if (MovimientoJugador.ataqueP)
+                {
+                    return;
+                }                   
                 MovimientoJugador.ataqueL = false;
                 if (ataqueL1 != null)
                 {
@@ -46,6 +51,12 @@ public class Attacks : StateMachineBehaviour
                     if (ataqueL1Collider != null)
                     {
                         ataqueL1Collider.enabled = true; 
+                    }
+                    // Activar el DamageDealer del ataque 1
+                    DamageDealer damageDealer1 = ataqueL1.GetComponent<DamageDealer>();
+                    if (damageDealer1 != null)
+                    {
+                        damageDealer1.gameObject.SetActive(true);
                     }
                     FMODUnity.RuntimeManager.PlayOneShot(attack1);
                 }    
@@ -60,17 +71,28 @@ public class Attacks : StateMachineBehaviour
                 animator.GetComponent<MonoBehaviour>().StartCoroutine(ReducirVelocidadConLerp(animator, stateInfo.length));
                 break;                
             case "Attack2":  
+                // Prevenir ejecución durante ejecución Y recuperación del ataque pesado
+                if (MovimientoJugador.ataqueP)
+                {
+                    return;
+                }
                 MovimientoJugador.enterAttack = true; 
                 MovimientoJugador.ataqueL = false;
                 MovimientoJugador.speed = 0;
                 
 
-                if (ataqueL1 != null)
+                if (ataqueL2 != null)
                 {
                     ataqueL2Collider = ataqueL2.GetComponent<Collider>();
                     if (ataqueL2Collider != null)
                     {
                         ataqueL2Collider.enabled = true; 
+                    }
+                    // Activar el DamageDealer del ataque 2
+                    DamageDealer damageDealer2 = ataqueL2.GetComponent<DamageDealer>();
+                    if (damageDealer2 != null)
+                    {
+                        damageDealer2.gameObject.SetActive(true);
                     }
                     FMODUnity.RuntimeManager.PlayOneShot(attack2);
                 }  
@@ -94,15 +116,26 @@ public class Attacks : StateMachineBehaviour
                 playerMovement.canMove = false;
                 break;
             case "Attack3":
+                // Prevenir ejecución durante ejecución Y recuperación del ataque pesado
+                if (MovimientoJugador.ataqueP)
+                {
+                    return;
+                }
                 MovimientoJugador.enterAttack = true; 
                 MovimientoJugador.ataqueL = false;
                 MovimientoJugador.speed = 0; 
-                if (ataqueL1 != null)
+                if (ataqueL3 != null)
                 {
                     ataqueL3Collider = ataqueL3.GetComponent<Collider>();
                     if (ataqueL3Collider != null)
                     {
                         ataqueL3Collider.enabled = true; 
+                    }
+                    // Activar el DamageDealer del ataque 3
+                    DamageDealer damageDealer3 = ataqueL3.GetComponent<DamageDealer>();
+                    if (damageDealer3 != null)
+                    {
+                        damageDealer3.gameObject.SetActive(true);
                     }
                     FMODUnity.RuntimeManager.PlayOneShot(attack3);
                 }  
@@ -187,6 +220,7 @@ public class Attacks : StateMachineBehaviour
     {
         PlayerMovement.hasAttacked = false;
         MovimientoJugador.enterAttack = false; // Permitir rotación nuevamente
+        // Solo resetear hasRotated si realmente terminamos todos los ataques (no en transiciones de combo)
         GameObject ataqueL1 = GameObject.Find("AtaqueL1");
         GameObject ataqueL2 = GameObject.Find("AtaqueL2");
         GameObject ataqueL3 = GameObject.Find("AtaqueL3");
@@ -200,13 +234,19 @@ public class Attacks : StateMachineBehaviour
         switch (attackNumber)
         {
             case "Attack1":
-                MovimientoJugador.hasRotated = false;
+                // NO resetear hasRotated aquí para permitir combos
                 if (ataqueL1 != null)
                 {
                     ataqueL1Collider = ataqueL1.GetComponent<Collider>();
                     if (ataqueL1Collider != null)
                     {
                         ataqueL1Collider.enabled = false; 
+                    }
+                    // Resetear el DamageDealer del ataque 1
+                    DamageDealer damageDealer1 = ataqueL1.GetComponent<DamageDealer>();
+                    if (damageDealer1 != null)
+                    {
+                        damageDealer1.ResetDamage();
                     }
                 }   
                 if (Cubo1 != null)
@@ -220,12 +260,19 @@ public class Attacks : StateMachineBehaviour
                 break;              
             case "Attack2":
                 MovimientoJugador.speed = 15; 
-                if (ataqueL1 != null)
+                // NO resetear hasRotated aquí para permitir combos
+                if (ataqueL2 != null)
                 {
                     ataqueL2Collider = ataqueL2.GetComponent<Collider>();
                     if (ataqueL2Collider != null)
                     {
                         ataqueL2Collider.enabled = false; 
+                    }
+                    // Resetear el DamageDealer del ataque 2
+                    DamageDealer damageDealer2 = ataqueL2.GetComponent<DamageDealer>();
+                    if (damageDealer2 != null)
+                    {
+                        damageDealer2.ResetDamage();
                     }
                 }   
                 if (Cubo2 != null)
@@ -239,12 +286,19 @@ public class Attacks : StateMachineBehaviour
                 break;
             case "Attack3":
                 MovimientoJugador.speed = 15; 
-                if (ataqueL1 != null)
+                MovimientoJugador.hasRotated = false; // Resetear para permitir nueva rotación
+                if (ataqueL3 != null)
                 {
                     ataqueL3Collider = ataqueL3.GetComponent<Collider>();
                     if (ataqueL3Collider != null)
                     {
                         ataqueL3Collider.enabled = false; 
+                    }
+                    // Resetear el DamageDealer del ataque 3
+                    DamageDealer damageDealer3 = ataqueL3.GetComponent<DamageDealer>();
+                    if (damageDealer3 != null)
+                    {
+                        damageDealer3.ResetDamage();
                     }
                 }   
                 if (Cubo3 != null)
@@ -265,6 +319,7 @@ public class Attacks : StateMachineBehaviour
                 MovimientoJugador.enterAttack = false;
                 MovimientoJugador.ataqueD = false;
                 MovimientoJugador.ataqueD2 = false;
+                MovimientoJugador.hasRotated = false; // Resetear para permitir nueva rotación
                 MovimientoJugador.speed = 15;
                 break;
             case "Attack3P":
