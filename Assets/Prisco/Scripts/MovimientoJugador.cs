@@ -702,6 +702,7 @@ public Vector3 ObtenerDireccionMovimiento()
             ataqueCollider.enabled = false;
             ataqueMesh.enabled = false;
             ataqueP = false;
+            ataqueEjecutado = false; // Resetear para permitir un nuevo ataque
             if (damageDealerP != null)
             {
                 damageDealerP.ResetDamage();
@@ -771,11 +772,9 @@ public void AtaqueJugador()
 
     public void AtaquePesado()
 {
-    if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado && canAttack)
+    // Solo permitir el ataque si ha pasado el tiempo completo desde el último ataque Y no está ejecutándose ningún ataque pesado
+    if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado && !atacando && !ataqueP && canAttack)
     {
-        // Solo cancelar ataque pesado anterior si había uno en curso
-        CancelarAtaquePesado();
-        
         // Cancelar ataques a distancia
         CancelarAtaquesEnCurso();
 
@@ -795,15 +794,11 @@ public void AtaqueJugador()
       
         ataqueP = true;
         ataqueEjecutado = true;
-        tiempoUltimoAtaque = Time.time; // Actualizar el tiempo del último ataque
+        tiempoUltimoAtaque = Time.time; // Marcar el inicio del ataque
         FMODUnity.RuntimeManager.PlayOneShot(heavy);
     }
 
-    // Restablecer ataqueEjecutado después del tiempo de espera
-    if (Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque)
-    {
-        ataqueEjecutado = false;
-    }
+    // NO resetear ataqueEjecutado aquí - solo se reseteará cuando termine completamente el ataque
 }
 
 public void AtaquePesadoAnim()
@@ -831,7 +826,13 @@ private void ExpandirCollider()
         atacando = false;
         ataqueCollider.enabled = false;
         ataqueMesh.enabled = false;
-        tiempoUltimoAtaque = Time.time; // Actualizar el tiempo del último ataque cuando el collider alcance el rango máximo
+        ataqueP = false; // Resetear la bandera del ataque pesado
+        
+        // Agregar cooldown de 0.5 segundos después de completar el ataque
+        tiempoUltimoAtaque = Time.time + 0.5f; // Cooldown de 0.5 segundos
+        
+        // Resetear la bandera para permitir un nuevo ataque pesado después del cooldown
+        ataqueEjecutado = false;
         
         // Resetear el DamageDealer del ataque pesado cuando termina
         if (damageDealerP != null)
@@ -871,10 +872,13 @@ public void AtaqueDistancia()
         
         if (!canChargeShot)
         {
+            // Reproducir la animación inmediatamente para disparo normal
+            animator.Play("3P");
             EjecutarDisparoNormal(); // Disparo normal si el disparo cargado está desactivado
         }
         else
         {
+            // NO reproducir animación aquí - se reproducirá en la corrutina DisparoNormalOCargado
             disparoCoroutine = StartCoroutine(DisparoNormalOCargado()); // Lógica actual si el disparo cargado está activado
         }
     }
@@ -886,15 +890,19 @@ private void EjecutarDisparoNormal()
     Debug.Log("Disparo normal ejecutado");
     enterAttack = true;
     ataqueD = true;
-    // NO resetear hasRotated aquí para permitir cancelación por otros ataques
+    
+    // Reproducir animación del disparo
+    animator.Play("3P");
 
+    // Ejecutar el disparo normal (crear el proyectil)
+    EjecutarAtaqueDistancia();
+
+    // Iniciar la corrutina de mirar al mouse DESPUÉS de ejecutar el disparo
     if (mirarCoroutine != null)
     {
         StopCoroutine(mirarCoroutine);
     }
     mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
-
-    tiempoUltimoDisparo = Time.time;
 }
 
 private IEnumerator DisparoNormalOCargado()
@@ -904,7 +912,10 @@ private IEnumerator DisparoNormalOCargado()
 
     canMove = false; // Deshabilitar movimiento del jugador
     
-    while (Input.GetButton("Fire2") && (ataqueD || ataqueD2)) // Verificar que el ataque no haya sido cancelado
+    // Reproducir la animación "3P" inmediatamente al empezar a cargar
+    animator.Play("3P");
+    
+    while (Input.GetButton("Fire2"))
     {
         tiempoCarga += Time.deltaTime;
 
@@ -919,14 +930,8 @@ private IEnumerator DisparoNormalOCargado()
             transform.rotation = targetRotation;
         }
 
-        if (tiempoCarga <= 1f && canChargeShot) 
-        {
-             animator.Play("3P");
-        }     
-
         if (tiempoCarga >= 1f && canChargeShot) 
-        {
-            mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
+        {            
             disparoCargado = true;
             break;
         }
@@ -936,49 +941,63 @@ private IEnumerator DisparoNormalOCargado()
 
     canMove = true; // Habilitar movimiento del jugador nuevamente
     disparoCoroutine = null; // Resetear la referencia a la corrutina
-    
-    // Solo ejecutar si el ataque no ha sido cancelado
-    if ((ataqueD || ataqueD2) && disparoCargado)
+
+    if (disparoCargado)
     {
         FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo cargado
         Debug.Log("Disparo cargado ejecutado");
        
         ataqueD2 = true;
-        // Lógica para disparo cargado
+        // Ejecutar el disparo cargado (crear el proyectil)
+        EjecutarAtaqueDistanciaCargado();
+        
+        // Iniciar la corrutina de mirar al mouse DESPUÉS de ejecutar el disparo
+        mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
     }
-    else if ((ataqueD || ataqueD2) && !disparoCargado)
+    else
     {
-        EjecutarDisparoNormal(); // Ejecutar disparo normal si no se carga
+        // Si no se cargó completamente, ejecutar disparo normal (pero sin duplicar la animación)
+        FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo normal
+        Debug.Log("Disparo normal ejecutado (no se completó la carga)");
+        enterAttack = true;
+        ataqueD = true;
+        
+        // Ejecutar el disparo normal (crear el proyectil)
+        EjecutarAtaqueDistancia();
+
+        // Iniciar la corrutina de mirar al mouse DESPUÉS de ejecutar el disparo
+        if (mirarCoroutine != null)
+        {
+            StopCoroutine(mirarCoroutine);
+        }
+        mirarCoroutine = StartCoroutine(MirarAlMousePorUnSegundo());
     }
-    // Si ataqueD y ataqueD2 son false, significa que fue cancelado por otro ataque
 }
 
 private void EjecutarAtaqueDistanciaCargado()
-    {
-        
-        tiempoUltimoDisparo = Time.time;
-        balasActuales--;
+{
+    tiempoUltimoDisparo = Time.time;
+    balasActuales--;
 
-        GameObject boomerangObj = Instantiate(prefabDisparoCargado, spawnPosition.position, spawnPosition.rotation);
-        DisparoCargado boomerang = boomerangObj.GetComponent<DisparoCargado>();
-        boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
-    }
+    GameObject boomerangObj = Instantiate(prefabDisparoCargado, spawnPosition.position, spawnPosition.rotation);
+    DisparoCargado boomerang = boomerangObj.GetComponent<DisparoCargado>();
+    boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
+}
 
- private void EjecutarAtaqueDistancia()
-    {
-        
-        tiempoUltimoDisparo = Time.time;
-        balasActuales--;
+private void EjecutarAtaqueDistancia()
+{
+    tiempoUltimoDisparo = Time.time;
+    balasActuales--;
 
-        GameObject boomerangObj = Instantiate(prefabDisparoNormal, spawnPosition.position, spawnPosition.rotation);
-        Boomerang boomerang = boomerangObj.GetComponent<Boomerang>();
-        boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
-    }
+    GameObject boomerangObj = Instantiate(prefabDisparoNormal, spawnPosition.position, spawnPosition.rotation);
+    Boomerang boomerang = boomerangObj.GetComponent<Boomerang>();
+    boomerang.Lanzar(spawnPosition.forward); // Lanzar en la dirección del objeto vacío
+}
 
-// Corrutina que orienta al jugador hacia donde apunta el mouse durante 1 segundo
+// Corrutina que orienta al jugador hacia donde apunta el mouse durante un tiempo corto
 private IEnumerator MirarAlMousePorUnSegundo()
 {
-    float duration = 0.5f; // Duración del ataque (o de la "mirada")
+    float duration = 0.1f; // Duración muy corta después del disparo
     float elapsed = 0f;
     
     while (elapsed < duration)
@@ -1003,12 +1022,11 @@ private IEnumerator MirarAlMousePorUnSegundo()
         
         elapsed += Time.deltaTime;
         yield return null;
-
     }
     
-        enterAttack = false;
-        ataqueD = false;
-        hasRotated = false; // Resetear para permitir nueva rotación
+    enterAttack = false;
+    ataqueD = false;
+    hasRotated = false; // Resetear para permitir nueva rotación
 }
 
     private void RecargarBalas()
