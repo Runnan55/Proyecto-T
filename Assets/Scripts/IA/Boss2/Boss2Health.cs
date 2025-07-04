@@ -45,6 +45,9 @@ public class Boss2Health : MonoBehaviour
     private float respawnInterval = 20f;  // Intervalo para regenerar los spawners después de ser destruidos
     private float nextRespawnTime = 0f;
 
+    private Animator animator;
+
+
     [Header("Barra vida")]
     public Slider healthBar;            // Barra principal (verde)
     public Slider previewHealthBar;     // Barra amarilla (preview)
@@ -63,6 +66,8 @@ public class Boss2Health : MonoBehaviour
         currentHealth = totalHealth;
         SubscribeToObjects();
         CalculateBossHealth();  // Inicializa la barra
+        animator = GetComponent<Animator>();
+
     }
     private void CalculateBossHealth()
     {
@@ -145,7 +150,7 @@ public class Boss2Health : MonoBehaviour
         protectionCooldownTime = Time.time + protectionDuration + protectionDelay;
 
         TriggerArmProtection();  // Activa la protección con los brazos
-        Debug.Log("🔰 Protección activada");
+        Debug.Log("Protección activada");
 
         yield return new WaitForSeconds(protectionDuration);
 
@@ -154,7 +159,7 @@ public class Boss2Health : MonoBehaviour
         rightArm.StopProtection();
 
         protectionActive = false;
-        Debug.Log("❌ Protección desactivada, empieza el cooldown");
+        Debug.Log("Protección desactivada, empieza el cooldown");
     }
 
     void SubscribeToObjects()
@@ -183,6 +188,7 @@ public class Boss2Health : MonoBehaviour
     }
     private void HandleObjectDestroyed(BossSpawner destroyedObj)
     {
+        animator.SetTrigger("Hit");
         if (AllObjectsDestroyed())
         {
             if (currentPhase == 1)
@@ -248,7 +254,9 @@ public class Boss2Health : MonoBehaviour
     private void Die()
     {
         Debug.Log("¡El boss ha muerto definitivamente!");
-        Destroy(gameObject);
+        animator.SetTrigger("Die");
+        Destroy(gameObject, 3f);
+        
     }
 
     private void RegenerateSpawners()
@@ -272,14 +280,20 @@ public class Boss2Health : MonoBehaviour
 
         if (random == 0)
         {
+            animator.SetTrigger("Attack");
+
             palmadaAttack.ExecuteDoblePalmadaSobreJugador();
         }
         else if (random == 1)
         {
+            animator.SetTrigger("Attack");
+
             punoTaladro.ExecutePunetazo(punchPointA, punchPointB);
         }
         else
         {
+            animator.SetTrigger("Attack");
+
             barridoAttack.ExecuteBarrido(sweepStart, sweepEnd);
         }
 
