@@ -114,6 +114,7 @@ public class MovimientoJugador : MonoBehaviour
 
     [Header("Progreso")]
     public int nivelActual = 1;
+    public bool disparoDesbloqueado = false;
 
     #region *Bertadas
     public void speedUp()

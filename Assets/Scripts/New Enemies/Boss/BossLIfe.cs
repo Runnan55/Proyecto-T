@@ -8,7 +8,7 @@ public class BossLIfe : MonoBehaviour
     public float maxHealth = 100f;
     public float currentHealth;
 
-    public EnemyVision enemyVision; // Referencia al script de visión
+    public EnemyVision enemyVision; // Referencia al script de visiï¿½n
 
     public float frontDamageMultiplier = 0.25f;
     public float normalDamageMultiplier = 1f;
@@ -22,8 +22,8 @@ public class BossLIfe : MonoBehaviour
     public Slider previewHealthBar;     // Barra secundaria (preview amarilla)
     public float previewSpeed = 1f;     // Velocidad con la que la barra amarilla baja
 
-    public Text damageText; // Referencia al Text en el Canvas para mostrar el daño
-    public float damageDisplayTime = 1f; // Tiempo en segundos que el daño es visible
+    public Text damageText; // Referencia al Text en el Canvas para mostrar el daï¿½o
+    public float damageDisplayTime = 1f; // Tiempo en segundos que el daï¿½o es visible
 
     protected virtual void Start()
     {
@@ -41,7 +41,7 @@ public class BossLIfe : MonoBehaviour
         }
         if (damageText != null)
         {
-            damageText.gameObject.SetActive(false); // Asegúrate de que el texto no se vea al principio
+            damageText.gameObject.SetActive(false); // Asegï¿½rate de que el texto no se vea al principio
         }
     }
     protected virtual void Update()
@@ -68,7 +68,7 @@ public class BossLIfe : MonoBehaviour
         }
 
         currentHealth -= damage;
-        Debug.Log($"Daño recibido: {damage}. Vida restante: {currentHealth}");
+        Debug.Log($"Daï¿½o recibido: {damage}. Vida restante: {currentHealth}");
 
         if (healthBar != null)
         {
@@ -78,11 +78,11 @@ public class BossLIfe : MonoBehaviour
         
         if (damageText != null)
         {
-            // Mostrar el daño en el texto
+            // Mostrar el daï¿½o en el texto
             damageText.text = $"-{redondeado}";
             damageText.gameObject.SetActive(true); // Activar el texto para mostrarlo
 
-            // Desactivar el texto después de un tiempo
+            // Desactivar el texto despuï¿½s de un tiempo
             StartCoroutine(HideDamageTextAfterDelay());
         }
         if (currentHealth <= 0)
@@ -103,6 +103,23 @@ public class BossLIfe : MonoBehaviour
     private void Die()
     {
         Debug.Log("Enemigo derrotado.");
+        BossDeath();
         Destroy(gameObject);
+    }
+
+    private void BossDeath()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            var movimientoJugador = player.GetComponent<MovimientoJugador>();
+            if (movimientoJugador != null)
+            {
+                movimientoJugador.nivelActual = 3;
+                movimientoJugador.disparoDesbloqueado = true;
+            }
+        }
+        
+        UnityEngine.SceneManagement.SceneManager.LoadScene("HubNuevo");
     }
 }
