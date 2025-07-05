@@ -17,7 +17,7 @@ public class SlimePrueba_IA : EnemyLife
     public float velocidad = 3f; // Velocidad de movimiento
     private Color colorInicial;
     public Color colorFinal = Color.red;
-    public float tiempoCambioColor = 1f;
+    public float tiempoCambioColor = 0.5f; // Reducido de 1f a 0.3f para ataque más rápido
     private Renderer rendererEsqueleto;
     private bool activandoCollider = false;
     public Transform puntoAtaque; // Objeto vacío donde se instanciará el prefab del ataque
@@ -36,7 +36,7 @@ public class SlimePrueba_IA : EnemyLife
 
     private enum Estado { Chasing, Attacking }
     private Estado estadoActual = Estado.Chasing;
-    private float tiempoEsperaAtaque = 1f;
+    private float tiempoEsperaAtaque = 0.5f; // Reducido de 1f a 0.5f para ataques más frecuentes
     #endregion
 
     #region Unity Methods
