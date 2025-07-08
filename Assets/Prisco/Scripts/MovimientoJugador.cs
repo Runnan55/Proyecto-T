@@ -50,7 +50,7 @@ public class MovimientoJugador : MonoBehaviour
     public float tiempoEsperaAtaque = 3.0f; 
     private float tiempoUltimoAtaque;   
     public static bool canAttack = true;
-    public bool canChargeShot = true; // Nueva variable para controlar el disparo cargado
+    // Remover esta línea: public bool canChargeShot = true; // Nueva variable para controlar el disparo cargado
 
     [Header("Distance Settings")]  
     public GameObject prefabDisparoNormal;
@@ -421,7 +421,12 @@ public class MovimientoJugador : MonoBehaviour
 
    public void Movimientojugador()
 {
-    if (!canMove) return; // Si no puede moverse, salir del método
+    if (!canMove) 
+    {
+        // Desactivar la animación de correr cuando no se puede mover (disparo cargado)
+        animator.SetBool("Run", false);
+        return; // Si no puede moverse, salir del método
+    }
 
     float hor = Input.GetAxisRaw("Horizontal");
     float ver = Input.GetAxisRaw("Vertical");
@@ -871,7 +876,7 @@ public void AtaqueDistancia()
             hasRotated = true;
         }
         
-        if (!canChargeShot)
+        if (!disparoDesbloqueado)
         {
             // Reproducir la animación inmediatamente para disparo normal
             animator.Play("3P");
@@ -931,7 +936,7 @@ private IEnumerator DisparoNormalOCargado()
             transform.rotation = targetRotation;
         }
 
-        if (tiempoCarga >= 1f && canChargeShot) 
+        if (tiempoCarga >= 1f && disparoDesbloqueado) 
         {            
             disparoCargado = true;
             break;
