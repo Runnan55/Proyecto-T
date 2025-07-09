@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;  // Para actualizar la barra de vida
+using UnityEngine.SceneManagement;
 
 public class Boss2Health : MonoBehaviour
 {
@@ -255,8 +256,14 @@ public class Boss2Health : MonoBehaviour
     {
         Debug.Log("¡El boss ha muerto definitivamente!");
         animator.SetTrigger("Die");
-        Destroy(gameObject, 3f);
-        
+
+        StartCoroutine(LoadWinSceneAfterDelay(1f));
+    }
+
+    private IEnumerator LoadWinSceneAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene("Win");
     }
 
     private void RegenerateSpawners()
