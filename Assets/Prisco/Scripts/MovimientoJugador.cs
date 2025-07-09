@@ -112,9 +112,21 @@ public class MovimientoJugador : MonoBehaviour
     public static bool isInDodgeArea = false;
     public static bool godMode = false;
 
-    [Header("Progreso")]
-    public int nivelActual = 1;
-    public bool disparoDesbloqueado = false;
+    /*     [Header("Progreso")]
+        public int nivelActual = 1;
+        public bool disparoDesbloqueado = false; */
+    
+        [SerializeField] public int nivelActual
+    {
+        get => CoreManager.nivelActual;
+        set => CoreManager.nivelActual = value;
+    }
+    
+    [SerializeField] public bool disparoDesbloqueado
+    {
+        get => CoreManager.disparoDesbloqueado;
+        set => CoreManager.disparoDesbloqueado = value;
+    }
 
     #region *Bertadas
     public void speedUp()
@@ -291,12 +303,15 @@ public class MovimientoJugador : MonoBehaviour
 
 
   void Update()
-    {        
+    {
         if (Input.GetKeyDown(KeyCode.G))
         {
             godMode = !godMode;
             Debug.Log("God Mode: " + (godMode ? "Activated" : "Deactivated"));
             rangoMaximo = 999;
+            
+            Debug.Log($"Nivel Actual: {nivelActual}");
+            Debug.Log($"Disparo Desbloqueado: {disparoDesbloqueado}");
         }
 
         if (Input.GetKeyDown(KeyCode.O))

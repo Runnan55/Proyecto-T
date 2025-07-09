@@ -11,6 +11,10 @@ public class CoreManager : MonoBehaviour
         get { return _instance; }
     }
 
+    // AÑADIDO: Variables persistentes globales
+    public static int nivelActual = 1;
+    public static bool disparoDesbloqueado = false;
+
     [SerializeField, Tooltip("")]
     private GameObject debugManagerPrefab = null;
 
@@ -46,7 +50,6 @@ public class CoreManager : MonoBehaviour
             //Debug.Log("Core:: Duplicate CoreManager, deleting duplicate instance.");
             Destroy(this.gameObject);
         }
-
         else
         {
             _instance = this;
@@ -72,7 +75,8 @@ public class CoreManager : MonoBehaviour
 
     private void initialize()
     {
-        if (!HUDPrefab || !eventSystemPrefab || !interactionManagerPrefab || !playerPrefab || !inputManagerPrefab || !saveLoadManagerPrefab || !menuPrefab || !debugManagerPrefab)
+        if (!HUDPrefab || !eventSystemPrefab || !interactionManagerPrefab || !playerPrefab || 
+            !inputManagerPrefab || !saveLoadManagerPrefab || !menuPrefab || !debugManagerPrefab)
         {
             Debug.LogError("Core:: Missing prefab for core component. Game will not function correctly. See Inspector for object '" + gameObject.name + "' to ensure all fields are populated correctly.");
             return;
@@ -89,14 +93,18 @@ public class CoreManager : MonoBehaviour
         DefaultHUD.Instance.initialize();
         InteractionManager.Instance.initialize();
 
-        // Lastly, load game options
-        //SaveLoadManager.Instance.LoadGameOptions();
-
-        // Helper checks //
-        if(GameObject.FindObjectOfType<MainMenu>() == null && SceneManager.GetActiveScene().buildIndex == 0)
+        // AÑADIDO: Resetear estado si es la primera escena (menú principal)
+        if (SceneManager.GetActiveScene().buildIndex == 0)
         {
-            Debug.LogError("Core:: The scene '" + SceneManager.GetActiveScene().name + "' is at index 0, but index 0 is reserved for the Main Menu. This scene does not contain an FPEMainMenu object. You must add one or controls will not work as expected.");
+            ResetGameState();
         }
+    }
+
+    // AÑADIDO: Método para resetear el estado del juego
+    public static void ResetGameState()
+    {
+        nivelActual = 1;
+        disparoDesbloqueado = false;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -111,7 +119,6 @@ public class CoreManager : MonoBehaviour
                 Destroy(player);
             }
         }
-
         else
         {
             StartCoroutine(SpawnPlayerWithDelay(0.5f));
@@ -144,7 +151,7 @@ public class CoreManager : MonoBehaviour
             player.transform.position = startPosition;
             Quaternion flatRotation = Quaternion.Euler(0.0f, startLocation.gameObject.transform.rotation.eulerAngles.y, 0.0f);
             player.transform.rotation = flatRotation;
-           // Debug.Log("Spawneando player en " + player.transform.position);
+            //Debug.Log("Spawneando player en " + player.transform.position);
         }
         else
         {
