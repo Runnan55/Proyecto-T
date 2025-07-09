@@ -158,6 +158,13 @@ public class BossMovement2 : BossLIfe
             }
         }
     }
+    protected override void PlayDamageAnimation()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("ReceiveDamage");
+        }
+    }
 
     private IEnumerator cooldown2()
     {

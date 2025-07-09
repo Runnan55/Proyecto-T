@@ -9,7 +9,7 @@ public class PunoTaladro : MonoBehaviour
     public float damageRadius = 2f;
     public int maxUses = 2;
     private int uses = 0;
-
+    private Life playerLife;
     private Transform player;
 
     void Start()

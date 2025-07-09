@@ -8,9 +8,16 @@ public class SlowOrb : MonoBehaviour
     public float speed = 2f;
     public float lifespan = 10f;
 
+    public float slowFactor = 0.3f;
+    public float slowDuration = 1.5f;
+
     private Transform player;
     private bool activated = false;
     private float timer = 0f;
+    private bool effectTriggered = false;
+
+    private static bool playerSlowed = false;
+    private static float originalSpeed;
 
     void Start()
     {
@@ -19,11 +26,12 @@ public class SlowOrb : MonoBehaviour
 
     void Update()
     {
+        if (effectTriggered) return;
+
         timer += Time.deltaTime;
 
         if (timer >= lifespan)
         {
-            Debug.Log("Orbe desaparece tras 10s");
             Destroy(gameObject);
             return;
         }
@@ -33,7 +41,6 @@ public class SlowOrb : MonoBehaviour
         if (!activated && distance <= detectionRadius)
         {
             activated = true;
-            Debug.Log("Orbe ha detectado al jugador");
         }
 
         if (activated)
@@ -43,18 +50,49 @@ public class SlowOrb : MonoBehaviour
         }
     }
 
-    public void BreakOrb()
+    private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Orbe destruido por el jugador");
+        if (effectTriggered) return;
+
+        if (other.CompareTag("Player") && !playerSlowed)
+        {
+            effectTriggered = true;
+            playerSlowed = true;
+
+            originalSpeed = MovimientoJugador.speed;
+            MovimientoJugador.speed = originalSpeed * slowFactor;
+
+            Debug.Log("Jugador ralentizado. Engranaje oculto.");
+
+            // Ocultar solo el MeshRenderer del hijo "Engranaje"
+            Transform engranaje = transform.Find("Engranaje");
+            if (engranaje != null)
+            {
+                MeshRenderer mesh = engranaje.GetComponent<MeshRenderer>();
+                if (mesh != null) mesh.enabled = false;
+            }
+
+            // Desactivar colisión del orbe
+            Collider col = GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+
+            StartCoroutine(RestoreAfterDelay());
+        }
+    }
+
+    private IEnumerator RestoreAfterDelay()
+    {
+        yield return new WaitForSeconds(slowDuration);
+
+        MovimientoJugador.speed = originalSpeed;
+        playerSlowed = false;
+
+        Debug.Log("Velocidad restaurada. Orbe destruido.");
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void BreakOrb()
     {
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log("Orbe tocó al jugador");
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 }

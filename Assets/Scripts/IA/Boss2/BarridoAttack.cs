@@ -23,16 +23,13 @@ public class BarridoAttack : MonoBehaviour
 
     private IEnumerator DoBarrido(Vector3 originalStart, Vector3 originalEnd)
     {
-        // Calculamos el vector del barrido original
         Vector3 direction = (originalEnd - originalStart).normalized;
         float distance = Vector3.Distance(originalStart, originalEnd);
 
-        // Proyectamos la posición del jugador en esa línea
         Vector3 toPlayer = player.position - originalStart;
         float projection = Vector3.Dot(toPlayer, direction);
-        projection = Mathf.Clamp(projection, 0f, distance); // aseguramos que no salga de la línea
+        projection = Mathf.Clamp(projection, 0f, distance);
 
-        // Nuevo punto de inicio: retrocedemos para que pase por el jugador
         Vector3 adjustedStart = originalStart + direction * (projection - distance / 2f);
         Vector3 adjustedEnd = adjustedStart + direction * distance;
 
@@ -42,6 +39,15 @@ public class BarridoAttack : MonoBehaviour
             barrido.transform.position = adjustedStart + Vector3.up;
             barrido.transform.localScale = new Vector3(2, 1, 15);
             barrido.GetComponent<Renderer>().material.color = Color.red;
+
+            // Quitar el collider por defecto y poner BoxCollider como trigger
+            Destroy(barrido.GetComponent<Collider>());
+            BoxCollider bc = barrido.AddComponent<BoxCollider>();
+            bc.isTrigger = true;
+
+            // Agregar script de daño
+            BarridoDamage bd = barrido.AddComponent<BarridoDamage>();
+            bd.damage = damage;
 
             float elapsed = 0f;
 
@@ -55,7 +61,7 @@ public class BarridoAttack : MonoBehaviour
             Destroy(barrido);
             yield return new WaitForSeconds(delayBetweenSwipes);
 
-            // Invertimos la dirección para el siguiente swipe
+            // Invertir dirección
             var temp = adjustedStart;
             adjustedStart = adjustedEnd;
             adjustedEnd = temp;

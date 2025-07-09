@@ -73,7 +73,8 @@ public class BossFallingTrap : MonoBehaviour
             Vector3 projectileMoveDirection = (projectileVector - transform.position).normalized;
 
             GameObject tempProjectile = Instantiate(projectilePrefab, transform.position, Quaternion.LookRotation(projectileMoveDirection));
-            tempProjectile.GetComponent<ProyectilClones>().speed = explosionForce;
+            tempProjectile.GetComponent<FlechaBot>().speed = explosionForce;
+            tempProjectile.GetComponent<FlechaBot>().SetDirection(projectileMoveDirection); // 
 
             angle += angleStep;
         }

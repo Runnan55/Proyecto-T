@@ -68,6 +68,8 @@ public class BossLIfe : MonoBehaviour
         }
 
         currentHealth -= damage;
+        PlayDamageAnimation();
+
         Debug.Log($"Da�o recibido: {damage}. Vida restante: {currentHealth}");
 
         if (healthBar != null)
@@ -89,6 +91,10 @@ public class BossLIfe : MonoBehaviour
         {
             Die();
         }
+    }
+    protected virtual void PlayDamageAnimation()
+    {
+
     }
 
     private IEnumerator HideDamageTextAfterDelay()
