@@ -98,6 +98,8 @@ public class BossSpawner : MonoBehaviour, IProtectable
     {
         while (!isDestroyed)
         {
+
+            yield return new WaitForSeconds(2f);
             // Solo se invoca un enemigo de manera aleatoria
             if (enemyPrefabs != null && enemyPrefabs.Count > 0)
             {
