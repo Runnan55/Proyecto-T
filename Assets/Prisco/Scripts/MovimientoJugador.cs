@@ -303,7 +303,7 @@ public class MovimientoJugador : MonoBehaviour
 
 
   void Update()
-    {
+    {/* 
         if (Input.GetKeyDown(KeyCode.G))
         {
             godMode = !godMode;
@@ -327,7 +327,7 @@ public class MovimientoJugador : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             BTCollider.SetActive(!BTCollider.activeSelf);
-        }
+        } */
 
 /*      if (Input.GetKeyDown(KeyCode.Alpha9))
         {

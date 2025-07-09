@@ -215,6 +215,30 @@ public class Level : MonoBehaviour
                     StartCoroutine(exitDoor.Open());
                 }
 
+                bool seUsoGrid = false;
+                foreach (var wave in waves)
+                {
+                    if (wave.gridManager != null)
+                    {
+                        seUsoGrid = true;
+                        break;
+                    }
+                }
+
+                if (seUsoGrid)
+                {
+                    GameObject player = GameObject.FindGameObjectWithTag("Player");
+                    if (player != null)
+                    {
+                        var movimientoJugador = player.GetComponent<MovimientoJugador>();
+                        if (movimientoJugador != null)
+                        {
+                            movimientoJugador.nivelActual = 4;
+                            UnityEngine.SceneManagement.SceneManager.LoadScene("HubNuevo");
+                        }
+                    }
+                }
+
                 if (teleportAfterLastWave || changeRooms)
                 {
                     StartCoroutine(HandleRoomTransitionAndTeleport());
