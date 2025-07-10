@@ -44,6 +44,7 @@ public class EnemigosMele : EnemyLife
     private Rigidbody rb; // Rigidbody del enemigo
 
     private float originalAgentSpeed;
+    private bool hasBeenAdded = false; // Para evitar duplicados en la lista
 
 
      private void Awake()
@@ -60,20 +61,40 @@ public class EnemigosMele : EnemyLife
          if (!allEnemies.Contains(this))
         {
             allEnemies.Add(this);
+            hasBeenAdded = true;
         }
     }
 
     void OnDisable()
     {
-        // Remover este enemigo de la lista cuando se desactive
+        // Remover este enemigo de las listas cuando se desactive
         if (allEnemies.Contains(this))
         {
             allEnemies.Remove(this);
+        }
+        if (currentAttackers.Contains(this))
+        {
+            currentAttackers.Remove(this);
+        }
+    }
+
+    void OnDestroy()
+    {
+        // Asegurar limpieza al destruir el objeto
+        if (allEnemies.Contains(this))
+        {
+            allEnemies.Remove(this);
+        }
+        if (currentAttackers.Contains(this))
+        {
+            currentAttackers.Remove(this);
         }
     }
 
      void Update()
     {       
+        // Verificar que las listas no tengan referencias nulas
+        CleanupLists();
         
         switch (currentState)
         {         
@@ -86,12 +107,18 @@ public class EnemigosMele : EnemyLife
                 break; 
                 
             case State.Gethit:
-                // ...existing code...
+                // No hacer nada en gethit, el estado cambiará automáticamente
                 break; 
-                             
         }
 
         agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale;
+    }
+
+    private void CleanupLists()
+    {
+        // Limpiar referencias nulas de las listas estáticas
+        allEnemies.RemoveAll(enemy => enemy == null);
+        currentAttackers.RemoveAll(enemy => enemy == null);
     }
 
     public override void ReceiveDamage(float damage)
@@ -173,27 +200,38 @@ public class EnemigosMele : EnemyLife
 
         agent.isStopped = false; // Asegúrate de que el agente no esté detenido
 
-        if (currentAttackers.Count < maxAttackers || currentAttackers.Contains(this))
-        {
-            agent.SetDestination(player.position);
-            enemyRenderer.material.color = Color.green;
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        
+        // Verificar si puede atacar (dentro del rango Y hay espacio disponible O ya está en la lista de atacantes)
+        bool canAttack = distanceToPlayer <= attackDistance && 
+                        (currentAttackers.Count < maxAttackers || currentAttackers.Contains(this));
 
-            if (Vector3.Distance(transform.position, player.position) < attackDistance)
+        if (canAttack)
+        {
+            // Cambiar a estado de ataque
+            currentState = State.Attacking;
+            if (!currentAttackers.Contains(this))
             {
-                currentState = State.Attacking;
-                if (!currentAttackers.Contains(this))
-                {
-                    currentAttackers.Add(this);
-                }
+                currentAttackers.Add(this);
+                Debug.Log($"Enemigo {gameObject.name} agregado a atacantes. Total atacantes: {currentAttackers.Count}");
             }
+            agent.SetDestination(player.position);
+            enemyRenderer.material.color = Color.red; // Color de ataque
+        }
+        else if (currentAttackers.Count >= maxAttackers && !currentAttackers.Contains(this))
+        {
+            // Si hay demasiados atacantes, mantener distancia
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            Vector3 targetPosition = player.position - directionToPlayer * (attackDistance + 1f);
+            
+            agent.SetDestination(targetPosition);
+            enemyRenderer.material.color = Color.yellow; // Color para indicar que está esperando
         }
         else
         {
-            Vector3 directionToPlayer = (player.position - transform.position).normalized;
-            Vector3 targetPosition = player.position + directionToPlayer * attackDistance;
-
-            agent.SetDestination(targetPosition);
-            enemyRenderer.material.color = Color.yellow; // Color para indicar que está rodeando
+            // Perseguir normalmente
+            agent.SetDestination(player.position);
+            enemyRenderer.material.color = Color.green; // Color de persecución
         }
     }
 
@@ -201,6 +239,7 @@ public class EnemigosMele : EnemyLife
     {
         if (!isAttacking)
         {
+            Debug.Log($"Enemigo {gameObject.name} iniciando ataque");
             StartCoroutine(PerformAttack());
         }
     }
@@ -214,11 +253,16 @@ public class EnemigosMele : EnemyLife
         Color initialColor = enemyRenderer.material.color;
         Color targetColor = initialColor * 0.2f; 
 
+        // Preparación del ataque
         while (elapsedTime < 0.5f)
         {
             if (currentState != State.Attacking)
             {
                 isAttacking = false;
+                if (currentAttackers.Contains(this))
+                {
+                    currentAttackers.Remove(this);
+                }
                 yield break; 
             }
 
@@ -236,7 +280,7 @@ public class EnemigosMele : EnemyLife
             yield return null;
         }
 
-        // Ataque
+        // Ejecutar ataque
         agent.isStopped = false;
         enemyRenderer.material.color = targetColor; 
 
@@ -257,13 +301,17 @@ public class EnemigosMele : EnemyLife
         GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);        
         effect.transform.parent = transform; 
         
+        // Duración del ataque
         while (elapsedTime < 1f)
         {
             if (currentState != State.Attacking)
             {
-                Destroy(effect); 
+                if (effect != null) Destroy(effect); 
                 isAttacking = false;
-                currentAttackers.Remove(this); // Liberar al atacante actual
+                if (currentAttackers.Contains(this))
+                {
+                    currentAttackers.Remove(this);
+                }
                 yield break; 
             }
 
@@ -271,9 +319,9 @@ public class EnemigosMele : EnemyLife
             yield return null;
         }
 
-        effect.SetActive(false); 
+        if (effect != null) effect.SetActive(false); 
 
-        // Recuperacion
+        // Recuperación
         Vector3 RestartdirectionToPlayer = (player.position - transform.position).normalized;
         RestartdirectionToPlayer.y = 0; 
         Quaternion RestartlookRotation = Quaternion.LookRotation(RestartdirectionToPlayer);   
@@ -284,7 +332,13 @@ public class EnemigosMele : EnemyLife
         agent.isStopped = false;
         isAttacking = false;
 
-        currentAttackers.Remove(this); // Liberar al atacante actual
+        // Liberar al atacante y volver a perseguir
+        if (currentAttackers.Contains(this))
+        {
+            currentAttackers.Remove(this);
+            Debug.Log($"Enemigo {gameObject.name} terminó ataque. Atacantes restantes: {currentAttackers.Count}");
+        }
+        
         currentState = State.Chasing; 
     }
 

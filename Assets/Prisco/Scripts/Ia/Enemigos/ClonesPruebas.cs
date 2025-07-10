@@ -15,7 +15,8 @@ public class ClonesPruebas : EnemyLife
     private NavMeshAgent agent;
     private Transform player;    
     private Renderer enemyRenderer; 
-    private Rigidbody rb; 
+    private Rigidbody rb;
+    private GameObject healthBar; // Referencia a la barra de vida
 
     [Header("Cloning")]
     public GameObject clonePrefab; 
@@ -34,7 +35,8 @@ public class ClonesPruebas : EnemyLife
     public float preShootDelay = 1.5f; // Duración del pre-disparo
     public float waitTimer = 1.5f; // Duración del cambio de color
     public float attackCooldown = 5f; // Duración del cooldown de ataque
-    private float lastAttackTime; 
+    private float lastAttackTime;
+    private bool isAttacking = false; // Nueva bandera para controlar si está atacando
 
     [Header("Movement")]
     public float teleportDistance = 20f; // Distancia de teletransporte
@@ -57,6 +59,15 @@ public class ClonesPruebas : EnemyLife
         rb = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         enemyRenderer = GetComponent<Renderer>();
+        
+        // Buscar la barra de vida (asumiendo que es un child object)
+        healthBar = transform.Find("HealthBar")?.gameObject;
+        if (healthBar == null)
+        {
+            // Si no está como child, buscar por componente
+            healthBar = GetComponentInChildren<Canvas>()?.gameObject;
+        }
+        
         currentState = State.Chasing;
         previousState = currentState; 
         lastAttackTime = -attackCooldown; 
@@ -92,27 +103,50 @@ public class ClonesPruebas : EnemyLife
         }
         agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale; 
 
-       
+        // Mejorar el sistema de cambio de color de los clones
+        UpdateCloneColors();
+    }
+
+    private void UpdateCloneColors()
+    {
         if (MovimientoJugador.bulletTimeScale < 1)
         {
+            // Durante el tiempo bala, los clones deben ser rojos
             if (clone1 != null)
             {
-                clone1.GetComponent<Renderer>().material.color = Color.red;
+                Renderer clone1Renderer = clone1.GetComponent<Renderer>();
+                if (clone1Renderer != null)
+                {
+                    clone1Renderer.material.color = Color.red;
+                }
             }
             if (clone2 != null)
             {
-                clone2.GetComponent<Renderer>().material.color = Color.red;
+                Renderer clone2Renderer = clone2.GetComponent<Renderer>();
+                if (clone2Renderer != null)
+                {
+                    clone2Renderer.material.color = Color.red;
+                }
             }
         }
         else
         {
+            // Tiempo normal, usar el color original de los clones
             if (clone1 != null)
             {
-                clone1.GetComponent<Renderer>().material.color = CloneBehavior.cloneRenderer.material.color;
+                Renderer clone1Renderer = clone1.GetComponent<Renderer>();
+                if (clone1Renderer != null && CloneBehavior.cloneRenderer != null)
+                {
+                    clone1Renderer.material.color = CloneBehavior.cloneRenderer.material.color;
+                }
             }
             if (clone2 != null)
             {
-                clone2.GetComponent<Renderer>().material.color = CloneBehavior.cloneRenderer.material.color;
+                Renderer clone2Renderer = clone2.GetComponent<Renderer>();
+                if (clone2Renderer != null && CloneBehavior.cloneRenderer != null)
+                {
+                    clone2Renderer.material.color = CloneBehavior.cloneRenderer.material.color;
+                }
             }
         }
     }
@@ -128,11 +162,31 @@ public class ClonesPruebas : EnemyLife
 
     private void Attacking()
     {
+        // Ocultar barra de vida durante el ataque
+        if (healthBar != null)
+        {
+            healthBar.SetActive(false);
+        }
+
+        // Verificar si está siendo empujado antes de atacar
+        if (isBeingPushed)
+        {
+            return;
+        }
+
+        // Verificar si ya está ejecutando un ataque
+        if (isAttacking)
+        {
+            return;
+        }
+
         if (Time.time - lastAttackTime < attackCooldown * MovimientoJugador.bulletTimeScale)
         {
             return; 
         }
 
+        // Marcar que está comenzando un ataque
+        isAttacking = true;
         lastAttackTime = Time.time; 
 
         // Calcular las posiciones de los clones y del enemigo en forma de triángulo
@@ -267,29 +321,53 @@ public class ClonesPruebas : EnemyLife
             float lerpFactor = Mathf.Clamp01(elapsedTime / preShootDelay); 
             enemyRenderer.material.color = Color.Lerp(originalColor, secondaryColor, lerpFactor); 
 
-            
-            if (clone1 != null)
+            // Aplicar el cambio de color a los clones solo si no están en tiempo bala
+            if (MovimientoJugador.bulletTimeScale >= 1)
             {
-                clone1.GetComponent<Renderer>().material.color = Color.Lerp(originalColor, secondaryColor, lerpFactor);
-            }
-            if (clone2 != null)
-            {
-                clone2.GetComponent<Renderer>().material.color = Color.Lerp(originalColor, secondaryColor, lerpFactor);
+                if (clone1 != null)
+                {
+                    Renderer clone1Renderer = clone1.GetComponent<Renderer>();
+                    if (clone1Renderer != null)
+                    {
+                        clone1Renderer.material.color = Color.Lerp(originalColor, secondaryColor, lerpFactor);
+                    }
+                }
+                if (clone2 != null)
+                {
+                    Renderer clone2Renderer = clone2.GetComponent<Renderer>();
+                    if (clone2Renderer != null)
+                    {
+                        clone2Renderer.material.color = Color.Lerp(originalColor, secondaryColor, lerpFactor);
+                    }
+                }
             }
 
             if (elapsedTime >= preShootDelay)
             {
                 enemyRenderer.material.color = originalColor; 
-                if (clone1 != null)
-                {
-                    clone1.GetComponent<Renderer>().material.color = CloneBehavior.cloneRenderer.material.color;
-                }
-                if (clone2 != null)
-                {
-                    clone2.GetComponent<Renderer>().material.color = CloneBehavior.cloneRenderer.material.color;
-                }
-                isPreShooting = false; 
                 
+                // Restaurar color original solo si no está en tiempo bala
+                if (MovimientoJugador.bulletTimeScale >= 1)
+                {
+                    if (clone1 != null && CloneBehavior.cloneRenderer != null)
+                    {
+                        Renderer clone1Renderer = clone1.GetComponent<Renderer>();
+                        if (clone1Renderer != null)
+                        {
+                            clone1Renderer.material.color = CloneBehavior.cloneRenderer.material.color;
+                        }
+                    }
+                    if (clone2 != null && CloneBehavior.cloneRenderer != null)
+                    {
+                        Renderer clone2Renderer = clone2.GetComponent<Renderer>();
+                        if (clone2Renderer != null)
+                        {
+                            clone2Renderer.material.color = CloneBehavior.cloneRenderer.material.color;
+                        }
+                    }
+                }
+                
+                isPreShooting = false; 
                 
                 for (int i = 0; i < 3; i++)
                 {
@@ -297,7 +375,8 @@ public class ClonesPruebas : EnemyLife
                     yield return new WaitForSeconds(shootDelay * MovimientoJugador.bulletTimeScale); 
                 }
 
-                
+                // Marcar que el ataque ha terminado
+                isAttacking = false;
                 currentState = State.Waiting;
             }
             yield return null;
@@ -306,22 +385,54 @@ public class ClonesPruebas : EnemyLife
 
     private void GetHit()
     {
-        
-        if (clone1 != null)
+        // Cancelar ataque en progreso
+        isAttacking = false;
+
+        // Solo destruir clones y cambiar estado si no está ya siendo empujado
+        if (!isBeingPushed)
         {
-            Destroy(clone1);
-        }
-        if (clone2 != null)
-        {
-            Destroy(clone2);
+            if (clone1 != null)
+            {
+                Destroy(clone1);
+            }
+            if (clone2 != null)
+            {
+                Destroy(clone2);
+            }
         }
 
-        
-        currentState = State.Waiting;
+        // Permanecer en estado Gethit mientras está siendo empujado
+        if (!isBeingPushed)
+        {
+            currentState = State.Waiting;
+        }
     }
 
     private void Waiting()
     {
+        // Hacer que el enemigo huya del jugador
+        Vector3 fleeDirection = (transform.position - player.position).normalized;
+        Vector3 fleePosition = transform.position + fleeDirection * 10f; // Distancia de huida
+        
+        // Buscar una posición válida en el NavMesh
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(fleePosition, out hit, 10f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+        else
+        {
+            // Si no encuentra una posición válida, moverse en dirección aleatoria
+            Vector3 randomDirection = UnityEngine.Random.insideUnitSphere.normalized;
+            randomDirection.y = 0; // Mantener en el plano horizontal
+            Vector3 randomPosition = transform.position + randomDirection * 5f;
+            
+            if (NavMesh.SamplePosition(randomPosition, out hit, 5f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
+        }
+        
         waitDuration -= Time.deltaTime * MovimientoJugador.bulletTimeScale; 
         if (waitDuration <= 0)
         {
@@ -336,14 +447,20 @@ public class ClonesPruebas : EnemyLife
             }
 
             currentState = State.Chasing;
-            waitDuration = 5f; 
+            waitDuration = 2f; 
         }
     }
 
     #region Damage Handling
     public override void ReceiveDamage(float damage)
     {
-        base.ReceiveDamage(damage);        
+        base.ReceiveDamage(damage);
+        
+        // Mostrar barra de vida cuando reciba daño
+        if (healthBar != null)
+        {
+            healthBar.SetActive(true);
+        }
 
         
         if (Time.time > lastPushTime + pushCooldown)
@@ -358,6 +475,9 @@ public class ClonesPruebas : EnemyLife
     {
         if (rb == null) yield break; 
 
+        // Cancelar ataque en progreso
+        isAttacking = false;
+
         isBeingPushed = true;
         if (agent != null)
         {
@@ -365,6 +485,16 @@ public class ClonesPruebas : EnemyLife
         }
         rb.isKinematic = false; 
         enemyRenderer.material.color = Color.red; 
+
+        // Destruir clones cuando comience el empuje
+        if (clone1 != null)
+        {
+            Destroy(clone1);
+        }
+        if (clone2 != null)
+        {
+            Destroy(clone2);
+        }
 
        
         Vector3 pushDirection = (transform.position - player.position).normalized;
@@ -415,7 +545,9 @@ public class ClonesPruebas : EnemyLife
             }
         }
         isBeingPushed = false;
-        currentState = State.Chasing;
+        
+        // Cambiar a estado Waiting después de terminar el empuje
+        currentState = State.Waiting;
     }
     #endregion
 }
