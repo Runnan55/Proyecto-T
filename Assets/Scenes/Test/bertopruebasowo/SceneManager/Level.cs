@@ -78,18 +78,17 @@ public class Level : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (disableCameraFollowOnStart)
-        {
-            disableCameraFollow();
-        }
-
-        if (!disableCameraFollowOnStart)
-        {
-            enableCameraFollow();
-        }
-        
         if (other.CompareTag("Player") && !hasPlayerEntered)
         {
+            if (disableCameraFollowOnStart)
+            {
+                disableCameraFollow();
+            }
+            else
+            {
+                enableCameraFollow();
+            }
+
             if (entranceDoor != null)
             {
                 StartCoroutine(entranceDoor.Close());
