@@ -27,27 +27,51 @@ public class CloneBehavior : EnemyLife
 
     private IEnumerator ChangeColorAndShoot()
     {
-        bool isPreShooting = true; // Indicador de pre-disparo
-        Color originalColor = cloneRenderer.material.color; // Guardar el color original
-        Color secondaryColor = new Color(1.0f, 0.5f, 0.0f); // Color secundario naranja
+        bool isPreShooting = true;
+        Color originalColor = cloneRenderer.material.color;
+        Color secondaryColor = new Color(1.0f, 0.5f, 0.0f);
 
         while (isPreShooting)
         {
-            waitTimer -= Time.deltaTime;
-            float lerpFactor = 1 - (waitTimer / preShootDelay); 
-            cloneRenderer.material.color = Color.Lerp(originalColor, secondaryColor, lerpFactor); // Interpolar entre el color original y el secundario
+            // Verificar si el objeto aún existe antes de continuar
+            if (cloneRenderer == null || this == null)
+            {
+                yield break;
+            }
+
+            waitTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
+            float lerpFactor = 1 - (waitTimer / preShootDelay);
+            
+            // Verificar nuevamente antes de acceder al material
+            if (cloneRenderer != null)
+            {
+                cloneRenderer.material.color = Color.Lerp(originalColor, secondaryColor, lerpFactor);
+            }
 
             if (waitTimer <= 0)
             {
-                cloneRenderer.material.color = originalColor; // Restaurar el color original
-                isPreShooting = false; 
+                // Verificar antes de restaurar el color
+                if (cloneRenderer != null)
+                {
+                    cloneRenderer.material.color = originalColor;
+                }
+                
+                isPreShooting = false;
 
                 // Instanciar 3 prefabs de balas con un delay entre cada una
                 for (int i = 0; i < 3; i++)
                 {
-                    Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-                    yield return new WaitForSeconds(shootDelay); 
-                }           
+                    // Verificar si el objeto aún existe antes de disparar
+                    if (bulletPrefab != null && bulletSpawnPoint != null && this != null)
+                    {
+                        Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+                        yield return new WaitForSeconds(shootDelay * MovimientoJugador.bulletTimeScale);
+                    }
+                    else
+                    {
+                        yield break; // Salir si el objeto ha sido destruido
+                    }
+                }
             }
             yield return null;
         }

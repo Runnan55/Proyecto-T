@@ -99,8 +99,13 @@ public class DistanciaPrueba : EnemyLife
         }
 
         LookAtPlayer();
-        agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale;
-        agent.isStopped = (currentState == State.Shooting || currentState == State.IsOnRange); 
+        
+        // Verificar que el agente esté activo y en NavMesh antes de modificar velocidad
+        if (agent != null && agent.enabled && agent.isOnNavMesh && !isBeingPushed)
+        {
+            agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale;
+            agent.isStopped = (currentState == State.Shooting || currentState == State.IsOnRange);
+        }
     }
     #endregion
 
@@ -109,10 +114,13 @@ public class DistanciaPrueba : EnemyLife
     #region State Handlers
     private void HandleChasing() 
     { 
+        // No hacer nada si está siendo empujado
+        if (isBeingPushed) return;
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if (distanceToPlayer > distanciaDetecion)
         {
-            if (agent != null && agent.isOnNavMesh)
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
             {
                 try
                 {
@@ -126,7 +134,7 @@ public class DistanciaPrueba : EnemyLife
         }
         else
         {
-            if (agent != null && agent.isOnNavMesh)
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
             {
                 agent.ResetPath();
             }
@@ -164,6 +172,9 @@ public class DistanciaPrueba : EnemyLife
 
     private void HandleReposition() 
     {  
+        // No hacer nada si está siendo empujado
+        if (isBeingPushed) return;
+
         repositionTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
         if (repositionTimer <= 0)
         {
@@ -198,7 +209,7 @@ public class DistanciaPrueba : EnemyLife
 
         directionToBackOfPlayer.Normalize();
         Vector3 newPosition = player.position + directionToBackOfPlayer * 15f; 
-        if (agent != null && agent.isOnNavMesh)
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
         {
             agent.SetDestination(newPosition);
         }
@@ -206,8 +217,15 @@ public class DistanciaPrueba : EnemyLife
 
     private void HandleShooting() 
     {        
+        // No hacer nada si está siendo empujado
+        if (isBeingPushed) return;
+
         LookAtPlayer();
-        agent.isStopped = true;
+        
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+        }
 
         if (!isPreShooting)
         {
@@ -256,17 +274,22 @@ public class DistanciaPrueba : EnemyLife
 
     private IEnumerator PushBack()
     {
-        if (rb == null) yield break; // Salir si no hay Rigidbody
+        if (rb == null) yield break;
 
         isBeingPushed = true;
-        if (agent != null)
+        
+        // Desactivar agente de forma segura
+        if (agent != null && agent.enabled)
         {
-            agent.enabled = false; // Desactiva el NavMeshAgent
+            agent.isStopped = true;
+            agent.ResetPath();
+            yield return new WaitForEndOfFrame(); // Esperar un frame
+            agent.enabled = false;
         }
-        rb.isKinematic = false; // Cambia el Rigidbody a modo no-kinemático para aplicar la física
+        
+        rb.isKinematic = false;
         enemyRenderer.material.color = Color.red; 
 
-        // Aplica una fuerza de empuje en la dirección opuesta a la posición del jugador
         Vector3 pushDirection = (transform.position - player.position).normalized;
 
            if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
@@ -296,7 +319,7 @@ public class DistanciaPrueba : EnemyLife
 
             if (Physics.Raycast(rb.position, pushDirection, out RaycastHit hit, frameDistance, LayerMask.GetMask("obstacleLayers")))
             {
-                rb.velocity = Vector3.zero; // Detener el empuje
+                rb.velocity = Vector3.zero;
                 break;
             }
 
@@ -304,16 +327,44 @@ public class DistanciaPrueba : EnemyLife
             yield return new WaitForFixedUpdate();
         }
 
-        // Restaurar el estado del Rigidbody y NavMeshAgent
-        rb.isKinematic = true; // Cambia de nuevo a kinemático
+        // Restaurar estado de forma segura
+        rb.isKinematic = true;
+        
+        // Esperar un frame antes de reactivar el agente
+        yield return new WaitForEndOfFrame();
+        
         if (agent != null)
         {
-            agent.enabled = true; // Reactiva el NavMeshAgent
-            if (agent.isOnNavMesh)
+            // Verificar que esté en una posición válida del NavMesh
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(transform.position, out navHit, 5f, NavMesh.AllAreas))
             {
-                agent.Warp(transform.position); // Asegurarse de que el agente esté en el NavMesh
+                transform.position = navHit.position;
+                agent.enabled = true;
+                
+                if (agent.isOnNavMesh)
+                {
+                    agent.Warp(transform.position);
+                    agent.isStopped = false;
+                }
+            }
+            else
+            {
+                // Si no puede encontrar el NavMesh, intentar teleportar cerca del jugador
+                Vector3 fallbackPosition = player.position + Vector3.back * 10f;
+                if (NavMesh.SamplePosition(fallbackPosition, out navHit, 10f, NavMesh.AllAreas))
+                {
+                    transform.position = navHit.position;
+                    agent.enabled = true;
+                    if (agent.isOnNavMesh)
+                    {
+                        agent.Warp(transform.position);
+                        agent.isStopped = false;
+                    }
+                }
             }
         }
+        
         isBeingPushed = false;
         currentState = State.Chasing;
     }

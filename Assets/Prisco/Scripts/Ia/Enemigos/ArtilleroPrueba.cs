@@ -106,14 +106,22 @@ public class ArtilleroPrueba : EnemyLife
     }
     private IEnumerator PushBack()
     {
-        if (rb == null) yield break; 
+        if (rb == null) yield break;
 
         isBeingPushed = true;
-        agent.enabled = false; 
-        rb.isKinematic = false; 
-       enemyRenderer.material.color = Color.red; 
-
         
+        // Desactivar agente de forma segura
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+            yield return new WaitForEndOfFrame();
+            agent.enabled = false;
+        }
+        
+        rb.isKinematic = false;
+        enemyRenderer.material.color = Color.red;
+
         Vector3 pushDirection = (transform.position - player.position).normalized;
 
         if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
@@ -143,7 +151,7 @@ public class ArtilleroPrueba : EnemyLife
 
             if (Physics.Raycast(rb.position, pushDirection, out RaycastHit hit, frameDistance, LayerMask.GetMask("obstacleLayers")))
             {
-                rb.velocity = Vector3.zero; // Detiene el movimiento si choca con un obstáculo
+                rb.velocity = Vector3.zero;
                 break;
             }
 
@@ -151,9 +159,27 @@ public class ArtilleroPrueba : EnemyLife
             yield return new WaitForFixedUpdate();
         }
 
-       
         rb.isKinematic = true;
-        agent.enabled = true; 
+        
+        // Reactivar agente de forma segura
+        yield return new WaitForEndOfFrame();
+        
+        if (agent != null)
+        {
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(transform.position, out navHit, 5f, NavMesh.AllAreas))
+            {
+                transform.position = navHit.position;
+                agent.enabled = true;
+                
+                if (agent.isOnNavMesh)
+                {
+                    agent.Warp(transform.position);
+                    agent.isStopped = false;
+                }
+            }
+        }
+        
         isBeingPushed = false;
         currentState = State.positioning;
         isPositioning = false; 
@@ -162,10 +188,9 @@ public class ArtilleroPrueba : EnemyLife
 
     public void Positioning()
     {
-        agent.isStopped = false;
-        if (!agent.enabled)
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
         {
-            agent.enabled = true; 
+            agent.isStopped = false;
         }
 
         if (!isPositioning)
@@ -183,10 +208,10 @@ public class ArtilleroPrueba : EnemyLife
         Vector3 directionAwayFromPlayer = (transform.position - player.position).normalized;
         Vector3 targetPosition = transform.position + directionAwayFromPlayer * distanciaAlejarse;
 
-        if (agent != null && agent.isOnNavMesh)
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
         {
             agent.SetDestination(targetPosition);
-            while (agent.pathPending || (agent != null && agent.isOnNavMesh && agent.remainingDistance > agent.stoppingDistance))
+            while (agent.pathPending || (agent != null && agent.enabled && agent.isOnNavMesh && agent.remainingDistance > agent.stoppingDistance))
             {
                 if (currentState == State.gethit)
                 {
@@ -202,7 +227,11 @@ public class ArtilleroPrueba : EnemyLife
 
     public void Attacking()
     {
-        agent.isStopped = true;
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+        }
+        
         if (mortarProjectilePrefab == null || mortarLaunchPoint == null) return;
 
         Transform player = GameObject.FindGameObjectWithTag("Player").transform;

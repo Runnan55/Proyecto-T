@@ -153,7 +153,22 @@ public class ClonesPruebas : EnemyLife
 
     private void Chasing()
     {
-        agent.SetDestination(player.position);
+        if (agent != null && agent.enabled)
+        {
+            try
+            {
+                if (agent.isOnNavMesh)
+                {
+                    agent.SetDestination(player.position);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("Error en Chasing() con NavMeshAgent: " + ex.Message);
+                StartCoroutine(ReactivateAgent());
+            }
+        }
+        
         if (Vector3.Distance(transform.position, player.position) <= detectionDistance)
         {
             currentState = State.Attacking;
@@ -410,26 +425,56 @@ public class ClonesPruebas : EnemyLife
 
     private void Waiting()
     {
-        // Hacer que el enemigo huya del jugador
-        Vector3 fleeDirection = (transform.position - player.position).normalized;
-        Vector3 fleePosition = transform.position + fleeDirection * 10f; // Distancia de huida
-        
-        // Buscar una posición válida en el NavMesh
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(fleePosition, out hit, 10f, NavMesh.AllAreas))
+        // No hacer nada si está siendo empujado
+        if (isBeingPushed) return;
+
+        // Verificaciones más robustas para el agente
+        if (agent != null && agent.enabled)
         {
-            agent.SetDestination(hit.position);
-        }
-        else
-        {
-            // Si no encuentra una posición válida, moverse en dirección aleatoria
-            Vector3 randomDirection = UnityEngine.Random.insideUnitSphere.normalized;
-            randomDirection.y = 0; // Mantener en el plano horizontal
-            Vector3 randomPosition = transform.position + randomDirection * 5f;
-            
-            if (NavMesh.SamplePosition(randomPosition, out hit, 5f, NavMesh.AllAreas))
+            try
             {
-                agent.SetDestination(hit.position);
+                // Verificar si está en NavMesh antes de intentar SetDestination
+                if (agent.isOnNavMesh)
+                {
+                    // Hacer que el enemigo huya del jugador
+                    Vector3 fleeDirection = (transform.position - player.position).normalized;
+                    Vector3 fleePosition = transform.position + fleeDirection * 10f;
+                    
+                    // Buscar una posición válida en el NavMesh
+                    NavMeshHit hit;
+                    if (NavMesh.SamplePosition(fleePosition, out hit, 10f, NavMesh.AllAreas))
+                    {
+                        agent.SetDestination(hit.position);
+                    }
+                    else
+                    {
+                        // Si no encuentra una posición válida, moverse en dirección aleatoria
+                        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere.normalized;
+                        randomDirection.y = 0;
+                        Vector3 randomPosition = transform.position + randomDirection * 5f;
+                        
+                        if (NavMesh.SamplePosition(randomPosition, out hit, 5f, NavMesh.AllAreas))
+                        {
+                            agent.SetDestination(hit.position);
+                        }
+                    }
+                }
+                else
+                {
+                    // Si no está en NavMesh, intentar reposicionarlo
+                    NavMeshHit navHit;
+                    if (NavMesh.SamplePosition(transform.position, out navHit, 5f, NavMesh.AllAreas))
+                    {
+                        transform.position = navHit.position;
+                        agent.Warp(transform.position);
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("Error en Waiting() con NavMeshAgent: " + ex.Message);
+                // En caso de error, intentar reactivar el agente
+                StartCoroutine(ReactivateAgent());
             }
         }
         
@@ -448,6 +493,29 @@ public class ClonesPruebas : EnemyLife
 
             currentState = State.Chasing;
             waitDuration = 2f; 
+        }
+    }
+
+    private IEnumerator ReactivateAgent()
+    {
+        yield return new WaitForEndOfFrame();
+        
+        if (agent != null)
+        {
+            agent.enabled = false;
+            yield return new WaitForEndOfFrame();
+            
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(transform.position, out navHit, 10f, NavMesh.AllAreas))
+            {
+                transform.position = navHit.position;
+                agent.enabled = true;
+                
+                if (agent.isOnNavMesh)
+                {
+                    agent.Warp(transform.position);
+                }
+            }
         }
     }
 
@@ -479,10 +547,16 @@ public class ClonesPruebas : EnemyLife
         isAttacking = false;
 
         isBeingPushed = true;
-        if (agent != null)
+        
+        // Desactivar agente de forma segura
+        if (agent != null && agent.enabled)
         {
-            agent.enabled = false; 
+            agent.isStopped = true;
+            agent.ResetPath();
+            yield return new WaitForEndOfFrame();
+            agent.enabled = false;
         }
+        
         rb.isKinematic = false; 
         enemyRenderer.material.color = Color.red; 
 
@@ -496,7 +570,6 @@ public class ClonesPruebas : EnemyLife
             Destroy(clone2);
         }
 
-       
         Vector3 pushDirection = (transform.position - player.position).normalized;
 
         if (MovimientoJugador.instance.animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
@@ -534,16 +607,42 @@ public class ClonesPruebas : EnemyLife
             yield return new WaitForFixedUpdate();
         }
 
+        rb.isKinematic = true;
         
-        rb.isKinematic = true; 
+        // Reactivar agente de forma segura
+        yield return new WaitForEndOfFrame();
+        
         if (agent != null)
         {
-            agent.enabled = true; 
-            if (agent.isOnNavMesh)
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(transform.position, out navHit, 5f, NavMesh.AllAreas))
             {
-                agent.Warp(transform.position); 
+                transform.position = navHit.position;
+                agent.enabled = true;
+                
+                if (agent.isOnNavMesh)
+                {
+                    agent.Warp(transform.position);
+                    agent.isStopped = false;
+                }
+            }
+            else
+            {
+                // Si no puede encontrar el NavMesh, intentar teleportar cerca del jugador
+                Vector3 fallbackPosition = player.position + Vector3.back * 10f;
+                if (NavMesh.SamplePosition(fallbackPosition, out navHit, 10f, NavMesh.AllAreas))
+                {
+                    transform.position = navHit.position;
+                    agent.enabled = true;
+                    if (agent.isOnNavMesh)
+                    {
+                        agent.Warp(transform.position);
+                        agent.isStopped = false;
+                    }
+                }
             }
         }
+        
         isBeingPushed = false;
         
         // Cambiar a estado Waiting después de terminar el empuje

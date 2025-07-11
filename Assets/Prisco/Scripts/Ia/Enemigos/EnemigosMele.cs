@@ -140,9 +140,18 @@ public class EnemigosMele : EnemyLife
         if (rb == null) yield break; // Salir si no hay Rigidbody
 
         isBeingPushed = true;
-        agent.enabled = false; // Desactiva el NavMeshAgent
-        rb.isKinematic = false; // Cambia el Rigidbody a modo no-kinemático para aplicar la física
-       enemyRenderer.material.color = Color.red; 
+        
+        // Desactivar agente de forma segura
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+            yield return new WaitForEndOfFrame();
+            agent.enabled = false;
+        }
+        
+        rb.isKinematic = false;
+        enemyRenderer.material.color = Color.red; 
 
         // Aplica una fuerza de empuje en la dirección opuesta a la posición del jugador
         Vector3 pushDirection = (transform.position - player.position).normalized;
@@ -182,9 +191,27 @@ public class EnemigosMele : EnemyLife
             yield return new WaitForFixedUpdate();
         }
 
-        // Restaurar el estado del Rigidbody y NavMeshAgent
-        rb.isKinematic = true; // Cambia de nuevo a kinemático
-        agent.enabled = true; // Reactiva el NavMeshAgent
+        rb.isKinematic = true;
+        
+        // Reactivar agente de forma segura
+        yield return new WaitForEndOfFrame();
+        
+        if (agent != null)
+        {
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(transform.position, out navHit, 5f, NavMesh.AllAreas))
+            {
+                transform.position = navHit.position;
+                agent.enabled = true;
+                
+                if (agent.isOnNavMesh)
+                {
+                    agent.Warp(transform.position);
+                    agent.isStopped = false;
+                }
+            }
+        }
+        
         isBeingPushed = false;
         currentState = State.Chasing;
     }  
@@ -193,45 +220,59 @@ public class EnemigosMele : EnemyLife
 
     private void Chase()
     {       
-        if (!agent.enabled)
+        if (agent != null && !agent.enabled && !isBeingPushed)
         {
-            agent.enabled = true; // Asegúrate de que el NavMeshAgent esté habilitado
+            agent.enabled = true;
         }
 
-        agent.isStopped = false; // Asegúrate de que el agente no esté detenido
-
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        
-        // Verificar si puede atacar (dentro del rango Y hay espacio disponible O ya está en la lista de atacantes)
-        bool canAttack = distanceToPlayer <= attackDistance && 
-                        (currentAttackers.Count < maxAttackers || currentAttackers.Contains(this));
-
-        if (canAttack)
+        if (agent != null && agent.enabled)
         {
-            // Cambiar a estado de ataque
-            currentState = State.Attacking;
-            if (!currentAttackers.Contains(this))
+            try
             {
-                currentAttackers.Add(this);
-                Debug.Log($"Enemigo {gameObject.name} agregado a atacantes. Total atacantes: {currentAttackers.Count}");
+                if (agent.isOnNavMesh)
+                {
+                    agent.isStopped = false;
+                    
+                    float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+                    
+                    // Verificar si puede atacar (dentro del rango Y hay espacio disponible O ya está en la lista de atacantes)
+                    bool canAttack = distanceToPlayer <= attackDistance && 
+                                    (currentAttackers.Count < maxAttackers || currentAttackers.Contains(this));
+
+                    if (canAttack)
+                    {
+                        // Cambiar a estado de ataque
+                        currentState = State.Attacking;
+                        if (!currentAttackers.Contains(this))
+                        {
+                            currentAttackers.Add(this);
+                            Debug.Log($"Enemigo {gameObject.name} agregado a atacantes. Total atacantes: {currentAttackers.Count}");
+                        }
+                        agent.SetDestination(player.position);
+                        enemyRenderer.material.color = Color.red; // Color de ataque
+                    }
+                    else if (currentAttackers.Count >= maxAttackers && !currentAttackers.Contains(this))
+                    {
+                        // Si hay demasiados atacantes, mantener distancia
+                        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+                        Vector3 targetPosition = player.position - directionToPlayer * (attackDistance + 1f);
+                        
+                        agent.SetDestination(targetPosition);
+                        enemyRenderer.material.color = Color.yellow; // Color para indicar que está esperando
+                    }
+                    else
+                    {
+                        // Perseguir normalmente
+                        agent.SetDestination(player.position);
+                        enemyRenderer.material.color = Color.green; // Color de persecución
+                    }
+                }
             }
-            agent.SetDestination(player.position);
-            enemyRenderer.material.color = Color.red; // Color de ataque
-        }
-        else if (currentAttackers.Count >= maxAttackers && !currentAttackers.Contains(this))
-        {
-            // Si hay demasiados atacantes, mantener distancia
-            Vector3 directionToPlayer = (player.position - transform.position).normalized;
-            Vector3 targetPosition = player.position - directionToPlayer * (attackDistance + 1f);
-            
-            agent.SetDestination(targetPosition);
-            enemyRenderer.material.color = Color.yellow; // Color para indicar que está esperando
-        }
-        else
-        {
-            // Perseguir normalmente
-            agent.SetDestination(player.position);
-            enemyRenderer.material.color = Color.green; // Color de persecución
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("Error en Chase() con NavMeshAgent: " + ex.Message);
+                StartCoroutine(ReactivateAgent());
+            }
         }
     }
 
@@ -246,9 +287,21 @@ public class EnemigosMele : EnemyLife
 
     private IEnumerator PerformAttack()
     {
-        
         isAttacking = true;
-        agent.isStopped = true; 
+        
+        // Verificar que el agente esté activo antes de usarlo
+        try
+        {
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("Error al detener agente en PerformAttack: " + ex.Message);
+        }
+        
         float elapsedTime = 0f;
         Color initialColor = enemyRenderer.material.color;
         Color targetColor = initialColor * 0.2f; 
@@ -281,7 +334,18 @@ public class EnemigosMele : EnemyLife
         }
 
         // Ejecutar ataque
-        agent.isStopped = false;
+        try
+        {
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+            {
+                agent.isStopped = false;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("Error al reanudar agente en PerformAttack: " + ex.Message);
+        }
+        
         enemyRenderer.material.color = targetColor; 
 
         Vector3 finalDirectionToPlayer = (lastPlayerPosition - transform.position).normalized;
@@ -292,7 +356,17 @@ public class EnemigosMele : EnemyLife
 
         StartCoroutine(MovimientoAtaque(targetPosition, moveTime / MovimientoJugador.bulletTimeScale)); 
 
-        agent.isStopped = true; 
+        try
+        {
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("Error al detener agente después del movimiento: " + ex.Message);
+        }
 
         elapsedTime = 0f;        
         
@@ -329,7 +403,20 @@ public class EnemigosMele : EnemyLife
 
         enemyRenderer.material.color = initialColor; 
 
-        agent.isStopped = false;
+        try
+        {
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+            {
+                agent.isStopped = false;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning("Error al reanudar agente al finalizar ataque: " + ex.Message);
+            // Intentar reactivar el agente
+            StartCoroutine(ReactivateAgent());
+        }
+        
         isAttacking = false;
 
         // Liberar al atacante y volver a perseguir
@@ -342,6 +429,28 @@ public class EnemigosMele : EnemyLife
         currentState = State.Chasing; 
     }
 
+    private IEnumerator ReactivateAgent()
+    {
+        yield return new WaitForEndOfFrame();
+        
+        if (agent != null)
+        {
+            agent.enabled = false;
+            yield return new WaitForEndOfFrame();
+            
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(transform.position, out navHit, 10f, NavMesh.AllAreas))
+            {
+                transform.position = navHit.position;
+                agent.enabled = true;
+                
+                if (agent.isOnNavMesh)
+                {
+                    agent.Warp(transform.position);
+                }
+            }
+        }
+    }
 
     IEnumerator MovimientoAtaque(Vector3 destination, float duration)
     {

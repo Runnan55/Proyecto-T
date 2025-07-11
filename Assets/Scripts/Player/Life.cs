@@ -39,7 +39,7 @@ public class Life : MonoBehaviour
     public Material invincibleMaterial;
     public Material damageMaterial;
     public Material originalMaterial;
-    public SkinnedMeshRenderer skinnedMeshRenderer;
+    public MeshRenderer meshRenderer; // Cambiado de SkinnedMeshRenderer a MeshRenderer
 
     [Header("Sounds")]
     [SerializeField] private FMODUnity.EventReference damage;
@@ -441,9 +441,9 @@ public class Life : MonoBehaviour
 
     private void ChangeMaterial(Material newMaterial)
     {
-        if (skinnedMeshRenderer != null && newMaterial != null)
+        if (meshRenderer != null && newMaterial != null)
         {
-            skinnedMeshRenderer.material = new Material(newMaterial);
+            meshRenderer.material = new Material(newMaterial);
         }
     }
 
