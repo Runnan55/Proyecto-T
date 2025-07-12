@@ -67,6 +67,15 @@ public class FlechaTest : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Walls"))
+        {
+            //Debug.Log("Physical collision with Walls detected");
+            Destroy(gameObject);
+        }
+    }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("BTCollider"))

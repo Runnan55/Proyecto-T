@@ -198,7 +198,7 @@ public class Attacks : StateMachineBehaviour
     private IEnumerator DelayAfterThirdAttack()
     {
         MovimientoJugador.canAttack = false;
-        yield return new WaitForSeconds(1.3f); 
+        yield return new WaitForSeconds(0.8f); // Reducido de 1.3f a 0.8f
         MovimientoJugador.canAttack = true;
     }
 

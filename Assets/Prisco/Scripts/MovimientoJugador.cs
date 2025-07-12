@@ -47,7 +47,7 @@ public class MovimientoJugador : MonoBehaviour
     private bool atacando = false; 
     private Coroutine mirarCoroutine; 
     private Coroutine disparoCoroutine; // Nueva variable para manejar la corrutina del disparo cargado 
-    public float tiempoEsperaAtaque = 3.0f; 
+    public float tiempoEsperaAtaque = 1.5f; // Reducido de 3.0f a 1.5f
     private float tiempoUltimoAtaque;   
     public static bool canAttack = true;
     // Remover esta línea: public bool canChargeShot = true; // Nueva variable para controlar el disparo cargado
@@ -877,8 +877,8 @@ private void ExpandirCollider()
         ataqueMesh.enabled = false;
         ataqueP = false; // Resetear la bandera del ataque pesado
         
-        // Agregar cooldown de 0.5 segundos después de completar el ataque
-        tiempoUltimoAtaque = Time.time + 0.5f; // Cooldown de 0.5 segundos
+        // Reducir cooldown de 0.5 a 0.2 segundos después de completar el ataque
+        tiempoUltimoAtaque = Time.time + 0.2f; // Cooldown reducido de 0.5 a 0.2 segundos
         
         // Resetear la bandera para permitir un nuevo ataque pesado después del cooldown
         ataqueEjecutado = false;
