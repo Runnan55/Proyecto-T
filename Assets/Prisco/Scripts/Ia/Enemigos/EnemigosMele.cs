@@ -372,7 +372,7 @@ public class EnemigosMele : EnemyLife
         
         FMODUnity.RuntimeManager.PlayOneShot(enemySwoosh);
 
-        GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity);        
+        GameObject effect = Instantiate(attackEffectPrefab, AttackSpawn.position, Quaternion.identity); // <-- AQUÍ se crea el objeto que contiene el daño
         effect.transform.parent = transform; 
         
         // Duración del ataque
