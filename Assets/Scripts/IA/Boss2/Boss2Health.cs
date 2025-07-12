@@ -47,6 +47,7 @@ public class Boss2Health : MonoBehaviour
     private float nextRespawnTime = 0f;
 
     private Animator animator;
+    private Transform player;
 
 
     [Header("Barra vida")]
@@ -68,7 +69,20 @@ public class Boss2Health : MonoBehaviour
         SubscribeToObjects();
         CalculateBossHealth();  // Inicializa la barra
         animator = GetComponent<Animator>();
+        StartCoroutine(FindPlayerWithDelay());
 
+    }
+
+    private IEnumerator FindPlayerWithDelay()
+    {
+        yield return new WaitForSeconds(2f);
+
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (player == null)
+        {
+            Debug.LogError("No se encontr� un objeto con la etiqueta 'Player'");
+        }
     }
     private void CalculateBossHealth()
     {
