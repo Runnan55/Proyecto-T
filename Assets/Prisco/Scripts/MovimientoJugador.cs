@@ -271,12 +271,21 @@ public class MovimientoJugador : MonoBehaviour
     #endregion BulletTime
 
     #region *Priscada
+
    void Awake()
     {
+        //limpiar tiempo bala
+
+        bulletTime = false;
+        bulletTimeScale = 1f;
+        if (afterImageEffect != null)
+            afterImageEffect.enabled = false;
+        DefaultHUD.Instance?.DisableBulletTimeUI();
+
         if (instance == null)
         {
             instance = this;
-            
+
             // Inicializar variables estáticas para asegurar valores correctos
             speed = 15.0f;
             hasAttacked = false;
