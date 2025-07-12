@@ -10,7 +10,8 @@ public class DamageDealer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (damagedObjects.Contains(other.gameObject))
+        // Solo verificar si ya ha recibido daño cuando NO esté en god mode
+        if (!MovimientoJugador.godMode && damagedObjects.Contains(other.gameObject))
         {
             return; // Si el objeto ya ha recibido daño, no hacer nada
         }
@@ -18,7 +19,6 @@ public class DamageDealer : MonoBehaviour
         EnemyLife enemy = other.GetComponent<EnemyLife>();
         BossLIfe bossLife = other.GetComponent<BossLIfe>();
         BossSpawner bossSpawner = other.GetComponent<BossSpawner>();
-
         BossArmProtector bossArmProtector = other.GetComponent<BossArmProtector>();
 
         //Debug.Log("Entrando en contacto con: " + other.name);
@@ -26,25 +26,36 @@ public class DamageDealer : MonoBehaviour
         {
             enemy.ReceiveDamage(damageAmount);
            // Debug.Log("dano");
-            damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
+            if (!MovimientoJugador.godMode)
+            {
+                damagedObjects.Add(other.gameObject); // Solo registrar en modo normal
+            }
         }
 
         if (bossLife != null)
         {
             bossLife.TakeDamage(damageAmount);
-            damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
+            if (!MovimientoJugador.godMode)
+            {
+                damagedObjects.Add(other.gameObject); // Solo registrar en modo normal
+            }
         }
 
         if (bossArmProtector != null)
         {
-
             bossArmProtector.TakeDamage(damageAmount);
-            damagedObjects.Add(other.gameObject);
+            if (!MovimientoJugador.godMode)
+            {
+                damagedObjects.Add(other.gameObject); // Solo registrar en modo normal
+            }
         }
         if (bossSpawner != null)
         {
             bossSpawner.TakeDamage(damageAmount);
-            damagedObjects.Add(other.gameObject); // Registrar que este objeto ha recibido daño
+            if (!MovimientoJugador.godMode)
+            {
+                damagedObjects.Add(other.gameObject); // Solo registrar en modo normal
+            }
         }
       
 

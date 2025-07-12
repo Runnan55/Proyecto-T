@@ -812,10 +812,10 @@ public void AtaqueJugador()
     }
     public void AtaqueLigero()
     {
-        if (Input.GetButtonDown("Fire1") && !ataqueL && canAttack)
+        if (Input.GetButtonDown("Fire1") && !ataqueL && (canAttack || godMode))
         {     
-            // No permitir ataques ligeros durante ejecución Y recuperación del ataque pesado
-            if (atacando || ataqueP)
+            // No permitir ataques ligeros durante ejecución Y recuperación del ataque pesado (excepto en god mode)
+            if (!godMode && (atacando || ataqueP))
             {
                 return;
             }
@@ -830,11 +830,14 @@ public void AtaqueJugador()
 
     public void AtaquePesado()
 {
-    // Solo permitir el ataque si ha pasado el tiempo completo desde el último ataque Y no está ejecutándose ningún ataque pesado
-    if (Input.GetKeyDown(KeyCode.Q) && Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado && !atacando && !ataqueP && canAttack)
+    // Solo permitir el ataque si ha pasado el tiempo completo desde el último ataque Y no está ejecutándose ningún ataque pesado (excepto en god mode)
+    if (Input.GetKeyDown(KeyCode.Q) && (godMode || (Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado && !atacando && !ataqueP)) && (canAttack || godMode))
     {
-        // Cancelar ataques a distancia
-        CancelarAtaquesEnCurso();
+        // Cancelar ataques a distancia (excepto en god mode)
+        if (!godMode)
+        {
+            CancelarAtaquesEnCurso();
+        }
 
         enterAttack = true;
         // Permitir rotación hacia el mouse al activar ataque pesado
@@ -851,8 +854,11 @@ public void AtaqueJugador()
         }
       
         ataqueP = true;
-        ataqueEjecutado = true;
-        tiempoUltimoAtaque = Time.time; // Marcar el inicio del ataque
+        if (!godMode)
+        {
+            ataqueEjecutado = true;
+            tiempoUltimoAtaque = Time.time; // Marcar el inicio del ataque
+        }
         FMODUnity.RuntimeManager.PlayOneShot(heavy);
     }
 
@@ -886,11 +892,14 @@ private void ExpandirCollider()
         ataqueMesh.enabled = false;
         ataqueP = false; // Resetear la bandera del ataque pesado
         
-        // Reducir cooldown de 0.5 a 0.2 segundos después de completar el ataque
-        tiempoUltimoAtaque = Time.time + 0.2f; // Cooldown reducido de 0.5 a 0.2 segundos
-        
-        // Resetear la bandera para permitir un nuevo ataque pesado después del cooldown
-        ataqueEjecutado = false;
+        if (!godMode)
+        {
+            // Reducir cooldown de 0.5 a 0.2 segundos después de completar el ataque
+            tiempoUltimoAtaque = Time.time + 0.2f; // Cooldown reducido de 0.5 a 0.2 segundos
+            
+            // Resetear la bandera para permitir un nuevo ataque pesado después del cooldown
+            ataqueEjecutado = false;
+        }
         
         // Resetear el DamageDealer del ataque pesado cuando termina
         if (damageDealerP != null)
@@ -902,16 +911,19 @@ private void ExpandirCollider()
 
 public void AtaqueDistancia()
 {
-    if (Input.GetButtonDown("Fire2") && balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)
+    if (Input.GetButtonDown("Fire2") && (godMode || (balasActuales > 0 && Time.time - tiempoUltimoDisparo >= tiempoEntreDisparos)))
     {
-        // No permitir ataques a distancia durante ejecución Y recuperación del ataque pesado
-        if (atacando || ataqueP)
+        // No permitir ataques a distancia durante ejecución Y recuperación del ataque pesado (excepto en god mode)
+        if (!godMode && (atacando || ataqueP))
         {
             return;
         }
         
-        // Cancelar solo otros ataques a distancia
-        CancelarAtaquesEnCurso();
+        // Cancelar solo otros ataques a distancia (excepto en god mode)
+        if (!godMode)
+        {
+            CancelarAtaquesEnCurso();
+        }
         
         enterAttack = true;
         
@@ -1034,8 +1046,11 @@ private IEnumerator DisparoNormalOCargado()
 
 private void EjecutarAtaqueDistanciaCargado()
 {
-    tiempoUltimoDisparo = Time.time;
-    balasActuales--;
+    if (!godMode)
+    {
+        tiempoUltimoDisparo = Time.time;
+        balasActuales--;
+    }
 
     GameObject boomerangObj = Instantiate(prefabDisparoCargado, spawnPosition.position, spawnPosition.rotation);
     DisparoCargado boomerang = boomerangObj.GetComponent<DisparoCargado>();
@@ -1044,8 +1059,11 @@ private void EjecutarAtaqueDistanciaCargado()
 
 private void EjecutarAtaqueDistancia()
 {
-    tiempoUltimoDisparo = Time.time;
-    balasActuales--;
+    if (!godMode)
+    {
+        tiempoUltimoDisparo = Time.time;
+        balasActuales--;
+    }
 
     GameObject boomerangObj = Instantiate(prefabDisparoNormal, spawnPosition.position, spawnPosition.rotation);
     Boomerang boomerang = boomerangObj.GetComponent<Boomerang>();
