@@ -14,14 +14,10 @@ public class BossSpawner : MonoBehaviour, IProtectable
     public delegate void OnDestroyedHandler(BossSpawner spawner);
     public event OnDestroyedHandler OnDestroyed;
 
-    public Material defaultMaterial;
-    public Material protectedMaterial;
-    private Renderer rend;
     private Coroutine spawnCoroutine;
 
     void Start()
     {
-        rend = GetComponent<Renderer>();
         ResetObject();  // Inicializa el spawner
     }
 
@@ -110,9 +106,6 @@ public class BossSpawner : MonoBehaviour, IProtectable
     public void SetProtected(bool state)
     {
         isProtected = state;
-        if (rend != null)
-            rend.material = isProtected ? protectedMaterial : defaultMaterial;
-
         Debug.Log($"{name} Protección activa: {state}");
     }
 
