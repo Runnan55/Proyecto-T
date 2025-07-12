@@ -323,7 +323,7 @@ public class BossMovement2 : BossLIfe
                 Debug.Log("atckd");
 
             }
-            else if (contador >= 8 && Time.time > lastCooldown + cooldown)
+            else if (contador >= 6 && Time.time > lastCooldown + cooldown)
             {
                 Salto();
                 lastCooldown = Time.time;
@@ -331,7 +331,7 @@ public class BossMovement2 : BossLIfe
                 contador = 0;
 
             }
-            if ( contador2 >= 6 && Time.time > lastCooldown + cooldown)
+            if ( contador2 >= 4 && Time.time > lastCooldown + cooldown)
             {
                 ExplosionPropia2();
                 lastCooldown = Time.time;
