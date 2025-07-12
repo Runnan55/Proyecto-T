@@ -276,6 +276,18 @@ public class MovimientoJugador : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            
+            // Inicializar variables estáticas para asegurar valores correctos
+            speed = 15.0f;
+            hasAttacked = false;
+            hasRotated = false;
+            ataqueL = false;
+            ataqueP = false;
+            ataqueD = false;
+            ataqueD2 = false;
+            canAttack = true;
+            isDashing = false;
+            enterAttack = false;
         }
         else
         {
@@ -290,7 +302,17 @@ public class MovimientoJugador : MonoBehaviour
         instance = GetComponent<MovimientoJugador>();
         animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
-       
+        
+        // Asegurar estado inicial correcto
+        canMove = true;
+        canAttack = true;
+        isDashing = false;
+        atacando = false;
+        ataqueEjecutado = false;
+        bulletTime = false;
+        
+        // Asegurar velocidad correcta
+        speed = 15.0f;
 
 /*         for (int i = 0; i < 5; i++)
                         {
