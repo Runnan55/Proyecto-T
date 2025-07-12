@@ -290,14 +290,16 @@ public class MovimientoJugador : MonoBehaviour
         instance = GetComponent<MovimientoJugador>();
         animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
+        disparoDesbloqueado = CoreManager.disparoDesbloqueado; // Asegurar que el disparo cargado esté sincronizado con el manager
+       
 
 /*         for (int i = 0; i < 5; i++)
-        {
-            safePositions.Enqueue(transform.position);
-        }
+                        {
+                            safePositions.Enqueue(transform.position);
+                        }
 
-        StartCoroutine(UpdateSafePosition()); */
-        
+                        StartCoroutine(UpdateSafePosition()); */
+
         btColliders = Physics.OverlapSphere(transform.position, 10000);
     }
 
@@ -894,7 +896,7 @@ public void AtaqueDistancia()
         if (!disparoDesbloqueado)
         {
             // Reproducir la animación inmediatamente para disparo normal
-            animator.Play("3P");
+            
             EjecutarDisparoNormal(); // Disparo normal si el disparo cargado está desactivado
         }
         else
@@ -908,15 +910,13 @@ public void AtaqueDistancia()
 private void EjecutarDisparoNormal()
 {
     FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo normal
-    Debug.Log("Disparo normal ejecutado");
+    Debug.Log("Disparo normal ejecutado" + "disparoDesbloqueado = " + disparoDesbloqueado);
     enterAttack = true;
-    ataqueD = true;
-    
-    // Reproducir animación del disparo
-    animator.Play("3P");
-
+    ataqueD = true;  
+ 
+    animator.Play("3p");
     // Ejecutar el disparo normal (crear el proyectil)
-    EjecutarAtaqueDistancia();
+        EjecutarAtaqueDistancia();
 
     // Iniciar la corrutina de mirar al mouse DESPUÉS de ejecutar el disparo
     if (mirarCoroutine != null)
@@ -934,7 +934,7 @@ private IEnumerator DisparoNormalOCargado()
     canMove = false; // Deshabilitar movimiento del jugador
     
     // Reproducir la animación "3P" inmediatamente al empezar a cargar
-    animator.Play("3P");
+   
     
     while (Input.GetButton("Fire2"))
     {
@@ -966,7 +966,7 @@ private IEnumerator DisparoNormalOCargado()
     if (disparoCargado)
     {
         FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo cargado
-        Debug.Log("Disparo cargado ejecutado");
+        Debug.Log("Disparo cargado ejecutado" + "disparoCargado = " + disparoCargado);
        
         ataqueD2 = true;
         // Ejecutar el disparo cargado (crear el proyectil)
