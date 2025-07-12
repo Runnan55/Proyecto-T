@@ -11,7 +11,8 @@ public class Turret3 : MonoBehaviour
     public float bulletSpeed = 10f;
 
     private Transform player; // Referencia al transform del jugador
-    private bool canShoot = true;
+    // private bool canShoot = true;
+    private float shootCooldown = 0f;
 
     void Start()
     {
@@ -27,7 +28,7 @@ public class Turret3 : MonoBehaviour
         }
 
         transform.rotation = Quaternion.Euler(0, -90, 0);
-        StartCoroutine(FireRateCooldown());
+        shootCooldown = 0f;
     }
 
     void Update()
@@ -36,10 +37,15 @@ public class Turret3 : MonoBehaviour
         {
             FollowPlayerOnZ();
 
-            if (canShoot)
+            if (shootCooldown > 0f)
+            {
+                shootCooldown -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
+            }
+
+            if (shootCooldown <= 0f)
             {
                 ShootStraight();
-                StartCoroutine(FireRateCooldown());
+                shootCooldown = fireRate;
             }
         }
     }
@@ -53,13 +59,11 @@ public class Turret3 : MonoBehaviour
     private void ShootStraight()
     {
         GameObject bullet = Instantiate(bulletPrefab, cannon.position, cannon.rotation);
-        bullet.GetComponent<Flecha>().speed = bulletSpeed * MovimientoJugador.bulletTimeScale;
+        bullet.GetComponent<FlechaTest>().speed = bulletSpeed;
     }
 
     private IEnumerator FireRateCooldown()
     {
-        canShoot = false;
-        yield return new WaitForSeconds(fireRate / MovimientoJugador.bulletTimeScale);
-        canShoot = true;
+        yield break;
     }
 }

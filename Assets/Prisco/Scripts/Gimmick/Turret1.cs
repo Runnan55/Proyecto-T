@@ -12,11 +12,12 @@ public class Turret1 : MonoBehaviour
     public float bulletSpeed = 10f;
     public bool rotateCounterClockwise = false;
 
-    private bool canShoot = true;
+    // private bool canShoot = true;
+    private float shootCooldown = 0f;
 
     void Start()
     {
-        StartCoroutine(FireRateCooldown());
+        shootCooldown = 0f;
     }
 
     void Update()
@@ -28,10 +29,15 @@ public class Turret1 : MonoBehaviour
             LookAtCenter();
         }
 
-        if (canShoot)
+        if (shootCooldown > 0f)
+        {
+            shootCooldown -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
+        }
+
+        if (shootCooldown <= 0f)
         {
             ShootAtCenter();
-            StartCoroutine(FireRateCooldown());
+            shootCooldown = fireRate;
         }
     }
 
@@ -47,21 +53,12 @@ public class Turret1 : MonoBehaviour
     {
         Vector3 direction = (rotationCenter.position - cannon.position).normalized;
         GameObject bullet = Instantiate(bulletPrefab, cannon.position, Quaternion.LookRotation(direction));
-        bullet.GetComponent<Flecha>().speed = bulletSpeed * MovimientoJugador.bulletTimeScale;
+        // Solo asigna la velocidad base, el script de la bala se encarga del time scale
+        bullet.GetComponent<FlechaTest>().speed = bulletSpeed;
     }
 
     private IEnumerator FireRateCooldown()
     {
-        canShoot = false;
-        float adjustedFireRate = fireRate / MovimientoJugador.bulletTimeScale;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < adjustedFireRate)
-        {
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        canShoot = true;
+        yield break;
     }
 }
