@@ -290,7 +290,6 @@ public class MovimientoJugador : MonoBehaviour
         instance = GetComponent<MovimientoJugador>();
         animator = GetComponent<Animator>();   
         tiempoUltimoAtaque = -tiempoEsperaAtaque;
-        disparoDesbloqueado = CoreManager.disparoDesbloqueado; // Asegurar que el disparo cargado esté sincronizado con el manager
        
 
 /*         for (int i = 0; i < 5; i++)
@@ -305,7 +304,7 @@ public class MovimientoJugador : MonoBehaviour
 
 
   void Update()
-    {/* 
+    { 
         if (Input.GetKeyDown(KeyCode.G))
         {
             godMode = !godMode;
@@ -314,6 +313,11 @@ public class MovimientoJugador : MonoBehaviour
             
             Debug.Log($"Nivel Actual: {nivelActual}");
             Debug.Log($"Disparo Desbloqueado: {disparoDesbloqueado}");
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            disparoDesbloqueado = true;
         }
 
         if (Input.GetKeyDown(KeyCode.O))
@@ -329,7 +333,7 @@ public class MovimientoJugador : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             BTCollider.SetActive(!BTCollider.activeSelf);
-        } */
+        } 
 
 /*      if (Input.GetKeyDown(KeyCode.Alpha9))
         {
@@ -896,7 +900,7 @@ public void AtaqueDistancia()
         if (!disparoDesbloqueado)
         {
             // Reproducir la animación inmediatamente para disparo normal
-            
+            animator.Play("3P");
             EjecutarDisparoNormal(); // Disparo normal si el disparo cargado está desactivado
         }
         else
@@ -910,13 +914,15 @@ public void AtaqueDistancia()
 private void EjecutarDisparoNormal()
 {
     FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo normal
-    Debug.Log("Disparo normal ejecutado" + "disparoDesbloqueado = " + disparoDesbloqueado);
+    Debug.Log("Disparo normal ejecutado");
     enterAttack = true;
-    ataqueD = true;  
- 
-    animator.Play("3p");
+    ataqueD = true;
+    
+    // Reproducir animación del disparo
+    animator.Play("3P");
+
     // Ejecutar el disparo normal (crear el proyectil)
-        EjecutarAtaqueDistancia();
+    EjecutarAtaqueDistancia();
 
     // Iniciar la corrutina de mirar al mouse DESPUÉS de ejecutar el disparo
     if (mirarCoroutine != null)
@@ -934,7 +940,7 @@ private IEnumerator DisparoNormalOCargado()
     canMove = false; // Deshabilitar movimiento del jugador
     
     // Reproducir la animación "3P" inmediatamente al empezar a cargar
-   
+    animator.Play("3P");
     
     while (Input.GetButton("Fire2"))
     {
@@ -966,8 +972,8 @@ private IEnumerator DisparoNormalOCargado()
     if (disparoCargado)
     {
         FMODUnity.RuntimeManager.PlayOneShot(shot); // Sonido de disparo cargado
-        Debug.Log("Disparo cargado ejecutado" + "disparoCargado = " + disparoCargado);
-       
+        Debug.Log("Disparo cargado ejecutado");      
+
         ataqueD2 = true;
         // Ejecutar el disparo cargado (crear el proyectil)
         EjecutarAtaqueDistanciaCargado();
