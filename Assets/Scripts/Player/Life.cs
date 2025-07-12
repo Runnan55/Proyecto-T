@@ -163,6 +163,7 @@ public class Life : MonoBehaviour
         {
             Debug.LogError("deathScreen no está asignado.");
         }
+            Time.timeScale = 1f; // Restablecer el time scale antes de recargar la escena
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             Debug.Log("f");
         }
