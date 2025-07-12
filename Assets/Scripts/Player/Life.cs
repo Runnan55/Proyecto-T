@@ -231,6 +231,7 @@ public class Life : MonoBehaviour
         UpdateTimeImage();
 
         isAlive = false;
+        Time.timeScale = 0f;
         Debug.Log("MORISIOn, is alive? " + isAlive);
         deathScreen.gameObject.SetActive(true);
     }
