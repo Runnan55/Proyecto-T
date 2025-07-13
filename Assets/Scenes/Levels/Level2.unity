@@ -18042,6 +18042,111 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1135501632}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1138484476
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1375166972}
+    m_Modifications:
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.039993286
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -16.489998
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8952873539273405079, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      propertyPath: m_Name
+      value: Crystal 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 3201861361526369128, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8952873539273405079, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1138484479}
+  m_SourcePrefab: {fileID: 100100000, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+--- !u!4 &1138484477 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 670404923530142538, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+  m_PrefabInstance: {fileID: 1138484476}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1138484478 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8952873539273405079, guid: 50fe631a65073594dbf4152a9555b8c8, type: 3}
+  m_PrefabInstance: {fileID: 1138484476}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1138484479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138484478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92da6e43369c70c49bd5023a82f66f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPositions:
+  - {fileID: 1958924629}
+  - {fileID: 354462442}
+  - {fileID: 2045412545}
+  - {fileID: 1731971655}
+  turretPrefab1: {fileID: 0}
+  turretPrefab2: {fileID: 0}
+  turretPrefab3: {fileID: 0}
+  turretSpawnPosition1: {fileID: 0}
+  turretSpawnPosition2: {fileID: 0}
+  turretSpawnPosition3: {fileID: 0}
+  touchMax: 6
+  touchCount1: 1
+  touchCount2: 6
+  touchCount3: 11
+  activarCambioDeEscena: 0
+  nombreEscenaDestino: 
+  actualizarNivelDelJugador: 0
+  nuevoNivelJugador: 1
+  objetoADesaparecer: {fileID: 1355863106}
+  desaparecerConEfecto: 1
+  tiempoDesaparicion: 1
 --- !u!1001 &1143406566
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22182,6 +22287,7 @@ Transform:
   - {fileID: 1501146468}
   - {fileID: 383706128}
   - {fileID: 1550852761}
+  - {fileID: 1138484477}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1380593854

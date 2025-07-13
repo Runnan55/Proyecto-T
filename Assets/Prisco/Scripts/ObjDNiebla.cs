@@ -15,6 +15,9 @@ public class ObjDNiebla : MonoBehaviour
 
     [Header("Modo expansivo")]
     public bool usarModoExpansivo = false; // Indica si el objeto está en modo expansivo
+    
+    [Header("Rango máximo permanente")]
+    public bool usarRangoMaximo = false; // Si está en true, usa el rango máximo permanentemente
 
     [Header("Reducción de rango")]
     public int rangoInicial = 5; // Rango inicial de visión
@@ -36,10 +39,28 @@ public class ObjDNiebla : MonoBehaviour
                 Debug.LogError("No se encontró un objeto con el script csFogWar en la escena.");
             }
         }
+
+        // Si usarRangoMaximo está activado, activar inmediatamente el FogRevealer
+        if (usarRangoMaximo && fogWar != null)
+        {
+            sightRange = maxSightRange;
+            ActivarFogRevealer();
+        }
     }
 
     private void Update()
     {
+        // Si usarRangoMaximo está activado, usar siempre el rango máximo
+        if (usarRangoMaximo)
+        {
+            if (sightRange != maxSightRange)
+            {
+                sightRange = maxSightRange;
+                ActualizarFogRevealer();
+            }
+            return; // Salir del Update para evitar la lógica de reducción
+        }
+
         // Si el rango actual es mayor que 0, reducir gradualmente
         if (usarModoExpansivo && sightRange > 0)
         {
@@ -79,8 +100,14 @@ public class ObjDNiebla : MonoBehaviour
                 ActivarFogRevealer();
             }
 
+            // Si usarRangoMaximo está activado, establecer el rango máximo inmediatamente
+            if (usarRangoMaximo)
+            {
+                sightRange = maxSightRange;
+                ActualizarFogRevealer();
+            }
             // Incrementar el rango de visión si está en modo expansivo
-            if (usarModoExpansivo && !rangoIncrementado)
+            else if (usarModoExpansivo && !rangoIncrementado)
             {
                 IncrementarRango();
                 rangoIncrementado = true; // Marcar como incrementado
