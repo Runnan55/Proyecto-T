@@ -23,18 +23,24 @@ public class TileController : MonoBehaviour
         
         if(currentTween != null) LeanTween.cancel(currentTween.id);
         
+        var obstacle = GetComponent<UnityEngine.AI.NavMeshObstacle>();
+        if (obstacle == null)
+            obstacle = gameObject.AddComponent<UnityEngine.AI.NavMeshObstacle>();
+
         currentTween = LeanTween.moveY(gameObject, targetY, animationDuration)
             .setEase(raise ? raiseEase : lowerEase)
             .setOnStart(() => {
             if (raise)
             {
                 gameObject.layer = LayerMask.NameToLayer("obstacleLayers");
+                obstacle.carving = true;
             }
             })
             .setOnComplete(() => {
             if (!raise)
             {
                 gameObject.layer = LayerMask.NameToLayer("VisibleThroughFog");
+                obstacle.carving = false;
             }
             });
     }
