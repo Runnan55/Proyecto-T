@@ -349,6 +349,7 @@ public class MovimientoJugador : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.L))
         {
             disparoDesbloqueado = true;
+            nivelActual = 4;
         }
 
         if (Input.GetKeyDown(KeyCode.O))
