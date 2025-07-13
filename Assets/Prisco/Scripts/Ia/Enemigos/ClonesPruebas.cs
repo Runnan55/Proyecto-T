@@ -53,6 +53,8 @@ public class ClonesPruebas : EnemyLife
     [Header("State Timers")]
     public float waitDuration = 5f; // Duración del estado de espera
 
+    private bool lastBulletTimeState = false; // Nuevo campo para rastrear cambios en el tiempo bala
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();       
@@ -103,8 +105,37 @@ public class ClonesPruebas : EnemyLife
         }
         agent.speed = originalAgentSpeed * MovimientoJugador.bulletTimeScale; 
 
+        // Detectar cambios en el tiempo bala y forzar actualización de colores
+        bool currentBulletTime = MovimientoJugador.bulletTimeScale < 1;
+        if (currentBulletTime != lastBulletTimeState)
+        {
+            lastBulletTimeState = currentBulletTime;
+            ForceUpdateAllCloneColors();
+        }
+
         // Mejorar el sistema de cambio de color de los clones
         UpdateCloneColors();
+    }
+
+    // Nuevo método para forzar la actualización de colores en todos los clones
+    private void ForceUpdateAllCloneColors()
+    {
+        if (clone1 != null)
+        {
+            CloneBehavior cloneBehavior1 = clone1.GetComponent<CloneBehavior>();
+            if (cloneBehavior1 != null)
+            {
+                cloneBehavior1.ForceUpdateColor();
+            }
+        }
+        if (clone2 != null)
+        {
+            CloneBehavior cloneBehavior2 = clone2.GetComponent<CloneBehavior>();
+            if (cloneBehavior2 != null)
+            {
+                cloneBehavior2.ForceUpdateColor();
+            }
+        }
     }
 
     private void UpdateCloneColors()
@@ -294,6 +325,8 @@ public class ClonesPruebas : EnemyLife
         cloneBehavior1.preShootDelay = preShootDelay;
         cloneBehavior1.waitTimer = waitTimer;
         cloneBehavior1.lastPosition = clonePosition1;
+        // Forzar actualización de color inmediatamente después de crear el clon
+        cloneBehavior1.ForceUpdateColor();
 
         CloneBehavior cloneBehavior2 = clone2.GetComponent<CloneBehavior>();
         cloneBehavior2.bulletPrefab = bulletPrefab;
@@ -301,7 +334,9 @@ public class ClonesPruebas : EnemyLife
         cloneBehavior2.shootDelay = shootDelay;
         cloneBehavior2.preShootDelay = preShootDelay;
         cloneBehavior2.waitTimer = waitTimer;
-        cloneBehavior2.lastPosition = clonePosition2; 
+        cloneBehavior2.lastPosition = clonePosition2;
+        // Forzar actualización de color inmediatamente después de crear el clon
+        cloneBehavior2.ForceUpdateColor();
 
        
         StartCoroutine(ChangeColorAndShoot());

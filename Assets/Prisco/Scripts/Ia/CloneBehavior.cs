@@ -13,16 +13,45 @@ public class CloneBehavior : EnemyLife
     private NavMeshAgent agent;
     public Vector3 lastPosition; // Añadir esta línea para rastrear la última posición del clon
     private Renderer enemyRenderer;
-
-    
-    
+    private bool isInBulletTime = false; // Nuevo campo para rastrear el estado del tiempo bala
 
     private void Awake()
     {
         cloneRenderer = GetComponent<Renderer>();
         agent = GetComponent<NavMeshAgent>();
         StartCoroutine(ChangeColorAndShoot());
-         enemyRenderer = GetComponent<Renderer>();
+        enemyRenderer = GetComponent<Renderer>();
+    }
+
+    private void Update()
+    {
+        // Verificar cambios en el tiempo bala y actualizar color si es necesario
+        bool currentBulletTime = MovimientoJugador.bulletTimeScale < 1;
+        if (currentBulletTime != isInBulletTime)
+        {
+            isInBulletTime = currentBulletTime;
+            ForceUpdateColor();
+        }
+    }
+
+    // Método público para forzar la actualización del color
+    public void ForceUpdateColor()
+    {
+        if (enemyRenderer == null) return;
+
+        if (MovimientoJugador.bulletTimeScale < 1)
+        {
+            // Durante el tiempo bala, cambiar a rojo
+            enemyRenderer.material.color = Color.red;
+        }
+        else
+        {
+            // Tiempo normal, usar el color original del clon
+            if (cloneRenderer != null)
+            {
+                enemyRenderer.material.color = cloneRenderer.material.color;
+            }
+        }
     }
 
     private IEnumerator ChangeColorAndShoot()
@@ -41,7 +70,7 @@ public class CloneBehavior : EnemyLife
 
             waitTimer -= Time.deltaTime * MovimientoJugador.bulletTimeScale;
             float lerpFactor = 1 - (waitTimer / preShootDelay);
-            
+
             // Verificar nuevamente antes de acceder al material
             if (cloneRenderer != null)
             {
@@ -55,7 +84,7 @@ public class CloneBehavior : EnemyLife
                 {
                     cloneRenderer.material.color = originalColor;
                 }
-                
+
                 isPreShooting = false;
 
                 // Instanciar 3 prefabs de balas con un delay entre cada una

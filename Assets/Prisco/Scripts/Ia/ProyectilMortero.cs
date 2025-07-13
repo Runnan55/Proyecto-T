@@ -131,6 +131,19 @@ public class ProyectilMortero : MonoBehaviour
                 Debug.LogError("playerLife is not initialized.");
             }
         }
+        else if (other.CompareTag("Walls"))
+        {
+            Debug.Log("Projectile collided with wall - destroying projectile.");
+            
+            // Limpiar área de impacto si existe
+            if (impactAreaInstance != null)
+            {
+                Destroy(impactAreaInstance);
+            }
+            
+            // Destruir el proyectil
+            Destroy(gameObject);
+        }
         else if (other.CompareTag("BTCollider"))
         {
             movimientoJugador.CountBTProjectiles();

@@ -371,10 +371,10 @@ public class MovimientoJugador : MonoBehaviour
             CountBTProjectiles();
         } */
 
-        // Lógica combinada para tiempo bala y dash
+        // Lógica combinada para tiempo bala y dash - MEJORADA
         if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
         {
-            if (Time.time >= lastBulletTimeUse + bulletTimeCooldown && canDash && !isDashing)
+            if (Time.time >= lastBulletTimeUse + bulletTimeCooldown && canDash)
             {
                 if (!bulletTime && afterImageEffect != null)
                 {
@@ -394,8 +394,8 @@ public class MovimientoJugador : MonoBehaviour
             }
         }
 
-        // Dash normal fuera del área de dodge
-        if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && canDash && !isDashing)
+        // Dash normal fuera del área de dodge - MEJORADA
+        if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && canDash)
         {
             StartCoroutine(Dash());
         }
@@ -530,7 +530,13 @@ public Vector3 ObtenerUltimaDireccion()
 
 IEnumerator Dash()
 {
-     canAttack = false; // Deshabilitar ataques
+    // Verificar si ya está en dash para evitar múltiples ejecuciones
+    if (isDashing)
+    {
+        yield break;
+    }
+
+    canAttack = false; // Deshabilitar ataques
     animator.Play("Dash");
     isDashing = true;
     canDash = false;
@@ -540,6 +546,7 @@ IEnumerator Dash()
     enterAttack = false;
     animator.SetBool("Run", false);
     
+    FMODUnity.RuntimeManager.PlayOneShot(dash);
 
     Vector3 dashDirection = ObtenerDireccionDash();
     if (dashDirection == Vector3.zero)
@@ -568,12 +575,18 @@ IEnumerator Dash()
 
     isDashing = false;
     rb.useGravity = true;
-
-    yield return new WaitForSeconds(dashCooldown);
     life.disableInvencibility();
-    canDash = true;
+
+    // Iniciar cooldown del dash
+    StartCoroutine(DashCooldown());
     canAttack = true; // Habilitar ataques nuevamente
-   
+}
+
+// Nueva corrutina separada para el cooldown del dash
+private IEnumerator DashCooldown()
+{
+    yield return new WaitForSeconds(dashCooldown);
+    canDash = true;
 }
 
 public IEnumerator EmpujarJugadorAL2(Vector3 direccion, float duracion)
@@ -836,39 +849,68 @@ public void AtaqueJugador()
 
     public void AtaquePesado()
 {
-    // Solo permitir el ataque si ha pasado el tiempo completo desde el último ataque Y no está ejecutándose ningún ataque pesado (excepto en god mode)
-    if (Input.GetKeyDown(KeyCode.Q) && (godMode || (Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque && !ataqueEjecutado && !atacando && !ataqueP)) && (canAttack || godMode))
+    if (Input.GetKeyDown(KeyCode.Q))
     {
-        // Cancelar ataques a distancia (excepto en god mode)
-        if (!godMode)
+        // Debug para identificar qué condición está bloqueando el ataque
+        if (godMode)
         {
-            CancelarAtaquesEnCurso();
+            Debug.Log("God Mode activo - ejecutando ataque pesado");
+            EjecutarAtaquePesado();
+            return;
         }
 
-        enterAttack = true;
-        // Permitir rotación hacia el mouse al activar ataque pesado
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
+        // Verificar condiciones una por una con debug
+        bool tiempoSuficiente = Time.time >= tiempoUltimoAtaque + tiempoEsperaAtaque;
+        bool noEstaEjecutado = !ataqueEjecutado;
+        bool noEstaAtacando = !atacando;
+        bool noEstaAtaqueP = !ataqueP;
+        bool puedeAtacar = canAttack;
+
+        Debug.Log($"Ataque Pesado - Tiempo suficiente: {tiempoSuficiente}, No ejecutado: {noEstaEjecutado}, No atacando: {noEstaAtacando}, No ataque P: {noEstaAtaqueP}, Puede atacar: {puedeAtacar}");
+        Debug.Log($"Tiempo actual: {Time.time}, Último ataque: {tiempoUltimoAtaque}, Diferencia: {Time.time - tiempoUltimoAtaque}, Requerido: {tiempoEsperaAtaque}");
+
+        if (tiempoSuficiente && noEstaEjecutado && noEstaAtacando && noEstaAtaqueP && puedeAtacar)
         {
-            Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-            Vector3 directionToLook = (targetPosition - transform.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
-            transform.rotation = targetRotation;
-            direccionRaycast = directionToLook;
-            hasRotated = true;
+            Debug.Log("Ejecutando ataque pesado");
+            EjecutarAtaquePesado();
         }
-      
-        ataqueP = true;
-        if (!godMode)
+        else
         {
-            ataqueEjecutado = true;
-            tiempoUltimoAtaque = Time.time; // Marcar el inicio del ataque
+            Debug.Log("Ataque pesado bloqueado por condiciones");
         }
-        FMODUnity.RuntimeManager.PlayOneShot(heavy);
+    }
+}
+
+private void EjecutarAtaquePesado()
+{
+    // Cancelar ataques a distancia (excepto en god mode)
+    if (!godMode)
+    {
+        CancelarAtaquesEnCurso();
     }
 
-    // NO resetear ataqueEjecutado aquí - solo se reseteará cuando termine completamente el ataque
+    enterAttack = true;
+    
+    // Permitir rotación hacia el mouse al activar ataque pesado
+    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    RaycastHit hit;
+    if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Ataque")))
+    {
+        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+        Vector3 directionToLook = (targetPosition - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(directionToLook);
+        transform.rotation = targetRotation;
+        direccionRaycast = directionToLook;
+        hasRotated = true;
+    }
+  
+    ataqueP = true;
+    if (!godMode)
+    {
+        ataqueEjecutado = true;
+        tiempoUltimoAtaque = Time.time; // Marcar el inicio del ataque
+    }
+    FMODUnity.RuntimeManager.PlayOneShot(heavy);
 }
 
 public void AtaquePesadoAnim()
@@ -893,6 +935,7 @@ private void ExpandirCollider()
     }
     else
     {
+        Debug.Log("Finalizando ataque pesado");
         atacando = false;
         ataqueCollider.enabled = false;
         ataqueMesh.enabled = false;
@@ -900,11 +943,12 @@ private void ExpandirCollider()
         
         if (!godMode)
         {
-            // Reducir cooldown de 0.5 a 0.2 segundos después de completar el ataque
-            tiempoUltimoAtaque = Time.time + 0.2f; // Cooldown reducido de 0.5 a 0.2 segundos
+            // Simplificar el cooldown - solo marcar el tiempo actual
+            tiempoUltimoAtaque = Time.time;
             
             // Resetear la bandera para permitir un nuevo ataque pesado después del cooldown
             ataqueEjecutado = false;
+            Debug.Log($"Ataque pesado completado. Próximo disponible en: {Time.time + tiempoEsperaAtaque}");
         }
         
         // Resetear el DamageDealer del ataque pesado cuando termina
