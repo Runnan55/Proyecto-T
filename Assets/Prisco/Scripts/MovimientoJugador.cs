@@ -371,13 +371,20 @@ public class MovimientoJugador : MonoBehaviour
             CountBTProjectiles();
         } */
 
-        if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && !bulletTime)
+        // Lógica combinada para tiempo bala y dash
+        if (isInDodgeArea && Input.GetKeyDown(KeyCode.Space))
         {
-            if (Time.time >= lastBulletTimeUse + bulletTimeCooldown && canDash && !isDashing )
+            if (Time.time >= lastBulletTimeUse + bulletTimeCooldown && canDash && !isDashing)
             {
-                if (afterImageEffect != null)
+                if (!bulletTime && afterImageEffect != null)
                 {
+                    // Activar tiempo bala y dash juntos
                     StartCoroutine(ActivateBulletTime());
+                    StartCoroutine(Dash());
+                }
+                else if (bulletTime)
+                {
+                    // Solo dash si ya está en tiempo bala
                     StartCoroutine(Dash());
                 }
                 else
@@ -387,8 +394,7 @@ public class MovimientoJugador : MonoBehaviour
             }
         }
 
-       
-
+        // Dash normal fuera del área de dodge
         if (!isInDodgeArea && Input.GetKeyDown(KeyCode.Space) && canDash && !isDashing)
         {
             StartCoroutine(Dash());
@@ -1000,7 +1006,7 @@ private IEnumerator DisparoNormalOCargado()
             transform.rotation = targetRotation;
         }
 
-        if (tiempoCarga >= 1f && disparoDesbloqueado) 
+        if (tiempoCarga >= 0.5f && disparoDesbloqueado) // Reducido de 1f a 0.6f
         {            
             disparoCargado = true;
             break;
